@@ -1,5 +1,3 @@
-class PennMARC
-  def self.isthisthingon
-    puts 'Is this thing on?'
-  end
-end
+# frozen_string_literal: true
+
+require_relative 'pennmarc/record'

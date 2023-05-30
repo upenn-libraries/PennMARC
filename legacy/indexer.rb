@@ -148,7 +148,7 @@ class FranklinIndexer < BaseIndexer
     # this is now automatically copied on the Solr side
     # to_field "author_creator_f", extract_marc(author_creator_spec, :trim_punctuation => true)
 
-    # TODO: logic here is exactly the same as author_creator_facet: cache somehow?
+    # TODO: xfacet field, do not migrate
     to_field 'author_creator_xfacet2_input', extract_marc(author_creator_spec, :trim_punctuation => true) do |r, acc|
       acc.map! { |v| 'n' + v }
     end
@@ -178,6 +178,7 @@ class FranklinIndexer < BaseIndexer
       acc.concat(pennlibmarc.get_subject_facet_values(rec, true))
     end
 
+    # TODO: xfacet field, do not migrate
     to_field 'call_number_xfacet' do |rec, acc|
       acc.concat(pennlibmarc.get_call_number_xfacet_values(rec))
     end
@@ -256,6 +257,7 @@ class FranklinIndexer < BaseIndexer
       acc.concat(pennlibmarc.get_standardized_title_values(rec))
     end
 
+    # TODO: xfacet field, do not migrate
     to_field 'title_xfacet' do |rec, acc|
       acc.concat(pennlibmarc.get_title_xfacet_values(rec))
     end
@@ -332,6 +334,8 @@ class FranklinIndexer < BaseIndexer
     # these values are then mapped Solr-side to the `*_subject_stored_a` fields below. The fields are still
     # directly configured below for storage of values that should be displayed, but not directly
     # browseable/facetable
+    # TODO: while we should not migrate this field directly, we need to
+    #       ensure that the copyfield behavior is incorporated into our indexer
     to_field 'subject_xfacet2_input' do |rec, acc, ctx|
       val = ctx.clipboard.dig(:subjects, :xfacet)
       acc.concat(val) if val
