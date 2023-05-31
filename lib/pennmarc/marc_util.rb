@@ -6,24 +6,25 @@ module MarcUtil
   # passed-in regex and passed in subfield
   # TODO: example usage
   # @param [MARC::DataField] field
-  # @param [String|Integer|Symbol] subf
+  # @param [String|Integer|Symbol] subfield
   # @param [Regexp] regex
   # @return [TrueClass, FalseClass]
-  def subfield_value?(field, subf, regex)
-    field.any? { |sf| sf.code == subf.to_s && sf.value =~ regex }
+  def subfield_value?(field, subfield, regex)
+    field.any? { |sf| sf.code == subfield.to_s && sf.value =~ regex }
   end
 
   # returns true iff a given field has a given subfield value in a given array
   # TODO: example usage
   # @param [MARC:DataField] field
-  # @param [String|Integer|Symbol] subf
+  # @param [String|Integer|Symbol] subfield
   # @param [Array] array
   # @return [TrueClass, FalseClass]
-  def subfield_value_in?(field, subf, array)
-    field.any? { |sf| sf.code == subf.to_s && sf.value.in?(array) }
+  def subfield_value_in?(field, subfield, array)
+    field.any? { |sf| sf.code == subfield.to_s && sf.value.in?(array) }
   end
 
   # returns a lambda checking if passed-in subfield's code is a member of array
+  # TODO: include lambda returning methods in their own module?
   # @param [Array] array
   # @return [Proc]
   def subfield_in?(array)
@@ -41,4 +42,24 @@ module MarcUtil
             period: /\.\s*$/ } # TODO: revise to exclude "etc."
     string.sub map[trailer.to_sym], ''
   end
+
+  # MARC 880 field "Alternate Graphic Representation" contains text "linked" to another
+  # field (e.g., 254 [Title]) used as an alternate representation. Often used to hold
+  # translations of title values. A common need is to extract subfields as selected by 
+  # passed-in block from 880 datafield that has a particular subfield 6 value.
+  # See: https://www.loc.gov/marc/bibliographic/bd880.html
+  # @param [MARC::Record] record
+  # @param [String|Array] subfield6_value either a string to look for in sub6 or an array of them
+  # @param block [Proc] takes a subfield as argument, returns a boolean
+  def linked_alternate(record, subfield6_value, &block)
+    subfield6_value = "(#{subfield6_value.join('|')})"
+    record.fields('880')
+          .select { |f| subfield_value?(f, '6', /^#{subfield6_value}/) }
+          .map do |f|
+            f.select { |sf| block.call(sf) }.map(&:value).join(' ')
+          end
+  end
+  alias get_880 linked_alternate
+
+
 end
