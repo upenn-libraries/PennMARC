@@ -2,6 +2,14 @@
 
 # class to hold "utility" methods used in MARC parsing methods
 module MarcUtil
+  # Join subfields from a field selected based on a provided proc
+  # @param [MARC::DataField] field
+  # @param [Proc] selector
+  # @return [String]
+  def join_subfields(field, &selector)
+    field.select { |v| selector.call(v) }.map(&:value).select(&:present?).join(' ')
+  end
+
   # returns true if field has a value that matches
   # passed-in regex and passed in subfield
   # TODO: example usage
@@ -31,6 +39,14 @@ module MarcUtil
     ->(subfield) { array.member?(subfield.code) }
   end
 
+  # returns a lambda checking if passed-in subfield's code is NOT a member of array
+  # TODO: include lambda returning methods in their own module?
+  # @param [Array] array
+  # @return [Proc]
+  def subfield_not_in?(array)
+    ->(subfield) { !array.member?(subfield.code) }
+  end
+
   # @param [Symbol|String] trailer to target for removal
   # @param [String] string to modify
   def trim_trailing(trailer, string)
@@ -50,13 +66,12 @@ module MarcUtil
   # See: https://www.loc.gov/marc/bibliographic/bd880.html
   # @param [MARC::Record] record
   # @param [String|Array] subfield6_value either a string to look for in sub6 or an array of them
-  # @param block [Proc] takes a subfield as argument, returns a boolean
-  def linked_alternate(record, subfield6_value, &block)
-    subfield6_value = "(#{subfield6_value.join('|')})"
+  # @param selector [Proc] takes a subfield as argument, returns a boolean
+  def linked_alternate(record, subfield6_value, &selector)
     record.fields('880')
-          .select { |f| subfield_value?(f, '6', /^#{subfield6_value}/) }
+          .select { |f| subfield_value?(f, '6', /^#{Array.wrap(subfield6_value).join('|')}/) }
           .map do |f|
-            f.select { |sf| block.call(sf) }.map(&:value).join(' ')
+            f.select { |sf| selector.call(sf) }.map(&:value).join(' ')
           end
   end
   alias get_880 linked_alternate

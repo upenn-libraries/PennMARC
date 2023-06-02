@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# $LOAD_PATH.unshift(File.join(__dir__, '..', 'lib')) unless $LOAD_PATH.include?(File.join(__dir__, '..', 'lib'))
 $LOAD_PATH.unshift(__dir__) unless $LOAD_PATH.include?(__dir__)
 
 Dir[File.join(__dir__, 'support', '**', '*.rb')].sort.each { |f| require f }
