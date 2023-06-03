@@ -9,5 +9,5 @@ gem 'nokogiri'
 group :development do
   gem 'rspec'
   gem 'simplecov'
-  gem 'upennlib-rubocop'
+  gem 'upennlib-rubocop', require: false
 end
