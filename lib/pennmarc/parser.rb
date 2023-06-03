@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
 require 'active_support/all'
-require_relative 'helper'
-# require_relative 'author_creator'
-# require_relative 'database'
-# require_relative 'date'
-# require_relative 'format'
-# require_relative 'genre'
-# require_relative 'identifier'
-# require_relative 'link'
-# require_relative 'location'
-# require_relative 'subject'
-require_relative 'title'
+require_relative 'helpers/helper'
+require_relative 'helpers/creator'
+require_relative 'helpers/database'
+require_relative 'helpers/date'
+require_relative 'helpers/format'
+require_relative 'helpers/genre'
+require_relative 'helpers/identifier'
+require_relative 'helpers/link'
+require_relative 'helpers/location'
+require_relative 'helpers/subject'
+require_relative 'helpers/title'
 
 module PennMARC
-  DEFINED_HELPERS = %w[AuthorCreator Database Date Format Genre Link Location Subject Title].freeze
+  DEFINED_HELPERS = %w[Creator Database Date Format Genre Link Location Subject Title].freeze
 
   # Methods here should return values used in the indexer. The parsing logic should
   # NOT return values specific to any particular site/interface, but just general

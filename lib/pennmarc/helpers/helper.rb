@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative 'marc_util'
+require_relative '../util'
 
 module PennMARC
   # Shared helper code
   class Helper
-    extend MarcUtil
+    extend Util
   end
 end

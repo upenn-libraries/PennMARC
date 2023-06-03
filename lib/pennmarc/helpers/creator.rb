@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module PennMARC
-  # Do Author/Creator-y stuff
-  class AuthorCreator < Helper
+  # Do Creator-y stuff
+  class Creator < Helper
     class << self
       def search(record)
 
