@@ -44,7 +44,7 @@ When successful, the documentation pages will be available at [http://localhost:
 
 ### Style
 
-This gem utilizes the [upenn-rubocop](https://gitlab.library.upenn.edu/digital-library-development/upennlib-rubocop) 
+This gem utilizes the [upennlib-rubocop](https://gitlab.library.upenn.edu/dld/upennlib-rubocop) 
 gem to enforce a consistent style.
 
 To run rubocop with the configuration:
