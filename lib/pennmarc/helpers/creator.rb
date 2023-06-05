@@ -4,21 +4,13 @@ module PennMARC
   # Do Creator-y stuff
   class Creator < Helper
     class << self
-      def search(record)
+      def search(record); end
 
-      end
+      def show(record); end
 
-      def show(record)
+      def sort(record); end
 
-      end
-
-      def sort(record)
-
-      end
-
-      def facet(record)
-
-      end
+      def facet(record); end
     end
   end
 end

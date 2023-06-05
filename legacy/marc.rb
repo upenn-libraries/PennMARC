@@ -1,3 +1,4 @@
+# rubocop:disable all
 # frozen_string_literal: true
 
 require 'nokogiri'
@@ -2959,3 +2960,4 @@ module PennLib
   end
 
 end
+# rubocop:enable all

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Gem::Specification.new do |s|
   s.name        = 'pennmarc'
   s.version     = '0.0.1'
@@ -9,10 +11,12 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://gitlab.library.upenn.edu/dld/catalog/pennmarc'
   s.license     = 'MIT'
 
+  s.required_ruby_version = '>= 3.2'
+
   s.add_dependency 'marc'
 
+  s.add_development_dependency 'nokogiri'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'simplecov'
   s.add_development_dependency 'upennlib-rubocop'
-  s.add_development_dependency 'nokogiri'
 end

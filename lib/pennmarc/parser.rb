@@ -24,7 +24,7 @@ module PennMARC
   # Methods should, by default, take in a MARC::Record
   class Parser
     # @param [Array] mappings ???
-    def initialize(mappings:, helpers: DEFINED_HELPERS)
+    def initialize(mappings: [], helpers: DEFINED_HELPERS)
       @mappings = mappings # LoC & Dewey translations, Language Code, Location details - may be passed to methods
       @helpers = Array.wrap(helpers) # TODO: load helpers dynamically?
     end

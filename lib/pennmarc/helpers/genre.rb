@@ -4,13 +4,9 @@ module PennMARC
   # Do Genre-y stuff
   class Genre < Helper
     class << self
-      def search(record)
+      def search(record); end
 
-      end
-
-      def show(record)
-
-      end
+      def show(record); end
 
       def facet(record); end
     end

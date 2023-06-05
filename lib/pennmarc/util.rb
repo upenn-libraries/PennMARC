@@ -76,7 +76,5 @@ module PennMARC
             end
     end
     alias get_880 linked_alternate
-
-
   end
 end

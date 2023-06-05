@@ -1,3 +1,4 @@
+# rubocop:disable all
 $:.unshift './config'
 
 require 'date'
@@ -564,3 +565,4 @@ class FranklinIndexer < BaseIndexer
   end
 
 end
+# rubocop:enable all

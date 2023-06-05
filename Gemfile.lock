@@ -26,6 +26,7 @@ GEM
     racc (1.6.2)
     rack (3.0.7)
     rainbow (3.1.1)
+    rake (13.0.6)
     regexp_parser (2.8.0)
     rexml (3.2.5)
     rspec (3.12.0)
@@ -91,6 +92,8 @@ GEM
       rubocop-rails
       rubocop-rake
       rubocop-rspec
+    webrick (1.8.1)
+    yard (0.9.34)
 
 PLATFORMS
   x86_64-linux
@@ -99,9 +102,12 @@ DEPENDENCIES
   activesupport
   marc
   nokogiri
+  rake
   rspec
   simplecov
   upennlib-rubocop
+  webrick
+  yard
 
 BUNDLED WITH
    2.4.10

@@ -2,7 +2,7 @@
 
 module PennMARC
   # Do Location-y stuff
-  class Location
+  class Location < Helper
     # this will use a mapping from parsed XML...
     class << self
       def library(record:); end

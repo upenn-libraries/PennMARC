@@ -6,17 +6,11 @@ module PennMARC
     # TODO: what about classified subject headings (MeSH, LCSH, etc.)
     #       that are set in the context clipboard? recreate something similar?
     class << self
-      def search(record)
+      def search(record); end
 
-      end
+      def show(record); end
 
-      def show(record)
-
-      end
-
-      def facet(record)
-
-      end
+      def facet(record); end
     end
   end
 end

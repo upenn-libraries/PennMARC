@@ -8,9 +8,7 @@ module PennMARC
         record.fields('001').first.value
       end
 
-      def isbn(record)
-
-      end
+      def isbn(record); end
 
       def issn(record); end
     end
