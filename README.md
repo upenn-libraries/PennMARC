@@ -8,7 +8,7 @@ When included in a project, it should be utilized like this:
 
 ```ruby
 parser = PennMARC::Parser.new # eventually we will pass in some mappings...
-puts title_show(marc_record) # Title intended for display
+puts parser.title_show(marc_record) # Title intended for display
 ```
 
 All methods will require a `MARC::Record` object. For more about these, see the 

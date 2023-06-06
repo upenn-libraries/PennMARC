@@ -8,13 +8,16 @@ require_relative 'helpers/date'
 require_relative 'helpers/format'
 require_relative 'helpers/genre'
 require_relative 'helpers/identifier'
+require_relative 'helpers/language'
 require_relative 'helpers/link'
 require_relative 'helpers/location'
 require_relative 'helpers/subject'
 require_relative 'helpers/title'
 
 module PennMARC
-  DEFINED_HELPERS = %w[Creator Database Date Format Genre Link Location Subject Title].freeze
+  attr_accessor :mappings
+
+  DEFINED_HELPERS = %w[Creator Database Date Format Genre Language Link Location Subject Title].freeze
 
   # Methods here should return values used in the indexer. The parsing logic should
   # NOT return values specific to any particular site/interface, but just general
@@ -23,9 +26,8 @@ module PennMARC
   #
   # Methods should, by default, take in a MARC::Record
   class Parser
-    # @param [Array] mappings ???
-    def initialize(mappings: [], helpers: DEFINED_HELPERS)
-      @mappings = mappings # LoC & Dewey translations, Language Code, Location details - may be passed to methods
+    def initialize(helpers: DEFINED_HELPERS)
+      @mappings = {}
       @helpers = Array.wrap(helpers) # TODO: load helpers dynamically?
     end
 
@@ -41,6 +43,14 @@ module PennMARC
       helper = call.shift
       meth = call.join('_')
       "PennMARC::#{helper.titleize}".constantize.public_send(meth, opts)
+    end
+
+    # Load language map from YAML and memoize in @mappings hash
+    # @return [Hash]
+    def language_map
+      @mappings[:language] ||=
+        YAML.safe_load(File.read(File.join(File.expand_path(__dir__), 'mappings', 'language.yml')),
+                       symbolize_names: true)
     end
   end
 end

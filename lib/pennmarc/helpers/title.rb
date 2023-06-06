@@ -5,6 +5,9 @@ module PennMARC
   class Title < Helper
     class << self
       # Title Search
+      #
+      # @param [MARC::Record] record
+      # @return [Array<String>]
       def search(record)
         record.fields('245').take(1).map do |field|
           a_or_k = field.find_all(&subfield_in?(%w[a k]))
@@ -13,7 +16,6 @@ module PennMARC
           joined = field.find_all(&subfield_in?(%w[b n p]))
                         .map { |sf| trim_trailing(:slash, sf.value) }
                         .join(' ')
-
           apunct = a_or_k[-1]
           hpunct = field.find_all { |sf| sf.code == 'h' }
                         .map { |sf| sf.value[-1] }
@@ -32,7 +34,7 @@ module PennMARC
       # Display Title
       #
       # @param [MARC::Record] record
-      # @return [String]
+      # @return [String] single valued title
       def show(record)
         acc = []
         acc += record.fields('245').map do |field|
@@ -43,22 +45,19 @@ module PennMARC
         acc.join(' ')
       end
 
-      # Canonical title, with nonfiling characters removed, if present and specified
-      # TODO: it seems we are currently using a multivalued field for sorting...check the schema...
+      # Canonical title, with non-filing characters removed, if present and specified.
+      #
+      # @param [MARC::Record] record
+      # @return [String]
       def sort(record); end
-
-      # we dont facet by title...but there is xfacet stuff currently that supports title browse
-      # def facet(record:); end
 
       # Standardized Title
       #
       # These values are intended for display. There has been distinct logic for storing search values as well
-      # (see get_standardized_title_values) but this appears only used with Title Browse functionality.
-      #
-      # 130: https://www.oclc.org/bibformats/en/1xx/130.html
-      # 240: https://www.oclc.org/bibformats/en/2xx/240.html
-      #
-      # Ported from get_standardized_title_display. Returned values from legacy method are "link" hashes.
+      # (see get_standardized_title_values) but this appears only used with Title Browse functionality. Values come
+      # from 130 ({https://www.oclc.org/bibformats/en/1xx/130.html OCLC docs}) and 240
+      # ({https://www.oclc.org/bibformats/en/2xx/240.html OCLC docs}) as well as relator fields. Ported from Franklin
+      # get_standardized_title_display. Returned values from legacy method are "link" hashes.
       #
       # @param [MARC::Record] record
       # @return [Array<String>] Array of standardized titles as strings
@@ -71,10 +70,9 @@ module PennMARC
 
       # Other Title
       #
-      # These titles are intended for display
-      #
-      # 246: https://www.oclc.org/bibformats/en/2xx/246.html
-      # 740: https://www.oclc.org/bibformats/en/7xx/740.html
+      # These titles are intended for display. Data comes from 246
+      # ({https://www.oclc.org/bibformats/en/2xx/246.htm OCLC docs}) and 740
+      # {(https://www.oclc.org/bibformats/en/7xx/740.html OCLC docs)}
       #
       # Ported from get_other_title_display
       # @param [MARC::Record] record
