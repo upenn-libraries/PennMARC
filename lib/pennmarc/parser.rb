@@ -45,6 +45,146 @@ module PennMARC
       "PennMARC::#{helper.titleize}".constantize.public_send(meth, opts)
     end
 
+    # @param [MARC::Record] record
+    # @return [Object]
+    def publication_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def edition_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def conference_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def series_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def production_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def distribution_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def manufacture_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def contained_in_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def cartographic_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def fingerprint_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def arrangement_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def place_of_publication_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def system_details_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def biography_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def summary_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def contents_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def participant_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def credits_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def notes_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def local_notes_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def offsite_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def finding_aid_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def provenance_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def chronology_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def related_collections_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def cited_in_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def publications_about_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def cite_as_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def contributor_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def related_work_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def contains_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def other_edition_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def constituent_unit_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def has_supplement_show(record); end
+
+    # @param [MARC::Record] record
+    # @return [Object]
+    def access_restriction_show(record); end
+
     # Load language map from YAML and memoize in @mappings hash
     # @return [Hash]
     def language_map
