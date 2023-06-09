@@ -45,7 +45,7 @@ module MarcSpecHelpers
   # @param [String (frozen)] tag MARC tag, e.g., 001, 665
   # @param [String (frozen)] indicator1 MARC indicator, e.g., 0
   # @param [String (frozen)] indicator2
-  # @param [Hash] subfields hash of subfield values as code => value
+  # @param [Hash] subfields hash of subfield values as code => value or code => [value, value]
   # @return [MARC::DataField]
   def marc_field(tag: 'TST', indicator1: ' ', indicator2: ' ', subfields: {})
     subfield_objects = subfields.each_with_object([]) do |(code, value), array|
