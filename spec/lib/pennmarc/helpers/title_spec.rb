@@ -26,8 +26,8 @@ describe 'PennMARC::Title' do
     end
 
     describe '.sort' do
-      xit 'returns the expected sort value' do
-        expect(helper.sort(record)).to eq ''
+      it 'returns the expected sort value' do
+        expect(helper.sort(record)).to eq 'Coopers & Lybrand guide to business tax strategies and planning / The'
       end
     end
   end

@@ -45,11 +45,50 @@ module PennMARC
         acc.join(' ')
       end
 
-      # Canonical title, with non-filing characters removed, if present and specified.
-      #
+      # Canonical title, with non-filing characters removed, if present and specified. Currently we index two "title
+      # sort" fields: title_nssort (ssort type - regex token filter applied) and title_sort_tl (text left justified).
+      # It is not yet clear why this distinction is useful. For now, use a properly normalized (leading
+      # articles and punctuation removed) single title value here.
+      # @todo refactor to reduce complexity
       # @param [MARC::Record] record
       # @return [String]
-      def sort(record); end
+      def sort(record)
+        title_field = record.fields('245').first
+        return unless title_field
+
+        # attempt to get number of non-filing characters present, default to 0
+        offset = if title_field.indicator2 =~ /^[0-9]$/
+                   title_field.indicator2.to_i
+                 else
+                   0
+                 end
+        raw_title = join_subfields(title_field, &subfield_in?(['a'])) # get title from subfield a
+        value = if offset.between?(1, 9)
+                  { prefix: raw_title[0..offset - 1].strip, filing: raw_title[offset..].strip }
+                elsif raw_title
+                  handle_bracket_prefix raw_title
+                else
+                  # no subfield a, no indicator
+                  raw_form = join_subfields(title_field, &subfield_in?(['a']))
+                  handle_bracket_prefix raw_form
+                end
+        value[:filing] = [value[:filing],
+                          join_subfields(title_field, &subfield_in?(%w[b n p]))].join(' ')
+        value[:filing] + value[:prefix]
+      end
+
+      # Create prefix/filing hash for representing a title value with filing characters removed, with special
+      # consideration for bracketed titles
+      # @todo Is this still useful?
+      # @param [String] title
+      # @return [Hash]
+      def handle_bracket_prefix(title)
+        if title.starts_with? '['
+          { prefix: '[', filing: title[1..] } # this seems silly
+        else
+          { prefix: '', filing: title }
+        end
+      end
 
       # Standardized Title
       #
@@ -72,7 +111,7 @@ module PennMARC
       #
       # These titles are intended for display. Data comes from 246
       # ({https://www.oclc.org/bibformats/en/2xx/246.htm OCLC docs}) and 740
-      # {(https://www.oclc.org/bibformats/en/7xx/740.html OCLC docs)}
+      # ({https://www.oclc.org/bibformats/en/7xx/740.html OCLC docs)}
       #
       # Ported from get_other_title_display
       # @param [MARC::Record] record
