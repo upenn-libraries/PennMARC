@@ -38,17 +38,20 @@ module MarcSpecHelpers
   # Can pass in tag, indicators and subfields (using simple hash structure). E.g.,
   # marc_field(tag: '650', indicator2: '7'),
   #            subfields: { a: 'Tax planning',
+  #                         m: ['Multiple', 'Subfields']
   #                         z: 'United States.',
   #                         '0': http://id.loc.gov/authorities/subjects/sh2008112546 }
   #            )
   # @param [String (frozen)] tag MARC tag, e.g., 001, 665
   # @param [String (frozen)] indicator1 MARC indicator, e.g., 0
   # @param [String (frozen)] indicator2
-  # @param [Hash] subfields hash of subfield values as code => value $ TODO: what about repeating subfields?
+  # @param [Hash] subfields hash of subfield values as code => value
   # @return [MARC::DataField]
   def marc_field(tag: 'TST', indicator1: ' ', indicator2: ' ', subfields: {})
-    build_subfields = subfields.map { |code, value| marc_subfield code, value }
-    MARC::DataField.new tag, indicator1, indicator2, *build_subfields
+    subfield_objects = subfields.each_with_object([]) do |(code, value), subfield_objects|
+      Array.wrap(value).map { |value| subfield_objects << marc_subfield(code, value) }
+    end
+    MARC::DataField.new tag, indicator1, indicator2, *subfield_objects
   end
 
   # Return a MARC::Record containing passed in DataFields
