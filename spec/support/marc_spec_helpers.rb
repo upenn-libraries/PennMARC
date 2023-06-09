@@ -48,8 +48,8 @@ module MarcSpecHelpers
   # @param [Hash] subfields hash of subfield values as code => value
   # @return [MARC::DataField]
   def marc_field(tag: 'TST', indicator1: ' ', indicator2: ' ', subfields: {})
-    subfield_objects = subfields.each_with_object([]) do |(code, value), subfield_objects|
-      Array.wrap(value).map { |value| subfield_objects << marc_subfield(code, value) }
+    subfield_objects = subfields.each_with_object([]) do |(code, value), array|
+      Array.wrap(value).map { |v| array << marc_subfield(code, v) }
     end
     MARC::DataField.new tag, indicator1, indicator2, *subfield_objects
   end
