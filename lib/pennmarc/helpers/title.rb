@@ -36,12 +36,11 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [String] single valued title
       def show(record)
-        acc = []
-        acc += record.fields('245').map do |field|
+        acc = record.fields('245').map do |field|
           join_subfields(field, &subfield_not_in?(%w[6 8]))
         end
         acc += linked_alternate(record, '245', &subfield_not_in?(%w[6 8]))
-               .map { |value| " = #{value}" }
+               .map { |value| "= #{value}" }
         acc.join(' ')
       end
 
@@ -73,8 +72,8 @@ module PennMARC
                   handle_bracket_prefix raw_form
                 end
         value[:filing] = [value[:filing],
-                          join_subfields(title_field, &subfield_in?(%w[b n p]))].join(' ')
-        value[:filing] + value[:prefix]
+                          join_subfields(title_field, &subfield_in?(%w[b n p]))].compact_blank.join(' ')
+        [value[:filing], value[:prefix]].join(' ').strip
       end
 
       # Create prefix/filing hash for representing a title value with filing characters removed, with special
@@ -84,9 +83,9 @@ module PennMARC
       # @return [Hash]
       def handle_bracket_prefix(title)
         if title.starts_with? '['
-          { prefix: '[', filing: title[1..] } # this seems silly
+          { prefix: '[', filing: title[1..].strip } # this seems silly
         else
-          { prefix: '', filing: title }
+          { prefix: '', filing: title.strip }
         end
       end
 
@@ -97,14 +96,30 @@ module PennMARC
       # from 130 ({https://www.oclc.org/bibformats/en/1xx/130.html OCLC docs}) and 240
       # ({https://www.oclc.org/bibformats/en/2xx/240.html OCLC docs}) as well as relator fields. Ported from Franklin
       # get_standardized_title_display. Returned values from legacy method are "link" hashes.
-      #
+
+      # @note this is simplified from legacy practice as a linking hash is not returned. i believe this only supported
+      #       title browse and we will not be supporting that at this time
       # @param [MARC::Record] record
       # @return [Array<String>] Array of standardized titles as strings
       def standardized(record)
-        standardized_titles = []
-        standardized_titles += titles_from_130_240(record)
-        standardized_titles += titles_from_730(record)
-        standardized_titles + standardized_titles_from_880(record)
+        standardized_titles = record.fields(%w[130 240]).map do |field|
+          join_subfields(field, &subfield_not_in?(%w[0 6 8 e w]))
+        end
+        standardized_titles += record.fields('730').filter_map do |field|
+          # skip if unless one of the indicators is blank
+          next unless field.indicator1 == '' || field.indicator2 == ''
+
+          # skip if a subfield i is present
+          next if subfield_defined?(field, 'i')
+
+          join_subfields(field, &subfield_not_in?(%w[5 6 8 e w]))
+        end
+        standardized_titles + record.fields('880').filter_map do |field|
+          next unless !subfield_defined?(field, 'i') ||
+                      subfield_value_in?(field, '6', %w[130 240 730])
+
+          join_subfields field, &subfield_not_in?(%w[5 6 8 e w])
+        end
       end
 
       # Other Title
@@ -113,14 +128,23 @@ module PennMARC
       # ({https://www.oclc.org/bibformats/en/2xx/246.htm OCLC docs}) and 740
       # ({https://www.oclc.org/bibformats/en/7xx/740.html OCLC docs)}
       #
-      # Ported from get_other_title_display
       # @param [MARC::Record] record
       # @return [Array<String>] Array of other titles as strings
       def other(record)
-        other_titles = []
-        other_titles += titles_from_246(record)
-        other_titles += titles_from_740(record)
-        other_titles + other_titles_from_880(record)
+        other_titles = record.fields('246').map do |field|
+          join_subfields(field, &subfield_not_in?(%w[6 8]))
+        end
+        other_titles += record.fields('740')
+                              .filter_map do |field|
+          next unless field.indicator2.in? ['', ' ', '0', '1', '3']
+
+          join_subfields(field, &subfield_not_in?(%w[5 6 8]))
+        end
+        other_titles + record.fields('880').filter_map do |field|
+          next unless subfield_value_in? field, '6', %w[246 740]
+
+          join_subfields(field, &subfield_not_in?(%w[5 6 8]))
+        end
       end
 
       # Former Title
@@ -132,6 +156,7 @@ module PennMARC
       # Ported from get_former_title_display. That method returns a hash for constructing a search link.
       # We may need to do something like that eventually.
       #
+      # @todo what are e and w subfields?
       # @param [MARC::Record] record
       # @return [Array<String>]
       def former(record)
@@ -139,8 +164,8 @@ module PennMARC
               .select { |field| field.tag == '247' || (field.tag == '880' && subfield_value?(field, '6', /^247/)) } # TODO: this is a common pattern, how can we make this more clear?
               .map do |field|
           former_title = join_subfields field, &subfield_not_in?(%w[6 8 e w]) # 6 and 8 are not meaningful for display
-          former_title_append = join_subfields field, &subfield_in?(%w[e w]) # TODO: e and w appear undocumented - what are they?
-          "#{former_title} #{former_title_append}"
+          former_title_append = join_subfields field, &subfield_in?(%w[e w])
+          "#{former_title} #{former_title_append}".strip
         end
       end
     end

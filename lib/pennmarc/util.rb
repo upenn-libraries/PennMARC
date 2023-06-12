@@ -8,7 +8,7 @@ module PennMARC
     # @param [Proc] selector
     # @return [String]
     def join_subfields(field, &selector)
-      field.select { |v| selector.call(v) }.map(&:value).select(&:present?).join(' ')
+      field.select { |v| selector.call(v) }.filter_map { |sf| sf.value&.strip }.join(' ')
     end
 
     # returns true if field has a value that matches
@@ -46,6 +46,15 @@ module PennMARC
     # @return [Proc]
     def subfield_not_in?(array)
       ->(subfield) { !array.member?(subfield.code) }
+    end
+
+    # Check if a field has a subfield defined
+    # @todo write specs
+    # @param [MARC::DataField] field
+    # @param [String|Symbol|Integer] subfield
+    # @return [TrueClass, FalseClass]
+    def subfield_defined?(field, subfield)
+      field.any? { |sf| sf.code == subfield.to_s }
     end
 
     # @param [Symbol|String] trailer to target for removal
