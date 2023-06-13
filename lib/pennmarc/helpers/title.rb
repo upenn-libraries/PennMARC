@@ -4,53 +4,73 @@ module PennMARC
   # This helper contains logic for parsing out Title and Title-related fields.
   class Title < Helper
     class << self
+      AUX_TITLE_TAGS = {
+        main: %w[130 210 240 245 246 247 440 490 730 740 830],
+        related: %w[773 774 780 785],
+        entity: %w[700 710 711]
+      }.freeze
+
       # TODO: current configuration for search depends on additional title fields, impacting relevance:
       #       "keyword search": title_1_search^2.5 title_2_search^1.5
       #       "journal title search": journal_title_1_search^3 journal_title_2_search^0.5
 
-      # Single-valued Title, for use in headings. Takes the first {https://www.oclc.org/bibformats/en/2xx/245.html 245} value.
-      # ǂa is proper title
-      # ǂk is form
-      # ǂb is remainder of title
-      # ǂn is number of part
-      # ǂp is name of part
-      # ǂh is medium, which OCLC doc says DO NOT USE...
+      # Main Title Search field. Takes from 245 and linked 880. Ported from get_title_1_search_values.
       # @param [MARC::Record] record
-      # @return [Array<String>]
-      def single(record)
-        record.fields('245').take(1).map do |field|
-          a_or_k = field.find_all(&subfield_in?(%w[a k]))
-                        .map { |sf| trim_trailing(:comma, trim_trailing(:slash, sf.value).rstrip) }
-                        .first || ''
-          joined = field.find_all(&subfield_in?(%w[b n p]))
-                        .map { |sf| trim_trailing(:slash, sf.value) }
-                        .join(' ')
-          apunct = a_or_k[-1]
-          hpunct = field.find_all { |sf| sf.code == 'h' }
-                        .map { |sf| sf.value[-1] }
-                        .first
-          punct = if [apunct, hpunct].member?('=')
-                    '='
-                  else
-                    [apunct, hpunct].member?(':') ? ':' : nil
-                  end
+      # @return [Array<>] array of title values
+      def search(record)
+        titles = record.fields('245').filter_map do |field|
+          join_subfields(field, &subfield_not_in?(%w[c 6 8 h]))
+        end
+        titles + record.fields('880').filter_map do |field|
+          next unless subfield_value?(field, '6', /245/)
 
-          [trim_trailing(:colon, trim_trailing(:equal, a_or_k)), punct, joined]
-            .select(&:present?).join(' ')
+          join_subfields(field, &subfield_not_in?(%w[c 6 8 h]))
         end
       end
 
-      # Display Title
-      #
+      # Auxiliary Title Search field. Takes from many fields that contain title-like information. Ported from
+      # get_title_2_search_values.
+      # @todo port this, it is way complicated but essential for relevance
       # @param [MARC::Record] record
-      # @return [String] single valued title
+      # @return [Array<>] array of title values
+      def search_aux(record); end
+
+      # Journal Title Search field.
+      # @todo port this, it is way complicated but essential for relevance
+      # @param [MARC::Record] record
+      # @return [Array<String>]
+      def journal_search(record); end
+
+      # Auxiliary Journal Title Search field.
+      # @todo port this, it is way complicated but essential for relevance
+      # @param [MARC::Record] record
+      # @return [Array<String>]
+      def journal_search_aux(record); end
+
+      # Single-valued Title, for use in headings. Takes the first {https://www.oclc.org/bibformats/en/2xx/245.html 245}
+      # value. Special consideration for
+      # {https://www.oclc.org/bibformats/en/2xx/245.html#punctuation punctuation practices}.
+      # @todo still consider ǂh? medium, which OCLC doc says DO NOT USE...
+      # @todo is punctuation handling still as desired? treatment here is described in spreadsheet from 2011
+      # @param [MARC::Record] record
+      # @return [String]
       def show(record)
-        acc = record.fields('245').map do |field|
-          join_subfields(field, &subfield_not_in?(%w[6 8]))
-        end
-        acc += linked_alternate(record, '245', &subfield_not_in?(%w[6 8]))
-               .map { |value| "= #{value}" }
-        acc.join(' ')
+        field = record.fields('245').first
+        title_or_form = field.find_all(&subfield_in?(%w[a k]))
+                             .map { |sf| trim_trailing(:comma, trim_trailing(:slash, sf.value).rstrip) }
+                             .first || ''
+        other_info = field.find_all(&subfield_in?(%w[b n p]))
+                          .map { |sf| trim_trailing(:slash, sf.value) }
+                          .join(' ')
+        hpunct = field.find_all { |sf| sf.code == 'h' }.map { |sf| sf.value.last }.first
+        punctuation = if [title_or_form.last, hpunct].include?('=')
+                        '='
+                      else
+                        [title_or_form.last, hpunct].include?(':') ? ':' : nil
+                      end
+        [trim_trailing(:colon, trim_trailing(:equal, title_or_form)).strip,
+         punctuation,
+         other_info].compact_blank.join(' ')
       end
 
       # Canonical title, with non-filing characters removed, if present and specified. Currently we index two "title
@@ -156,10 +176,9 @@ module PennMARC
         end
       end
 
-      # Former Title
+      # Former Title for display.
       # These titles are intended for display
       #
-      # https://www.loc.gov/marc/bibliographic/concise/bd247.html
       # https://www.oclc.org/bibformats/en/2xx/247.html
       #
       # Ported from get_former_title_display. That method returns a hash for constructing a search link.

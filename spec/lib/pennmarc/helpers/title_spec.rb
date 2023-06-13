@@ -5,42 +5,61 @@ describe 'PennMARC::Title' do
 
   let(:helper) { PennMARC::Title }
 
-  describe '.show' do
+  describe '.search' do
     let(:record) do
       marc_record fields: [
-        marc_field(tag: '245', subfields: { a: 'Title', c: 'by Someone' }),
-        marc_field(tag: '880', subfields: { '6': '245', a: 'Alt Title', c: 'by Someone' })
+        marc_field(tag: '245', subfields: { a: 'Title', b: 'Subtitle', c: 'Responsibility', h: 'Medium' }),
+        marc_field(tag: '880', subfields: { a: 'Linked Title', '6': '245' })
       ]
     end
 
-    it 'returns the expected title display value' do
-      expect(helper.show(record)).to eq('Title by Someone = Alt Title by Someone')
+    it 'returns search values without ǂc or ǂh content' do
+      values = helper.search(record)
+      expect(values).to contain_exactly 'Linked Title', 'Title Subtitle'
+      expect(values).not_to include 'Responsibility', 'Medium'
     end
   end
 
-  describe '.single' do
+  xdescribe '.search_aux'
+
+  describe '.show' do
     let(:record) do
       marc_record fields: [
         marc_field(tag: '245', subfields: subfields)
       ]
     end
 
-    context 'with no subfield a or k defined' do
-      let(:subfields) { { b: '', h: '' } }
+    context 'with ǂa, ǂk and ǂn defined' do
+      let(:subfields) { { a: 'Five Decades of MARC usage', k: 'journals', n: 'Part One' } }
+
+      it 'returns single title value with text from ǂa and ǂn but not ǂk' do
+        expect(helper.show(record)).to eq 'Five Decades of MARC usage Part One'
+      end
     end
 
-    context 'with subfield h containing an =' do
-      let(:subfields) { { b: '', h: '=' } }
+    context 'with no ǂa but a ǂk and ǂn defined' do
+      let(:subfields) { { k: 'journals', n: 'Part One' } }
+
+      it 'returns single title value with text from ǂk and ǂn' do
+        expect(helper.show(record)).to eq 'journals Part One'
+      end
     end
 
-    context 'with subfield a containing a :' do
-      let(:subfields) { { a: ':', h: '' } }
+    context 'with ǂa containing an " = "' do
+      let(:subfields) { { a: 'There is a parallel statement = ', b: 'Parallel statement / ' } }
+
+      it 'returns single title value with text from ǂa and ǂb joined with an " = " and other trailing punctuation
+          removed' do
+        expect(helper.show(record)).to eq 'There is a parallel statement = Parallel statement'
+      end
     end
 
-    it 'returns the expected search values' do
-      search_values = helper.search(record)
-      expect(search_values).to be_an Array
-      expect(search_values).to contain_exactly([])
+    context 'with ǂa containing an " : "' do
+      let(:subfields) { { a: 'There is an other statement : ', b: 'Other statement' } }
+
+      it 'returns single title value with text from ǂa and ǂn' do
+        expect(helper.show(record)).to eq 'There is an other statement : Other statement'
+      end
     end
   end
 
@@ -55,8 +74,9 @@ describe 'PennMARC::Title' do
       end
 
       it 'properly removes and appends the number of characters specified in indicator 2' do
-        expect(helper.sort(record)).to start_with 'Record Title'
-        expect(helper.sort(record)).to end_with 'The'
+        value = helper.sort(record)
+        expect(value).to start_with 'Record Title'
+        expect(value).to end_with 'The'
       end
 
       it 'includes ǂb, ǂn and ǂp values' do
@@ -97,10 +117,11 @@ describe 'PennMARC::Title' do
     end
 
     it 'returns the expected standardized title display values' do
-      expect(helper.standardized(record)).to contain_exactly(
+      values = helper.standardized(record)
+      expect(values).to contain_exactly(
         'Another Uniform Title', 'Translated Uniform Title', 'Uniform Title 2000', 'Yet Another Uniform Title'
       )
-      expect(helper.standardized(record)).not_to include 'Not Printed Title', 'Subfield i Title'
+      expect(values).not_to include 'Not Printed Title', 'Subfield i Title'
     end
   end
 
@@ -124,13 +145,15 @@ describe 'PennMARC::Title' do
   describe '.former' do
     let(:record) do
       marc_record fields: [
-        marc_field(tag: '247', subfields: { a: 'Former Title', n: 'Part', '6': 'Not Included', e: 'Append' }),
+        marc_field(tag: '247', subfields: { a: 'Former Title', n: 'Part', '6': 'Linkage', e: 'Append' }),
         marc_field(tag: '880', subfields: { a: 'Alt Title', n: 'Part', '6': '247' })
       ]
     end
 
     it 'returns the expected former title value' do
-      expect(helper.former(record)).to contain_exactly 'Former Title Part Append', 'Alt Title Part'
+      values = helper.former(record)
+      expect(values).to contain_exactly 'Former Title Part Append', 'Alt Title Part'
+      expect(values).not_to include 'Linkage', '247'
     end
   end
 end

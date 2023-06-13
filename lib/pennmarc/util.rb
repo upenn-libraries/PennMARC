@@ -8,7 +8,12 @@ module PennMARC
     # @param [Proc] selector
     # @return [String]
     def join_subfields(field, &selector)
-      field.select { |v| selector.call(v) }.filter_map { |sf| sf.value&.strip }.join(' ')
+      field.select { |v| selector.call(v) }.filter_map { |sf|
+        value = sf.value&.strip
+        next unless value.present?
+
+        value
+      }.join(' ')
     end
 
     # returns true if field has a value that matches
