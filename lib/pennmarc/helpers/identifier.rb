@@ -39,7 +39,7 @@ module PennMARC
         acc += record.fields('020').map do |field|
           join_subfields(field, &subfield_in?(%w[a z]))
         end.select(&:present?)
-        acc += get_880(record, '020', &subfield_in?(%w[a z]))
+        acc += linked_alternate(record, '020', &subfield_in?(%w[a z]))
         acc
       end
 
@@ -53,7 +53,7 @@ module PennMARC
         acc += record.fields('022').map do |field|
           join_subfields(field, &subfield_in?(%w[a z]))
         end.select(&:present?)
-        acc += get_880(record, '022', &subfield_in?(%w[a z]))
+        acc += linked_alternate(record, '022', &subfield_in?(%w[a z]))
         acc
       end
 
@@ -85,7 +85,7 @@ module PennMARC
         acc += record.fields(%w[024 028]).map do |field|
           join_subfields(field, &subfield_not_in?(%w[5 6]))
         end.select(&:present?)
-        acc += get_880(record, %w[024 028], &subfield_not_in?(%w[5 6]))
+        acc += linked_alternate(record, %w[024 028], &subfield_not_in?(%w[5 6]))
         acc
       end
 
