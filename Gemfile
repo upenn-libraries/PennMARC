@@ -3,6 +3,7 @@
 source 'https://rubygems.org'
 
 gem 'activesupport'
+gem 'library_stdnums'
 gem 'marc'
 gem 'nokogiri'
 gem 'rake'
