@@ -23,7 +23,7 @@ module PennMARC
           if field.tag == '020'
             field.filter_map { |subfield| normalize_isbn(subfield.value) if subfield_in?(%w[a z]).call(subfield) }
           else
-            field.filter_map { |subfield| normalize_issn(subfield.value) if subfield_in?(%w[a l z]).call(subfield) }
+            field.filter_map { |subfield| subfield.value if subfield_in?(%w[a l z]).call(subfield) }
           end
         end.flatten.compact.uniq
       end
@@ -118,14 +118,6 @@ module PennMARC
       #  @return [Array<String, String>, nil]
       def normalize_isbn(isbn)
         StdNum::ISBN.allNormalizedValues(isbn)
-      end
-
-      # Normalizes issn value using {https://github.com/billdueber/library_stdnums library_stdnums gem}
-      #
-      # @param [String] issn
-      # @return [String, nil]
-      def normalize_issn(issn)
-        StdNum::ISSN.normalize(issn)
       end
     end
   end

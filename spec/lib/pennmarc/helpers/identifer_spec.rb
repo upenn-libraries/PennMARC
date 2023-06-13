@@ -22,7 +22,7 @@ describe 'PennMARC::Identifier' do
     end
 
     it 'returns expected search values' do
-      expect(helper.isxn_search(record)).to contain_exactly('9781594205071', '1594205078', '03007162', '00086533')
+      expect(helper.isxn_search(record)).to contain_exactly('9781594205071', '1594205078', '0300-7162', '0008-6533')
     end
 
     it 'converts ISBN10 values to ISBN13' do
