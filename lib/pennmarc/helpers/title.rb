@@ -4,6 +4,10 @@ module PennMARC
   # This helper contains logic for parsing out Title and Title-related fields.
   class Title < Helper
     class << self
+      # TODO: current configuration for search depends on additional title fields, impacting relevance:
+      #       "keyword search": title_1_search^2.5 title_2_search^1.5
+      #       "journal title search": journal_title_1_search^3 journal_title_2_search^0.5
+
       # Title Search
       #
       # @param [MARC::Record] record
