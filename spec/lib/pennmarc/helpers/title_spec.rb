@@ -18,8 +18,26 @@ describe 'PennMARC::Title' do
     end
   end
 
-  describe '.search' do
-    xit 'returns the expected search values' do
+  describe '.single' do
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '245', subfields: subfields)
+      ]
+    end
+
+    context 'with no subfield a or k defined' do
+      let(:subfields) { { b: '', h: '' } }
+    end
+
+    context 'with subfield h containing an =' do
+      let(:subfields) { { b: '', h: '=' } }
+    end
+
+    context 'with subfield a containing a :' do
+      let(:subfields) { { a: ':', h: '' } }
+    end
+
+    it 'returns the expected search values' do
       search_values = helper.search(record)
       expect(search_values).to be_an Array
       expect(search_values).to contain_exactly([])

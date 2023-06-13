@@ -8,11 +8,16 @@ module PennMARC
       #       "keyword search": title_1_search^2.5 title_2_search^1.5
       #       "journal title search": journal_title_1_search^3 journal_title_2_search^0.5
 
-      # Title Search
-      #
+      # Single-valued Title, for use in headings. Takes the first {https://www.oclc.org/bibformats/en/2xx/245.html 245} value.
+      # ǂa is proper title
+      # ǂk is form
+      # ǂb is remainder of title
+      # ǂn is number of part
+      # ǂp is name of part
+      # ǂh is medium, which OCLC doc says DO NOT USE...
       # @param [MARC::Record] record
       # @return [Array<String>]
-      def search(record)
+      def single(record)
         record.fields('245').take(1).map do |field|
           a_or_k = field.find_all(&subfield_in?(%w[a k]))
                         .map { |sf| trim_trailing(:comma, trim_trailing(:slash, sf.value).rstrip) }
