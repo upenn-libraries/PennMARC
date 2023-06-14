@@ -4,19 +4,17 @@ module PennMARC
   # This helper contains logic for parsing out Title and Title-related fields.
   class Title < Helper
     class << self
+      # these will be used when completing the *search_aux methods
       AUX_TITLE_TAGS = {
         main: %w[130 210 240 245 246 247 440 490 730 740 830],
         related: %w[773 774 780 785],
         entity: %w[700 710 711]
       }.freeze
 
-      # TODO: current configuration for search depends on additional title fields, impacting relevance:
-      #       "keyword search": title_1_search^2.5 title_2_search^1.5
-      #       "journal title search": journal_title_1_search^3 journal_title_2_search^0.5
-
-      # Main Title Search field. Takes from 245 and linked 880. Ported from get_title_1_search_values.
+      # Main Title Search field. Takes from 245 and linked 880.
+      # @note Ported from get_title_1_search_values.
       # @param [MARC::Record] record
-      # @return [Array<>] array of title values
+      # @return [Array<String>] array of title values for search
       def search(record)
         titles = record.fields('245').filter_map do |field|
           join_subfields(field, &subfield_not_in?(%w[c 6 8 h]))
@@ -28,32 +26,32 @@ module PennMARC
         end
       end
 
-      # Auxiliary Title Search field. Takes from many fields that contain title-like information. Ported from
-      # get_title_2_search_values.
+      # Auxiliary Title Search field. Takes from many fields that contain title-like information.
+      # @note Ported from get_title_2_search_values.
       # @todo port this, it is way complicated but essential for relevance
       # @param [MARC::Record] record
-      # @return [Array<>] array of title values
+      # @return [Array<String>] array of title values for search
       def search_aux(record); end
 
       # Journal Title Search field.
       # @todo port this, it is way complicated but essential for relevance
       # @param [MARC::Record] record
-      # @return [Array<String>]
+      # @return [Array<String>] journal title information for search
       def journal_search(record); end
 
       # Auxiliary Journal Title Search field.
       # @todo port this, it is way complicated but essential for relevance
       # @param [MARC::Record] record
-      # @return [Array<String>]
+      # @return [Array<String>] journal title information for search
       def journal_search_aux(record); end
 
       # Single-valued Title, for use in headings. Takes the first {https://www.oclc.org/bibformats/en/2xx/245.html 245}
       # value. Special consideration for
       # {https://www.oclc.org/bibformats/en/2xx/245.html#punctuation punctuation practices}.
-      # @todo still consider ǂh? medium, which OCLC doc says DO NOT USE...
+      # @todo still consider ǂh? medium, which OCLC doc says DO NOT USE...but that is OCLC...
       # @todo is punctuation handling still as desired? treatment here is described in spreadsheet from 2011
       # @param [MARC::Record] record
-      # @return [String]
+      # @return [String] single title for display
       def show(record)
         field = record.fields('245').first
         title_or_form = field.find_all(&subfield_in?(%w[a k]))
@@ -73,17 +71,16 @@ module PennMARC
          other_info].compact_blank.join(' ')
       end
 
-      # Canonical title, with non-filing characters removed, if present and specified. Currently we index two "title
-      # sort" fields: title_nssort (ssort type - regex token filter applied) and title_sort_tl (text left justified).
-      # It is not yet clear why this distinction is useful. For now, use a properly normalized (leading
-      # articles and punctuation removed) single title value here.
+      # Canonical title with non-filing characters relocated to the end.
+      #
+      # @note Currently we index two "title sort" fields: title_nssort (ssort type - regex token filter applied) and
+      #       title_sort_tl (text left justified). It is not yet clear why this distinction is useful. For now, use a
+      #       properly normalized (leading) articles and punctuation removed) single title value here.
       # @todo refactor to reduce complexity
       # @param [MARC::Record] record
-      # @return [String]
+      # @return [String] title value for sorting
       def sort(record)
         title_field = record.fields('245').first
-        return unless title_field
-
         # attempt to get number of non-filing characters present, default to 0
         offset = if title_field.indicator2 =~ /^[0-9]$/
                    title_field.indicator2.to_i
@@ -93,29 +90,16 @@ module PennMARC
         raw_title = join_subfields(title_field, &subfield_in?(['a'])) # get title from subfield a
         value = if offset.between?(1, 9)
                   { prefix: raw_title[0..offset - 1].strip, filing: raw_title[offset..].strip }
-                elsif raw_title
+                elsif raw_title.present?
                   handle_bracket_prefix raw_title
                 else
                   # no subfield a, no indicator
-                  raw_form = join_subfields(title_field, &subfield_in?(['a']))
+                  raw_form = join_subfields(title_field, &subfield_in?(['k']))
                   handle_bracket_prefix raw_form
                 end
         value[:filing] = [value[:filing],
                           join_subfields(title_field, &subfield_in?(%w[b n p]))].compact_blank.join(' ')
         [value[:filing], value[:prefix]].join(' ').strip
-      end
-
-      # Create prefix/filing hash for representing a title value with filing characters removed, with special
-      # consideration for bracketed titles
-      # @todo Is this still useful?
-      # @param [String] title
-      # @return [Hash]
-      def handle_bracket_prefix(title)
-        if title.starts_with? '['
-          { prefix: '[', filing: title[1..].strip } # this seems silly
-        else
-          { prefix: '', filing: title.strip }
-        end
       end
 
       # Standardized Title
@@ -151,10 +135,9 @@ module PennMARC
         end
       end
 
-      # Other Title
+      # Other Title for display
       #
-      # These titles are intended for display. Data comes from 246
-      # ({https://www.oclc.org/bibformats/en/2xx/246.htm OCLC docs}) and 740
+      # Data comes from 246 ({https://www.oclc.org/bibformats/en/2xx/246.htm OCLC docs}) and 740
       # ({https://www.oclc.org/bibformats/en/7xx/740.html OCLC docs)}
       #
       # @param [MARC::Record] record
@@ -177,16 +160,13 @@ module PennMARC
       end
 
       # Former Title for display.
-      # These titles are intended for display
+      # These values come from {https://www.oclc.org/bibformats/en/2xx/247.html 247}.
       #
-      # https://www.oclc.org/bibformats/en/2xx/247.html
-      #
-      # Ported from get_former_title_display. That method returns a hash for constructing a search link.
-      # We may need to do something like that eventually.
-      #
+      # @note Ported from get_former_title_display. That method returns a hash for constructing a search link.
+      #       We may need to do something like that eventually.
       # @todo what are e and w subfields?
       # @param [MARC::Record] record
-      # @return [Array<String>]
+      # @return [Array<String>] array of former titles
       def former(record)
         record.fields
               .select { |field| field.tag == '247' || (field.tag == '880' && subfield_value?(field, '6', /^247/)) } # TODO: this is a common pattern, how can we make this more clear?
@@ -194,6 +174,21 @@ module PennMARC
           former_title = join_subfields field, &subfield_not_in?(%w[6 8 e w]) # 6 and 8 are not meaningful for display
           former_title_append = join_subfields field, &subfield_in?(%w[e w])
           "#{former_title} #{former_title_append}".strip
+        end
+      end
+
+      private
+
+      # Create prefix/filing hash for representing a title value with filing characters removed, with special
+      # consideration for bracketed titles
+      # @todo Is this still useful?
+      # @param [String] title
+      # @return [Hash]
+      def handle_bracket_prefix(title)
+        if title.starts_with? '['
+          { prefix: '[', filing: title[1..].strip }
+        else
+          { prefix: '', filing: title.strip }
         end
       end
     end

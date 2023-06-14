@@ -54,7 +54,6 @@ module PennMARC
     end
 
     # Check if a field has a subfield defined
-    # @todo write specs
     # @param [MARC::DataField] field
     # @param [String|Symbol|Integer] subfield
     # @return [TrueClass, FalseClass]

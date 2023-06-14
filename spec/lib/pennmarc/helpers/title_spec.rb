@@ -23,11 +23,7 @@ describe 'PennMARC::Title' do
   xdescribe '.search_aux'
 
   describe '.show' do
-    let(:record) do
-      marc_record fields: [
-        marc_field(tag: '245', subfields: subfields)
-      ]
-    end
+    let(:record) { marc_record fields: [marc_field(tag: '245', subfields: subfields)] }
 
     context 'with ǂa, ǂk and ǂn defined' do
       let(:subfields) { { a: 'Five Decades of MARC usage', k: 'journals', n: 'Part One' } }
@@ -66,11 +62,13 @@ describe 'PennMARC::Title' do
   describe '.sort' do
     context 'with a record with a valid indicator2 value' do
       let(:record) do
-        marc_record fields: [marc_field(tag: '245', indicator2: '4', subfields: {
-                                          a: 'The Record Title',
-                                          b: 'Remainder', n: 'Number', p: 'Section',
-                                          h: 'Do not display'
-                                        })]
+        marc_record fields: [
+          marc_field(tag: '245', indicator2: '4', subfields: {
+                       a: 'The Record Title',
+                       b: 'Remainder', n: 'Number', p: 'Section',
+                       h: 'Do not display'
+                     })
+        ]
       end
 
       it 'properly removes and appends the number of characters specified in indicator 2' do
@@ -83,6 +81,7 @@ describe 'PennMARC::Title' do
         expect(helper.sort(record)).to eq 'Record Title Remainder Number Section The'
       end
     end
+
     context 'with a record with no indicator2 value' do
       let(:record) do
         marc_record fields: [marc_field(tag: '245', subfields: { a: 'The Record Title' })]
@@ -92,6 +91,17 @@ describe 'PennMARC::Title' do
         expect(helper.sort(record)).to eq 'The Record Title'
       end
     end
+
+    context 'with a record with no ǂa and no indicator2 value' do
+      let(:record) do
+        marc_record fields: [marc_field(tag: '245', subfields: { k: 'diaries' })]
+      end
+
+      it 'uses ǂk (form) value without transformation' do
+        expect(helper.sort(record)).to eq 'diaries'
+      end
+    end
+
     context 'with a record with a leading bracket' do
       let(:record) do
         marc_record fields: [marc_field(tag: '245', subfields: { a: '[The Record Title]' })]
