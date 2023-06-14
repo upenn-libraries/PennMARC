@@ -188,9 +188,20 @@ module PennMARC
     # Load language map from YAML and memoize in @mappings hash
     # @return [Hash]
     def language_map
-      @mappings[:language] ||=
-        YAML.safe_load(File.read(File.join(File.expand_path(__dir__), 'mappings', 'language.yml')),
-                       symbolize_names: true)
+      @mappings[:language] ||= load_map('language.yml')
+    end
+
+    # Load relator map from YAML and memoize in @mappings hash
+    # @return [Hash]
+    def relator_map
+      @mappings[:relator] ||= load_map('relator.yml')
+    end
+
+    # @param [String] filename of mapping file in config directory, with file extension
+    # @return [Hash] mapping as hash
+    def load_map(filename)
+      YAML.safe_load(File.read(File.join(File.expand_path(__dir__), 'mappings', filename)),
+                     symbolize_names: true)
     end
   end
 end
