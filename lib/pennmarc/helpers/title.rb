@@ -169,8 +169,9 @@ module PennMARC
       # @return [Array<String>] array of former titles
       def former(record)
         record.fields
-              .select { |field| field.tag == '247' || (field.tag == '880' && subfield_value?(field, '6', /^247/)) } # TODO: this is a common pattern, how can we make this more clear?
-              .map do |field|
+              .filter_map do |field|
+          next unless field.tag == '247' || (field.tag == '880' && subfield_value?(field, '6', /^247/))
+
           former_title = join_subfields field, &subfield_not_in?(%w[6 8 e w]) # 6 and 8 are not meaningful for display
           former_title_append = join_subfields field, &subfield_in?(%w[e w])
           "#{former_title} #{former_title_append}".strip
