@@ -116,9 +116,49 @@ module PennMARC
         end
       end
 
+      # Conference for display
+      # @note ported from get_conference_values
+      # @param [MARC::Record] record
+      # @return [Array<String>] array of conference values
+      # @param [Hash] relator_map
+      def conference_show(record, relator_map)
+        record.fields('111').filter_map do |field|
+          name_from_main_entry field, relator_map
+        end
+      end
+
+      # Conference detailed display
+      # @note ported from get_conference_values
+      # @param [MARC::Record] record
+      # @return [Array<String>] array of conference values
+      def conference_detail_show(record)
+        values = record.fields(%w[111 711]).filter_map do |field|
+          next unless field.indicator2.in? ['', ' ']
+
+          conf = if field.none? { |sf| sf.code == 'i' } # TODO: refactor to use subfield_undefined?
+                   join_subfields field, &subfield_not_in?(%w[0 4 5 6 8 e j w])
+                 end
+          conf_extra = join_subfields field, &subfield_in(%w[e j w])
+          "#{conf} #{conf_extra}".strip
+        end
+        values + record.fields('880').filter_map do |field|
+          next unless subfield_value_in? field, '6', %w[111 711]
+
+          next if field.any? { |subfield| subfield.code == 'i' } # TODO: refactor to use subfield_defined?
+
+          conf = join_subfields(field, &subfield_not_in(%w[0 4 5 6 8 e j w]))
+          conf_extra = join_subfields(field, &subfield_in(%w[4 e j w]))
+          "#{conf} #{conf_extra}"
+        end
+      end
+
+      # @todo this supports "Conference" fielded search and may not be needed
+      # @note see get_conference_search_values
+      def conference_search(record); end
+
       private
 
-      # Trim punctuation method extracted from Traject macro, to ensure consistent performance
+      # Trim punctuation method extracted from Traject macro, to ensure consistent output
       # @todo move to Util?
       # @param [String] string
       # @return [String] string with relevant punctuation removed

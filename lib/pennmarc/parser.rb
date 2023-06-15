@@ -55,10 +55,6 @@ module PennMARC
 
     # @param [MARC::Record] record
     # @return [Object]
-    def conference_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
     def series_show(record); end
 
     # @param [MARC::Record] record
