@@ -75,7 +75,7 @@ module PennMARC
       #
       # @note Currently we index two "title sort" fields: title_nssort (ssort type - regex token filter applied) and
       #       title_sort_tl (text left justified). It is not yet clear why this distinction is useful. For now, use a
-      #       properly normalized (leading) articles and punctuation removed) single title value here.
+      #       properly normalized (leading articles and punctuation removed) single title value here.
       # @todo refactor to reduce complexity
       # @param [MARC::Record] record
       # @return [String] title value for sorting
@@ -110,7 +110,7 @@ module PennMARC
       # ({https://www.oclc.org/bibformats/en/2xx/240.html OCLC docs}) as well as relator fields. Ported from Franklin
       # get_standardized_title_display. Returned values from legacy method are "link" hashes.
 
-      # @note this is simplified from legacy practice as a linking hash is not returned. i believe this only supported
+      # @note this is simplified from legacy practice as a linking hash is not returned. I believe this only supported
       #       title browse and we will not be supporting that at this time
       # @param [MARC::Record] record
       # @return [Array<String>] Array of standardized titles as strings
@@ -119,7 +119,7 @@ module PennMARC
           join_subfields(field, &subfield_not_in?(%w[0 6 8 e w]))
         end
         standardized_titles += record.fields('730').filter_map do |field|
-          # skip if unless one of the indicators is blank
+          # skip unless one of the indicators is blank
           next unless field.indicator1 == '' || field.indicator2 == ''
 
           # skip if a subfield i is present
