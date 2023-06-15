@@ -60,18 +60,27 @@ module PennMARC
       # Get numeric OCLC ID of first {https://www.oclc.org/bibformats/en/0xx/035.html 035 field}
       # with an OCLC ID defined in subfield 'a'.
       #
+      # @todo We should evaluate this to return a single value in the future since subfield a is non-repeatable
       # @param [MARC::Record] record
       # @return [Array<String>]
       def oclc_id(record)
-        record.fields('035')
-              .select { |field| field.any? { |subfield| subfield_a_is_oclc?(subfield) } }
-              .take(1)
-              .flat_map do |field|
-                field.find_all { |subfield| subfield_a_is_oclc?(subfield) }.map do |subfield|
-                  match = /^\s*\(OCoLC\)[^1-9]*([1-9][0-9]*).*$/.match(subfield.value)
-                  match[1] if match
-                end.compact
-              end
+        oclc_id = Array.wrap(record.fields('035')
+                         .find { |field| field.any? { |subfield| subfield_a_is_oclc?(subfield) } })
+
+        oclc_id.flat_map do |field|
+          field.filter_map do |subfield|
+            # skip unless subfield 'a' is an oclc id value
+            next unless subfield_a_is_oclc?(subfield)
+
+            # search for numeric part of oclc id (e.g. '610094484' in '(OCoLC)ocn610094484')
+            match = /^\s*\(OCoLC\)[^1-9]*([1-9][0-9]*).*$/.match(subfield.value)
+
+            # skip unless search to find numeric part of oclc id has a match
+            next unless match
+
+            match[1]
+          end
+        end
       end
 
       # Get publisher issued identifiers from fields {https://www.oclc.org/bibformats/en/0xx/024.html 024},
