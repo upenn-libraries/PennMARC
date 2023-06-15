@@ -53,12 +53,20 @@ module PennMARC
       ->(subfield) { !array.member?(subfield.code) }
     end
 
-    # Check if a field has a subfield defined
+    # Check if a field has a given subfield defined
     # @param [MARC::DataField] field
     # @param [String|Symbol|Integer] subfield
     # @return [TrueClass, FalseClass]
     def subfield_defined?(field, subfield)
       field.any? { |sf| sf.code == subfield.to_s }
+    end
+
+    # Check if a field does not have a given subfield defined
+    # @param [MARC::DataField] field
+    # @param [String|Symbol|Integer] subfield
+    # @return [TrueClass, FalseClass]
+    def subfield_undefined?(field, subfield)
+      field.none? { |sf| sf.code == subfield.to_s }
     end
 
     # @param [Symbol|String] trailer to target for removal

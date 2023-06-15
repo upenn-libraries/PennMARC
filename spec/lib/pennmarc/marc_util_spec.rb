@@ -29,6 +29,19 @@ describe 'PennMARC::Util' do
     end
   end
 
+  describe '.subfield_undefined?' do
+    let(:field) { marc_field subfields: { a: 'Defined' } }
+
+    it 'returns true if subfield is not present on a field' do
+      expect(util.subfield_undefined?(field, :b)).to be_truthy
+      expect(util.subfield_undefined?(field, 'b')).to be_truthy
+    end
+
+    it 'returns false if a subfield is present on a field' do
+      expect(util.subfield_undefined?(field, :a)).to be_falsey
+    end
+  end
+
   describe '.subfield_value?' do
     let(:field) { marc_field subfields: { a: '123' } }
 
