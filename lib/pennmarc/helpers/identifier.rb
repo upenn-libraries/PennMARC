@@ -33,7 +33,7 @@ module PennMARC
       #
       # @param [MARC::Record] record
       # @return [Array<String>]
-      # todo look into z subfield for 020 field, should we show cancelled isbn?
+      # @todo look into z subfield for 020 field, should we show cancelled isbn?
       def isbn_show(record)
         acc = []
         acc += record.fields('020').map do |field|
