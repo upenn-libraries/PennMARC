@@ -19,13 +19,13 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>]
       def isxn_search(record)
-        record.fields(%w[020 022]).map do |field|
+        record.fields(%w[020 022]).filter_map do |field|
           if field.tag == '020'
             field.filter_map { |subfield| normalize_isbn(subfield.value) if subfield_in?(%w[a z]).call(subfield) }
           else
             field.filter_map { |subfield| subfield.value if subfield_in?(%w[a l z]).call(subfield) }
           end
-        end.flatten.compact.uniq
+        end.flatten.uniq
       end
 
       # Get ISBN values for display from the {https://www.oclc.org/bibformats/en/0xx/020.html 020 field}
@@ -35,12 +35,12 @@ module PennMARC
       # @return [Array<String>]
       # @todo look into z subfield for 020 field, should we show cancelled isbn?
       def isbn_show(record)
-        acc = []
-        acc += record.fields('020').map do |field|
-          join_subfields(field, &subfield_in?(%w[a z]))
-        end.select(&:present?)
-        acc += linked_alternate(record, '020', &subfield_in?(%w[a z]))
-        acc
+        isbn_values = record.fields('020').filter_map do |field|
+          joined_isbn = join_subfields(field, &subfield_in?(%w[a z]))
+          joined_isbn if joined_isbn.present?
+        end
+        isbn_values += linked_alternate(record, '020', &subfield_in?(%w[a z]))
+        isbn_values
       end
 
       # Get ISSN values for display from the {https://www.oclc.org/bibformats/en/0xx/022.html 022 field} and related
@@ -49,12 +49,12 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>]
       def issn_show(record)
-        acc = []
-        acc += record.fields('022').map do |field|
-          join_subfields(field, &subfield_in?(%w[a z]))
-        end.select(&:present?)
-        acc += linked_alternate(record, '022', &subfield_in?(%w[a z]))
-        acc
+        issn_values = record.fields('022').filter_map do |field|
+          joined_issn = join_subfields(field, &subfield_in?(%w[a z]))
+          joined_issn if joined_issn.present?
+        end
+        issn_values += linked_alternate(record, '022', &subfield_in?(%w[a z]))
+        issn_values
       end
 
       # Get numeric OCLC ID of first {https://www.oclc.org/bibformats/en/0xx/035.html 035 field}
@@ -81,12 +81,12 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<string>]
       def publisher_number_show(record)
-        acc = []
-        acc += record.fields(%w[024 028]).map do |field|
-          join_subfields(field, &subfield_not_in?(%w[5 6]))
-        end.select(&:present?)
-        acc += linked_alternate(record, %w[024 028], &subfield_not_in?(%w[5 6]))
-        acc
+        publisher_numbers = record.fields(%w[024 028]).filter_map do |field|
+          joined_identifiers = join_subfields(field, &subfield_not_in?(%w[5 6]))
+          joined_identifiers if joined_identifiers.present?
+        end
+        publisher_numbers += linked_alternate(record, %w[024 028], &subfield_not_in?(%w[5 6]))
+        publisher_numbers
       end
 
       # Get publisher issued identifiers for searching of a record. Values extracted from fields
@@ -95,9 +95,10 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>]
       def publisher_number_search(record)
-        record.fields(%w[024 028]).map do |field|
-          join_subfields(field, &subfield_in?(%w[a]))
-        end.select(&:present?)
+        record.fields(%w[024 028]).filter_map do |field|
+          joined_identifiers = join_subfields(field, &subfield_in?(%w[a]))
+          joined_identifiers if joined_identifiers.present?
+        end
       end
 
       private
