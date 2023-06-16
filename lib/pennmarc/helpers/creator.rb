@@ -14,19 +14,15 @@ module PennMARC
       # @param [Hash] relator_mapping
       # @return [Array<String>] array of author/creator values
       def search(record, relator_mapping)
-        acc = []
-        acc += record.fields(TAGS).map do |field|
+        values = record.fields(TAGS).map do |field|
           pieces = field.filter_map do |sf|
             if sf.code == 'a'
-              # after_comma = [trim_trailing(:comma, substring_after(sf.value, ', '))].join(' ').squish
-              # before_comma = substring_before(sf.value, ', ')
-              # " #{after_comma} #{before_comma}"
               parts = sf.value.partition(',')
               " #{parts[0]} #{parts[2]}"
-            elsif !%w[a 1 4 6 8].member?(sf.code)
+            elsif !sf.code.in?(%w[a 1 4 6 8])
               " #{sf.value}"
             elsif sf.code == '4'
-              ", #{relator_mapping[sf.value]}"
+              ", #{relator_mapping[sf.value.to_sym]}"
             end
           end
           value = pieces.join(' ').squish
@@ -36,37 +32,32 @@ module PennMARC
             "#{value}."
           end
         end
-        acc += record.fields(TAGS).map do |field|
+        # TODO: why are we iterating the same fields twice?
+        values += record.fields(TAGS).map do |field|
           pieces = field.filter_map do |sf|
-            if !%w[4 6 8].member?(sf.code)
+            if !%w[4 6 8].include?(sf.code)
               " #{sf.value}"
             elsif sf.code == '4'
-              ", #{relator_mapping[sf.value]}"
+              ", #{relator_mapping[sf.value.to_sym]}"
             end
           end
-          value = join_and_trim_whitespace(pieces)
+          value = pieces.join(' ').squish
           if value.end_with?('.') || value.end_with?('-')
             value
           else
             "#{value}."
           end
         end
-        acc += record.fields(%w[880])
-                     .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(100|110)/ } }
-                     .map do |field|
-          suba = field.find_all(&subfield_in(%w[a])).map do |sf|
-            # after_comma = join_and_trim_whitespace(
-            #   [trim_trailing(:comma, substring_before(sf.value, ','))]
-            # )
-            # before_comma = substring_after(sf.value, ',')
-            # "#{after_comma} #{before_comma}"
-            parts = sf.value.partition(',')
-            "#{parts[0]} #{parts[2]}"
-          end.first
-          oth = field.find_all(&subfield_not_in?(%w[6 8 a t])).map(&:value).join(' ').squish
-          [suba, oth].join(' ')
-        end
-        acc
+        values + record.fields(%w[880])
+                       .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(100|110)/ } }
+                       .map do |field|
+                   suba = field.find_all(&subfield_in?(%w[a])).map do |sf|
+                     parts = sf.value.partition(',')
+                     "#{parts[0]} #{parts[2]}"
+                   end.first
+                   oth = field.find_all(&subfield_not_in?(%w[6 8 a t])).map(&:value).join(' ').squish
+                   [suba, oth].join(' ')
+                 end
       end
 
       # Auxiliary Author/Creator search field
