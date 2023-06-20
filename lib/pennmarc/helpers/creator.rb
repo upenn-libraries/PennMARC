@@ -153,16 +153,14 @@ module PennMARC
         values = record.fields(%w[111 711]).filter_map do |field|
           next unless field.indicator2.in? ['', ' ']
 
-          conf = if field.none? { |sf| sf.code == 'i' } # TODO: refactor to use subfield_undefined?
-                   join_subfields field, &subfield_not_in?(%w[0 4 5 6 8 e j w])
-                 end
+          conf = join_subfields field, &subfield_not_in?(%w[0 4 5 6 8 e j w]) if subfield_undefined? field, 'i'
           conf_extra = join_subfields field, &subfield_in(%w[e j w])
           "#{conf} #{conf_extra}".strip
         end
         values + record.fields('880').filter_map do |field|
           next unless subfield_value_in? field, '6', %w[111 711]
 
-          next if field.any? { |subfield| subfield.code == 'i' } # TODO: refactor to use subfield_defined?
+          next if subfield_defined? field, 'i'
 
           conf = join_subfields(field, &subfield_not_in(%w[0 4 5 6 8 e j w]))
           conf_extra = join_subfields(field, &subfield_in(%w[4 e j w]))
