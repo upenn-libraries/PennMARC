@@ -4,7 +4,7 @@ module PennMARC
   # Parser methods for extracting identifier values.
   class Identifier < Helper
     class << self
-      # Alma MMS ID value
+      # Get Alma MMS ID value
       #
       # @param [MARC::Record] record
       # @return [String]
@@ -12,47 +12,123 @@ module PennMARC
         record.fields('001').first.value
       end
 
-      # Aggregate ISXN field intended for search
+      # Get normalized ISXN values for searching of a record. Values aggregated from subfield 'a' and 'z' of the
+      # {https://www.oclc.org/bibformats/en/0xx/020.html 020 field}, and subfield 'a', 'l', and 'z' of the
+      # the {https://www.oclc.org/bibformats/en/0xx/020.html 022 field}.
       #
-      # @todo port FranklinIndexer isbn_isxn_stored
       # @param [MARC::Record] record
       # @return [Array<String>]
-      def isxn_search(record); end
+      def isxn_search(record)
+        record.fields(%w[020 022]).filter_map do |field|
+          if field.tag == '020'
+            field.filter_map { |subfield| normalize_isbn(subfield.value) if subfield_in?(%w[a z]).call(subfield) }
+          else
+            field.filter_map { |subfield| subfield.value if subfield_in?(%w[a l z]).call(subfield) }
+          end
+        end.flatten.uniq
+      end
 
-      # ISBN values
+      # Get ISBN values for display from the {https://www.oclc.org/bibformats/en/0xx/020.html 020 field}
+      # and related {https://www.oclc.org/bibformats/en/8xx/880.html 880 field}.
       #
-      # @todo port Marc#get_isbn_display
       # @param [MARC::Record] record
-      # @return [Array]
-      def isbn_show(record); end
+      # @return [Array<String>]
+      # @todo look into z subfield for 020 field, should we show cancelled isbn?
+      def isbn_show(record)
+        isbn_values = record.fields('020').filter_map do |field|
+          joined_isbn = join_subfields(field, &subfield_in?(%w[a z]))
+          joined_isbn if joined_isbn.present?
+        end
+        isbn_values += linked_alternate(record, '020', &subfield_in?(%w[a z]))
+        isbn_values
+      end
 
-      # ISSN values
+      # Get ISSN values for display from the {https://www.oclc.org/bibformats/en/0xx/022.html 022 field} and related
+      # {https://www.oclc.org/bibformats/en/8xx/880.html 880 field}.
       #
-      # @ todo port Marc#get_issn_display
       # @param [MARC::Record] record
-      # @return [Array]
-      def issn_show(record); end
+      # @return [Array<String>]
+      def issn_show(record)
+        issn_values = record.fields('022').filter_map do |field|
+          joined_issn = join_subfields(field, &subfield_in?(%w[a z]))
+          joined_issn if joined_issn.present?
+        end
+        issn_values += linked_alternate(record, '022', &subfield_in?(%w[a z]))
+        issn_values
+      end
 
-      # OCLC ID values
+      # Get numeric OCLC ID of first {https://www.oclc.org/bibformats/en/0xx/035.html 035 field}
+      # with an OCLC ID defined in subfield 'a'.
       #
-      # @todo port Marc#get_oclc_id_values
+      # @todo We should evaluate this to return a single value in the future since subfield a is non-repeatable
       # @param [MARC::Record] record
-      # @return [Array]
-      def oclc_id(record); end
+      # @return [Array<String>]
+      def oclc_id(record)
+        oclc_id = Array.wrap(record.fields('035')
+                         .find { |field| field.any? { |subfield| subfield_a_is_oclc?(subfield) } })
 
-      # Publisher Number Display
+        oclc_id.flat_map do |field|
+          field.filter_map do |subfield|
+            # skip unless subfield 'a' is an oclc id value
+            next unless subfield_a_is_oclc?(subfield)
+
+            # search for numeric part of oclc id (e.g. '610094484' in '(OCoLC)ocn610094484')
+            match = /^\s*\(OCoLC\)[^1-9]*([1-9][0-9]*).*$/.match(subfield.value)
+
+            # skip unless search to find numeric part of oclc id has a match
+            next unless match
+
+            match[1]
+          end
+        end
+      end
+
+      # Get publisher issued identifiers from fields {https://www.oclc.org/bibformats/en/0xx/024.html 024},
+      # {https://www.oclc.org/bibformats/en/0xx/024.html 028}, and related
+      # {https://www.oclc.org/bibformats/en/8xx/880.html 880 field}.
       #
-      # @todo port Marc::get_publisher_number_display
       # @param [MARC::Record] record
-      # @return [Array]
-      def publisher_number_show(record); end
-      
-      # Publisher Number Search
-      # @todo port FranklinIndexer pubnum_search
-      # 
+      # @return [Array<string>]
+      def publisher_number_show(record)
+        publisher_numbers = record.fields(%w[024 028]).filter_map do |field|
+          joined_identifiers = join_subfields(field, &subfield_not_in?(%w[5 6]))
+          joined_identifiers if joined_identifiers.present?
+        end
+        publisher_numbers += linked_alternate(record, %w[024 028], &subfield_not_in?(%w[5 6]))
+        publisher_numbers
+      end
+
+      # Get publisher issued identifiers for searching of a record. Values extracted from fields
+      # {https://www.oclc.org/bibformats/en/0xx/024.html 024} and {https://www.oclc.org/bibformats/en/0xx/024.html 028}.
+      #
       # @param [MARC::Record] record
-      # @return [Array]
-      def publisher_number_search(record); end
+      # @return [Array<String>]
+      def publisher_number_search(record)
+        record.fields(%w[024 028]).filter_map do |field|
+          joined_identifiers = join_subfields(field, &subfield_in?(%w[a]))
+          joined_identifiers if joined_identifiers.present?
+        end
+      end
+
+      private
+
+      # Determine if subfield 'a' is an OCLC id.
+      #
+      # @param [MARC::Subfield]
+      # @return [TrueClass, FalseClass]
+      def subfield_a_is_oclc?(subfield)
+        subfield.code == 'a' && subfield.value =~ /^\(OCoLC\).*/
+      end
+
+      # Normalize isbn value using {https://github.com/billdueber/library_stdnums library_stdnums gem}.
+      # Converts ISBN10 (ten-digit) to validated ISBN13 (thriteen-digit) and returns both values. If passed
+      # ISBN13 parameter, only returns validated ISBN13 value.
+      #
+      #  @param [String] isbn
+      #  @return [Array<String, String>, nil]
+      def normalize_isbn(isbn)
+        StdNum::ISBN.allNormalizedValues(isbn)
+      end
     end
   end
 end

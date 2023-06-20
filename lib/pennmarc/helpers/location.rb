@@ -1,13 +1,20 @@
 # frozen_string_literal: true
 
 module PennMARC
-  # Do Location-y stuff
+  # Methods that return Library and Location values from Alma enhanced MARC fields
   class Location < Helper
-    # this will use a mapping from parsed XML...
     class << self
-      def library(record:); end
+      # @todo port logic from get_library_values
+      # @param [MARC::Record] record
+      # @param [Hash] location_map
+      # @return [Array<String>]
+      def library(record, location_map); end
 
-      def specific_location(record:); end
+      # @todo port logic from get_specific_location_values
+      # @param [MARC::Record] record
+      # @param [Hash] location_map
+      # @return [Array<String>]
+      def specific_location(record, location_map); end
     end
   end
 end
