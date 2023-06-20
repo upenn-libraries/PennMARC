@@ -17,4 +17,18 @@ describe 'PennMARC::Util' do
       expect(util.join_subfields(field, &subfield_numeric)).to eq 'join subfields'
     end
   end
+
+  describe '.substring_before' do
+    it 'returns the entire substring after the first occurrence of the target' do
+      string = 'string.with.periods'
+      expect(util.substring_before(string, '.')).to eq 'string'
+    end
+  end
+
+  describe '.substring_after' do
+    it 'returns the entire substring after the first occurrence of the target' do
+      string = 'string.with.periods'
+      expect(util.substring_after(string, '.')).to eq 'with.periods'
+    end
+  end
 end

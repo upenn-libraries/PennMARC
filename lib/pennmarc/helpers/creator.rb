@@ -9,55 +9,62 @@ module PennMARC
 
 
       # Author/Creator search field
+      # @todo this seems bad - why include relator codes? URIs? punctuation? leaving mostly as-is for now,
+      #       but this should be reexamined in the relevancy-tuning phase
       # @note ported from get_author_creator_1_search_values
       # @param [MARC::Record] record
       # @param [Hash] relator_mapping
       # @return [Array<String>] array of author/creator values
       def search(record, relator_mapping)
-        values = record.fields(TAGS).map do |field|
+        acc = record.fields(TAGS).map do |field|
           pieces = field.filter_map do |sf|
             if sf.code == 'a'
-              parts = sf.value.partition(',')
-              " #{parts[0]} #{parts[2]}"
-            elsif !sf.code.in?(%w[a 1 4 6 8])
+              convert_name_order(sf.value)
+            elsif !%w[a 1 4 6 8].member?(sf.code)
               " #{sf.value}"
             elsif sf.code == '4'
-              ", #{relator_mapping[sf.value.to_sym]}"
+              relator = translate_relator(sf.value, relator_mapping)
+              next if relator.blank?
+
+              ", #{relator}"
             end
           end
-          value = pieces.join(' ').squish
+          value = join_and_squish(pieces)
           if value.end_with?('.') || value.end_with?('-')
             value
           else
             "#{value}."
           end
         end
-        # TODO: why are we iterating the same fields twice?
-        values += record.fields(TAGS).map do |field|
+        # a second iteration over the same fields produces name entries with the names not reordered
+        acc += record.fields(TAGS).map do |field|
           pieces = field.filter_map do |sf|
-            if !%w[4 6 8].include?(sf.code)
+            if !%w[4 6 8].member?(sf.code)
               " #{sf.value}"
             elsif sf.code == '4'
-              ", #{relator_mapping[sf.value.to_sym]}"
+              relator = translate_relator(sf.value, relator_mapping)
+              next if relator.blank?
+
+              ", #{relator}"
             end
           end
-          value = pieces.join(' ').squish
+          value = join_and_squish(pieces)
           if value.end_with?('.') || value.end_with?('-')
             value
           else
             "#{value}."
           end
         end
-        values + record.fields(%w[880])
-                       .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(100|110)/ } }
-                       .map do |field|
-                   suba = field.find_all(&subfield_in?(%w[a])).map do |sf|
-                     parts = sf.value.partition(',')
-                     "#{parts[0]} #{parts[2]}"
-                   end.first
-                   oth = field.find_all(&subfield_not_in?(%w[6 8 a t])).map(&:value).join(' ').squish
-                   [suba, oth].join(' ')
-                 end
+        acc += record.fields(%w[880])
+                     .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(100|110)/ } }
+                     .map do |field|
+          suba = field.find_all(&subfield_in?(%w[a])).map do |sf|
+            convert_name_order(sf.value)
+          end.first
+          oth = join_and_squish(field.find_all(&subfield_not_in?(%w[6 8 a t])).map(&:value))
+          join_and_squish [suba, oth]
+        end
+        acc.uniq
       end
 
       # Auxiliary Author/Creator search field
@@ -180,32 +187,33 @@ module PennMARC
           if !%w[0 1 4 6 8].member?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
-            ", #{mapping[sf.value]}"
+            ", #{translate_relator(sf.value, mapping)}"
           end
         end.join
         s2 = s + (!%w[. -].member?(s.last) ? '.' : '')
         s2.squish
       end
 
-      # Partition a string by char, and return substring up to char
-      # @todo remove unless i end up using in .search
-      # @todo consider for move to Util and specs
-      # @todo is it right to return empty string is char is not found? analyze contexts
-      # @param [String] string
-      # @param [String|RegEx] char
-      # @return [String]
-      def substring_before(string, char)
-        string.scan(char).present? ? s.split(char, 2)[0] : ''
+      # Translate a relator code using mapping
+      # @todo handle case of receiving a URI? E.g., http://loc.gov/relator/aut
+      # @param [String] relator_code
+      # @param [Hash] mapping
+      # @return [String, NilClass]
+      def translate_relator(relator_code, mapping)
+        return unless relator_code.present?
+
+        mapping[relator_code]
       end
 
-      # Partition a string by char, and return substring after char
-      # @todo consider for move to Util and specs
-      # @todo is it right to return empty string is char is not found? analyze contexts
-      # @param [String] string
-      # @param [String|RegEx] char
+      # Convert "Lastname, First" to "First Lastname"
+      # @param [String] name value for processing
       # @return [String]
-      def substring_after(string, char)
-        string.scan(char).present? ? string.split(char, 2)[1] : ''
+      def convert_name_order(name)
+        return name unless name.include? ','
+
+        after_comma = join_and_squish([trim_trailing(:comma, substring_after(name, ', '))])
+        before_comma = substring_before(name, ', ')
+        "#{after_comma} #{before_comma}".squish
       end
     end
   end

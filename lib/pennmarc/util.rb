@@ -76,5 +76,29 @@ module PennMARC
             end
     end
     alias get_880 linked_alternate
+
+    # Get the substring of a string up to a given target character
+    # @param [Object] string to split
+    # @param [Object] target character to split upon
+    # @return [String (frozen)]
+    def substring_before(string, target)
+      string.scan(target).present? ? string.split(target, 2).first : ''
+    end
+
+    # Get the substring of a string after the first occurrence of a target character
+    # @param [Object] string to split
+    # @param [Object] target character to split upon
+    # @return [String (frozen)]
+    def substring_after(string, target)
+      string.scan(target).present? ? string.split(target, 2).second : ''
+    end
+
+    # Join array and normalizing extraneous spaces
+    # @param [Array] array
+    # @return [String]
+    def join_and_squish(array)
+      array.join(' ').squish
+    end
+    alias join_and_trim_whitespace join_and_squish
   end
 end

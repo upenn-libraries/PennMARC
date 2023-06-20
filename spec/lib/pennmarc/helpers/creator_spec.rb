@@ -4,24 +4,37 @@ describe 'PennMARC::Creator' do
   include MarcSpecHelpers
 
   let(:helper) { PennMARC::Creator }
-  let(:mapping) do
-    { rbr: 'Rubricator', prg: 'Programmer', frg: 'Forger' }
-  end
+  let(:mapping) { { aut: 'Author' } }
 
   describe '.search' do
-    let(:record) do
+    let(:single_author_record) do
       marc_record fields: [
-        marc_field(tag: '100', subfields: { a: 'Surname, Name', d: '1941', '0': 'http://cool.uri', '4': 'rbr' }),
-        marc_field(tag: '110', subfields: { a: 'Evil Corp.', b: 'R&D' }),
-        marc_field(tag: '880', subfields: { a: 'Surname, Alternative', d: '1941', '6': '100' }),
-        marc_field(tag: '880', subfields: { '6': '110', a: 'Alt. Evil Corp. Name', b: 'Alt. R&D' })
+        marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345',
+                                            e: 'author', '4': 'http://cool.uri/vocabulary/relators/aut' }),
+        marc_field(tag: '880', subfields: { a: 'Surname, Alternative', '6': '100' })
       ]
     end
 
-    let(:output) { helper.search(record, mapping) }
+    let(:org_author_record) do
+      marc_record fields: [
+        marc_field(tag: '110', subfields: { a: 'Group of People', b: 'Annual Meeting', '4': 'aut' }),
+        marc_field(tag: '880', subfields: { '6': '110', a: 'Alt. Group Name', b: 'Alt. Annual Meeting' })
+      ]
+    end
 
-    it 'test' do
-      expect(output).to eq []
+    it 'contains the expected search field values for a single author work' do
+      expect(helper.search(single_author_record, mapping)).to eq [
+        'Name Surname http://cool.uri/12345 author.',
+        'Surname, Name http://cool.uri/12345 author.',
+        'Alternative Surname'
+      ]
+    end
+
+    it 'contains the expected search field values for a group author work' do
+      expect(helper.search(org_author_record, mapping)).to eq [
+        'Group of People Annual Meeting.',
+        'Alt. Group Name Alt. Annual Meeting'
+      ]
     end
   end
 
