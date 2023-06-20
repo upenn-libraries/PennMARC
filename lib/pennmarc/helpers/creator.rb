@@ -1,32 +1,37 @@
 # frozen_string_literal: true
 
 module PennMARC
-  # Do Creator-y stuff
+  # Do Creator & Author field processing
+  # @todo can there ever be multiple 100 fields?
+  #       can ǂe and ǂ4 both be used at the same time? seems to result in duplicate values
   class Creator < Helper
     class << self
       TAGS = %w[100 110].freeze
       AUX_TAGS = %w[100 110 111 400 410 411 700 710 711 800 810 811].freeze
 
-
-      # Author/Creator search field
-      # @todo this seems bad - why include relator codes? URIs? punctuation? leaving mostly as-is for now,
-      #       but this should be reexamined in the relevancy-tuning phase
+      # Author/Creator search field. Includes all subfield values (even ǂ0 URIs) from
+      # {https://www.oclc.org/bibformats/en/1xx/100.html 100 Main Entry--Personal Name} and
+      # {https://www.oclc.org/bibformats/en/1xx/110.html 110 Main Entry--Corporate Name}. Maps any relator codes found
+      # in ǂ4. To better handle name searches, returns names as both "First Last" and "Last, First" if a comma is found
+      # in ǂa. Also indexes any linked values in the 880.
+      # @todo this seems bad - why include relator labels? URIs? punctuation? leaving mostly as-is for now,
+      #       but this should be reexamined in the relevancy-tuning phase. URIs should def be removed.
       # @note ported from get_author_creator_1_search_values
       # @param [MARC::Record] record
       # @param [Hash] relator_mapping
-      # @return [Array<String>] array of author/creator values
+      # @return [Array<String>] array of author/creator values for indexing
       def search(record, relator_mapping)
         acc = record.fields(TAGS).map do |field|
           pieces = field.filter_map do |sf|
             if sf.code == 'a'
               convert_name_order(sf.value)
             elsif !%w[a 1 4 6 8].member?(sf.code)
-              " #{sf.value}"
+              sf.value
             elsif sf.code == '4'
               relator = translate_relator(sf.value, relator_mapping)
               next if relator.blank?
 
-              ", #{relator}"
+              relator
             end
           end
           value = join_and_squish(pieces)
@@ -40,12 +45,12 @@ module PennMARC
         acc += record.fields(TAGS).map do |field|
           pieces = field.filter_map do |sf|
             if !%w[4 6 8].member?(sf.code)
-              " #{sf.value}"
+              sf.value
             elsif sf.code == '4'
               relator = translate_relator(sf.value, relator_mapping)
               next if relator.blank?
 
-              ", #{relator}"
+              relator
             end
           end
           value = join_and_squish(pieces)
@@ -71,21 +76,36 @@ module PennMARC
       # @note ported from get_author_creator_2_search_values
       # @todo port this later
       # @param [MARC::Record] record
-      # @return [Array<String>] array of author/creator values
+      # @return [Array<String>] array of extended author/creator values for indexing
       def search_aux(record); end
 
-      # Author/Creator display field
-      # @note ported from get_author_creator_values
+      # All author/creator values for display (like #show, but multivalued?) - no 880 linkage
+      # @note ported from get_author_creator_values (indexed as author_creator_a) - shown on results page
       # @param [MARC::Record] record
       # @param [Hash] relator_mapping
       # @return [Array<String>] array of author/creator values for display
-      def show(record, relator_mapping)
+      def values(record, relator_mapping)
         record.fields(TAGS).map do |field|
           name_from_main_entry(field, relator_mapping)
         end
       end
 
-      # Author/Creator sort
+      # Author/Creator values for display
+      # @todo ported from get_author_display - used on record show page. porting did not include 4, e or w values,
+      # which were part of the link object as 'append' values in franklin
+      # @param [MARC::Record] record
+      # @return [Array<String>] array of author/creator values for display
+      def show(record)
+        fields = record.fields(TAGS)
+        fields += record.fields('880').select { |field| subfield_value_in?(field, '6', TAGS) }
+        fields.filter_map do |field|
+          join_subfields(field, &subfield_not_in?(%w[0 1 4 6 8 e w]))
+        end
+      end
+
+      # Author/Creator sort. Does not map and include any relator
+      # codes.
+      # @todo THis includes any URI from ǂ0 which could help to disambiguate in sorts, but ǂ1 is excluded...
       # @note ported from get_author_creator_sort_values
       # @param [MARC::Record] record
       # @return [String] string with author/creator value for sorting
@@ -109,7 +129,7 @@ module PennMARC
         }
         source_map.flat_map do |field_num, subfields|
           record.fields(field_num.to_s).map do |field|
-            trim_punctuation(join_subfields(field, &subfield_in?(subfields.split)))
+            trim_punctuation(join_subfields(field, &subfield_in?(subfields.split(''))))
           end
         end
       end
@@ -187,7 +207,10 @@ module PennMARC
           if !%w[0 1 4 6 8].member?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
-            ", #{translate_relator(sf.value, mapping)}"
+            relator = translate_relator(sf.value, mapping)
+            next if relator.blank?
+
+            ", #{relator}"
           end
         end.join
         s2 = s + (!%w[. -].member?(s.last) ? '.' : '')
@@ -202,7 +225,7 @@ module PennMARC
       def translate_relator(relator_code, mapping)
         return unless relator_code.present?
 
-        mapping[relator_code]
+        mapping[relator_code.to_sym]
       end
 
       # Convert "Lastname, First" to "First Lastname"
