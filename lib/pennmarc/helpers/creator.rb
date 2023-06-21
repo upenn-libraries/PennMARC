@@ -1,19 +1,24 @@
 # frozen_string_literal: true
 
 module PennMARC
-  # Do Creator & Author field processing
+  # Do Creator & Author field processing. Main methods pull from 110 and 111 fields. Display methods here no longer
+  # return data structures intended for generating "search" links, but some of the split subfield parsing remains from
+  # ported methods in case we need to replicate that functionality.
   # @todo can there ever be multiple 100 fields?
   #       can ǂe and ǂ4 both be used at the same time? seems to result in duplicate values
   class Creator < Helper
     class << self
+      # Main tags for Author/Creator information
       TAGS = %w[100 110].freeze
+      # Aux tags for Author/Creator information, for use in search_aux method
       AUX_TAGS = %w[100 110 111 400 410 411 700 710 711 800 810 811].freeze
 
       # Author/Creator search field. Includes all subfield values (even ǂ0 URIs) from
       # {https://www.oclc.org/bibformats/en/1xx/100.html 100 Main Entry--Personal Name} and
       # {https://www.oclc.org/bibformats/en/1xx/110.html 110 Main Entry--Corporate Name}. Maps any relator codes found
       # in ǂ4. To better handle name searches, returns names as both "First Last" and "Last, First" if a comma is found
-      # in ǂa. Also indexes any linked values in the 880.
+      # in ǂa. Also indexes any linked values in the 880. SOme of the search fields remain incomplete and may need to be
+      # further investigated and ported when search result relevancy is considered.
       # @todo this seems bad - why include relator labels? URIs? punctuation? leaving mostly as-is for now,
       #       but this should be reexamined in the relevancy-tuning phase. URIs should def be removed. and shouldn't
       #       indicator1 tell us the order of the name?
@@ -93,7 +98,7 @@ module PennMARC
 
       # Author/Creator values for display
       # @todo ported from get_author_display - used on record show page. porting did not include 4, e or w values,
-      # which were part of the link object as 'append' values in franklin
+      #       which were part of the link object as 'append' values in franklin
       # @param [MARC::Record] record
       # @return [Array<String>] array of author/creator values for display
       def show(record)
@@ -201,9 +206,6 @@ module PennMARC
       end
 
       # Extract the information we care about from 1xx fields, map relator codes, and use appropriate punctuation
-      # @todo if this is not reused, don't do this private method as it wont be tested directly (see conference_display?) could move to Util...
-      # @note added 2017/04/10: filter out 0 (authority record numbers) added by Alma
-      #       added 2022/08/04: filter our 1 (URIs) added my MARCive project
       # @param [MARC::Field] field
       # @return [String] joined subfield values for value from field
       def name_from_main_entry(field, mapping)
@@ -217,8 +219,7 @@ module PennMARC
             ", #{relator}"
           end
         end.join
-        s2 = s + (!%w[. -].member?(s.last) ? '.' : '')
-        s2.squish
+        (s + (!%w[. -].member?(s.last) ? '.' : '')).squish
       end
 
       # Translate a relator code using mapping

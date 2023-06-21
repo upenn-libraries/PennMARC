@@ -12,7 +12,7 @@ describe 'PennMARC::Creator' do
     context 'for a single author record' do
       let(:fields) do
         [marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345',
-                                             e: 'author', d: '1900-2000'}),
+                                             e: 'author', d: '1900-2000' }),
          marc_field(tag: '880', subfields: { a: 'Surname, Alternative', '6': '100' })]
       end
 
@@ -81,8 +81,8 @@ describe 'PennMARC::Creator' do
 
     context 'for a corporate author record' do
       let(:fields) do
-        [ marc_field(tag: '110', subfields: { a: 'Group of People', b: 'Annual Meeting', '4': 'aut' }),
-          marc_field(tag: '880', subfields: { '6': '110', a: 'Alt. Group Name', b: 'Alt. Annual Meeting' })]
+        [marc_field(tag: '110', subfields: { a: 'Group of People', b: 'Annual Meeting', '4': 'aut' }),
+         marc_field(tag: '880', subfields: { '6': '110', a: 'Alt. Group Name', b: 'Alt. Annual Meeting' })]
       end
       it 'returns corporate author values with no URIs anywhere' do
         values = helper.show(record)
@@ -113,7 +113,7 @@ describe 'PennMARC::Creator' do
     context 'for a single author record' do
       let(:fields) do
         [marc_field(tag: '100', subfields: { a: 'Author, Great', d: '1900-2000' }),
-         marc_field(tag: '700', subfields: { a: 'Co-Author, Great', d: '1900-2000'}),
+         marc_field(tag: '700', subfields: { a: 'Co-Author, Great', d: '1900-2000' }),
          marc_field(tag: '800', subfields: { a: 'Author, Added' })]
       end
 
@@ -130,7 +130,8 @@ describe 'PennMARC::Creator' do
       end
 
       it 'includes corporate author and creator values from allowed subfields' do
-        expect(values).to contain_exactly 'A Publisher', 'A Series Entity', 'A Sponsor', 'Group of People Annual Meeting'
+        expect(values).to contain_exactly 'A Publisher', 'A Series Entity', 'A Sponsor',
+                                          'Group of People Annual Meeting'
       end
     end
     context 'for a meeting author record' do
