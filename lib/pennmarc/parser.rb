@@ -45,145 +45,104 @@ module PennMARC
       "PennMARC::#{helper.titleize}".constantize.public_send(meth, opts)
     end
 
+    # @todo does this fit in an existing helper?
     # @param [MARC::Record] record
     # @return [Object]
-    def publication_show(record); end
+    def cartographic_show(record)
+      record.fields(%w{255 342}).map do |field|
+        join_subfields(field, &subfield_not_6_or_8)
+      end
+    end
+
+    # @todo move to Identifier helper
+    # @param [MARC::Record] record
+    # @return [Object]
+    def fingerprint_show(record)
+      record.fields('026').map do |field|
+        join_subfields(field, &subfield_not_in(%w{2 5 6 8}))
+      end
+    end
+
+    # @todo does this fit in an existing helper?
+    # @param [MARC::Record] record
+    # @return [Object]
+    def arrangement_show(record)
+      get_datafield_and_880(record, '351')
+    end
 
     # @param [MARC::Record] record
     # @return [Object]
-    def edition_show(record); end
+    def system_details_show(record)
+      acc = []
+      acc += record.fields('538').map do |field|
+        get_sub3_and_other_subs(field, &subfield_in(%w{a i u}))
+      end
+      acc += record.fields('344').map do |field|
+        get_sub3_and_other_subs(field, &subfield_in(%w{a b c d e f g h}))
+      end
+      acc += record.fields(%w{345 346}).map do |field|
+        get_sub3_and_other_subs(field, &subfield_in(%w{a b}))
+      end
+      acc += record.fields('347').map do |field|
+        get_sub3_and_other_subs(field, &subfield_in(%w{a b c d e f}))
+      end
+      acc += record.fields('880')
+                .select { |f| has_subfield6_value(f, /^538/) }
+                .map do |field|
+        get_sub3_and_other_subs(field, &subfield_in(%w{a i u}))
+      end
+      acc += record.fields('880')
+                .select { |f| has_subfield6_value(f, /^344/) }
+                .map do |field|
+        get_sub3_and_other_subs(field, &subfield_in(%w{a b c d e f g h}))
+      end
+      acc += record.fields('880')
+                .select { |f| has_subfield6_value(f, /^(345|346)/) }
+                .map do |field|
+        get_sub3_and_other_subs(field, &subfield_in(%w{a b}))
+      end
+      acc += record.fields('880')
+                .select { |f| has_subfield6_value(f, /^347/) }
+                .map do |field|
+        get_sub3_and_other_subs(field, &subfield_in(%w{a b c d e f}))
+      end
+      acc
+    end
 
-    # @param [MARC::Record] record
-    # @return [Object]
-    def conference_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def series_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def production_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def distribution_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def manufacture_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def contained_in_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def cartographic_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def fingerprint_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def arrangement_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def place_of_publication_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def system_details_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def biography_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def summary_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def contents_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def participant_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def credits_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def notes_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def local_notes_show(record); end
-
+    # @todo the legacy code here is a hot mess for a number of reasons, what do we need this field to do?
+    # @note port the needed parts from get_offsite_display, don't return HTML
     # @param [MARC::Record] record
     # @return [Object]
     def offsite_show(record); end
 
+    # @todo move this to Creator helper
     # @param [MARC::Record] record
     # @return [Object]
-    def finding_aid_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def provenance_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def chronology_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def related_collections_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def cited_in_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def publications_about_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def cite_as_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def contributor_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def related_work_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def contains_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def other_edition_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def constituent_unit_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def has_supplement_show(record); end
-
-    # @param [MARC::Record] record
-    # @return [Object]
-    def access_restriction_show(record); end
+    def contributor_show(record)
+      acc = []
+      acc += record.fields(%w{700 710})
+                   .select { |f| ['', ' ', '0'].member?(f.indicator2) }
+                   .select { |f| f.none? { |sf| sf.code == 'i' } }
+                   .map do |field|
+        contributor = join_subfields(field, &subfield_in(%w{a b c d j q}))
+        contributor_append = field.select(&subfield_in(%w{e u 3 4})).map do |sf|
+          if sf.code == '4'
+            ", #{relator_codes[sf.value]}"
+          else
+            " #{sf.value}"
+          end
+        end.join
+        { value: contributor, value_append: contributor_append, link_type: 'author_creator_xfacet2' }
+      end
+      acc += record.fields('880')
+                   .select { |f| has_subfield6_value(f, /^(700|710)/) && (f.none? { |sf| sf.code == 'i' }) }
+                   .map do |field|
+        contributor = join_subfields(field, &subfield_in(%w{a b c d j q}))
+        contributor_append = join_subfields(field, &subfield_in(%w{e u 3}))
+        { value: contributor, value_append: contributor_append, link_type: 'author_creator_xfacet2' }
+      end
+      acc
+    end
 
     # Load language map from YAML and memoize in @mappings hash
     # @return [Hash]
