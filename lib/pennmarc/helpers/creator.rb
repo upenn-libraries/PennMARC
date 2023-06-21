@@ -143,8 +143,8 @@ module PennMARC
       # Conference for display, intended for results display
       # @note ported from get_conference_values
       # @param [MARC::Record] record
-      # @return [Array<String>] array of conference values
       # @param [Hash] relator_map
+      # @return [Array<String>] array of conference values
       def conference_show(record, relator_map)
         record.fields('111').filter_map do |field|
           name_from_main_entry field, relator_map
