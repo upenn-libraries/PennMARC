@@ -89,12 +89,13 @@ module PennMARC
     # @param [MARC::Record] record
     # @param [String|Array] subfield6_value either a string to look for in sub6 or an array of them
     # @param selector [Proc] takes a subfield as argument, returns a boolean
+    # @return [Array]
     def linked_alternate(record, subfield6_value, &selector)
-      record.fields('880')
-            .select { |f| subfield_value?(f, '6', /^#{Array.wrap(subfield6_value).join('|')}/) }
-            .map do |f|
-              f.select { |sf| selector.call(sf) }.map(&:value).join(' ')
-            end
+      record.fields('880').filter_map do |field|
+        next unless subfield_value?(field, '6', /^#{Array.wrap(subfield6_value).join('|')}/)
+
+        field.select { |sf| selector.call(sf) }.map(&:value).join(' ')
+      end
     end
     alias get_880 linked_alternate
   end
