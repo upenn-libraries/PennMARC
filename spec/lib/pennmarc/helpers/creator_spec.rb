@@ -100,7 +100,7 @@ describe 'PennMARC::Creator' do
       ]
     end
 
-    it 'returns single value with no content from ǂ1, 4, 6, 8 or e' do
+    it 'returns single value with no content from ǂ1, ǂ4, ǂ6, ǂ8 or ǂe' do
       expect(helper.sort(record)).to eq 'Sort, Value, 1900-2000 http://cool.uri/12345'
       expect(helper.sort(record)).not_to include 'aut'
     end
@@ -147,11 +147,34 @@ describe 'PennMARC::Creator' do
   end
 
   describe '.conference_show' do
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '111', subfields: { a: 'MARC History Symposium', '4': 'aut' }),
+        marc_field(tag: '880', subfields: { a: 'Alt. MARC History Symposium', '6': '111' })
+      ]
+    end
 
+    it 'returns conference name information for display, ignoring any linked 880 fields' do
+      expect(helper.conference_show(record, mapping)).to eq ['MARC History Symposium, Author.']
+    end
   end
 
   describe '.conference_detail_show' do
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '111', subfields: { a: 'MARC History Symposium', c: 'Moscow' }),
+        marc_field(tag: '711', subfields: { a: 'Russian Library Conference', j: 'author' }),
+        marc_field(tag: '711', indicator2: '1', subfields: { a: 'Ignored Entry', j: 'author' }),
+        marc_field(tag: '880', subfields: { a: 'Proceedings', '6': '111' }),
+        marc_field(tag: '880', subfields: { a: 'Not Included', i: 'something', '6': '111' })
+      ]
+    end
 
+    it 'returns detailed conference name information for display, including linked 880 fields without ǂi, and ignoring
+        any 111 or 711 with a defined indicator 2 value' do
+      expect(helper.conference_detail_show(record)).to eq ['MARC History Symposium Moscow',
+                                                           'Russian Library Conference author', 'Proceedings']
+    end
   end
 
   xdescribe '.conference_search'

@@ -15,7 +15,8 @@ module PennMARC
       # in ǂ4. To better handle name searches, returns names as both "First Last" and "Last, First" if a comma is found
       # in ǂa. Also indexes any linked values in the 880.
       # @todo this seems bad - why include relator labels? URIs? punctuation? leaving mostly as-is for now,
-      #       but this should be reexamined in the relevancy-tuning phase. URIs should def be removed.
+      #       but this should be reexamined in the relevancy-tuning phase. URIs should def be removed. and shouldn't
+      #       indicator1 tell us the order of the name?
       # @note ported from get_author_creator_1_search_values
       # @param [MARC::Record] record
       # @param [Hash] relator_mapping
@@ -105,7 +106,7 @@ module PennMARC
 
       # Author/Creator sort. Does not map and include any relator
       # codes.
-      # @todo THis includes any URI from ǂ0 which could help to disambiguate in sorts, but ǂ1 is excluded...
+      # @todo This includes any URI from ǂ0 which could help to disambiguate in sorts, but ǂ1 is excluded...
       # @note ported from get_author_creator_sort_values
       # @param [MARC::Record] record
       # @return [String] string with author/creator value for sorting
@@ -134,7 +135,7 @@ module PennMARC
         end
       end
 
-      # Conference for display
+      # Conference for display, intended for results display
       # @note ported from get_conference_values
       # @param [MARC::Record] record
       # @return [Array<String>] array of conference values
@@ -145,26 +146,31 @@ module PennMARC
         end
       end
 
-      # Conference detailed display
+      # Conference detailed display, intended for record show page.
       # @note ported from get_conference_values
+      # @todo what is ǂi for?
       # @param [MARC::Record] record
       # @return [Array<String>] array of conference values
       def conference_detail_show(record)
         values = record.fields(%w[111 711]).filter_map do |field|
           next unless field.indicator2.in? ['', ' ']
 
-          conf = join_subfields field, &subfield_not_in?(%w[0 4 5 6 8 e j w]) if subfield_undefined? field, 'i'
-          conf_extra = join_subfields field, &subfield_in(%w[e j w])
-          "#{conf} #{conf_extra}".strip
+          conf = if subfield_undefined? field, 'i'
+                   join_subfields field, &subfield_not_in?(%w[0 4 5 6 8 e j w])
+                 else
+                   ''
+                 end
+          conf_extra = join_subfields field, &subfield_in?(%w[e j w])
+          join_and_squish [conf, conf_extra].compact_blank
         end
         values + record.fields('880').filter_map do |field|
           next unless subfield_value_in? field, '6', %w[111 711]
 
           next if subfield_defined? field, 'i'
 
-          conf = join_subfields(field, &subfield_not_in(%w[0 4 5 6 8 e j w]))
-          conf_extra = join_subfields(field, &subfield_in(%w[4 e j w]))
-          "#{conf} #{conf_extra}"
+          conf = join_subfields(field, &subfield_not_in?(%w[0 4 5 6 8 e j w]))
+          conf_extra = join_subfields(field, &subfield_in?(%w[4 e j w]))
+          join_and_squish [conf, conf_extra]
         end
       end
 
