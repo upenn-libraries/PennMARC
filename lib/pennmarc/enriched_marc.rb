@@ -2,6 +2,8 @@
 
 # Constants for Alma's MARC enrichment
 # MARC enrichment is performed during the Alma Publishing process
+# @see https://developers.exlibrisgroup.com/alma/apis/docs/bibs/R0VUIC9hbG1hd3MvdjEvYmlicy97bW1zX2lkfQ==/
+#   Alma documentation for these added fields
 module PennMARC
   module EnrichedMarc
     # terminology follows the Publishing Profile screen
