@@ -13,12 +13,12 @@ module PennMARC
         next unless value.present?
 
         value
-      }.join(' ')
+      }.join(' ').squish
     end
 
     # returns true if field has a value that matches
     # passed-in regex and passed in subfield
-    # TODO: example usage
+    # @todo example usage
     # @param [MARC::DataField] field
     # @param [String|Integer|Symbol] subfield
     # @param [Regexp] regex
