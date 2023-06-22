@@ -210,7 +210,7 @@ module PennMARC
       # @return [String] joined subfield values for value from field
       def name_from_main_entry(field, mapping)
         s = field.filter_map do |sf|
-          if !%w[0 1 4 6 8].member?(sf.code)
+          if %w[0 1 4 6 8].exclude?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
             relator = translate_relator(sf.value, mapping)
