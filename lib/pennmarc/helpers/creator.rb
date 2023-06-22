@@ -17,7 +17,7 @@ module PennMARC
       # {https://www.oclc.org/bibformats/en/1xx/100.html 100 Main Entry--Personal Name} and
       # {https://www.oclc.org/bibformats/en/1xx/110.html 110 Main Entry--Corporate Name}. Maps any relator codes found
       # in ǂ4. To better handle name searches, returns names as both "First Last" and "Last, First" if a comma is found
-      # in ǂa. Also indexes any linked values in the 880. SOme of the search fields remain incomplete and may need to be
+      # in ǂa. Also indexes any linked values in the 880. Some of the search fields remain incomplete and may need to be
       # further investigated and ported when search result relevancy is considered.
       # @todo this seems bad - why include relator labels? URIs? punctuation? leaving mostly as-is for now,
       #       but this should be reexamined in the relevancy-tuning phase. URIs should def be removed. and shouldn't
@@ -31,7 +31,7 @@ module PennMARC
           pieces = field.filter_map do |sf|
             if sf.code == 'a'
               convert_name_order(sf.value)
-            elsif !%w[a 1 4 6 8].member?(sf.code)
+            elsif %w[a 1 4 6 8].exclude?(sf.code)
               sf.value
             elsif sf.code == '4'
               relator = translate_relator(sf.value, relator_mapping)
