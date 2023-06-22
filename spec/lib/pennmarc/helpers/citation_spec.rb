@@ -14,7 +14,7 @@ describe 'PennMARC::Citation' do
     end
   end
 
-  describe 'cite_as_show' do
+  describe '.cite_as_show' do
     let(:record) { marc_record fields: [marc_field(tag: '524', subfields: {a: 'Perkins Historical Archive, Box 2'})] }
 
     it 'returns expected citation values' do
