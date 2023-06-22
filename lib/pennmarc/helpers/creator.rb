@@ -66,9 +66,9 @@ module PennMARC
             "#{value}."
           end
         end
-        acc += record.fields(%w[880])
-                     .select { |f| f.any? { |sf| sf.code == '6' && sf.value =~ /^(100|110)/ } }
-                     .map do |field|
+        acc += record.fields(%w[880]).filter_map do |field|
+          next unless field.any? { |sf| sf.code == '6' && sf.value.in?(%w[100 110]) }
+
           suba = field.find_all(&subfield_in?(%w[a])).map do |sf|
             convert_name_order(sf.value)
           end.first
