@@ -97,5 +97,28 @@ module PennMARC
             end
     end
     alias get_880 linked_alternate
+
+    # Common case of wanting to extract all the subfields besides 6 or 8,
+    # from 880 datafield that has a particular subfield 6 value. We exclude 6 because
+    # that value is the linkage ID itself and 8 bedcause... IDK
+    # @param [MARC::Record] record
+    # @param [String|Array] subfield6_value either a string to look for in sub6 or an array of them
+    def linked_alternate_not_6_or_8(record, subfield6_value)
+      linked_alternate(record, subfield6_value) do |sf|
+        !%w{6 8}.member?(sf.code)
+      end
+    end
+
+    # Returns the non-6,8 subfields from a datafield and its 880 link.
+    # @param [MARC::Record] record
+    # @param [String] tag
+    def datafield_and_linked_alternate(record, tag)
+      acc = []
+      acc += record.fields(tag).map do |field|
+        join_subfields(field, &subfield_not_in?(%w{6 8}))
+      end
+      acc += linked_alternate_not_6_or_8(record, tag)
+      acc
+    end
   end
 end
