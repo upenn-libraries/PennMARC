@@ -6,11 +6,19 @@ describe 'PennMARC::Citation' do
   let(:helper) { PennMARC::Citation }
 
   describe '.cited_in_show' do
-    let(:record) { marc_record fields: [marc_field(tag: '510', subfields: {a: 'Patrick'}),
-                                      marc_field(tag: '880', subfields: {'6': '510', a: 'パトリック'})] }
+    let(:record) { marc_record fields: [marc_field(tag: '510', subfields: {a: 'Perkins Archive'}),
+                                      marc_field(tag: '880', subfields: {'6': '510', a: 'パーキンスのアーカイブ'})] }
 
     it 'returns expected citation values' do
-      expect(helper.cited_in_show(record)).to contain_exactly('Patrick', 'パトリック')
+      expect(helper.cited_in_show(record)).to contain_exactly('Perkins Archive', 'パーキンスのアーカイブ')
+    end
+  end
+
+  describe 'cite_as_show' do
+    let(:record) { marc_record fields: [marc_field(tag: '524', subfields: {a: 'Perkins Historical Archive, Box 2'})] }
+
+    it 'returns expected citation values' do
+      expect(helper.cite_as_show(record)).to contain_exactly('Perkins Historical Archive, Box 2')
     end
   end
 end

@@ -100,7 +100,7 @@ module PennMARC
 
     # Common case of wanting to extract all the subfields besides 6 or 8,
     # from 880 datafield that has a particular subfield 6 value. We exclude 6 because
-    # that value is the linkage ID itself and 8 bedcause... IDK
+    # that value is the linkage ID itself and 8 because... IDK
     # @param [MARC::Record] record
     # @param [String|Array] subfield6_value either a string to look for in sub6 or an array of them
     def linked_alternate_not_6_or_8(record, subfield6_value)
