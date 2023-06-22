@@ -47,6 +47,7 @@ describe 'PennMARC::Location' do
 
     context 'without enriched marc location tag' do
       let(:record) { marc_record(fields: [marc_field(tag: '852', subfields: { g: %w[stor oovanp] })]) }
+
       it 'returns expected value' do
         expect(helper.location(record:, location_map: helper::MAPPINGS, display_value: 'library')).to be_empty
       end
