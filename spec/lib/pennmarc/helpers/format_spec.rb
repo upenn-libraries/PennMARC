@@ -5,6 +5,39 @@ describe 'PennMARC::Format' do
 
   let(:helper) { PennMARC::Format }
 
+  describe '.format' do
+    let(:formats) { helper.facet(record) }
+
+    context 'for an "Archive"' do
+
+    end
+
+    context 'for a "Newspaper"' do
+
+    end
+
+    context 'for a "Book"' do
+      let(:record) do
+        marc_record(fields: fields, leader: '      aa  ')
+      end
+      let(:fields) do
+        [marc_field(tag: '245', subfields: { k: 'blah' })]
+      end
+
+      it 'returns a facet value including only "Book"' do
+        expect(formats).to eq ['Book']
+      end
+    end
+
+    context 'for a "Projected Graphic"' do
+
+    end
+
+    context 'with a "Curated Format" set' do
+
+    end
+  end
+
   describe '.show' do
     let(:record) { marc_record fields: fields }
 

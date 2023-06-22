@@ -69,6 +69,19 @@ module PennMARC
       field.none? { |sf| sf.code == subfield.to_s }
     end
 
+    # @param [MARC::DataField] field
+    # @param [String|Symbol] subfield as a string or symbol
+    # @return [Array] subfield values for given subfield code
+    def subfield_values(field, subfield)
+      field.filter_map do |sf|
+        next unless sf.code == subfield.to_s
+
+        next unless sf.value.present?
+
+        sf.value
+      end
+    end
+
     # @param [Symbol|String] trailer to target for removal
     # @param [String] string to modify
     def trim_trailing(trailer, string)
