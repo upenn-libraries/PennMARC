@@ -7,13 +7,13 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Object]
       def cited_in_show(record)
-        get_datafield_and_880(record, '510')
+        datafield_and_linked_alternate(record, '510')
       end
 
       # @param [MARC::Record] record
       # @return [Object]
       def cite_as_show(record)
-        get_datafield_and_880(record, '524')
+        datafield_and_linked_alternate(record, '524')
       end
     end
   end
