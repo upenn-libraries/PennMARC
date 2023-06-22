@@ -37,30 +37,13 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>]
       def facet(record)
-        acc = []
-
+        formats = []
         format_code = leader_format(record.leader)
-
-        # get 007 and 008 values
         f007 = record.fields('007').map(&:value)
         f008 = record.fields('008').first&.value || ''
-
-        # is a 260 entry present, and does it have a b that matches 'press'
-        f260press = record.fields('260').any? do |field|
-          field.select { |sf| sf.code == 'b' && sf.value =~ /press/i }.any?
-        end
-
-        # first letter of every 006
-        f006firsts = record.fields('006').map do |field|
-          field.value[0]
-        end
-
-        # get subfield values from 245 and 337
-        # TODO: create subfield_values record:, subfields: []
-        # TODO: use intelligible names for these variables
-        f245k = record.fields('245').flat_map { |field| subfield_values(field, :k) }
-        f245h = record.fields('245').flat_map { |field| subfield_values(field, :h) }
-        f337a = record.fields('337').flat_map { |field| subfield_values(field, :a) }
+        f006firsts = record.fields('006').map { |field| field.value[0] }
+        title_medium = subfield_values_for tag: '245', subfield: :h, record: record
+        media_type = subfield_values_for tag: '337', subfield: :a, record: record
 
         # TODO: exactly what's going on here? is call_nums an accurate variable name?
         call_nums = record.fields(EnrichedMarc::TAG_HOLDING).map do |field|
@@ -73,64 +56,45 @@ module PennMARC
         # locations = Location.location(record: record, display_value: 'specific_location') # TODO: from AM's MR
         locations = []
 
-        # TODO: locations_include_manuscripts?(locations)
-        if locations.any? { |loc| loc =~ /manuscripts/i }
-          acc << 'Manuscript'
-        # TODO: archives_but_not_cajs_or_nursing(locations) ?
-        elsif locations.any? { |loc| loc =~ /archives/i } &&
-              locations.none? { |loc| loc =~ /cajs/i } &&
-              locations.none? { |loc| loc =~ /nursing/i }
-          acc << 'Archive'
-        # TODO micro_or_microform_location(locations)
-        elsif locations.any? { |loc| loc =~ /micro/i } ||
-              f245h.any? { |val| val =~ /micro/i } ||
-              call_nums.any? { |val| val =~ /micro/i } ||
-              f337a.any? { |val| val =~ /microform/i }
-          acc << 'Microformat'
+        if include_manuscripts?(locations)
+          formats << 'Manuscript'
+        elsif archives_but_not_cajs_or_nursing?(locations)
+          formats << 'Archive'
+        elsif micro_or_microform?(call_nums, locations, media_type, title_medium)
+          formats << 'Microformat'
         else
-          # these next 4 can have this format plus ONE of the formats down farther below
-          acc << 'Thesis/Dissertation' if record.fields('502').any? && format_code == 'tm' # TODO: thesis_or_dissertation?(record, format_code)
-          acc << 'Conference/Event' if record.fields('111').any? || record.fields('711').any? # TODO: conference_event?(record)
-          acc << 'Newspaper' if format_code == 'as' && (f008[21] == 'n' || f008[22] == 'e') # TODO: newspaper?()
-          acc << 'Government document' if !format_code[0].in?(%w[c d i j]) && f008[28].in?(%w[f i o]) && !f260press # TODO: government_document?(record)
+          # any of these
+          formats << 'Thesis/Dissertation' if thesis_or_dissertation?(format_code, record)
+          formats << 'Conference/Event' if conference_event?(record)
+          formats << 'Newspaper' if newspaper?(f008, format_code)
+          formats << 'Government document' if government_document?(f008, record, format_code)
 
-          # only one of these
-          # TODO: convert to case?
-          acc << if format_code&.end_with?('i') ||
-                    (format_code == 'am' && f006firsts.include?('m') && f006firsts.include?('s')) # TODO: website_database?(record)
-                   'Website/Database'
-                 elsif format_code.in?(%w[aa ac am tm]) &&
-                       f245k.none? { |v| v =~ /kit/i } &&
-                       f245h.none? { |v| v =~ /micro/i } # TODO: book?(record)
-                   'Book'
-                 elsif format_code.in?(%w[ca cb cd cm cs dm]) # TODO: musical_score?(format_code)
-                   'Musical score'
-                 elsif format_code&.start_with?('e') || format_code == 'fm' # TODO: map_atlas?(format_code)
-                   'Map/Atlas'
-                 elsif format_code == 'gm' # TODO: graphical_media?(format_code)
-                   # TODO: graphical_media_type(f007? record?)
-                   if f007.any? { |v| v.start_with?('v') }
-                     'Video'
-                   elsif f007.any? { |v| v.start_with?('g') }
-                     'Projected graphic'
-                   else
-                     'Video' # TODO?
-                   end
-                 elsif format_code.in?(%w[im jm jc jd js]) # TODO: sound_recording?(format_code)
-                   'Sound recording'
-                 elsif format_code.in?(%w[km kd])
-                   'Image'
-                 elsif format_code == 'mm'
-                   'Datafile'
-                 elsif format_code.in?(%w[as gs])
-                   'Journal/Periodical'
-                 elsif format_code&.start_with?('r') # TODO: 3d_object?(format_code)
-                   '3D object'
-                 else
-                   'Other'
-                 end
+          # but only one of these
+          formats << if website_database?(f006firsts, format_code)
+                       'Website/Database'
+                     elsif book?(format_code, title_medium, record)
+                       'Book'
+                     elsif musical_score?(format_code)
+                       'Musical score'
+                     elsif map_atlas?(format_code)
+                       'Map/Atlas'
+                     elsif graphical_media?(format_code)
+                       graphical_media_type(f007)
+                     elsif sound_recording?(format_code)
+                       'Sound recording'
+                     elsif image?(format_code)
+                       'Image'
+                     elsif datafile?(format_code)
+                       'Datafile'
+                     elsif journal_periodical?(format_code)
+                       'Journal/Periodical'
+                     elsif three_d_object?(format_code)
+                       '3D object'
+                     else
+                       'Other'
+                     end
         end
-        acc.concat(curated_format(record))
+        formats.concat(curated_format(record))
       end
 
       # Show "Other Format" vales from {https://www.oclc.org/bibformats/en/7xx/776.html 776} and any 880 linkage.
@@ -139,13 +103,13 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array]
       def other_show(record)
-        acc = record.fields('776').filter_map do |field|
+        other_formats = record.fields('776').filter_map do |field|
           value = join_subfields(field, &subfield_in?(%w[i a s t o]))
           next if value.blank?
 
           value
         end
-        acc + linked_alternate(record, '776') do |sf|
+        other_formats + linked_alternate(record, '776') do |sf|
           sf.code.in? %w[i a s t o]
         end
       end
@@ -158,13 +122,150 @@ module PennMARC
       # @return [Array]
       def curated_format(record)
         record.fields('944').map do |field|
-          sf = field.find { |sf| sf.code == 'a' }
-          sf.nil? || (sf.value == sf.value.to_i.to_s) ? nil : sf.value
+          subfield = field.find { |sf| sf.code == 'a' }
+          subfield.nil? || (subfield.value == subfield.value.to_i.to_s) ? nil : subfield.value
         end.compact.uniq
       end
 
+      # @param [String] format_code
+      # @return [Boolean]
+      def image?(format_code)
+        format_code.in?(%w[km kd])
+      end
+
+      # @param [String] format_code
+      # @return [Boolean]
+      def datafile?(format_code)
+        format_code == 'mm'
+      end
+
+      # @param [String] format_code
+      # @return [Boolean]
+      def journal_periodical?(format_code)
+        format_code.in?(%w[as gs])
+      end
+
+      # @param [String] format_code
+      # @return [Boolean]
+      def three_d_object?(format_code)
+        format_code.start_with?('r')
+      end
+
+      # @param [String] format_code
+      # @return [Boolean]
+      def sound_recording?(format_code)
+        format_code.in?(%w[im jm jc jd js])
+      end
+
+      # @param [String] format_code
+      # @return [Boolean]
+      def graphical_media?(format_code)
+        format_code == 'gm'
+      end
+
+      # @param [String] format_code
+      # @return [Boolean]
+      def map_atlas?(format_code)
+        format_code&.start_with?('e') || format_code == 'fm'
+      end
+
+      # @param [String] format_code
+      # @return [Boolean]
+      def musical_score?(format_code)
+        format_code.in?(%w[ca cb cd cm cs dm])
+      end
+
+      # @param [String] format_code
+      # @param [Array<String>] title_medium
+      # @param [MARC::Record] record
+      # @return [Boolean]
+      def book?(format_code, title_medium, record)
+        title_forms = subfield_values_for tag: '245', subfield: :k, record: record
+        format_code.in?(%w[aa ac am tm]) &&
+          title_forms.none? { |v| v =~ /kit/i } &&
+          title_medium.none? { |v| v =~ /micro/i }
+      end
+
+      # @param [Array<String>] f006firsts
+      # @param [String] format_code
+      # @return [Boolean]
+      def website_database?(f006firsts, format_code)
+        format_code&.end_with?('i') ||
+          (format_code == 'am' && f006firsts.include?('m') && f006firsts.include?('s'))
+      end
+
+      # @param [String] f008
+      # @param [MARC::Record] record
+      # @param [String] format_code
+      # @return [Boolean]
+      def government_document?(f008, record, format_code)
+        # is a 260 entry present, and does it have a b that matches 'press'
+        f260press = record.fields('260').any? do |field|
+          field.select { |sf| sf.code == 'b' && sf.value =~ /press/i }.any?
+        end
+        %w[c d i j].exclude?(format_code[0]) && f008[28].in?(%w[f i o]) && !f260press
+      end
+
+      # @param [String] f008
+      # @param [String] format_code
+      # @return [Boolean]
+      def newspaper?(f008, format_code)
+        format_code == 'as' && (f008[21] == 'n' || f008[22] == 'e')
+      end
+
+      # @param [MARC::Record] record
+      # @return [Boolean]
+      def conference_event?(record)
+        record.fields('111').any? || record.fields('711').any? # TODO: use field_present helper here and below?
+      end
+
+      # @param [MARC::Record] record
+      # @param [String] format_code
+      # @return [Boolean]
+      def thesis_or_dissertation?(format_code, record)
+        record.fields('502').any? && format_code == 'tm'
+      end
+
+      # @param [Array<String>] title_medium
+      # @param [Array<String>] media_type
+      # @param [Array<String>] locations
+      # @param [Array<String>] call_nums
+      # @return [Boolean]
+      def micro_or_microform?(call_nums, locations, media_type, title_medium)
+        locations.any? { |loc| loc =~ /micro/i } ||
+          title_medium.any? { |val| val =~ /micro/i } ||
+          call_nums.any? { |val| val =~ /micro/i } ||
+          media_type.any? { |val| val =~ /microform/i }
+      end
+
+      # @param [Array<String>] locations
+      # @return [Boolean]
+      def archives_but_not_cajs_or_nursing?(locations)
+        locations.any? { |loc| loc =~ /archives/i } &&
+          locations.none? { |loc| loc =~ /cajs/i } &&
+          locations.none? { |loc| loc =~ /nursing/i }
+      end
+
+      # @param [Array<String>] locations
+      # @return [Boolean]
+      def include_manuscripts?(locations)
+        locations.any? { |loc| loc =~ /manuscripts/i }
+      end
+
+      # @param [Array<String>] f007
+      # @return [String (frozen)]
+      def graphical_media_type(f007)
+        if f007.any? { |v| v.start_with?('g') }
+          'Projected graphic'
+        else
+          'Video'
+        end
+      end
+
+      # @param [String] leader
+      # @return [String]
       def leader_format(leader)
-        leader[6..7]
+        leader[6..7] || '  '
       end
     end
   end

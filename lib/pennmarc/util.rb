@@ -69,6 +69,7 @@ module PennMARC
       field.none? { |sf| sf.code == subfield.to_s }
     end
 
+    # Gets all subfield values for a subfield in a given field
     # @param [MARC::DataField] field
     # @param [String|Symbol] subfield as a string or symbol
     # @return [Array] subfield values for given subfield code
@@ -79,6 +80,16 @@ module PennMARC
         next unless sf.value.present?
 
         sf.value
+      end
+    end
+
+    # Get all subfield values for a provided subfield form any occurrence of a provided tag/tags
+    # @param [String|Array] tag tags to consider
+    # @param [String|Symbol] subfield to take the values from
+    # @param [MARC::Record] record source
+    def subfield_values_for(tag:, subfield:, record:)
+      record.fields(tag).flat_map do |field|
+        subfield_values field, subfield
       end
     end
 
