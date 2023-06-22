@@ -38,6 +38,7 @@ describe 'PennMARC::Location' do
 
     context 'with multiple library locations' do
       let(:record) { marc_record(fields: [marc_field(tag: 'itm', subfields: { g: %w[stor oovanp] })]) }
+
       it 'returns expected value' do
         expect(helper.location(record:, location_map: helper::MAPPINGS,
                                display_value: 'library')).to contain_exactly('LIBRA',
@@ -55,6 +56,7 @@ describe 'PennMARC::Location' do
 
     context 'with electronic inventory tag' do
       let(:record) { marc_record(fields: [marc_field(tag: 'itm', subfields: { g: %w[stor] }), marc_field(tag: 'prt')]) }
+
       it 'returns expected value' do
         expect(helper.location(record:, location_map: helper::MAPPINGS,
                                display_value: 'library')).to contain_exactly('LIBRA', 'Online library')
