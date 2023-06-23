@@ -20,8 +20,11 @@ module PennMARC
       # @return [Array<string>] Array of types
       def type(record)
         record.fields('944').filter_map do |field|
+          # skip unless specified database format type present
+          next unless subfield_value?(field, 'a', /#{DATABASES_FACET_VALUE}/)
+
           type = field.find { |subfield| subfield.code == 'b' }
-          type&.value if subfield_value?(field, 'a', /#{DATABASES_FACET_VALUE}/)
+          type&.value
         end
       end
 
