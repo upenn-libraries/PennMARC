@@ -150,6 +150,12 @@ module PennMARC
       @mappings[:language] ||= load_map('language.yml')
     end
 
+    # Load location map from YAML and memoize in @mappings hash
+    # @return [Hash]
+    def location_map
+      @mappings[:location] ||= load_map('locations.yml')
+    end
+
     # Load relator map from YAML and memoize in @mappings hash
     # @return [Hash]
     def relator_map
