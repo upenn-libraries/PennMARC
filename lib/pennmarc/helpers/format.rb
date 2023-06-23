@@ -11,7 +11,7 @@ module PennMARC
       # field, different subfields are used.
       # @note ported from get_format_display
       # @param [MARC::Record] record
-      # @return [Array<String>]
+      # @return [Array<String>] format values for display
       def show(record)
         results = record.fields('300').map { |f| join_subfields(f, &subfield_not_in?(%w[3 6 8])) }
         results += record.fields(%w[254 255 310 342 352 362]).map do |f|
@@ -31,11 +31,25 @@ module PennMARC
         results.compact_blank
       end
 
-      # Get Format values for faceting.
-      # @todo not sure how this might be broken down, wrap complex conditional expressions in methods?
+      # Get Format values for faceting. Format values are determined using complex logic for each possible format value.
+      # The primary fields considered in determining Format facet values are:
+      #
+      # 1. "Type of Record" and "Bibliographic level" values extracted from the
+      #    {https://www.loc.gov/marc/bibliographic/bdleader.html MARC leader}.
+      # 2. Location name values and "Classification part" from Alma "enhanced" MARC holding/item information
+      # 3. {https://www.loc.gov/marc/bibliographic/bd007.html 007} values, the first
+      #    {https://www.loc.gov/marc/bibliographic/bd008.html 008} value, and the first character form all
+      #    {https://www.loc.gov/marc/bibliographic/bd006.html 006} values (form)
+      # 4. Medium values form {https://www.oclc.org/bibformats/en/2xx/245.html#subfieldh 245 ǂh}
+      # 5. Media Type values from {https://www.oclc.org/bibformats/en/3xx/337.html#subfielda 337 ǂa}
+      # Additional fields are considered for many of the formats. Much of this logic has been moved to private methods
+      # to keep this method from becoming too unwieldy.
+      # @todo is the conditional structure here still best practice? see the "Thesis on Microfilm" case in the specs
+      #       for this helper method
+      # @todo learn more about the "Curated format" values considered in 944 field
       # @note ported from get_format
       # @param [MARC::Record] record
-      # @return [Array<String>]
+      # @return [Array<String>] format values for faceting
       def facet(record)
         formats = []
         format_code = leader_format(record.leader)
@@ -99,9 +113,8 @@ module PennMARC
 
       # Show "Other Format" vales from {https://www.oclc.org/bibformats/en/7xx/776.html 776} and any 880 linkage.
       # @todo is 774 an error in the linked field in legacy? i changed to 776 here
-      # @todo port get_other_format_display
       # @param [MARC::Record] record
-      # @return [Array]
+      # @return [Array] other format values for display
       def other_show(record)
         other_formats = record.fields('776').filter_map do |field|
           value = join_subfields(field, &subfield_in?(%w[i a s t o]))
@@ -121,10 +134,12 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array]
       def curated_format(record)
-        record.fields('944').map do |field|
-          subfield = field.find { |sf| sf.code == 'a' }
-          subfield.nil? || (subfield.value == subfield.value.to_i.to_s) ? nil : subfield.value
-        end.compact.uniq
+        record.fields('944').filter_map do |field|
+          subfield_a = field.find { |sf| sf.code == 'a' }
+          next if subfield_a.nil? || (subfield_a.value == subfield_a.value.to_i.to_s)
+
+          subfield_a.value
+        end.uniq
       end
 
       # @param [String] format_code
@@ -252,6 +267,7 @@ module PennMARC
         locations.any? { |loc| loc =~ /manuscripts/i }
       end
 
+      # Consider {https://www.loc.gov/marc/bibliographic/bd007g.html 007} to determine graphical media format
       # @param [Array<String>] f007
       # @return [String (frozen)]
       def graphical_media_type(f007)

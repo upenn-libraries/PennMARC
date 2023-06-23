@@ -9,19 +9,42 @@ describe 'PennMARC::Format' do
     let(:formats) { helper.facet(record) }
 
     context 'for an "Archive"' do
-
+      # TODO: needs location stuff
     end
 
     context 'for a "Newspaper"' do
+      let(:record) do
+        marc_record leader: '      as  ',
+                    fields: [marc_control_field(tag: '008', value: '                     n')]
+      end
 
+      it 'returns a facet value including "Newspaper" and "Journal/Periodical"' do
+        expect(formats).to eq %w[Newspaper Journal/Periodical]
+      end
+    end
+
+    # TODO: confirm this as desired functionality
+    # Inspired by https://franklin.library.upenn.edu/catalog/FRANKLIN_999444703503681
+    # which appears to be a thesis on microfilm, but only has microfilm as a format.
+    context 'for a "Thesis" on "Microfilm"' do
+      let(:record) do
+        marc_record leader: '      tm',
+                    fields: [
+                      marc_field(tag: '245', subfields: { h: '[microfilm]' }),
+                      marc_field(tag: '502', subfields: { a: 'Ed.D. Thesis' })
+                    ]
+      end
+
+      it 'returns a facet value of only "Microformat"' do
+        # expect(formats).to eq %w[Microformat Thesis/Dissertation]
+        expect(formats).to eq %w[Microformat]
+      end
     end
 
     context 'for a "Book"' do
       let(:record) do
-        marc_record(fields: fields, leader: '      aa  ')
-      end
-      let(:fields) do
-        [marc_field(tag: '245', subfields: { k: 'blah' })]
+        marc_record leader: '      aa  ',
+                    fields: [marc_field(tag: '245', subfields: { k: 'blah' })]
       end
 
       it 'returns a facet value including only "Book"' do
@@ -30,11 +53,36 @@ describe 'PennMARC::Format' do
     end
 
     context 'for a "Projected Graphic"' do
+      let(:record) do
+        marc_record leader: '      gm  ',
+                    fields: [marc_control_field(tag: '007', value: 'go hkaaa ')]
+      end
 
+      it 'returns a facet value including only "Projected graphic"' do
+        expect(formats).to eq ['Projected graphic']
+      end
     end
 
     context 'with a "Curated Format" set' do
+      let(:record) do
+        marc_record fields: [marc_field(tag: '944', subfields: { a: subfield_a_value })]
+      end
 
+      context 'with a format in 944 ǂa' do
+        let(:subfield_a_value) { 'Book' }
+
+        it 'returns a facet value including a curated format of "Book"' do
+          expect(formats).to eq %w[Other Book]
+        end
+      end
+
+      context 'with a number in 944 ǂa' do
+        let(:subfield_a_value) { '123' }
+
+        it 'returns an empty facet value with a numeric value in for 944 ǂa' do
+          expect(formats).to eq ['Other']
+        end
+      end
     end
   end
 
