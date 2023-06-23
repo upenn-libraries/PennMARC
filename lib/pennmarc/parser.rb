@@ -15,10 +15,6 @@ require_relative 'helpers/subject'
 require_relative 'helpers/title'
 
 module PennMARC
-  attr_accessor :mappings
-
-  DEFINED_HELPERS = %w[Creator Database Date Format Genre Language Link Location Subject Title].freeze
-
   # Methods here should return values used in the indexer. The parsing logic should
   # NOT return values specific to any particular site/interface, but just general
   # MARC parsing logic for "title", "subject", "author", etc., as much as reasonably
@@ -26,6 +22,10 @@ module PennMARC
   #
   # Methods should, by default, take in a MARC::Record
   class Parser
+    attr_accessor :mappings
+
+    DEFINED_HELPERS = %w[Creator Database Date Format Genre Language Link Location Subject Title].freeze
+
     def initialize(helpers: DEFINED_HELPERS)
       @mappings = {}
       @helpers = Array.wrap(helpers) # TODO: load helpers dynamically?
