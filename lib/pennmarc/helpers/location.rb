@@ -3,11 +3,6 @@
 module PennMARC
   # Methods that return Library and Location values from Alma enhanced MARC fields
   class Location < Helper
-    #  Convert Array of location hashes to single hash with location_code as key and location hash as value
-    MAPPINGS = YAML.load_file('lib/pennmarc/mappings/locations.yml')['locations']['location'].index_by do |location|
-      location['location_code']
-    end
-
     class << self
       # Retrieves library location from enriched marc 'itm' or 'hld' fields, giving priority to the item location over
       # the holdings location. Returns item's location if available. Otherwise, returns holding's location.
