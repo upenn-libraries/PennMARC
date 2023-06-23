@@ -89,6 +89,7 @@ module PennMARC
     # @param [MARC::Record] record
     # @param [String|Array] subfield6_value either a string to look for in sub6 or an array of them
     # @param selector [Proc] takes a subfield as argument, returns a boolean
+    # @return [Array] array of linked alternates
     def linked_alternate(record, subfield6_value, &selector)
       record.fields('880')
             .select { |f| subfield_value?(f, '6', /^#{Array.wrap(subfield6_value).join('|')}/) }
@@ -103,6 +104,7 @@ module PennMARC
     # that value is the linkage ID itself and 8 because... IDK
     # @param [MARC::Record] record
     # @param [String|Array] subfield6_value either a string to look for in sub6 or an array of them
+    # @return [Array] array of linked alternates without 8 or 6 values
     def linked_alternate_not_6_or_8(record, subfield6_value)
       linked_alternate(record, subfield6_value) do |sf|
         !%w{6 8}.member?(sf.code)
@@ -112,6 +114,7 @@ module PennMARC
     # Returns the non-6,8 subfields from a datafield and its 880 link.
     # @param [MARC::Record] record
     # @param [String] tag
+    # @return [Array] acc
     def datafield_and_linked_alternate(record, tag)
       acc = []
       acc += record.fields(tag).map do |field|
