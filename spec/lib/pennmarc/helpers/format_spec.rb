@@ -6,10 +6,34 @@ describe 'PennMARC::Format' do
   let(:helper) { PennMARC::Format }
 
   describe '.format' do
-    let(:formats) { helper.facet(record) }
+    let(:map) { location_map }
+    let(:formats) { helper.facet(record, map) }
 
     context 'for an "Archive"' do
-      # TODO: needs location stuff
+      let(:map) do
+        { musearch: { specific_location: 'Penn Museum Archives',
+                      library: 'Penn Museum Archives',
+                      display: 'Penn Museum Archives, 215-898-8304' },
+          nursarch: { specific_location: 'Nursing Archives',
+                      library: 'Nursing Archives',
+                      display: 'Barbara Bates Center for History of Nursing - Fagin Hall 2U' } }
+      end
+
+      context 'for a record in "Penn Museum Archives (musearch)"' do
+        let(:record) { marc_record fields: [marc_field(tag: 'hld', subfields: { c: 'musearch' })] }
+
+        it 'returns format values of "Archive" for a record with holdings located in "musearch"' do
+          expect(formats).to include 'Archive'
+        end
+      end
+
+      context 'for a record in "Nursing Archives (nursarch)"' do
+        let(:record) { marc_record fields: [marc_field(tag: 'hld', subfields: { c: 'nursarch' })] }
+
+        it 'returns format values of without "Archive" for a record with a holding in "nursarch' do
+          expect(formats).not_to include 'Archive'
+        end
+      end
     end
 
     context 'for a "Newspaper"' do
@@ -38,6 +62,17 @@ describe 'PennMARC::Format' do
       it 'returns a facet value of only "Microformat"' do
         # expect(formats).to eq %w[Microformat Thesis/Dissertation]
         expect(formats).to eq %w[Microformat]
+      end
+    end
+
+    context 'for Microformats as determined by the holding call numbers' do
+      let(:record) do
+        marc_record fields: [
+          marc_field(tag: 'hld', subfields: { h: 'AB123', i: '.456 Microfilm' })]
+      end
+
+      it 'returns a facet value of "Microformat"' do
+        expect(formats).to eq ['Microformat']
       end
     end
 

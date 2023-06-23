@@ -49,8 +49,9 @@ module PennMARC
       # @todo learn more about the "Curated format" values considered in 944 field
       # @note ported from get_format
       # @param [MARC::Record] record
+      # @param [Hash] location_map
       # @return [Array<String>] format values for faceting
-      def facet(record)
+      def facet(record, location_map)
         formats = []
         format_code = leader_format(record.leader)
         f007 = record.fields('007').map(&:value)
@@ -59,16 +60,14 @@ module PennMARC
         title_medium = subfield_values_for tag: '245', subfield: :h, record: record
         media_type = subfield_values_for tag: '337', subfield: :a, record: record
 
-        # TODO: exactly what's going on here? is call_nums an accurate variable name?
+        # Get Call Number for holdings - ǂh gives us the 'Classification part' which contains strings like 'Microfilm'
         call_nums = record.fields(EnrichedMarc::TAG_HOLDING).map do |field|
-          # h gives us the 'Classification part' which contains strings like 'Microfilm'
           join_subfields(field, &subfield_in?([EnrichedMarc::SUB_HOLDING_CLASSIFICATION_PART,
                                                EnrichedMarc::SUB_HOLDING_ITEM_PART]))
         end
 
-        # get specific_location values from inventory info
-        # locations = Location.location(record: record, display_value: 'specific_location') # TODO: from AM's MR
-        locations = []
+        # get all specific_location values from inventory info
+        locations = Location.location record: record, location_map: location_map, display_value: :specific_location
 
         if include_manuscripts?(locations)
           formats << 'Manuscript'
@@ -253,6 +252,8 @@ module PennMARC
           media_type.any? { |val| val =~ /microform/i }
       end
 
+      # @todo "cajs" has no match in our location map, so it is not doing anything. Does this intend to catch cjsambx
+      #       "Library at the Katz Center - Archives"?
       # @param [Array<String>] locations
       # @return [Boolean]
       def archives_but_not_cajs_or_nursing?(locations)

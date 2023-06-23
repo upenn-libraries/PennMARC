@@ -78,7 +78,7 @@ module MarcSpecHelpers
                display: 'Levy Dental Medicine Library - Stacks' },
       stor: { specific_location: 'LIBRA',
               library: 'LIBRA',
-              display: 'LIBRA' }.freeze
+              display: 'LIBRA' }
     }
   end
 end
