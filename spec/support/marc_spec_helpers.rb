@@ -64,4 +64,21 @@ module MarcSpecHelpers
     record.leader = leader if leader
     record
   end
+
+  # Mock map for location lookup using Location helper
+  # The location codes :dent and :stor are the two outermost keys
+  # :specific_location, :library, :display are the inner keys that store location values
+  # @example
+  #   location_map[:stor][:library] #=> 'LIBRA'
+  # @return [Hash]
+  def location_map
+    {
+      dent: {  specific_location: 'Levy Dental Medicine Library - Stacks',
+               library: ['Health Sciences Libraries', 'Levy Dental Medicine Library'],
+               display: 'Levy Dental Medicine Library - Stacks' },
+      stor: { specific_location: 'LIBRA',
+              library: 'LIBRA',
+              display: 'LIBRA' }.freeze
+    }
+  end
 end

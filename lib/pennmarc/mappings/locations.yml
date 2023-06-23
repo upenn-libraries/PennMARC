@@ -1,0 +1,1801 @@
+---
+3eastelev:
+  specific_location: Van Pelt - third floor east elevator lobby
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - third floor east elevator lobby
+afro:
+  specific_location: Van Pelt - Africana Studies Resource Room
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Africana Studies Resource Room (305)
+annbcirc:
+  specific_location: Annenberg Library - Circulation Desk
+  library: Annenberg Library
+  display: Annenberg Library - Circulation Desk
+annbfilm:
+  specific_location: Annenberg Library - Microforms
+  library: Annenberg Library
+  display: Annenberg Library - Microforms
+annbgovt:
+  specific_location:
+  library: Annenberg Library
+  display: For this item write docdel@asc.upenn.edu or call 898-7027
+annbperi:
+  specific_location: Annenberg Library - Periodicals
+  library: Annenberg Library
+  display: Annenberg Library - Periodicals
+annbrefe:
+  specific_location: Annenberg Library - Reference
+  library: Annenberg Library
+  display: Annenberg Library - Reference
+annbrese:
+  specific_location: Annenberg Library - Reserve
+  library:
+    - Annenberg Library
+    - Reserve
+  display: Annenberg Library - Reserve
+annbthes:
+  specific_location: Annenberg Library - Theses
+  library: Annenberg Library
+  display: Annenberg Library - Theses
+arbor:
+  specific_location: Morris Arboretum
+  library: Morris Arboretum
+  display: Morris Arboretum, 215-247-5777
+archarch:
+  specific_location: Architectural Archives
+  library: Fisher Fine Arts Library
+  display: Architectural Archives, 215 898-8323
+amimp:
+  specific_location: Athenaeum of Philadelphia - American Imprints
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - American Imprints
+archivcoll:
+  specific_location: Athenaeum of Philadelphia - Archival Collections
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Archival Collections
+atlas:
+  specific_location: Athenaeum of Philadelphia - Atlases
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Atlases
+britimp:
+  specific_location: Athenaeum of Philadelphia - British Imprints
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - British Imprints
+carpco:
+  specific_location: Athenaeum of Philadelphia - Carpenters' Company
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Carpenters' Company
+catoffice:
+  specific_location: Athenaeum of Philadelphia - Cataloging Office
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Cataloging Office
+circcoll:
+  specific_location: Athenaeum of Philadelphia - Circulating Collection
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Circulating Collection
+circdesk:
+  specific_location: Athenaeum of Philadelphia - Circulation Desk
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Circulation Desk
+cidirbusrm:
+  specific_location: Athenaeum of Philadelphia - City Directories Busch Room
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - City Directories Busch Room
+collcare:
+  specific_location: Athenaeum of Philadelphia - Collections Care Manager
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Collections Care Manager
+fic:
+  specific_location: Athenaeum of Philadelphia - Fiction
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Fiction
+forimp:
+  specific_location: Athenaeum of Philadelphia - Foreign Imprints
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Foreign Imprints
+litaward:
+  specific_location: Athenaeum of Philadelphia - Literary Award
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Literary Award
+microfilm:
+  specific_location: Athenaeum of Philadelphia - Microfilm
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Microfilm
+newacqu:
+  specific_location: Athenaeum of Philadelphia - New Acquisitions
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - New Acquisitions
+nonfic:
+  specific_location: Athenaeum of Philadelphia - Non-Fiction
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Non-Fiction
+offsitede:
+  specific_location: Athenaeum of Philadelphia - Off-site (Delaware)
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Off-site (Delaware)
+rarecoll:
+  specific_location: Athenaeum of Philadelphia - Rare Books Collection
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Rare Books Collection
+reevecoll:
+  specific_location: Athenaeum of Philadelphia - Reeve Collection
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Reeve Collection
+ref:
+  specific_location: Athenaeum of Philadelphia - Reference
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Reference
+ruppcoll:
+  specific_location: Athenaeum of Philadelphia - Rupp Collection
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Rupp Collection
+serials:
+  specific_location: Athenaeum of Philadelphia - Serials
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Serials
+tradecat:
+  specific_location: Athenaeum of Philadelphia - Trade Catalogues
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Trade Catalogues
+videodvd:
+  specific_location: Athenaeum of Philadelphia - Videos
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Videos
+vismatl:
+  specific_location: Athenaeum of Philadelphia - Visual Materials
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Visual Materials
+athstor:
+  specific_location: LIBRA - Athenaeum of Philadelphia
+  library: LIBRA
+  display: LIBRA - Athenaeum of Philadelphia
+athstorcir:
+  specific_location: LIBRA - Athenaeum of Philadelphia Circulating
+  library: LIBRA
+  display: LIBRA - Athenaeum of Philadelphia Circulating
+biom:
+  specific_location: Holman Biotech Commons
+  library:
+    - Health Sciences Libraries
+    - Holman Biotech Commons
+  display: Holman Biotech Commons
+biomclin:
+  specific_location: Holman Biotech Commons - Clinical Reading Room
+  library:
+    - Health Sciences Libraries
+    - Holman Biotech Commons
+  display: Holman Biotech Commons - Clinical Reading Room
+biomhist:
+  specific_location: Holman Biotech Commons - Historical Collection
+  library:
+    - Health Sciences Libraries
+    - Holman Biotech Commons
+  display: Holman Biotech Commons - Historical Collection
+biomlibr:
+  specific_location: Holman Biotech Commons - Librarian's Office
+  library:
+    - Health Sciences Libraries
+    - Holman Biotech Commons
+  display: Holman Biotech Commons - Librarian's Office
+biomonli:
+  specific_location: Holman Biotech Commons - Online Office
+  library:
+    - Health Sciences Libraries
+    - Holman Biotech Commons
+  display: Holman Biotech Commons - Online Office
+biomperi:
+  specific_location: Holman Biotech Commons - Periodicals
+  library:
+    - Health Sciences Libraries
+    - Holman Biotech Commons
+  display: Holman Biotech Commons - Periodicals
+biomrede:
+  specific_location: Holman Biotech Commons - Reference Desk
+  library:
+    - Health Sciences Libraries
+    - Holman Biotech Commons
+  display: Holman Biotech Commons - Reference Desk
+biomrefe:
+  specific_location: Holman Biotech Commons - Reference
+  library:
+    - Health Sciences Libraries
+    - Holman Biotech Commons
+  display: Holman Biotech Commons - Reference
+biomrese:
+  specific_location: Holman Biotech Commons - Reserve
+  library:
+    - Health Sciences Libraries
+    - Holman Biotech Commons
+    - Reserve
+  display: Holman Biotech Commons - Reserve
+chem:
+  specific_location: Chemistry Library - Books
+  library: Chemistry Library
+  display: Chemistry Library - Books
+chemnewbk:
+  specific_location: Chemistry Library - New Books
+  library: Chemistry Library
+  display: Chemistry Library - New Book Shelf
+chemperi:
+  specific_location: Chemistry Library - Periodicals
+  library: Chemistry Library
+  display: Chemistry Library - Periodicals
+chemrdrm:
+  specific_location: Chemistry Library - Reading Room
+  library: Chemistry Library
+  display: Chemistry Library - Reading Room
+chemrefe:
+  specific_location: Chemistry Library - Reference
+  library: Chemistry Library
+  display: Chemistry Library - Reference
+chemrefstk:
+  specific_location: Chemistry Library - Reference Stacks
+  library: Chemistry Library
+  display: Chemistry Library - Reference Stacks
+chemrese:
+  specific_location: Chemistry Library - Reserve
+  library:
+    - Chemistry Library
+    - Reserve
+  display: Chemistry Library - Reserve
+cjs:
+  specific_location: Library at the Katz Center - Stacks
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Stacks
+cjsambx:
+  specific_location: Library at the Katz Center - Archives
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Archives Americana
+cjsarc:
+  specific_location: Library at the Katz Center - Archives
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Archives Room
+cjsarcbox1:
+  specific_location: Library at the Katz Center - Archives
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Archives Box 1
+cjsarcms:
+  specific_location: Library at the Katz Center - Archives
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Archives Room Manuscript
+cjsarcths:
+  specific_location: Library at the Katz Center - Archives
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Archives Thesis
+cjsartif:
+  specific_location: Library at the Katz Center - Reading Room
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Artifacts
+cjsbox1:
+  specific_location: Library at the Katz Center - Stacks
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Stacks Box 1
+cjsbox2:
+  specific_location: Library at the Katz Center - Stacks
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Stacks Box 2
+cjsbox3:
+  specific_location: Library at the Katz Center - Stacks
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Stacks Box 3
+cjsbox4:
+  specific_location: Library at the Katz Center - Stacks
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Stacks Box 4
+cjscdrom:
+  specific_location: Library at the Katz Center - Reading Room
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - CD-ROM
+cjscirc:
+  specific_location: Library at the Katz Center - Reading Room
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Circulation
+cjscomp:
+  specific_location: Library at the Katz Center - Reading Room
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Computer Room
+cjsdir:
+  specific_location: Library at the Katz Center - Stacks
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Director's Office
+cjsencyc:
+  specific_location: Library at the Katz Center - Reading Room
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Reference Encyclopedia
+cjsfiche:
+  specific_location: Library at the Katz Center - Stacks
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Microfiche
+cjsfilm:
+  specific_location: Library at the Katz Center - Stacks
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Microfilm
+cjsfol:
+  specific_location: Library at the Katz Center - Stacks
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Stacks Folio
+cjsgf:
+  specific_location: Library at the Katz Center - Rare Book Room
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Genizah Fragments
+cjsgrc:
+  specific_location: Library at the Katz Center - Archives
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Graphics Collection
+cjshur:
+  specific_location: Library at the Katz Center - Stacks
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Hurowitz Collection
+cjsincun:
+  specific_location: Library at the Katz Center - Rare Book Room
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Rare Book Incunabula
+cjsinproc:
+  specific_location: Library at the Katz Center - Stacks
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Processing
+cjsinprocn:
+  specific_location: Library at the Katz Center - Rare Book Room
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Processing Non-Circulating
+cjsmar:
+  specific_location: Library at the Katz Center - Stacks
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Margolis Collection
+cjsmemor:
+  specific_location: Library at the Katz Center - Stacks
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Memorial Collection
+cjsmini:
+  specific_location: Library at the Katz Center - Stacks
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Miniatures Stacks
+cjsoffice:
+  specific_location: Library at the Katz Center - Reading Room
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Office
+cjsover:
+  specific_location: Library at the Katz Center - Stacks
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Oversize Stacks
+cjsperb1:
+  specific_location: Library at the Katz Center - Stacks
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Periodicals B1
+cjsperb2:
+  specific_location: Library at the Katz Center - Stacks
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Periodicals B2
+cjsperbox1:
+  specific_location: Library at the Katz Center - Stacks
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Periodicals Box 1
+cjsperbox2:
+  specific_location: Library at the Katz Center - Stacks
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Periodicals Box 2
+cjsperfol:
+  specific_location: Library at the Katz Center - Stacks
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Periodicals Folio
+cjspergal:
+  specific_location: Library at the Katz Center - Reading Room
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Periodicals Gallery
+cjsperover:
+  specific_location: Library at the Katz Center - Stacks
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Periodicals Oversize
+cjsrar:
+  specific_location: Library at the Katz Center - Rare Book Room
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Rare Book Room
+cjsraram:
+  specific_location: Library at the Katz Center - Rare Book Room
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Rare Book Americana
+cjsrarbx1:
+  specific_location: Library at the Katz Center - Rare Book Room
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Rare Book Box 1
+cjsrarbx2:
+  specific_location: Library at the Katz Center - Rare Book Room
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Rare Book Box 2
+cjsrarbx3:
+  specific_location: Library at the Katz Center - Rare Book Room
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Rare Book Box 3
+cjsrarbx4:
+  specific_location: Library at the Katz Center - Rare Book Room
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Rare Book Box 4
+cjsrarfol:
+  specific_location: Library at the Katz Center - Rare Book Room
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Rare Book Folio
+cjsrargiga:
+  specific_location: Library at the Katz Center - Rare Book Room
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Rare Book Giant
+cjsrarmini:
+  specific_location: Library at the Katz Center - Rare Book Room
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Rare Book Miniature
+cjsrarms:
+  specific_location: Library at the Katz Center - Rare Book Room
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Rare Book Manuscript
+cjsrarover:
+  specific_location: Library at the Katz Center - Rare Book Room
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Rare Book Oversize
+cjsref:
+  specific_location: Library at the Katz Center - Reading Room
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Reference Room
+cjsreffol:
+  specific_location: Library at the Katz Center - Reading Room
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Reference Folio
+cjsreffol+:
+  specific_location: Library at the Katz Center - Reading Room
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Reference Oversize
+cjsres:
+  specific_location: Library at the Katz Center - Reading Room
+  library:
+    - Library at the Katz Center for Advanced Judaic Studies
+    - Reserve
+  display: Library at the Katz Center - Reserves
+cjsspec:
+  specific_location: Library at the Katz Center - Stacks
+  library:
+    - Special Collections
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Special
+cjsvideo:
+  specific_location: Library at the Katz Center - Stacks
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Library at the Katz Center - Video
+classics:
+  specific_location: Van Pelt - Classics Resource Room
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Classics Resource Room (301)
+dent:
+  specific_location: Levy Dental Medicine Library - Stacks
+  library:
+    - Health Sciences Libraries
+    - Levy Dental Medicine Library
+  display: Levy Dental Medicine Library - Stacks
+dentrare:
+  specific_location: Levy Dental Medicine Library - Rare Books
+  library:
+    - Special Collections
+    - Health Sciences Libraries
+    - Levy Dental Medicine Library
+  display: Levy Dental Medicine Library - Rare Books
+dentrefe:
+  specific_location: Levy Dental Medicine Library - Reference
+  library:
+    - Health Sciences Libraries
+    - Levy Dental Medicine Library
+  display: Levy Dental Medicine Library - Reference
+dentrese:
+  specific_location: Levy Dental Medicine Library - Reserve
+  library:
+    - Health Sciences Libraries
+    - Levy Dental Medicine Library
+    - Reserve
+  display: Levy Dental Medicine Library - Reserve
+dentshils:
+  specific_location: Levy Dental Medicine Library - Shils Boardroom
+  library:
+    - Health Sciences Libraries
+    - Levy Dental Medicine Library
+  display: Levy Dental Medicine Library - Shils Boardroom
+dncirc:
+  specific_location: Levy Dental Medicine Library - Circulation
+  library:
+    - Health Sciences Libraries
+    - Levy Dental Medicine Library
+  display: Levy Dental Medicine Library - Circulation
+easiacom:
+  specific_location: Van Pelt - East Asia Compact Shelving
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - East Asia Compact Shelving
+easiacmx:
+  specific_location: Van Pelt - East Asia Comics
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - East Asia Comics
+easiaover:
+  specific_location: Van Pelt - East Asia Oversize
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - East Asia Oversize
+easiasem:
+  specific_location: Van Pelt - East Asia Seminar Room
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - East Asia Seminar Room (526)
+eastasia:
+  specific_location: Van Pelt - East Asia Collection
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - East Asia
+edcomm:
+  specific_location: Education Commons
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Education Commons
+  display: Education Commons
+engi:
+  specific_location: Engineering Library
+  library: Engineering Library
+  display: Engineering Library
+engicirc:
+  specific_location: Engineering Library - Circulation Desk
+  library: Engineering Library
+  display: Engineering Library - Circulation Desk
+enginewbk:
+  specific_location: Engineering Library - New Book
+  library: Engineering Library
+  display: Engineering Library - New Book
+engiperi:
+  specific_location: Engineering Library - Periodicals
+  library: Engineering Library
+  display: Engineering Library - Periodicals (alphabetical by title)
+engirefe:
+  specific_location: Engineering Library - Reference
+  library: Engineering Library
+  display: Engineering Library - Reference
+engirese:
+  specific_location: Engineering Library - Reserve
+  library:
+    - Engineering Library
+    - Reserve
+  display: Engineering Library - Reserve
+engsc:
+  specific_location: Engineering Library - Study Collection
+  library: Engineering Library
+  display: Engineering Library - Study Collection
+eres:
+  specific_location:
+  library:
+  display: E-reserves
+fanewbook:
+  specific_location: Fisher Fine Arts Library - New Book Display
+  library: Fisher Fine Arts Library
+  display: Fine Arts Library - New Book Display
+FEATURED:
+  specific_location: Van Pelt - Featured Books--First Floor
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Featured Books--First Floor, see also table near Moelis Lounge
+fine:
+  specific_location: Fisher Fine Arts Library
+  library: Fisher Fine Arts Library
+  display: Fine Arts Library
+finecage:
+  specific_location: Fisher Fine Arts Library - Cage
+  library:
+    - Special Collections
+    - Fisher Fine Arts Library
+  display: Fine Arts Library - Cage (ask at desk)
+finecirc:
+  specific_location: Fisher Fine Arts Library - Circulation Desk
+  library: Fisher Fine Arts Library
+  display: Fine Arts Library - Circulation Desk
+finecore:
+  specific_location: Fisher Fine Arts Library - Core Reading Collection
+  library: Fisher Fine Arts Library
+  display: Fine Arts Library - Core Reading Collection
+finelock:
+  specific_location: Fisher Fine Arts Library - Locked Case
+  library:
+    - Special Collections
+    - Fisher Fine Arts Library
+  display: Fine Arts Library - Locked Case (ask at desk)
+finemaps:
+  specific_location: Fisher Fine Arts Library - Map Collection
+  library:
+    - Special Collections
+    - Fisher Fine Arts Library
+  display: Fine Arts Library - Map Collection
+finerare:
+  specific_location: Fisher Fine Arts Library - Rare Book
+  library:
+    - Special Collections
+    - Fisher Fine Arts Library
+  display: Fine Arts Library - Rare Book
+fineraremp:
+  specific_location: Fisher Fine Arts Library - Rare Maps
+  library:
+    - Special Collections
+    - Fisher Fine Arts Library
+  display: Fine Arts Library - Rare Map Collection
+finerarept:
+  specific_location: Fisher Fine Arts Library - Rare Print
+  library:
+    - Special Collections
+    - Fisher Fine Arts Library
+  display: Fine Arts Library - Rare Print Collection
+finerefe:
+  specific_location: Fisher Fine Arts Library - Reference
+  library: Fisher Fine Arts Library
+  display: Fine Arts Library - Reference
+finerese:
+  specific_location: Fisher Fine Arts Library - Reserve
+  library:
+    - Fisher Fine Arts Library
+    - Reserve
+  display: Fine Arts Library - Reserve
+fineslid:
+  specific_location: Fisher Fine Arts Library - Image
+  library: Fisher Fine Arts Library
+  display: Fine Arts Library - Slide Collection
+finestudio:
+  specific_location: Fisher Fine Arts Library - Studio Collection
+  library: Fisher Fine Arts Library
+  display: Fine Arts Library - Studio Collection
+HARR:
+  specific_location:
+  library:
+  display:
+judaica:
+  specific_location: Van Pelt - Judaica and Ancient Near East Resource Room
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Judaica/Ancient Near East Resource Room (401)
+lipp:
+  specific_location: Lippincott Library
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Lippincott Library
+  display: Lippincott Library
+lippb10:
+  specific_location: LIBRA
+  library: LIBRA
+  display: LIBRA
+lippbtrend:
+  specific_location: Lippincott Library - Business Trends
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Lippincott Library
+  display: Lippincott Library - Business Trends
+lippbusc:
+  specific_location: Lippincott Library - Business Collection
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Lippincott Library
+  display: Lippincott Library - Business Collection
+lippcomp:
+  specific_location: Lippincott Library - Class of 1956 Computer Area
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Lippincott Library
+  display: Lippincott Library - Class of 1956 Computer Area
+lipplipm:
+  specific_location: Lippincott Library - Lipman Collection
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Lippincott Library
+  display: Lippincott Library - Lipman Collection (ask staff)
+lipppeck:
+  specific_location: Lippincott Library - Peck Collection
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Lippincott Library
+  display: Lippincott Library - Peck Collection
+lipprefdsk:
+  specific_location: Lippincott Library - Reference Desk
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Lippincott Library
+  display: Lippincott Library - Reference Desk
+lipprefe:
+  specific_location: Lippincott Library - Reference
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Lippincott Library
+  display: Lippincott Library - Reference Stacks
+lipprefs:
+  specific_location: Lippincott Library - Reference Services
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Lippincott Library
+  display: Lippincott Library - Reference Services
+lipprein:
+  specific_location: Lippincott Library - Reference Indexes
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Lippincott Library
+  display: Lippincott Library - Reference Indexes
+lipprese:
+  specific_location: Lippincott Library - Reserve
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Lippincott Library
+    - Reserve
+  display: Lippincott Library - Reserve
+lippreseds:
+  specific_location: Lippincott Library - Reserve Desk
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Lippincott Library
+    - Reserve
+  display: Lippincott Library - Reserve Desk
+lippsnyd:
+  specific_location: Lippincott Library - Snyder Computer Area
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Lippincott Library
+  display: Lippincott Library - Snyder Computer Area
+math:
+  specific_location: Math/Physics/Astronomy Library
+  library:
+    - Math/Physics/Astronomy Library
+    - Math/Physics/Astronomy Library
+  display: Math/Physics/Astronomy Library
+mathcirc:
+  specific_location: Math/Physics/Astronomy Library - Circulation Desk
+  library: Math/Physics/Astronomy Library
+  display: Math/Physics/Astronomy - Circulation Desk
+mathfeat:
+  specific_location: Math/Physics/Astronomy Library - Featured Books Display
+  library: Math/Physics/Astronomy Library
+  display: Math/Physics/Astronomy Library - Featured Books Display
+mathnewbk:
+  specific_location: Math/Physics/Astronomy Library - New Book Shelf
+  library: Math/Physics/Astronomy Library
+  display: Math/Physics/Astronomy - New Book Shelf
+mathperi:
+  specific_location: Math/Physics/Astronomy Library - Periodicals
+  library: Math/Physics/Astronomy Library
+  display: Math/Physics/Astronomy - Periodicals (alphabetical by title)
+mathrefe:
+  specific_location: Math/Physics/Astronomy Library - Reference
+  library: Math/Physics/Astronomy Library
+  display: Math/Physics/Astronomy - Reference
+mathrese:
+  specific_location: Math/Physics/Astronomy Library - Reserve
+  library:
+    - Math/Physics/Astronomy Library
+    - Reserve
+  display: Math/Physics/Astronomy - Reserve
+medieval:
+  specific_location: Van Pelt - Medieval Studies Resource Room
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Medieval Studies Resource Room (405)
+mideast:
+  specific_location: Van Pelt - Middle East Seminar Room
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Middle East Seminar Room (523)
+mideastres:
+  specific_location: Van Pelt - Middle East Seminar Reserve
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Reserve
+  display: Van Pelt - Middle East Seminar Reserve
+moor:
+  specific_location: Engineering Library
+  library: Engineering Library
+  display: Engineering Library
+moorrefe:
+  specific_location: Engineering Library - Reference
+  library: Engineering Library
+  display: Engineering Library - Reference
+moorrese:
+  specific_location: Engineering Library - Reserve
+  library:
+    - Engineering Library
+    - Reserve
+  display: Engineering Library - Reserve
+muse:
+  specific_location: Penn Museum Library
+  library: Penn Museum Library
+  display: Penn Museum Library
+musearch:
+  specific_location: Penn Museum Archives
+  library: Penn Museum Archives
+  display: Penn Museum Archives, 215-898-8304
+musebrin:
+  specific_location: Penn Museum Library - Brinton Collection
+  library:
+    - Special Collections
+    - Penn Museum Library
+  display: Penn Museum Library - Brinton Collection
+musedesk:
+  specific_location: Penn Museum Library - Circulation
+  library: Penn Museum Library
+  display: Penn Museum Library - Desk
+museegyp:
+  specific_location: Penn Museum Library - Egyptian
+  library: Penn Museum Library
+  display: Penn Museum Library - Egyptian Collection
+museegypov:
+  specific_location: Penn Museum Library - Egyptian Oversize
+  library: Penn Museum Library
+  display: Penn Museum Library - Egyptian Oversize
+musekolb:
+  specific_location: Penn Museum Library - Kolb
+  library: Penn Museum Library
+  display: Penn Museum Library - Kolb
+muselock:
+  specific_location: Penn Museum Library - Locked
+  library:
+    - Special Collections
+    - Penn Museum Library
+  display: Penn Museum Library - Locked Cases (ask staff)
+musemedia:
+  specific_location: Penn Museum Library - Media
+  library: Penn Museum Library
+  display: Penn Museum Library - Media
+muserefe:
+  specific_location: Penn Museum Library - Reference
+  library: Penn Museum Library
+  display: Penn Museum Library - Reference
+muserese:
+  specific_location: Penn Museum Library - Reserve
+  library:
+    - Penn Museum Library
+    - Reserve
+  display: Penn Museum Library - Reserve
+musiclist:
+  specific_location: Van Pelt - Ormandy Center
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Ormandy Music and Media Center
+musicrese:
+  specific_location: Van Pelt - Ormandy Center
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Reserve
+  display: Van Pelt - Ormandy Reserve
+musicsem:
+  specific_location: Van Pelt - Marian Anderson Music Study Center
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Marian Anderson Music Study Center (452)
+musictech:
+  specific_location:
+  library:
+  display: Music Library Technical Services
+musicup:
+  specific_location: Van Pelt - Ormandy Center
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Ormandy University Performances
+musinwbk:
+  specific_location: Van Pelt - Music Library New Book Shelf
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Music Library New Book Shelf
+musisemres:
+  specific_location: Van Pelt - Marian Anderson Study Center Reserve
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Reserve
+  display: Van Pelt - Marian Anderson Study Center Reserve
+newb:
+  specific_location: 'Veterinary: du Pont Library (New Bolton)'
+  library:
+    - Health Sciences Libraries
+    - Veterinary
+    - 'Veterinary: du Pont Library (New Bolton)'
+  display: 'Veterinary: du Pont Library (New Bolton)'
+newbcirc:
+  specific_location: 'Veterinary: du Pont Library (New Bolton) - Circulation Desk'
+  library:
+    - Health Sciences Libraries
+    - Veterinary
+    - 'Veterinary: du Pont Library (New Bolton)'
+  display: 'Veterinary: du Pont Library (New Bolton) - Circulation Desk'
+newbofc:
+  specific_location: 'Veterinary: du Pont Library (New Bolton) - Office'
+  library:
+    - Health Sciences Libraries
+    - Veterinary
+    - 'Veterinary: du Pont Library (New Bolton)'
+  display: 'Veterinary: du Pont Library (New Bolton) - Office'
+newbrare:
+  specific_location: Kislak Center for Special Collections - Fairman Rogers Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Fairman Rogers Coll.
+newbrefe:
+  specific_location: 'Veterinary: du Pont Library (New Bolton) - Reference'
+  library:
+    - Health Sciences Libraries
+    - Veterinary
+    - 'Veterinary: du Pont Library (New Bolton)'
+  display: 'Veterinary: du Pont Library (New Bolton) - Reference'
+newbrese:
+  specific_location: 'Veterinary: du Pont Library (New Bolton) - Reserve'
+  library:
+    - Health Sciences Libraries
+    - Veterinary
+    - 'Veterinary: du Pont Library (New Bolton)'
+    - Reserve
+  display: 'Veterinary: du Pont Library (New Bolton) - Reserve'
+nursarch:
+  specific_location: Nursing Archives
+  library: Nursing Archives
+  display: Barbara Bates Center for History of Nursing - Fagin Hall 2U
+oobiom:
+  specific_location: On Order
+  library:
+    - Health Sciences Libraries
+    - Holman Biotech Commons
+  display: Ordered for Holman Biotech Commons
+oochem:
+  specific_location: On Order
+  library: Chemistry Library
+  display: Ordered for Chemistry Library
+oocjs:
+  specific_location: On Order
+  library: Library at the Katz Center for Advanced Judaic Studies
+  display: Ordered for Center for Judaic Studies Library
+oodental:
+  specific_location: On Order
+  library:
+    - Health Sciences Libraries
+    - Levy Dental Medicine Library
+  display: Ordered for Levy Dental Medicine Library
+ooeastasia:
+  specific_location: On Order
+  library: Van Pelt-Dietrich Library Center
+  display: Ordered for East Asia
+ooengi:
+  specific_location: On Order
+  library: Engineering Library
+  display: Ordered for Engineering Library
+oofine:
+  specific_location: On Order
+  library: Fisher Fine Arts Library
+  display: Ordered for Fine Arts Library
+oolipp:
+  specific_location: On Order
+  library: Lippincott Library
+  display: Ordered for Lippincott Library
+oomath:
+  specific_location: On Order
+  library: Math/Physics/Astronomy Library
+  display: Ordered for Math-Physics-Astronomy Library
+oomuse:
+  specific_location: On Order
+  library: Penn Museum Library
+  display: Ordered for Museum Library
+oomusic:
+  specific_location: On Order
+  library: Van Pelt-Dietrich Library Center
+  display: Ordered for Music Library
+oonewbolt:
+  specific_location: On Order
+  library:
+    - Health Sciences Libraries
+    - Veterinary
+    - 'Veterinary: du Pont Library (New Bolton)'
+  display: Ordered for New Bolton Library
+ooormandy:
+  specific_location: On Order
+  library: Van Pelt-Dietrich Library Center
+  display: Ordered for Ormandy Center
+oostor:
+  specific_location: On Order
+  library: LIBRA
+  display: Ordered for LIBRA
+oovanp:
+  specific_location: On Order
+  library: Van Pelt-Dietrich Library Center
+  display: Ordered for Van Pelt Library
+oovete:
+  specific_location: On Order
+  library:
+    - Health Sciences Libraries
+    - Veterinary
+  display: 'Ordered for Veterinary: Atwood Library (Campus)'
+ooyarn:
+  specific_location: On Order
+  library: Yarnall Collection
+  display: Ordered for Yarnall collection
+pah:
+  specific_location: Pennsylvania Hospital Library
+  library:
+    - Health Sciences Libraries
+    - Pennsylvania Hospital Library
+  display: Pennsylvania Hospital Library
+paharch:
+  specific_location: Pennsylvania Hospital Library - Archivist's Office
+  library:
+    - Health Sciences Libraries
+    - Pennsylvania Hospital Library
+  display: Pennsylvania Hospital Library - Archivist's Office
+pahcirc:
+  specific_location: Pennsylvania Hospital Library - Circulation
+  library:
+    - Health Sciences Libraries
+    - Pennsylvania Hospital Library
+  display: Pennsylvania Hospital Library - Circulation
+pahhc:
+  specific_location: Pennsylvania Hospital Library - Historic Collection
+  library:
+    - Health Sciences Libraries
+    - Pennsylvania Hospital Library
+  display: Pennsylvania Hospital Library - Historic Collection
+pahhist:
+  specific_location: Pennsylvania Hospital Library - History
+  library:
+    - Health Sciences Libraries
+    - Pennsylvania Hospital Library
+  display: Pennsylvania Hospital Library - History
+pahiph:
+  specific_location: Pennsylvania Hospital Library - IPH Collection
+  library:
+    - Health Sciences Libraries
+    - Pennsylvania Hospital Library
+  display: Pennsylvania Hospital Library - IPH Collection
+pahref:
+  specific_location: Pennsylvania Hospital Library - Reference
+  library:
+    - Health Sciences Libraries
+    - Pennsylvania Hospital Library
+  display: Pennsylvania Hospital Library - Reference
+pahres:
+  specific_location: Pennsylvania Hospital Library - Reserve
+  library:
+    - Health Sciences Libraries
+    - Pennsylvania Hospital Library
+    - Reserve
+  display: Pennsylvania Hospital Library - Reserve
+pahresrm:
+  specific_location: Pennsylvania Hospital Library - Reserve Room
+  library:
+    - Health Sciences Libraries
+    - Pennsylvania Hospital Library
+    - Reserve
+  display: Pennsylvania Hospital Library - Reserve Room
+pahstk:
+  specific_location: Pennsylvania Hospital Library - Stacks
+  library:
+    - Health Sciences Libraries
+    - Pennsylvania Hospital Library
+  display: Pennsylvania Hospital Library - Stacks
+religious:
+  specific_location: Van Pelt - Medieval Studies Resource Room
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Medieval Studies Resource Room (405)
+rosedesk:
+  specific_location: Van Pelt - Rosengarten Reserve
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Reserve
+  display: Van Pelt - Rosengarten Reserve Desk
+roserefe:
+  specific_location: Van Pelt - Rosengarten Reserve
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Reserve
+  display: Van Pelt - Rosengarten Reserve Reference
+roserese:
+  specific_location: Van Pelt - Rosengarten Reserve
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Reserve
+  display: Van Pelt - Rosengarten Reserve
+rotc:
+  specific_location:
+  library:
+  display: ROTC Library,  J.P.W.  Library, 3205 Lancaster Ave. 590-8808
+sasiarefe:
+  specific_location: Van Pelt - South Asia Studies Reading Room
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - South Asia Studies Reading Room (551)
+sasiarese:
+  specific_location: Van Pelt - South Asian Reserve
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Reserve
+  display: Van Pelt - South Asia Reserve (551)
+scg123:
+  specific_location: Kislak Center for Special Collections - Rare Book Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Rare Book Collection 123
+sc1100c:
+  specific_location: Kislak Center for Special Collections - 1100C Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - 1100C Collection
+scadams:
+  specific_location: Kislak Center for Special Collections - Adams Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Adams Collection
+scartbk:
+  specific_location: Kislak Center for Special Collections - Artists' Books
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Artists' Books
+scbanks:
+  specific_location: Kislak Center for Special Collections - Joanna Banks Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Joanna Banks Collection
+scblank:
+  specific_location: Kislak Center for Special Collections - Blank Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Blank Collection
+scbyron:
+  specific_location: Kislak Center for Special Collections - Byron Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Byron Collection
+sccanvas:
+  specific_location: Kislak Center for Special Collections - Canvassing Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Canvassing Collection
+sccomics:
+  specific_location: Kislak Center for Special Collections - Comics Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Comics Collection
+sccurt:
+  specific_location: Kislak Center for Special Collections - Curtis Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Curtis Collection
+scdech:
+  specific_location: Kislak Center for Special Collections - Dechert Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Dechert Collection
+scdethou:
+  specific_location: Kislak Center for Special Collections - De Thou Library
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - De Thou Library
+scdreis:
+  specific_location: Kislak Center for Special Collections - Dreiser Library
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Dreiser Library
+scdrey:
+  specific_location: Kislak Center for Special Collections - Dreyfus Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Dreyfus Collection
+scelias:
+  specific_location: Kislak Center for Special Collections - Swift's Reading Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Swift's Reading Collection
+scelz:
+  specific_location: Kislak Center for Special Collections - Elzevier Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Elzevier Collection
+scfast:
+  specific_location: Kislak Center for Special Collections - Fast Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Fast Collection
+scforr:
+  specific_location: Kislak Center for Special Collections - Forrest Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Forrest Collection
+scfoun:
+  specific_location: Kislak Center for Special Collections - Founders Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Founders Collection
+scfreed:
+  specific_location: Freedman Jewish Sound Archives
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Van Pelt - Freedman Jewish Sound Archives
+scfurn:
+  specific_location: Kislak Center for Special Collections - Furness Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Furness Collection
+scfurnlib:
+  specific_location: Kislak Center for Special Collections - Furness Shakespeare Library
+    (Van Pelt 628)
+  library:
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Furness Shakespeare Library (Van
+    Pelt 628)
+scfurnst:
+  specific_location: Kislak Center for Special Collections - Furness Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Furness Storage
+scgull:
+  specific_location: Kislak Center for Special Collections - Gulliver's Travels Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Gulliver's Travels Collection
+scinc:
+  specific_location: Kislak Center for Special Collections - Incunables
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Incunables
+sclea:
+  specific_location: Kislak Center for Special Collections - Lea Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Lea Collection
+scmap:
+  specific_location: Kislak Center for Special Collections - Rare Book Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Rare Book Collection
+scmss:
+  specific_location: Kislak Center for Special Collections - Manuscripts
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Manuscripts
+scmst:
+  specific_location: Kislak Center for Special Collections - Manuscripts Storage
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: 'Kislak Center for Special Collections - Manuscripts Storage, contact '
+scmsw:
+  specific_location: Kislak Center for Special Collections - Web
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Web
+scparts:
+  specific_location: Kislak Center for Special Collections - Books-in-Parts Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Books-in-Parts Collection
+scpspa:
+  specific_location: Kislak Center for Special Collections - Phila. Society for Promoting
+    Agriculture Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Phila. Society for Promoting Agriculture
+    Collection
+scrare:
+  specific_location: Kislak Center for Special Collections - Rare Book Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Rare Book Collection
+screading:
+  specific_location: Kislak Center for Special Collections - Reading Room
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections Reading Room
+screfe:
+  specific_location: Kislak Center for Special Collections - Reference Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Reference Collection
+screfestor:
+  specific_location: Kislak Center for Special Collections - Reference Storage
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections Reference Storage
+scschimmel:
+  specific_location: Kislak Center for Special Collections - Schimmel Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Schimmel Collection
+scsing:
+  specific_location: Kislak Center for Special Collections - Singer-Mendenhall Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Singer-Mendenhall Collection
+scsmith:
+  specific_location: Kislak Center for Special Collections - E.F. Smith Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - E.F. Smith Collection
+scsmithst:
+  specific_location: Kislak Center for Special Collections - E.F. Smith Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - E.F. Smith Collection Storage
+scsterne:
+  specific_location: Kislak Center for Special Collections - Day Sterne Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Day Sterne Collection
+scstor:
+  specific_location: Kislak Center for Special Collections - Rare Book Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Rare Book Collection Storage
+scteer:
+  specific_location: Kislak Center for Special Collections - Teerink Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Teerink Collection
+sctehon:
+  specific_location: Kislak Center for Special Collections - Tehon Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Tehon Collection
+sctress:
+  specific_location: Kislak Center for Special Collections - Arthur Tress Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Arthur Tress Collection
+scvilain:
+  specific_location: Kislak Center for Special Collections - Vilain-Wieck Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Vilain-Wieck Collection
+scwhit:
+  specific_location: Kislak Center for Special Collections - Whitman Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+  display: Kislak Center for Special Collections - Whitman Collection
+scyarn:
+  specific_location: Kislak Center for Special Collections - Yarnall Collection
+  library:
+    - Special Collections
+    - Kislak Center for Special Collections
+    - Van Pelt-Dietrich Library Center
+    - Yarnall Collection
+  display: Kislak Center for Special Collections - Yarnall Collection
+stor:
+  specific_location: LIBRA
+  library: LIBRA
+  display: LIBRA
+storcirc:
+  specific_location: LIBRA - Circulation
+  library: LIBRA
+  display: LIBRA - Circulation
+storcrstxt:
+  specific_location: GIC Collection at Penn Libraries
+  library:
+    - LIBRA
+    - GIC Collection
+  display: GIC Collection at Penn Libraries
+storfine:
+  specific_location: LIBRA Fisher Fine Arts
+  library: LIBRA
+  display: LIBRA Fisher Fine Arts
+storm:
+  specific_location: LIBRA
+  library: LIBRA
+  display: LIBRA - Music
+storlimit:
+  specific_location: LIBRA Limited
+  library:
+    - Special Collections
+    - LIBRA
+  display: LIBRA Limited
+storrare:
+  specific_location: LIBRA Rare
+  library:
+    - Special Collections
+    - LIBRA
+  display: LIBRA Rare
+storspec:
+  specific_location: LIBRA Special
+  library:
+    - Special Collections
+    - LIBRA
+  display: LIBRA Special
+scrunning:
+  specific_location: LIBRA Running Press Collection
+  library:
+    - Special Collections
+    - LIBRA
+  display: LIBRA Running Press Collection
+sw3rdfl:
+  specific_location: Van Pelt - Temporarily shelved on third floor southwest corner
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Temporarily shelved on third floor southwest corner
+refsw3rdfl:
+  specific_location: Van Pelt - Temporarily shelved on third floor southwest reference
+    corner
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Temporarily shelved on third floor southwest reference corner
+town:
+  specific_location: Engineering Library
+  library: Engineering Library
+  display: Engineering Library
+townrefe:
+  specific_location: Engineering Library - Reference
+  library: Engineering Library
+  display: Engineering Library - Reference
+townrese:
+  specific_location: Engineering Library - Reserve
+  library:
+    - Engineering Library
+    - Reserve
+  display: Engineering Library - Reserve
+townthes:
+  specific_location: Engineering Library - Theses
+  library: Engineering Library
+  display: Engineering Library - Theses
+twcirc:
+  specific_location:
+  library: Engineering Library
+  display: Engineering Library - Circulation Desk
+univarch:
+  specific_location: University Archives
+  library: University Archives
+  display: University Archives
+vanp:
+  specific_location: Van Pelt - Stacks
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt Library
+vanpbest:
+  specific_location: Van Pelt - Bestsellers Collection
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Bestsellers Collection
+vanpchil:
+  specific_location: Van Pelt - Illman Carter Children's Collection
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Illman Carter Children's Collection
+vanpcgc:
+  specific_location: Van Pelt - Center for Global Collections
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Center for Global Collections
+vanpmicro:
+  specific_location: Van Pelt - Microtext
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Microtext
+vanpmiddle:
+  specific_location:
+  library:
+  display: Van Pelt - Middle East Tech Services
+vanpNoCirc:
+  specific_location: Van Pelt - Non Circulating
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Non Circulating
+vanpvideo:
+  specific_location: Van Pelt - Video Collection
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Video Collection (ask at Circulation Desk)
+vanpzo:
+  specific_location: Van Pelt - Z oversize
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Z oversize
+vete:
+  specific_location: 'Veterinary: Atwood Library (Campus)'
+  library:
+    - Health Sciences Libraries
+    - Veterinary
+    - 'Veterinary: Atwood Library (Campus)'
+  display: 'Veterinary: Atwood Library (Campus)'
+vetedisp:
+  specific_location: 'Veterinary: Atwood Library (Campus) - Display'
+  library:
+    - Health Sciences Libraries
+    - Veterinary
+    - 'Veterinary: Atwood Library (Campus)'
+  display: 'Veterinary: Atwood Library (Campus) - Display'
+vetelibr:
+  specific_location: 'Veterinary: Atwood Library (Campus) - Librarian''s Office'
+  library:
+    - Health Sciences Libraries
+    - Veterinary
+    - 'Veterinary: Atwood Library (Campus)'
+  display: 'Veterinary: Atwood Library (Campus) - Librarian''s Office'
+veteover:
+  specific_location: 'Veterinary: Atwood Library (Campus) - Oversize'
+  library:
+    - Health Sciences Libraries
+    - Veterinary
+    - 'Veterinary: Atwood Library (Campus)'
+  display: 'Veterinary: Atwood Library (Campus) - Oversize'
+veterefe:
+  specific_location: 'Veterinary: Atwood Library (Campus) - Reference'
+  library:
+    - Health Sciences Libraries
+    - Veterinary
+    - 'Veterinary: Atwood Library (Campus)'
+  display: 'Veterinary: Atwood Library (Campus) - Reference'
+veterefov:
+  specific_location: 'Veterinary: Atwood Library (Campus) - Reference Oversize'
+  library:
+    - Health Sciences Libraries
+    - Veterinary
+    - 'Veterinary: Atwood Library (Campus)'
+  display: 'Veterinary: Atwood Library (Campus) - Reference Oversize'
+veterese:
+  specific_location: 'Veterinary: Atwood Library (Campus) - Reserve'
+  library:
+    - Health Sciences Libraries
+    - Veterinary
+    - 'Veterinary: Atwood Library (Campus)'
+    - Reserve
+  display: 'Veterinary: Atwood Library (Campus) - Reserve'
+veteresov:
+  specific_location: 'Veterinary: Atwood Library (Campus) - Reserve Oversize'
+  library:
+    - Health Sciences Libraries
+    - Veterinary
+    - 'Veterinary: Atwood Library (Campus)'
+    - Reserve
+  display: 'Veterinary: Atwood Library (Campus) - Reserve Oversize'
+vpfeatdvd:
+  specific_location: Van Pelt - Featured DVD Display - First Floor
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Featured DVD Display - First Floor
+vpjuv:
+  specific_location: Van Pelt - Notable Juvenile Books
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Notable Juvenile Books
+vpnewbook:
+  specific_location: Van Pelt - New Book Display
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - New Book Display
+vpref:
+  specific_location: Van Pelt Reference - Stacks
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Van Pelt Reference
+  display: Van Pelt Reference - Stacks
+vprefatlas:
+  specific_location: Van Pelt Reference - Atlas Cases
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Van Pelt Reference
+  display: Van Pelt Reference - Atlas Cases
+vprefbip:
+  specific_location: Van Pelt Reference - Books-in-Print
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Van Pelt Reference
+  display: Van Pelt Reference - Books-in-Print
+vprefdoc:
+  specific_location: Van Pelt Reference - Government Documents
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Van Pelt Reference
+  display: Van Pelt Reference - Government Documents
+vprefdsk:
+  specific_location: Van Pelt Reference - Desk
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Van Pelt Reference
+  display: Van Pelt Reference - Desk
+vpreffin:
+  specific_location: Van Pelt Reference - Financial Aid
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Van Pelt Reference
+  display: Van Pelt Reference - Financial Aid
+vprefmoel:
+  specific_location: Van Pelt Reference - Moelis CD Area
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Van Pelt Reference
+  display: Van Pelt Reference - Moelis CD Area
+vprefover:
+  specific_location: Van Pelt Reference - Oversize
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Van Pelt Reference
+  display: Van Pelt Reference - Oversize
+vpresdesk:
+  specific_location: Van Pelt Library - Reserve
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Reserve
+  display: Van Pelt Reserves Desk - First Floor
+vpvidcur:
+  specific_location: Van Pelt Library - Video Reserve
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Reserve
+  display: Van Pelt - Video Reserve
+vpwicref:
+  specific_location: Van Pelt - Weigle Information Commons Reference
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Weigle Information Commons Reference
+web:
+  specific_location: Penn Library Web
+  library: Penn Library Web
+  display: Penn Library Web
+WICDIS:
+  specific_location: Van Pelt - Weigle Information Commons
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Weigle Information Commons
+  display: Van Pelt - Weigle Information Commons
+yarn:
+  specific_location: Van Pelt - Yarnall Collection
+  library:
+    - Van Pelt-Dietrich Library Center
+    - Yarnall Collection
+  display: Van Pelt - Yarnall Collection
+athNoCirc:
+  specific_location: Athenaeum of Philadelphia - Non Circulating
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Non Circulating
+storNoCirc:
+  specific_location: LIBRA - Temporarily Unavailable
+  library: LIBRA
+  display: LIBRA - Temporarily Unavailable
+vanpNocirc:
+  specific_location: Van Pelt - Temporarily Unavailable
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Temporarily Unavailable
+hspclosed:
+  specific_location: Historical Society of Pennsylvania - Closed Stacks
+  library: Historical Society of Pennsylvania
+  display: Historical Society of Pennsylvania - Closed Stacks
+hspclosed2:
+  specific_location: Historical Society of Pennsylvania - Closed Stacks 2
+  library: Historical Society of Pennsylvania
+  display: Historical Society of Pennsylvania - Closed Stacks 2
+hspfam:
+  specific_location: Historical Society of Pennsylvania - Family History Room
+  library: Historical Society of Pennsylvania
+  display: Historical Society of Pennsylvania - Family History Room
+hsplcp:
+  specific_location: Historical Society of Pennsylvania - Library Company
+  library: Historical Society of Pennsylvania
+  display: Historical Society of Pennsylvania - Library Company
+hspmicro:
+  specific_location: Historical Society of Pennsylvania - Microfilm Room
+  library: Historical Society of Pennsylvania
+  display: Historical Society of Pennsylvania - Microfilm Room
+hsponline:
+  specific_location: Historical Society of Pennsylvania - Online
+  library: Historical Society of Pennsylvania
+  display: Historical Society of Pennsylvania - Online
+hsppenn:
+  specific_location: Historical Society of Pennsylvania - Pennsylvania Room
+  library: Historical Society of Pennsylvania
+  display: Historical Society of Pennsylvania - Pennsylvania Room
+hspreading:
+  specific_location: Historical Society of Pennsylvania - Reading Room
+  library: Historical Society of Pennsylvania
+  display: Historical Society of Pennsylvania - Reading Room
+hspref:
+  specific_location: Historical Society of Pennsylvania - Reference Desk
+  library: Historical Society of Pennsylvania
+  display: Historical Society of Pennsylvania - Reference Desk
+hspstafref:
+  specific_location: Historical Society of Pennsylvania - Staff Reference
+  library: Historical Society of Pennsylvania
+  display: Historical Society of Pennsylvania - Staff Reference
