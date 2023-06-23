@@ -36,9 +36,9 @@ module PennMARC
       #   Alma documentation for these added fields
       # @param [MARC::Record] record
       # @param [Hash] location_map hash with location_code as key and location hash as value
-      # @param [String] display_value field in locations hash to retrieve
+      # @param [Symbol | String] display_value field in location hash to retrieve
       # @return [Array<String>]
-      def location(record:, display_value:, location_map: MAPPINGS)
+      def location(record:, location_map:, display_value:)
         # get enriched marc location tag and subfield code
         location_tag_and_subfield_code(record) => {tag:, subfield_code:}
 
@@ -56,10 +56,10 @@ module PennMARC
             # sometimes "happening locations" are mistakenly used in holdings records.
             # that's a data problem that should be fixed.
             # here, if we encounter a code we can't map, we ignore it, for faceting purposes
-            next unless location_map.key?(subfield.value)
+            next unless location_map.key?(subfield.value.to_sym)
 
-            location_map[subfield.value][display_value]
-          end
+            location_map[subfield.value.to_sym][display_value.to_sym]
+          end.flatten.compact_blank
         end.uniq
         locations << 'Online library' if record.fields(PennMARC::EnrichedMarc::TAG_ELECTRONIC_INVENTORY).any?
         locations
