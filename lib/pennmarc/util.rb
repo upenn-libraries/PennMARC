@@ -116,12 +116,9 @@ module PennMARC
     # @param [String] tag
     # @return [Array] acc
     def datafield_and_linked_alternate(record, tag)
-      acc = []
-      acc += record.fields(tag).map do |field|
+      record.fields(tag).filter_map do |field|
         join_subfields(field, &subfield_not_in?(%w{6 8}))
-      end
-      acc += linked_alternate_not_6_or_8(record, tag)
-      acc
+      end + linked_alternate_not_6_or_8(record, tag)
     end
   end
 end
