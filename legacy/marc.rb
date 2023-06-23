@@ -533,6 +533,7 @@ module PennLib
       end
     end
 
+    # squish in ActiveSupport
     def normalize_space(s)
       s.strip.gsub(/\s{2,}/, ' ')
     end
