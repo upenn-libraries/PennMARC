@@ -5,7 +5,7 @@ describe 'PennMARC::Format' do
 
   let(:helper) { PennMARC::Format }
 
-  describe '.format' do
+  describe '.facet' do
     let(:map) { location_map }
     let(:formats) { helper.facet(record, map) }
 
@@ -30,7 +30,7 @@ describe 'PennMARC::Format' do
       context 'for a record in "Nursing Archives (nursarch)"' do
         let(:record) { marc_record fields: [marc_field(tag: 'hld', subfields: { c: 'nursarch' })] }
 
-        it 'returns format values of without "Archive" for a record with a holding in "nursarch' do
+        it 'returns format values of without "Archive" for a record with a holding in "nursarch"' do
           expect(formats).not_to include 'Archive'
         end
       end
@@ -38,7 +38,7 @@ describe 'PennMARC::Format' do
 
     context 'for a "Newspaper"' do
       let(:record) do
-        marc_record leader: '      as  ',
+        marc_record leader: '      as',
                     fields: [marc_control_field(tag: '008', value: '                     n')]
       end
 
@@ -67,8 +67,7 @@ describe 'PennMARC::Format' do
 
     context 'for Microformats as determined by the holding call numbers' do
       let(:record) do
-        marc_record fields: [
-          marc_field(tag: 'hld', subfields: { h: 'AB123', i: '.456 Microfilm' })]
+        marc_record fields: [marc_field(tag: 'hld', subfields: { h: 'AB123', i: '.456 Microfilm' })]
       end
 
       it 'returns a facet value of "Microformat"' do
@@ -78,7 +77,7 @@ describe 'PennMARC::Format' do
 
     context 'for a "Book"' do
       let(:record) do
-        marc_record leader: '      aa  ',
+        marc_record leader: '      aa',
                     fields: [marc_field(tag: '245', subfields: { k: 'blah' })]
       end
 
@@ -89,7 +88,7 @@ describe 'PennMARC::Format' do
 
     context 'for a "Projected Graphic"' do
       let(:record) do
-        marc_record leader: '      gm  ',
+        marc_record leader: '      gm',
                     fields: [marc_control_field(tag: '007', value: 'go hkaaa ')]
       end
 
@@ -103,7 +102,7 @@ describe 'PennMARC::Format' do
         marc_record fields: [marc_field(tag: '944', subfields: { a: subfield_a_value })]
       end
 
-      context 'with a format in 944 ǂa' do
+      context 'with a format explicitly specified in 944 ǂa' do
         let(:subfield_a_value) { 'Book' }
 
         it 'returns a facet value including a curated format of "Book"' do
@@ -114,7 +113,7 @@ describe 'PennMARC::Format' do
       context 'with a number in 944 ǂa' do
         let(:subfield_a_value) { '123' }
 
-        it 'returns an empty facet value with a numeric value in for 944 ǂa' do
+        it 'returns no content from 944 ǂa' do
           expect(formats).to eq ['Other']
         end
       end
@@ -149,6 +148,7 @@ describe 'PennMARC::Format' do
                                                        'Scale 1:24,000 Mercator projection (W 150°--W 30°/N 70°--N 40°)'
       end
     end
+
     context 'with entries in the 340' do
       let(:fields) do
         [marc_field(tag: '340', subfields: { a: 'cassette tape', b: '90 min', '0': 'excluded' }),

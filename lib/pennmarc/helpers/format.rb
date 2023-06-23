@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../enriched_marc'
-
 module PennMARC
-  # Do Format-y stuff
+  # Handle parsing out "Format" and "Other Format" values. Special care goes into controlling the format values for
+  # faceting.
   class Format < Helper
     class << self
       # Get any Format values from {https://www.oclc.org/bibformats/en/3xx/300.html 300},
@@ -60,7 +59,8 @@ module PennMARC
         title_medium = subfield_values_for tag: '245', subfield: :h, record: record
         media_type = subfield_values_for tag: '337', subfield: :a, record: record
 
-        # Get Call Number for holdings - ǂh gives us the 'Classification part' which contains strings like 'Microfilm'
+        # Get Call Number for holdings - ǂh gives us the 'Classification part' which can contain strings like
+        # 'Microfilm'
         call_nums = record.fields(EnrichedMarc::TAG_HOLDING).map do |field|
           join_subfields(field, &subfield_in?([EnrichedMarc::SUB_HOLDING_CLASSIFICATION_PART,
                                                EnrichedMarc::SUB_HOLDING_ITEM_PART]))
