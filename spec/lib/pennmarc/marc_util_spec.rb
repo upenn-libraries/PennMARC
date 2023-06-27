@@ -23,18 +23,6 @@ describe 'PennMARC::Util' do
       expect(util.subfield_value?(field, 'a', /123/)).to be_truthy
     end
 
-    it 'returns false if the subfield value does not mach the regex' do
-      expect(util.subfield_value?(field, 'a', /\D/)).to be_falsey
-    end
-  end
-
-  describe '.subfield_value?' do
-    let(:field) { marc_field subfields: { a: '123' } }
-
-    it 'returns true if the specified subfield value matches the regex' do
-      expect(util.subfield_value?(field, 'a', /123/)).to be_truthy
-    end
-
     it 'returns false if the subfield value does not mach he regex' do
       expect(util.subfield_value?(field, 'a', /\D/)).to be_falsey
     end
