@@ -56,10 +56,12 @@ module MarcSpecHelpers
 
   # Return a MARC::Record containing passed in DataFields
   # @param [Array<MARC::DataField>] fields
+  # @param [String, nil] leader
   # @return [MARC::Record]
-  def marc_record(fields: [])
+  def marc_record(fields: [], leader: nil)
     record = MARC::Record.new
     fields.each { |field| record << field }
+    record.leader = leader if leader
     record
   end
 
@@ -76,7 +78,7 @@ module MarcSpecHelpers
                display: 'Levy Dental Medicine Library - Stacks' },
       stor: { specific_location: 'LIBRA',
               library: 'LIBRA',
-              display: 'LIBRA' }.freeze
+              display: 'LIBRA' }
     }
   end
 end

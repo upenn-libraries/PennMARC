@@ -13,12 +13,12 @@ module PennMARC
         next unless value.present?
 
         value
-      }.join(' ')
+      }.join(' ').squish
     end
 
     # returns true if field has a value that matches
     # passed-in regex and passed in subfield
-    # TODO: example usage
+    # @todo example usage
     # @param [MARC::DataField] field
     # @param [String|Integer|Symbol] subfield
     # @param [Regexp] regex
@@ -69,6 +69,31 @@ module PennMARC
       field.none? { |sf| sf.code == subfield.to_s }
     end
 
+    # Gets all subfield values for a subfield in a given field
+    # @param [MARC::DataField] field
+    # @param [String|Symbol] subfield as a string or symbol
+    # @return [Array] subfield values for given subfield code
+    def subfield_values(field, subfield)
+      field.filter_map do |sf|
+        next unless sf.code == subfield.to_s
+
+        next unless sf.value.present?
+
+        sf.value
+      end
+    end
+
+    # Get all subfield values for a provided subfield from any occurrence of a provided tag/tags
+    # @param [String|Array] tag tags to consider
+    # @param [String|Symbol] subfield to take the values from
+    # @param [MARC::Record] record source
+    # @return [Array] array of subfield values
+    def subfield_values_for(tag:, subfield:, record:)
+      record.fields(tag).flat_map do |field|
+        subfield_values field, subfield
+      end
+    end
+
     # @param [Symbol|String] trailer to target for removal
     # @param [String] string to modify
     def trim_trailing(trailer, string)
@@ -89,12 +114,13 @@ module PennMARC
     # @param [MARC::Record] record
     # @param [String|Array] subfield6_value either a string to look for in sub6 or an array of them
     # @param selector [Proc] takes a subfield as argument, returns a boolean
+    # @return [Array]
     def linked_alternate(record, subfield6_value, &selector)
-      record.fields('880')
-            .select { |f| subfield_value?(f, '6', /^#{Array.wrap(subfield6_value).join('|')}/) }
-            .map do |f|
-              f.select { |sf| selector.call(sf) }.map(&:value).join(' ')
-            end
+      record.fields('880').filter_map do |field|
+        next unless subfield_value?(field, '6', /^#{Array.wrap(subfield6_value).join('|')}/)
+
+        field.select { |sf| selector.call(sf) }.map(&:value).join(' ')
+      end
     end
     alias get_880 linked_alternate
 
