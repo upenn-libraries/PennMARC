@@ -48,6 +48,32 @@ describe 'PennMARC::Util' do
     end
   end
 
+  describe '.subfield_in?' do
+    it 'returns a lambda that checks if a subfield code is a member of the array' do
+      array = %w[A B C]
+      subfield_in = subfield_in?(array)
+
+      subfield = marc_subfield('A', 'Value')
+      expect(subfield_in.call(subfield)).to be_truthy
+
+      subfield = marc_subfield('D', 'Value')
+      expect(subfield_in.call(subfield)).to be_falsey
+    end
+  end
+
+  describe '#subfield_not_in?' do
+    it 'returns a lambda that checks if a subfield code is not a member of the array' do
+      array = %w[A B C]
+      subfield_not_in = subfield_not_in?(array)
+
+      subfield = marc_subfield('A', 'Value')
+      expect(subfield_not_in.call(subfield)).to be_falsey
+
+      subfield = marc_subfield('D', 'Value')
+      expect(subfield_not_in.call(subfield)).to be_truthy
+    end
+  end
+
   describe '.subfield_defined?' do
     let(:field) { marc_field subfields: { a: 'Defined' } }
 
