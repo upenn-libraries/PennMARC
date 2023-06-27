@@ -164,4 +164,10 @@ describe 'PennMARC::Util' do
       expect(util.substring_after(string, '.')).to eq 'with.periods'
     end
   end
+
+  describe '.join_and_squish' do
+    it 'joins and squishes' do
+      expect(util.join_and_squish(['ruby   ' ,'   is', '  cool  '])).to eq 'ruby is cool'
+    end
+  end
 end
