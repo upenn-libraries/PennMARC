@@ -56,10 +56,29 @@ module MarcSpecHelpers
 
   # Return a MARC::Record containing passed in DataFields
   # @param [Array<MARC::DataField>] fields
+  # @param [String, nil] leader
   # @return [MARC::Record]
-  def marc_record(fields: [])
+  def marc_record(fields: [], leader: nil)
     record = MARC::Record.new
     fields.each { |field| record << field }
+    record.leader = leader if leader
     record
+  end
+
+  # Mock map for location lookup using Location helper
+  # The location codes :dent and :stor are the two outermost keys
+  # :specific_location, :library, :display are the inner keys that store location values
+  # @example
+  #   location_map[:stor][:library] #=> 'LIBRA'
+  # @return [Hash]
+  def location_map
+    {
+      dent: {  specific_location: 'Levy Dental Medicine Library - Stacks',
+               library: ['Health Sciences Libraries', 'Levy Dental Medicine Library'],
+               display: 'Levy Dental Medicine Library - Stacks' },
+      stor: { specific_location: 'LIBRA',
+              library: 'LIBRA',
+              display: 'LIBRA' }
+    }
   end
 end

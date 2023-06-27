@@ -13,12 +13,12 @@ module PennMARC
         next unless value.present?
 
         value
-      }.join(' ')
+      }.join(' ').squish
     end
 
     # returns true if field has a value that matches
     # passed-in regex and passed in subfield
-    # TODO: example usage
+    # @todo example usage
     # @param [MARC::DataField] field
     # @param [String|Integer|Symbol] subfield
     # @param [Regexp] regex
@@ -69,6 +69,31 @@ module PennMARC
       field.none? { |sf| sf.code == subfield.to_s }
     end
 
+    # Gets all subfield values for a subfield in a given field
+    # @param [MARC::DataField] field
+    # @param [String|Symbol] subfield as a string or symbol
+    # @return [Array] subfield values for given subfield code
+    def subfield_values(field, subfield)
+      field.filter_map do |sf|
+        next unless sf.code == subfield.to_s
+
+        next unless sf.value.present?
+
+        sf.value
+      end
+    end
+
+    # Get all subfield values for a provided subfield from any occurrence of a provided tag/tags
+    # @param [String|Array] tag tags to consider
+    # @param [String|Symbol] subfield to take the values from
+    # @param [MARC::Record] record source
+    # @return [Array] array of subfield values
+    def subfield_values_for(tag:, subfield:, record:)
+      record.fields(tag).flat_map do |field|
+        subfield_values field, subfield
+      end
+    end
+
     # @param [Symbol|String] trailer to target for removal
     # @param [String] string to modify
     def trim_trailing(trailer, string)
@@ -91,11 +116,11 @@ module PennMARC
     # @param selector [Proc] takes a subfield as argument, returns a boolean
     # @return [Array] array of linked alternates
     def linked_alternate(record, subfield6_value, &selector)
-      record.fields('880')
-            .select { |f| subfield_value?(f, '6', /^#{Array.wrap(subfield6_value).join('|')}/) }
-            .map do |f|
-              f.select { |sf| selector.call(sf) }.map(&:value).join(' ')
-            end
+      record.fields('880').filter_map do |field|
+        next unless subfield_value?(field, '6', /^#{Array.wrap(subfield6_value).join('|')}/)
+
+        field.select { |sf| selector.call(sf) }.map(&:value).join(' ')
+      end
     end
     alias get_880 linked_alternate
 
@@ -120,5 +145,29 @@ module PennMARC
         join_subfields(field, &subfield_not_in?(%w{6 8}))
       end + linked_alternate_not_6_or_8(record, tag)
     end
+
+    # Get the substring of a string up to a given target character
+    # @param [Object] string to split
+    # @param [Object] target character to split upon
+    # @return [String (frozen)]
+    def substring_before(string, target)
+      string.scan(target).present? ? string.split(target, 2).first : ''
+    end
+
+    # Get the substring of a string after the first occurrence of a target character
+    # @param [Object] string to split
+    # @param [Object] target character to split upon
+    # @return [String (frozen)]
+    def substring_after(string, target)
+      string.scan(target).present? ? string.split(target, 2).second : ''
+    end
+
+    # Join array and normalizing extraneous spaces
+    # @param [Array] array
+    # @return [String]
+    def join_and_squish(array)
+      array.join(' ').squish
+    end
+    alias join_and_trim_whitespace join_and_squish
   end
 end

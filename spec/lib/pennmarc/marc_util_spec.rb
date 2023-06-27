@@ -23,6 +23,18 @@ describe 'PennMARC::Util' do
       expect(util.subfield_value?(field, 'a', /123/)).to be_truthy
     end
 
+    it 'returns false if the subfield value does not mach the regex' do
+      expect(util.subfield_value?(field, 'a', /\D/)).to be_falsey
+    end
+  end
+
+  describe '.subfield_value?' do
+    let(:field) { marc_field subfields: { a: '123' } }
+
+    it 'returns true if the specified subfield value matches the regex' do
+      expect(util.subfield_value?(field, 'a', /123/)).to be_truthy
+    end
+
     it 'returns false if the subfield value does not mach he regex' do
       expect(util.subfield_value?(field, 'a', /\D/)).to be_falsey
     end
@@ -62,6 +74,30 @@ describe 'PennMARC::Util' do
     end
   end
 
+  describe '.subfield_values' do
+    let(:field) { marc_field subfields: { a: %w[A B C], b: 'Not Included' } }
+
+    it 'returns subfield values from a given field' do
+      expect(util.subfield_values(field, :a)).to eq %w[A B C]
+    end
+  end
+
+  describe '.subfield_values_for' do
+    let(:record) do
+      marc_record fields: [marc_field(tag: '123', subfields: { a: %w[A B C], b: 'Not Included' }),
+                           marc_field(tag: '123', subfields: { a: 'D' }),
+                           marc_field(tag: '333', subfields: { a: 'Maybe', b: 'Nope' })]
+    end
+
+    it 'returns subfield values from only the specified tag and subfield' do
+      expect(util.subfield_values_for(tag: '123', subfield: :a, record: record)).to eq %w[A B C D]
+    end
+
+    it 'returns subfield values from only the specified tags and subfield' do
+      expect(util.subfield_values_for(tag: %w[123 333], subfield: :a, record: record)).to eq %w[A B C D Maybe]
+    end
+  end
+
   describe '.trim_trailing' do
     it 'trims the specified trailer from the string' do
       expect(util.trim_trailing(:semicolon, 'Hello, world!  ;')).to eq('Hello, world!')
@@ -98,6 +134,20 @@ describe 'PennMARC::Util' do
 
     it 'returns the datafield and linked alternate' do
       expect(util.datafield_and_linked_alternate(record, '510')).to contain_exactly('Perkins', 'Snikrep')
+    end
+  end
+
+  describe '.substring_before' do
+    it 'returns the entire substring after the first occurrence of the target' do
+      string = 'string.with.periods'
+      expect(util.substring_before(string, '.')).to eq 'string'
+    end
+  end
+
+  describe '.substring_after' do
+    it 'returns the entire substring after the first occurrence of the target' do
+      string = 'string.with.periods'
+      expect(util.substring_after(string, '.')).to eq 'with.periods'
     end
   end
 end
