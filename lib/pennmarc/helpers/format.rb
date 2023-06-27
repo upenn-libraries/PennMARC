@@ -5,6 +5,26 @@ module PennMARC
   # faceting.
   class Format < Helper
     class << self
+      ARCHIVE = 'Archive'
+      BOOK = 'Book'
+      CONFERENCE_EVENT = 'Conference/Event'
+      DATAFILE = 'Datafile'
+      GOVDOC = 'Government document'
+      IMAGE = 'Image'
+      JOURNAL_PERIODICAL = 'Journal/Periodical'
+      MANUSCRIPT = 'Manuscript'
+      MAP_ATLAS = 'Map/Atlas'
+      MICROFORMAT = 'Microformat'
+      MUSICAL_SCORE = 'Musical score'
+      NEWSPAPER = 'Newspaper'
+      OTHER = 'Other'
+      PROJECTED_GRAPHIC = 'Projected graphic'
+      SOUND_RECORDING = 'Sound recording'
+      THESIS_DISSERTATION = 'Thesis/Dissertation'
+      THREE_D_OBJECT = '3D object'
+      VIDEO = 'Video'
+      WEBSITE_DATABASE = 'Website/Database'
+
       # Get any Format values from {https://www.oclc.org/bibformats/en/3xx/300.html 300},
       # 254, 255, 310, 342, 352 or {https://www.oclc.org/bibformats/en/3xx/340.html 340} field. based on the source
       # field, different subfields are used.
@@ -45,17 +65,17 @@ module PennMARC
       # to keep this method from becoming too unwieldy.
       # @todo is the conditional structure here still best practice? see the "Thesis on Microfilm" case in the specs
       #       for this helper method
-      # @todo learn more about the "Curated format" values considered in 944 field
       # @note ported from get_format
       # @param [MARC::Record] record
       # @param [Hash] location_map
       # @return [Array<String>] format values for faceting
+
       def facet(record, location_map)
         formats = []
         format_code = leader_format(record.leader)
         f007 = record.fields('007').map(&:value)
         f008 = record.fields('008').first&.value || ''
-        f006firsts = record.fields('006').map { |field| field.value[0] }
+        f006_forms = record.fields('006').map { |field| field.value[0] }
         title_medium = subfield_values_for tag: '245', subfield: :h, record: record
         media_type = subfield_values_for tag: '337', subfield: :a, record: record
 
@@ -70,41 +90,41 @@ module PennMARC
         locations = Location.location record: record, location_map: location_map, display_value: :specific_location
 
         if include_manuscripts?(locations)
-          formats << 'Manuscript'
+          formats << MANUSCRIPT
         elsif archives_but_not_cajs_or_nursing?(locations)
-          formats << 'Archive'
+          formats << ARCHIVE
         elsif micro_or_microform?(call_nums, locations, media_type, title_medium)
-          formats << 'Microformat'
+          formats << MICROFORMAT
         else
           # any of these
-          formats << 'Thesis/Dissertation' if thesis_or_dissertation?(format_code, record)
-          formats << 'Conference/Event' if conference_event?(record)
-          formats << 'Newspaper' if newspaper?(f008, format_code)
-          formats << 'Government document' if government_document?(f008, record, format_code)
+          formats << THESIS_DISSERTATION if thesis_or_dissertation?(format_code, record)
+          formats << CONFERENCE_EVENT if conference_event?(record)
+          formats << NEWSPAPER if newspaper?(f008, format_code)
+          formats << GOVDOC if government_document?(f008, record, format_code)
 
           # but only one of these
-          formats << if website_database?(f006firsts, format_code)
-                       'Website/Database'
+          formats << if website_database?(f006_forms, format_code)
+                       WEBSITE_DATABASE
                      elsif book?(format_code, title_medium, record)
-                       'Book'
+                       BOOK
                      elsif musical_score?(format_code)
-                       'Musical score'
+                       MUSICAL_SCORE
                      elsif map_atlas?(format_code)
-                       'Map/Atlas'
+                       MAP_ATLAS
                      elsif graphical_media?(format_code)
                        graphical_media_type(f007)
                      elsif sound_recording?(format_code)
-                       'Sound recording'
+                       SOUND_RECORDING
                      elsif image?(format_code)
-                       'Image'
+                       IMAGE
                      elsif datafile?(format_code)
-                       'Datafile'
+                       DATAFILE
                      elsif journal_periodical?(format_code)
-                       'Journal/Periodical'
+                       JOURNAL_PERIODICAL
                      elsif three_d_object?(format_code)
-                       '3D object'
+                       THREE_D_OBJECT
                      else
-                       'Other'
+                       OTHER
                      end
         end
         formats.concat(curated_format(record))
@@ -128,8 +148,9 @@ module PennMARC
 
       private
 
-      # Get 'Curated' format - this must be a Penn-specific practice
-      # @todo find out more about Penn's 944 usage before refactoring
+      # Get 'Curated' format from.
+      # {https://upennlibrary.atlassian.net/wiki/spaces/ALMA/pages/323912493/Local+9XX+Field+Use+in+Alma local field
+      # 944} ǂa, as long as it is not a numerical value.
       # @param [MARC::Record] record
       # @return [Array]
       def curated_format(record)
@@ -200,12 +221,12 @@ module PennMARC
           title_medium.none? { |v| v =~ /micro/i }
       end
 
-      # @param [Array<String>] f006firsts
+      # @param [Array<String>] f006_forms
       # @param [String] format_code
       # @return [Boolean]
-      def website_database?(f006firsts, format_code)
+      def website_database?(f006_forms, format_code)
         format_code&.end_with?('i') ||
-          (format_code == 'am' && f006firsts.include?('m') && f006firsts.include?('s'))
+          (format_code == 'am' && f006_forms.include?('m') && f006_forms.include?('s'))
       end
 
       # @param [String] f008
@@ -273,9 +294,9 @@ module PennMARC
       # @return [String (frozen)]
       def graphical_media_type(f007)
         if f007.any? { |v| v.start_with?('g') }
-          'Projected graphic'
+          PROJECTED_GRAPHIC
         else
-          'Video'
+          VIDEO
         end
       end
 

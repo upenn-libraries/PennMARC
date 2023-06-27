@@ -167,7 +167,7 @@ describe 'PennMARC::Format' do
     let(:record) do
       marc_record fields: [marc_field(tag: '776', subfields: {
                                         i: 'Online edition', a: 'Author, Name', t: 'Title', b: 'First Edition',
-                                        d: 'Some Publisher', w: '(OCoLC)12345'
+                                        d: 'Some Publisher', w: '(OCoLC)12345', s: 'Uniform Title', o: '12345'
                                       }),
                            marc_field(tag: '880', subfields: {
                                         '6': '776', i: 'Alt. Online Edition', t: 'Alt. Title'
@@ -175,8 +175,8 @@ describe 'PennMARC::Format' do
     end
 
     it 'returns other format information for display, with data from only ǂi, ǂa, ǂs, ǂt and ǂo' do
-      expect(helper.other_show(record)).to contain_exactly 'Online edition Author, Name Title',
-                                                           'Alt. Online Edition Alt. Title'
+      expect(helper.other_show(record)).to contain_exactly 'Alt. Online Edition Alt. Title',
+                                                           'Online edition Author, Name Title Uniform Title 12345'
     end
   end
 end
