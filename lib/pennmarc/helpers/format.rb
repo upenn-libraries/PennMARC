@@ -130,7 +130,7 @@ module PennMARC
         formats.concat(curated_format(record))
       end
 
-      # Show "Other Format" vales from {https://www.oclc.org/bibformats/en/7xx/776.html 776} and any 880 linkage.
+      # Show "Other Format" values from {https://www.oclc.org/bibformats/en/7xx/776.html 776} and any 880 linkage.
       # @todo is 774 an error in the linked field in legacy? i changed to 776 here
       # @param [MARC::Record] record
       # @return [Array] other format values for display
