@@ -5,6 +5,7 @@ module PennMARC
   # faceting.
   class Format < Helper
     class << self
+      # These constants represent the set of desired Format values for faceting.
       ARCHIVE = 'Archive'
       BOOK = 'Book'
       CONFERENCE_EVENT = 'Conference/Event'
