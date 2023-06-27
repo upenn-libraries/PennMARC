@@ -83,7 +83,7 @@ module PennMARC
       end
     end
 
-    # Get all subfield values for a provided subfield form any occurrence of a provided tag/tags
+    # Get all subfield values for a provided subfield from any occurrence of a provided tag/tags
     # @param [String|Array] tag tags to consider
     # @param [String|Symbol] subfield to take the values from
     # @param [MARC::Record] record source

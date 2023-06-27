@@ -60,7 +60,7 @@ module PennMARC
       # 3. {https://www.loc.gov/marc/bibliographic/bd007.html 007} values, the first
       #    {https://www.loc.gov/marc/bibliographic/bd008.html 008} value, and the first character form all
       #    {https://www.loc.gov/marc/bibliographic/bd006.html 006} values (form)
-      # 4. Medium values form {https://www.oclc.org/bibformats/en/2xx/245.html#subfieldh 245 ǂh}
+      # 4. Medium values from {https://www.oclc.org/bibformats/en/2xx/245.html#subfieldh 245 ǂh}
       # 5. Media Type values from {https://www.oclc.org/bibformats/en/3xx/337.html#subfielda 337 ǂa}
       # Additional fields are considered for many of the formats. Much of this logic has been moved to private methods
       # to keep this method from becoming too unwieldy.
