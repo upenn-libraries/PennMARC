@@ -6,8 +6,10 @@ describe 'PennMARC::Citation' do
   let(:helper) { PennMARC::Citation }
 
   describe '.cited_in_show' do
-    let(:record) { marc_record fields: [marc_field(tag: '510', subfields: {a: 'Perkins Archive'}),
-                                      marc_field(tag: '880', subfields: {'6': '510', a: 'パーキンスのアーカイブ'})] }
+    let(:record) do
+      marc_record fields: [marc_field(tag: '510', subfields: { a: 'Perkins Archive' }),
+                           marc_field(tag: '880', subfields: { '6': '510', a: 'パーキンスのアーカイブ' })]
+    end
 
     it 'returns expected citation values' do
       expect(helper.cited_in_show(record)).to contain_exactly('Perkins Archive', 'パーキンスのアーカイブ')
