@@ -13,6 +13,7 @@ require_relative 'helpers/link'
 require_relative 'helpers/location'
 require_relative 'helpers/subject'
 require_relative 'helpers/title'
+require_relative 'helpers/citation'
 
 module PennMARC
   attr_accessor :mappings
