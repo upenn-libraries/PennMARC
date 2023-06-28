@@ -169,5 +169,19 @@ module PennMARC
       array.join(' ').squish
     end
     alias join_and_trim_whitespace join_and_squish
+
+    # if there's a subfield i, extract its value, and if there's something
+    # in parentheses in that value, extract that.
+    def remove_paren_value_from_subfield_i(field)
+      val = field.select { |sf| sf.code == 'i' }.map do |sf|
+        match = /\((.+?)\)/.match(sf.value)
+        if match
+          sf.value.sub("(#{match[1]})", '')
+        else
+          sf.value
+        end
+      end.first || ''
+      trim_trailing(:colon, trim_trailing(:period, val))
+    end
   end
 end

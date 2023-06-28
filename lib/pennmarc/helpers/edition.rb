@@ -4,27 +4,29 @@ module PennMARC
   # Do Edition-y stuff
   class Edition < Helper
     class << self
+      # Edition values for display on a record page.
       # @param [MARC::Record] record
       # @return [Array<String>]
       def show(record)
         acc = []
         acc += record.fields('250').map do |field|
-          join_subfields(field, &subfield_not_in(%w[6 8]))
+          join_subfields(field, &subfield_not_in?(%w[6 8]))
         end
         acc += record.fields('880')
-                     .select { |f| has_subfield6_value(f, /^250/) }
+                     .select { |f| subfield_value?(f, '6', /^250/) }
                      .map do |field|
-          join_subfields(field, &subfield_not_in(%w[6 8]))
+          join_subfields(field, &subfield_not_in?(%w[6 8]))
         end
         acc
       end
 
+      # Edition values for display in search results.
       # @param [MARC::Record] record
       # @return [Array<String>]
       def values(record)
         record.fields('250').take(1).map do |field|
-          results = field.find_all(&subfield_not_in(%w[6 8])).map(&:value)
-          join_and_trim_whitespace(results)
+          results = field.find_all(&subfield_not_in?(%w[6 8])).map(&:value)
+          join_and_squish(results)
         end
       end
 
@@ -35,14 +37,14 @@ module PennMARC
         acc += record.fields('775')
                      .select { |f| f.any? { |sf| sf.code == 'i' } }
                      .map do |field|
-          get_other_edition_value(field)
+          other_edition_value(field)
         end
         acc += record.fields('880')
                      .select { |f| ['', ' '].member?(f.indicator2) }
-                     .select { |f| has_subfield6_value(f, /^775/) }
+                     .select { |f| subfield_value?(f, '6', /^775/) }
                      .select { |f| f.any? { |sf| sf.code == 'i' } }
                      .map do |field|
-          get_other_edition_value(field)
+          other_edition_value(field)
         end
         acc
       end
