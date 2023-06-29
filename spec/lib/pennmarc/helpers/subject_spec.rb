@@ -37,6 +37,15 @@ describe 'PennMARC::Subject' do
     let(:record) { marc_record fields: fields }
     let(:values) { helper.facet(record) }
 
+    # TODO: find some more inspiring examples in the corpus
+    context 'for a record with poorly-coded heading values' do
+      let(:fields) { [marc_field(tag: '650', indicator2: '0', subfields: { a: 'Subject -   Heading' })] }
+
+      it 'properly normalizes the heading value' do
+        expect(values.first).to eq 'Subject--Heading'
+      end
+    end
+
     context 'for a record with 650 headings with a ǂa that starts with PRO or CHR' do
       let(:fields) do
         [marc_field(tag: '650', indicator2: '4', subfields: { a: 'CHR 1998', '5': 'PU' }),
@@ -72,7 +81,7 @@ describe 'PennMARC::Subject' do
       end
 
       it 'properly concatenates heading components' do
-        expect(values.first).to include 'Libraries -- History'
+        expect(values.first).to include 'Libraries--History'
       end
 
       it 'excludes URI values from ǂ0 or ǂ1' do
@@ -86,11 +95,24 @@ describe 'PennMARC::Subject' do
       it 'includes active dates from ǂd' do
         expect(values.first).to include '22nd Century'
       end
+
+      it 'joins all values in the expected way' do
+        expect(values.first).to eq 'Libraries--History 22nd Century'
+      end
     end
   end
 
   describe '.childrens_show' do
+    let(:record) do
+      marc_record(fields: [
+        marc_field(tag: '650', indicator2: '1', subfields: { a: 'Test' })
+      ])
+    end
+    let(:values) { helper.childrens_show(record) }
 
+    it 'works' do
+      expect(values.first).to eq 'Test'
+    end
   end
 
   describe '.medical_show' do

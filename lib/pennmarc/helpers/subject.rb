@@ -20,7 +20,7 @@ module PennMARC
       SEARCH_SOURCE_INDICATORS = %w[0 1 2 4 7].freeze
 
       # Tags that serve as sources for Subject facet values
-      FACET_TAGS = %w[600 610 611 630 650 651].freeze
+      DISPLAY_TAGS = %w[600 610 611 630 650 651].freeze
 
       # These codes are expected to be found in sf2 when the indicator2 value is 7, indicating "source specified". There
       # are some sources whose headings we don't want to display.
@@ -74,7 +74,7 @@ module PennMARC
           normalize_single_subfield(hash[:parts].first) if hash[:count] == 1
 
           # assemble subject hash
-          "#{hash[:parts].join(' -- ')} #{hash[:lasts].join(' ')}".strip
+          "#{hash[:parts].join('--')} #{hash[:lasts].join(' ')}".strip
         end
       end
 
@@ -95,10 +95,15 @@ module PennMARC
 
       # Get Subjects from "Children" ontology
       #
-      # @todo port get_children_subject_display
       # @param [MARC::Record] record
       # @return [Array]
-      def childrens_show(record); end
+      def childrens_show(record)
+        subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '1' })
+          .filter_map do |field|
+            hash = build_subject_hash(field)
+            "#{hash[:parts].join('--')} #{hash[:lasts].join(' ')} #{hash[:append].join(' ')}".strip
+          end
+      end
 
       # Get Subjects from "MeSH" ontology
       #
@@ -121,17 +126,27 @@ module PennMARC
       # - facet
       # @param [MARC::Record] record
       # @param [String, Symbol] type
+      # @param [Hash] options to be passed to the selector method
       # @return [Array<MARC::DataField>] selected fields
-      def subject_fields(record, type:)
+      def subject_fields(record, type:, options: {})
         selector_method = case type.to_sym
-                          when :search
-                            :subject_search_field?
-                          when :facet
-                            :subject_facet_field?
+                          when :search then :subject_search_field?
+                          when :facet then :subject_facet_field?
+                          when :display then :subject_display_field?
                           else
                             raise StandardError # TODO: do better
                           end
-        record.fields.find_all { |field| send(selector_method, field) }
+        record.fields.find_all do |field|
+          options.any? ? send(selector_method, field, options) : send(selector_method, field)
+        end
+      end
+
+      def subject_display_field?(field, options)
+        return false if field.blank?
+
+        return true if field.tag.in?(options[:tags]) && field.indicator2.in?(options[:indicator2])
+
+        false
       end
 
       # @param [MARC::DataField] field
@@ -139,7 +154,7 @@ module PennMARC
       def subject_facet_field?(field)
         return false if field.blank?
 
-        return true if field.tag.in?(FACET_TAGS) && field.indicator2.in?(%w[0 2 4])
+        return true if field.tag.in?(DISPLAY_TAGS) && field.indicator2.in?(%w[0 2 4])
 
         return true if field.indicator2 == '7' && valid_ontology_code?(field)
 
