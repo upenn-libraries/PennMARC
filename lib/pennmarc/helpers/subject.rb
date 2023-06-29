@@ -69,12 +69,12 @@ module PennMARC
       def facet(record)
         subject_fields(record, type: :facet).filter_map do |field|
           hash = build_subject_hash(field)
-          next if hash[:count].zero?
+          next if hash.blank? || hash[:count]&.zero?
 
-          normalize_single_subfield(hash[:parts].first) if hash[:count].one?
+          normalize_single_subfield(hash[:parts].first) if hash[:count] == 1
 
           # assemble subject hash
-          "#{hash[:parts].join('--')} #{hash[:lasts].join(' ')}".strip
+          "#{hash[:parts].join(' -- ')} #{hash[:lasts].join(' ')}".strip
         end
       end
 
@@ -165,24 +165,23 @@ module PennMARC
         field.each do |subfield|
           case subfield.code
           when '0', '6', '8', '5', '1'
-            # ignore these subfields
+            # explicitly ignore these subfields
             next
           when 'a'
             # filter out PRO/CHR entirely (but only need to check on local heading types)
             return nil if term_info[:local] && subfield.value =~ /^%?(PRO|CHR)([ $]|$)/
+
+            term_info[:parts] << subfield.value.strip
+            term_info[:count] += 1
           when '2'
-            # use the _last_ source specified, so don't worry about overriding any prior values
-            term_info[:source_specified] = subfield.value.strip
-            next
+            term_info[:source] = subfield.value.strip
           when 'e', 'w'
             # 'e' is relator term; not sure what 'w' is. These are used to append for record-view display only
             term_info[:append] << subfield.value.strip
-            next
           when 'b', 'c', 'd', 'p', 'q', 't'
             # these are appended to the last component if possible (i.e., when joined, should have no delimiter)
             term_info[:lasts] << subfield.value.strip
             term_info[:count] += 1
-            next
           else
             # the usual case; add a new component to `parts`
             term_info[:parts] << subfield.value.strip
