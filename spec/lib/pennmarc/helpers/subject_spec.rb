@@ -30,11 +30,10 @@ describe 'PennMARC::Subject' do
   end
 
   describe '.show' do
-
   end
 
   describe '.facet' do
-    let(:record) { marc_record fields: fields }
+    let(:record) { marc_record fields: }
     let(:values) { helper.facet(record) }
 
     # TODO: find some more inspiring examples in the corpus
@@ -60,9 +59,9 @@ describe 'PennMARC::Subject' do
 
     context 'for a record with an indicator2 value of 3 5 or 6' do
       let(:fields) do
-        [marc_field(tag:'650', indicator2: '3', subfields: { a: 'Nope' }),
-         marc_field(tag:'650', indicator2: '5', subfields: { a: 'Nope' }),
-         marc_field(tag:'650', indicator2: '6', subfields: { a: 'Nope' })]
+        [marc_field(tag: '650', indicator2: '3', subfields: { a: 'Nope' }),
+         marc_field(tag: '650', indicator2: '5', subfields: { a: 'Nope' }),
+         marc_field(tag: '650', indicator2: '6', subfields: { a: 'Nope' })]
       end
 
       it 'des not include the headings' do
@@ -76,8 +75,7 @@ describe 'PennMARC::Subject' do
                     subfields: {
                       a: 'Libraries', x: 'History', e: 'relator', d: '22nd Century',
                       '2': 'fast', '0': 'http://fast.org/history'
-                    }
-         )]
+                    })]
       end
 
       it 'properly concatenates heading components' do
@@ -105,21 +103,45 @@ describe 'PennMARC::Subject' do
   describe '.childrens_show' do
     let(:record) do
       marc_record(fields: [
-        marc_field(tag: '650', indicator2: '1', subfields: { a: 'Test' })
-      ])
+                    marc_field(tag: '650', indicator2: '1', subfields: { a: 'Frogs', v: 'Fiction' }),
+                    marc_field(tag: '650', indicator2: '1', subfields: { a: 'Toads', v: 'Fiction' })
+                  ])
     end
     let(:values) { helper.childrens_show(record) }
 
     it 'works' do
-      expect(values.first).to eq 'Test'
+      expect(values).to contain_exactly 'Frogs--Fiction', 'Toads--Fiction'
     end
   end
 
   describe '.medical_show' do
+    let(:record) do
+      marc_record(
+        fields: [
+          marc_field(tag: '650', indicator2: '0', subfields: { a: 'Nephhrology', v: 'Periodicals' }),
+          marc_field(tag: '650', indicator2: '7',
+                     subfields: { a: 'Nephhrology', '2': 'fast', '0': '(OCoLC)fst01035991' }),
+          marc_field(tag: '650', indicator1: '1', indicator2: '2', subfields: { a: 'Nephrology' }),
+          marc_field(tag: '650', indicator1: '2', indicator2: '1', subfields: { a: 'Kidney Diseases' })
+        ]
+      )
+    end
 
+    it 'includes heading terms only from subject tags with indicator 2 of "2"' do
+      expect(helper.medical_show(record)).to contain_exactly 'Nephrology'
+    end
   end
 
   describe '.local_show' do
+    let(:record) do
+      marc_record(fields: [
+                    marc_field(tag: '650', indicator2: '4', subfields: { a: 'Local', v: 'Heading' }),
+                    marc_field(tag: '690', indicator2: '4', subfields: { a: 'Super Local.' })
+                  ])
+    end
 
+    it 'includes heading terms only from subject tags with indicator 2 of "4" or in the 69X range' do
+      expect(helper.local_show(record)).to contain_exactly 'Local--Heading', 'Super Local.'
+    end
   end
 end

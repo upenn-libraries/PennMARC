@@ -6,7 +6,29 @@ module PennMARC
   # support features (xfacet) that we will no longer support, and ties display and xfacet field parsing together too
   # tightly to be preserved. As a result fo this, display methods and facet methods below are ported from their state
   # prior to Michael's 2/2021 subject parsing changes.
+
   class Subject < Helper
+    class Term
+      # @return [Boolean]
+      attr_accessor :local
+
+      # @return [Array<String>]
+      attr_accessor :parts, :append, :last
+
+      # @return [String]
+      attr_accessor :source
+
+      def initialize
+        @parts = []
+        @append = []
+        @last = []
+      end
+
+      def to_s
+
+      end
+    end
+
     class << self
       # Tags that serve as sources for Subject search values
       # @todo why are 541 and 561 included here?
@@ -22,6 +44,9 @@ module PennMARC
       # Tags that serve as sources for Subject facet values
       DISPLAY_TAGS = %w[600 610 611 630 650 651].freeze
 
+      # Local subject heading tags
+      LOCAL_TAGS = %w[690 691 697].freeze
+
       # These codes are expected to be found in sf2 when the indicator2 value is 7, indicating "source specified". There
       # are some sources whose headings we don't want to display.
       ALLOWED_SUBJ_GENRE_ONTOLOGIES = %w[aat cct fast ftamc gmgpc gsafd homoit jlabsh lcgft lcsh lcstt lctgm
@@ -36,7 +61,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array]
       def search(record, relator_map)
-        subject_search_fields(record).filter_map do |field|
+        subject_fields(record, type: :search).filter_map do |field|
           subj_parts = field.filter_map do |sf|
             next if sf.code.in? %w[5 6 8]
 
@@ -102,7 +127,7 @@ module PennMARC
           .filter_map do |field|
             hash = build_subject_hash(field)
             "#{hash[:parts].join('--')} #{hash[:lasts].join(' ')} #{hash[:append].join(' ')}".strip
-          end
+          end.uniq
       end
 
       # Get Subjects from "MeSH" ontology
@@ -110,14 +135,29 @@ module PennMARC
       # @todo port get_medical_subject_display
       # @param [MARC::Record] record
       # @return [Array]
-      def medical_show(record); end
+      def medical_show(record)
+        subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '2' })
+          .filter_map do |field|
+          hash = build_subject_hash(field)
+          "#{hash[:parts].join('--')} #{hash[:lasts].join(' ')} #{hash[:append].join(' ')}".strip
+        end.uniq
+      end
 
       # Get Subject from local ontology
       #
       # @todo port get_local_subject_display
       # @param [MARC::Record] record
       # @return [Array]
-      def local_show(record); end
+      def local_show(record)
+        local_fields = subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '4' }) +
+                       subject_fields(record, type: :local)
+        local_fields.filter_map do |field|
+          next if subfield_value?(field, '2', /penncoi/)
+
+          hash = build_subject_hash(field)
+          "#{hash[:parts].join('--')} #{hash[:lasts].join(' ')} #{hash[:append].join(' ')}".strip
+        end.uniq
+      end
 
       private
 
@@ -133,12 +173,19 @@ module PennMARC
                           when :search then :subject_search_field?
                           when :facet then :subject_facet_field?
                           when :display then :subject_display_field?
+                          when :local then :subject_local_field?
                           else
                             raise StandardError # TODO: do better
                           end
         record.fields.find_all do |field|
           options.any? ? send(selector_method, field, options) : send(selector_method, field)
         end
+      end
+      
+      def subject_local_field?(field)
+        return true if field.tag.in? LOCAL_TAGS
+        
+        false
       end
 
       def subject_display_field?(field, options)
@@ -192,7 +239,7 @@ module PennMARC
             term_info[:source] = subfield.value.strip
           when 'e', 'w'
             # 'e' is relator term; not sure what 'w' is. These are used to append for record-view display only
-            term_info[:append] << subfield.value.strip
+            term_info[:append] << subfield.value.strip # TODO: map relator code?
           when 'b', 'c', 'd', 'p', 'q', 't'
             # these are appended to the last component if possible (i.e., when joined, should have no delimiter)
             term_info[:lasts] << subfield.value.strip
