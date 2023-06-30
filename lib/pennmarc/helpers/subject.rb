@@ -8,31 +8,11 @@ module PennMARC
   # prior to Michael's 2/2021 subject parsing changes.
 
   class Subject < Helper
-    class Term
-      # @return [Boolean]
-      attr_accessor :local
-
-      # @return [Array<String>]
-      attr_accessor :parts, :append, :last
-
-      # @return [String]
-      attr_accessor :source
-
-      def initialize
-        @parts = []
-        @append = []
-        @last = []
-      end
-
-      def to_s
-
-      end
-    end
-
     class << self
       # Tags that serve as sources for Subject search values
       # @todo why are 541 and 561 included here?
       SEARCH_TAGS = %w[541 561 600 610 611 630 650 651 653].freeze
+
       # Valid indicator 2 values indicating the source thesaurus for subject terms. These are:
       # - 0: LCSH
       # - 1: LC Children's
@@ -49,8 +29,8 @@ module PennMARC
 
       # These codes are expected to be found in sf2 when the indicator2 value is 7, indicating "source specified". There
       # are some sources whose headings we don't want to display.
-      ALLOWED_SUBJ_GENRE_ONTOLOGIES = %w[aat cct fast ftamc gmgpc gsafd homoit jlabsh lcgft lcsh lcstt lctgm
-                                         local/osu mesh ndlsh nlksh rbbin rbgenr rbmscv rbpap rbpri rbprov rbpub rbtyp].freeze
+      ALLOWED_SOURCE_CODES = %w[aat cct fast ftamc gmgpc gsafd homoit jlabsh lcgft lcsh lcstt lctgm
+                                local/osu mesh ndlsh nlksh rbbin rbgenr rbmscv rbpap rbpri rbprov rbpub rbtyp].freeze
 
       # All Subjects for searching. This includes most subfield content from any field contained in {SEARCH_TAGS} or 69X,
       # including any linked 880 fields. Fields must have an indicator2 value in {SEARCH_SOURCE_INDICATORS}.
@@ -63,19 +43,19 @@ module PennMARC
       def search(record, relator_map)
         subject_fields(record, type: :search).filter_map do |field|
           subj_parts = field.filter_map do |sf|
-            next if sf.code.in? %w[5 6 8]
-
+            # TODO: use term hash here?
             # TODO: why do we care about punctuation in a search field? relator mapping?
             case sf.code
+            when '5', '6', '8' then next
             when 'a'
-              " #{sf.value.gsub(/^%?(PRO|CHR)/, '').gsub(/\?$/, '')}" # TODO: what is this regex doing?
+              sf.value.gsub(/^%?(PRO|CHR)/, '').gsub(/\?$/, '') # TODO: what is this regex doing?
             when '4'
               # TODO: use relation mapping method from Title helper? for potential URI support?
-              # # sf 4 should contain a 3-letter code or URI "that specifies the relationship from the entity described
+              # sf 4 should contain a 3-letter code or URI "that specifies the relationship from the entity described
               # in the record to the entity referenced in the field"
               "#{sf.value}, #{relator_map[sf.value]}"
             else
-              " #{sf.value}"
+              sf.value
             end
           end
           next if subj_parts.empty?
@@ -93,30 +73,25 @@ module PennMARC
       # @return [Array]
       def facet(record)
         subject_fields(record, type: :facet).filter_map do |field|
-          hash = build_subject_hash(field)
-          next if hash.blank? || hash[:count]&.zero?
+          term_hash = build_subject_hash(field)
+          next if term_hash.blank? || term_hash[:count]&.zero?
 
-          normalize_single_subfield(hash[:parts].first) if hash[:count] == 1
-
-          # assemble subject hash
-          "#{hash[:parts].join('--')} #{hash[:lasts].join(' ')}".strip
+          format_term type: :facet, term: term_hash
         end
-      end
-
-      # when we've only encountered one subfield, assume that it might be a poorly-coded record
-      # with a bunch of subdivisions mashed together, and attempt to convert it to a consistent
-      # form.
-      def normalize_single_subfield(first_part)
-        first_part.gsub!(/([[[:alnum:]])])(\s+--\s*|\s*--\s+)([[[:upper:]][[:digit:]]])/, '\1--\3')
-        first_part.gsub!(/([[[:alpha:]])])\s+-\s+([[:upper:]]|[[:digit:]]{2,})/, '\1--\2')
-        first_part.gsub!(/([[[:alnum:]])])\s+-\s+([[:upper:]])/, '\1--\2')
       end
 
       # All Subjects for display
       #
       # @param [MARC::Record] record
       # @return [Array]
-      def show(record); end
+      def show(record)
+        subject_fields(record, type: :all).filter_map do |field|
+          term_hash = build_subject_hash(field)
+          next if term_hash.blank? || term_hash[:count]&.zero?
+
+          format_term type: :display, term: term_hash
+        end.uniq
+      end
 
       # Get Subjects from "Children" ontology
       #
@@ -125,27 +100,29 @@ module PennMARC
       def childrens_show(record)
         subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '1' })
           .filter_map do |field|
-            hash = build_subject_hash(field)
-            "#{hash[:parts].join('--')} #{hash[:lasts].join(' ')} #{hash[:append].join(' ')}".strip
+            term_hash = build_subject_hash(field)
+            next if term_hash.blank? || term_hash[:count]&.zero?
+
+            format_term type: :display, term: term_hash
           end.uniq
       end
 
       # Get Subjects from "MeSH" ontology
       #
-      # @todo port get_medical_subject_display
       # @param [MARC::Record] record
       # @return [Array]
       def medical_show(record)
         subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '2' })
           .filter_map do |field|
-          hash = build_subject_hash(field)
-          "#{hash[:parts].join('--')} #{hash[:lasts].join(' ')} #{hash[:append].join(' ')}".strip
-        end.uniq
+            term_hash = build_subject_hash(field)
+            next if term_hash.blank? || term_hash[:count]&.zero?
+
+            format_term type: :display, term: term_hash
+          end.uniq
       end
 
-      # Get Subject from local ontology
+      # Get Subject values from {DISPLAY_TAGS} where indicator2 is 4 and {LOCAL_TAGS}.
       #
-      # @todo port get_local_subject_display
       # @param [MARC::Record] record
       # @return [Array]
       def local_show(record)
@@ -154,8 +131,10 @@ module PennMARC
         local_fields.filter_map do |field|
           next if subfield_value?(field, '2', /penncoi/)
 
-          hash = build_subject_hash(field)
-          "#{hash[:parts].join('--')} #{hash[:lasts].join(' ')} #{hash[:append].join(' ')}".strip
+          term_hash = build_subject_hash(field)
+          next if term_hash.blank? || term_hash[:count]&.zero?
+
+          format_term type: :display, term: term_hash
         end.uniq
       end
 
@@ -164,6 +143,8 @@ module PennMARC
       # Get subject fields from a record based on expected usage type. Valid types are currently:
       # - search
       # - facet
+      # - display
+      # - local
       # @param [MARC::Record] record
       # @param [String, Symbol] type
       # @param [Hash] options to be passed to the selector method
@@ -174,6 +155,7 @@ module PennMARC
                           when :facet then :subject_facet_field?
                           when :display then :subject_display_field?
                           when :local then :subject_local_field?
+                          when :all then :subject_general_display_field?
                           else
                             raise StandardError # TODO: do better
                           end
@@ -181,13 +163,42 @@ module PennMARC
           options.any? ? send(selector_method, field, options) : send(selector_method, field)
         end
       end
-      
+
+      # Format a term hash as a string for display
+      # @param [Symbol] type
+      # @param [Hash] term components and information as a hash
+      def format_term(type:, term:)
+        normalize_single_subfield(term[:parts].first) if term[:count] == 1
+
+        case type
+        when :facet
+          "#{term[:parts].join('--')} #{term[:lasts].join(' ')}".strip
+        when :display
+          "#{term[:parts].join('--')} #{term[:lasts].join(' ')} #{term[:append].join(' ')}".strip
+        end
+      end
+
+      # @param [MARC::DataField] field
+      # @return [Boolean] whether a MARC field is intended for display under general "Subjects"
+      def subject_general_display_field?(field)
+        return false unless field.tag.in? DISPLAY_TAGS + LOCAL_TAGS
+
+        return false if field.indicator2 == '7' && !valid_source_code?(field)
+
+        true
+      end
+
+      # @param [MARC::DataField] field
+      # @return [Boolean] whether a MARC field is a local subject field (69X)
       def subject_local_field?(field)
         return true if field.tag.in? LOCAL_TAGS
-        
+
         false
       end
 
+      # @param [MARC::DataField] field
+      # @param [Hash] options include :tags and :indicator2 values
+      # @return [Boolean] whether a MARC field should be considered for display
       def subject_display_field?(field, options)
         return false if field.blank?
 
@@ -203,32 +214,35 @@ module PennMARC
 
         return true if field.tag.in?(DISPLAY_TAGS) && field.indicator2.in?(%w[0 2 4])
 
-        return true if field.indicator2 == '7' && valid_ontology_code?(field)
+        return true if field.indicator2 == '7' && valid_source_code?(field)
 
         false
       end
 
       # @param [MARC::DataField] field
       # @return [Boolean]
-      def valid_ontology_code?(field)
+      def valid_source_code?(field)
         field.any? do |subfield|
-          subfield.code == '2' && subfield.value.in?(ALLOWED_SUBJ_GENRE_ONTOLOGIES)
+          subfield.code == '2' && subfield.value.in?(ALLOWED_SOURCE_CODES)
         end
       end
 
       # @note Note that we must separately track count (as opposed to simply checking `parts.size`),
-      #       because we're using "subdivision count" as a heuristic for the quality level of the heading. - MG
+      #       because we're using (where? - MK) "subdivision count" as a heuristic for the quality level of the
+      #       heading. - MG
       # @todo do i need all this?
       # @todo do i need to handle punctuation? see append_new_part
       def build_subject_hash(field)
-        term_info = { count: 0, parts: [], append: [], lasts: [],
+        term_info = { count: 0, parts: [], append: [], lasts: [], uri: nil,
                       local: field.indicator2 == '4' || field.tag.starts_with?('69'), # local subject heading
                       vernacular: field.tag == '880' }
         field.each do |subfield|
           case subfield.code
-          when '0', '6', '8', '5', '1'
+          when '0', '6', '8', '5'
             # explicitly ignore these subfields
             next
+          when '1'
+            term_info[:uri] = subfield.value.strip
           when 'a'
             # filter out PRO/CHR entirely (but only need to check on local heading types)
             return nil if term_info[:local] && subfield.value =~ /^%?(PRO|CHR)([ $]|$)/
@@ -279,6 +293,15 @@ module PennMARC
 
         tag = tag[0..2]
         tag&.in?(SEARCH_TAGS) || tag&.start_with?('69')
+      end
+
+      # when we've only encountered one subfield, assume that it might be a poorly-coded record
+      # with a bunch of subdivisions mashed together, and attempt to convert it to a consistent
+      # form.
+      def normalize_single_subfield(first_part)
+        first_part.gsub!(/([[[:alnum:]])])(\s+--\s*|\s*--\s+)([[[:upper:]][[:digit:]]])/, '\1--\3')
+        first_part.gsub!(/([[[:alpha:]])])\s+-\s+([[:upper:]]|[[:digit:]]{2,})/, '\1--\2')
+        first_part.gsub!(/([[[:alnum:]])])\s+-\s+([[:upper:]])/, '\1--\2')
       end
     end
   end

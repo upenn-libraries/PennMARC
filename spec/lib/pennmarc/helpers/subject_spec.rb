@@ -29,9 +29,6 @@ describe 'PennMARC::Subject' do
     end
   end
 
-  describe '.show' do
-  end
-
   describe '.facet' do
     let(:record) { marc_record fields: }
     let(:values) { helper.facet(record) }
@@ -57,14 +54,14 @@ describe 'PennMARC::Subject' do
       end
     end
 
-    context 'for a record with an indicator2 value of 3 5 or 6' do
+    context 'for a record with an indicator2 value of 3, 5 or 6' do
       let(:fields) do
         [marc_field(tag: '650', indicator2: '3', subfields: { a: 'Nope' }),
          marc_field(tag: '650', indicator2: '5', subfields: { a: 'Nope' }),
          marc_field(tag: '650', indicator2: '6', subfields: { a: 'Nope' })]
       end
 
-      it 'des not include the headings' do
+      it 'does not include the headings' do
         expect(values).to be_empty
       end
     end
@@ -97,6 +94,27 @@ describe 'PennMARC::Subject' do
       it 'joins all values in the expected way' do
         expect(values.first).to eq 'Libraries--History 22nd Century'
       end
+    end
+  end
+
+  describe '.show' do
+    let(:record) do
+      marc_record(
+        fields: [
+          marc_field(tag: '650', indicator2: '0', subfields: { a: 'Nephrology', v: 'Periodicals' }),
+          marc_field(tag: '650', indicator2: '7',
+                     subfields: { a: 'Nephrology', '2': 'fast', '0': '(OCoLC)fst01035991' }),
+          marc_field(tag: '650', indicator2: '7', subfields: { a: 'Undesirable Heading', '2': 'exclude' }),
+          marc_field(tag: '650', indicator1: '1', indicator2: '2', subfields: { a: 'Nephrology' }),
+          marc_field(tag: '650', indicator1: '2', indicator2: '1', subfields: { a: 'Kidney Diseases' }),
+          marc_field(tag: '690', subfields: { a: 'Local Heading' })
+        ]
+      )
+    end
+
+    it 'shows all valid subject headings without duplicates' do
+      expect(helper.show(record)).to match_array ['Nephrology--Periodicals', 'Nephrology',
+                                                  'Kidney Diseases', 'Local Heading']
     end
   end
 
