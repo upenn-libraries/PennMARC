@@ -4,9 +4,15 @@ module PennMARC
   # Do Edition-y stuff
   class Edition < Helper
     class << self
-      # Edition values for display on a record page.
+      # Edition values for display on a record page. Field 250 is information relating to the edition of a work as
+      # determined by applicable cataloging rules. For mixed materials, field 250 is used to record statements relating
+      # to collections that contain versions of works existing in two or more versions (or states) in single or multiple
+      # copies (e.g., different drafts of a film script). For continuing resources, this field is not used for
+      # sequential edition statements such as 1st- ed. This type of information is contained in field 362 (Dates of
+      # Publication and/or Volume Designation).
+      # https://www.loc.gov/marc/bibliographic/bd250.html
       # @param [MARC::Record] record
-      # @return [Array<String>]
+      # @return [Array<String>] array of editions and their alternates
       def show(record)
         acc = []
         acc += record.fields('250').map do |field|
@@ -20,9 +26,9 @@ module PennMARC
         acc
       end
 
-      # Edition values for display in search results.
+      # Edition values for display in search results. Just grab the first 250 field.
       # @param [MARC::Record] record
-      # @return [Array<String>]
+      # @return [Array<String>] array of 250 fields, all subfields are joined into a single string
       def values(record)
         record.fields('250').take(1).map do |field|
           results = field.find_all(&subfield_not_in?(%w[6 8])).map(&:value)
@@ -30,21 +36,25 @@ module PennMARC
         end
       end
 
+      # Entry for another available edition of the target item (horizontal relationship). When a note is generated
+      # from this field, the introductory phrase Other editions available: may be generated based on the field tag for
+      # display.
+      # https://www.loc.gov/marc/bibliographic/bd775.html
       # @param [MARC::Record] record
-      # @return [Array<String>]
-      def other_show(record)
+      # @return [Array<String>] array of other edition strings
+      def other_show(record, relator_mapping)
         acc = []
         acc += record.fields('775')
                      .select { |f| f.any? { |sf| sf.code == 'i' } }
                      .map do |field|
-          other_edition_value(field)
+          other_edition_value(field, relator_mapping)
         end
         acc += record.fields('880')
                      .select { |f| ['', ' '].member?(f.indicator2) }
                      .select { |f| subfield_value?(f, '6', /^775/) }
                      .select { |f| f.any? { |sf| sf.code == 'i' } }
                      .map do |field|
-          other_edition_value(field)
+          other_edition_value(field, relator_mapping)
         end
         acc
       end
@@ -52,25 +62,28 @@ module PennMARC
       private
 
       # @param [MARC::DataField] field
-      # @return [String (frozen)]
-      def other_edition_value(field)
+      # @return [String (frozen)] assembled other version string
+      def other_edition_value(field, relator_mapping)
         subi = remove_paren_value_from_subfield_i(field) || ''
-        other_editions = field.map do |sf|
+        other_editions = field.filter_map do |sf|
           if %w[s x z].member?(sf.code)
             " #{sf.value}"
           elsif sf.code == 't'
-            " #{relator_codes[sf.value]}. "
+            relator = translate_relator(sf.value, relator_mapping)
+            next if relator.blank?
+
+            " #{relator}. "
           end
         end.compact.join
-        other_editions_append = field.map do |sf|
+        other_editions_append = field.filter_map do |sf|
           if !%w[i h s t x z e f o r w y 7].member?(sf.code)
             " #{sf.value}"
           elsif sf.code == 'h'
             " (#{sf.value}) "
           end
         end.compact.join
-        prepend = trim_trailing :period, subi
-        "#{prepend}: #{other_editions} #{other_editions_append}"
+        prepend = trim_trailing(:period, subi).strip.squish
+        "#{prepend}: #{other_editions} #{other_editions_append}".strip.squish
       end
     end
   end
