@@ -170,8 +170,10 @@ module PennMARC
     end
     alias join_and_trim_whitespace join_and_squish
 
-    # if there's a subfield i, extract its value, and if there's something
+    # If there's a subfield i, extract its value, and if there's something
     # in parentheses in that value, extract that.
+    # @param [MARC::Field] field
+    # @return [String] subfield i without parentheses value
     def remove_paren_value_from_subfield_i(field)
       val = field.select { |sf| sf.code == 'i' }.map do |sf|
         match = /\((.+?)\)/.match(sf.value)
@@ -182,6 +184,17 @@ module PennMARC
         end
       end.first || ''
       trim_trailing(:colon, trim_trailing(:period, val))
+    end
+
+    # Translate a relator code using mapping
+    # @todo handle case of receiving a URI? E.g., http://loc.gov/relator/aut
+    # @param [String] relator_code
+    # @param [Hash] mapping
+    # @return [String, NilClass] full relator string
+    def translate_relator(relator_code, mapping)
+      return unless relator_code.present?
+
+      mapping[relator_code.to_sym]
     end
   end
 end
