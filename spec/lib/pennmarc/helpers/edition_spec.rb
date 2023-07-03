@@ -4,11 +4,13 @@ describe 'PennMARC::Edition' do
   include MarcSpecHelpers
 
   let(:helper) { PennMARC::Edition }
+  let(:mapping) { { aut: 'Author' } }
   let(:record) do
     marc_record fields: [marc_field(tag: '250', subfields: { a: '5th Edition', b: 'Remastered' }),
                          marc_field(tag: '880', subfields: { '6': '250', b: 'رمستر' }),
                          marc_field(tag: '775', subfields: { i: 'Other Edition (Remove)',
-                                                             h: 'Cool Book' })]
+                                                             h: 'Cool Book',
+                                                             t: 'aut'})]
   end
 
   describe '.show' do
@@ -25,7 +27,7 @@ describe 'PennMARC::Edition' do
 
   describe '.other_show' do
     it 'returns other edition values' do
-      expect(helper.other_show(record)).to contain_exactly('Other Edition :   (Cool Book) ')
+      expect(helper.other_show(record, mapping)).to contain_exactly('Other Edition: Author. (Cool Book)')
     end
   end
 end
