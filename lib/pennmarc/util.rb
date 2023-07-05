@@ -169,5 +169,37 @@ module PennMARC
       array.join(' ').squish
     end
     alias join_and_trim_whitespace join_and_squish
+
+
+    # Get 650 & 880 for Provenance and Chronology: prefix should be 'PRO' or 'CHR' and may be preceeded by a '%'
+    # @note 11/2018: do not display $5 in PRO or CHR subjs
+    # @param [MARC::Record] record
+    # @param [String] prefix to select from subject field
+    # @return [Array] array of values
+    def prefixed_subject_and_alternate(record, prefix)
+      values = record.fields('650').filter_map do |field|
+        next unless field.indicator2 == '4'
+
+        next unless field.any? { |sf| sf.code == 'a' && sf.value =~ /^(#{prefix}|%#{prefix})/ }
+
+        elements = field.select(&subfield_in(%w{a})).map {|sf|
+          sf.value.gsub(/^%?#{prefix}/, '')
+        }
+        elements += join_subfields(field, &subfield_not_in(%w{a 6 8 e w 5}))
+        join_and_squish elements if elements.any?
+      end
+
+      values + record.fields('880').filter_map do |field|
+        next unless field.indicator2 == '4'
+
+        next unless subfield_value?(field, '6', /^650/)
+
+        next unless field.any? { |sf| sf.code == 'a' && sf.value =~ /^(#{prefix}|%#{prefix})/ }
+
+        elements = field.select(&subfield_in(%w{a})).map {|sf| sf.value.gsub(/^%?#{prefix}/, '') }
+        elements += join_subfields(field, &subfield_not_in(%w{a 6 8 e w 5}))
+        join_and_squish(elements) if elements.any?
+      end
+    end
   end
 end
