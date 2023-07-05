@@ -5,8 +5,8 @@ module PennMARC
   class Date < Helper
     class << self
       # Retrieve publication date (Date 1) from {https://www.loc.gov/marc/bibliographic/bd008a.html 008 field}.
-      # Publication date is a four-digit year found in position 7-10 and may contain 'u' characters to represent partially known dates. We
-      # replace any occurrences of 'u' with '0' before converting to DateTime object.
+      # Publication date is a four-digit year found in position 7-10 and may contain 'u' characters to represent
+      # partially known dates. We replace any occurrences of 'u' with '0' before converting to DateTime object.
       # @param [MARC::Record] record
       # @return [DateTime, nil] The publication date, or nil if date found in record is invalid
       def publication(record)
@@ -46,6 +46,8 @@ module PennMARC
       end
 
       # Retrieve date last updated from {https://www.loc.gov/marc/bibliographic/bd005.html 005 field}.
+      # Date last updated is a sixteen character String recorded in
+      # {https://www.iso.org/iso-8601-date-and-time-format.html ISO 8601} format.
       # @param [MARC::Record] record
       # @return [DateTime, nil] The date last updated, or nil if date found in record is invalid
       def last_updated(record)
