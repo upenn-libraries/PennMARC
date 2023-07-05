@@ -50,13 +50,18 @@ module PennMARC
       # @return [DateTime, nil] The date last updated, or nil if date found in record is invalid
       def last_updated(record)
         record.fields('005').filter_map do |field|
-          next if field.value.blank?
+          date_time_string = field.value
 
-          next if field.value.start_with?('0000')
+          next if date_time_string.blank?
 
-          DateTime.iso8601(field.value)
-        rescue ArgumentError => e
-          puts "Error parsing last updated date: #{field.value} - #{e}"
+          next if date_time_string.start_with?('0000')
+
+          next if date_time_string.to_i.zero?
+
+          DateTime.new(date_time_string.to_i)
+
+        rescue StandardError => e
+          puts "Error parsing last updated date: #{date_time_string} - #{e}"
           nil
         end.first
       end
