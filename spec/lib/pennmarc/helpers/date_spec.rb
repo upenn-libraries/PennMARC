@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe 'PennMarc::Date' do
+describe 'PennMARC::Date' do
   include MarcSpecHelpers
 
   let(:helper) { PennMARC::Date }
