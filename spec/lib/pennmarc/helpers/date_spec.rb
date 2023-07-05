@@ -78,10 +78,14 @@ describe 'PennMARC::Date' do
   end
 
   describe '.last_updated' do
-    let(:fields) { [marc_field(tag: '005', subfields: { q: '20230213163851.0' })] }
+    let(:fields) { [marc_field(tag: '005', subfields: { q: '20230213163851.1' })] }
 
     it 'returns date last updated' do
-      expect(helper.last_updated(record)).to eq(DateTime.new('20230213163851.0'.to_i))
+      expect(helper.last_updated(record)).to eq(DateTime.iso8601('20230213163851.1').to_datetime)
+    end
+
+    it 'returns year value' do
+      expect(helper.last_updated(record).year).to eq(2023)
     end
 
     context 'with invalid date' do
@@ -89,6 +93,12 @@ describe 'PennMARC::Date' do
 
       it 'returns nil' do
         expect(helper.last_updated(record)).to be_nil
+      end
+
+      it 'outputs error message' do
+        expect do
+          helper.last_updated(record)
+        end.to output("Error parsing last updated date: invalid date - invalid date\n").to_stdout
       end
     end
   end
