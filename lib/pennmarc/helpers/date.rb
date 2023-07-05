@@ -5,7 +5,7 @@ module PennMARC
   class Date < Helper
     class << self
       # Retrieve publication date (Date 1) from {https://www.loc.gov/marc/bibliographic/bd008a.html 008 field}.
-      # Publication date is found in position 7-10 and may contain 'u' characters to represent partially known dates. We
+      # Publication date is a four-digit year found in position 7-10 and may contain 'u' characters to represent partially known dates. We
       # replace any occurrences of 'u' with '0' before converting to DateTime object.
       # @param [MARC::Record] record
       # @return [DateTime, nil] The publication date, or nil if date found in record is invalid
