@@ -56,11 +56,9 @@ module PennMARC
 
           next if date_time_string.start_with?('0000')
 
-          next if date_time_string.to_i.zero?
+          DateTime.iso8601(date_time_string).to_datetime
 
-          DateTime.new(date_time_string.to_i)
-
-        rescue StandardError => e
+        rescue ArgumentError => e
           puts "Error parsing last updated date: #{date_time_string} - #{e}"
           nil
         end.first
