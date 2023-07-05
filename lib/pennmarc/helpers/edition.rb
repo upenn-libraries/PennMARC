@@ -14,26 +14,19 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>] array of editions and their alternates
       def show(record)
-        acc = []
-        acc += record.fields('250').map do |field|
+        record.fields('250').map do |field|
           join_subfields(field, &subfield_not_in?(%w[6 8]))
-        end
-        acc += record.fields('880')
-                     .select { |f| subfield_value?(f, '6', /^250/) }
-                     .map do |field|
-          join_subfields(field, &subfield_not_in?(%w[6 8]))
-        end
-        acc
+        end + linked_alternate_not_6_or_8(record, '250')
       end
 
       # Edition values for display in search results. Just grab the first 250 field.
       # @param [MARC::Record] record
-      # @return [Array<String>] array of 250 fields, all subfields are joined into a single string
+      # @return [String] string of all first 250 subfields, excluding 6 and 8
       def values(record)
-        record.fields('250').take(1).map do |field|
-          results = field.find_all(&subfield_not_in?(%w[6 8])).map(&:value)
-          join_and_squish(results)
-        end
+        edition = record.fields('250').first
+        return [] unless edition.present?
+
+        join_subfields(edition, &subfield_not_in?(%w[6 8]))
       end
 
       # Entry for another available edition of the target item (horizontal relationship). When a note is generated
@@ -43,20 +36,17 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>] array of other edition strings
       def other_show(record, relator_mapping)
-        acc = []
-        acc += record.fields('775')
-                     .select { |f| f.any? { |sf| sf.code == 'i' } }
-                     .map do |field|
+        record.fields('775').filter_map do |field|
+          next unless subfield_defined?(field, :i)
+
+          other_edition_value(field, relator_mapping)
+        end + record.fields('880').filter_map do |field|
+          next unless field.indicator2.in? ['', ' ']
+          next unless subfield_value_in? field, '6', %w[775]
+          next unless subfield_defined? field, 'i'
+
           other_edition_value(field, relator_mapping)
         end
-        acc += record.fields('880')
-                     .select { |f| ['', ' '].member?(f.indicator2) }
-                     .select { |f| subfield_value?(f, '6', /^775/) }
-                     .select { |f| f.any? { |sf| sf.code == 'i' } }
-                     .map do |field|
-          other_edition_value(field, relator_mapping)
-        end
-        acc
       end
 
       private
@@ -74,16 +64,16 @@ module PennMARC
 
             " #{relator}. "
           end
-        end.compact.join
+        end.join
         other_editions_append = field.filter_map do |sf|
-          if !%w[i h s t x z e f o r w y 7].member?(sf.code)
+          if %w[i h s t x z e f o r w y 7].exclude?(sf.code)
             " #{sf.value}"
           elsif sf.code == 'h'
             " (#{sf.value}) "
           end
-        end.compact.join
-        prepend = trim_trailing(:period, subi).strip.squish
-        "#{prepend}: #{other_editions} #{other_editions_append}".strip.squish
+        end.join
+        prepend = trim_trailing(:period, subi).squish
+        "#{prepend}: #{other_editions} #{other_editions_append}".squish
       end
     end
   end
