@@ -11,8 +11,11 @@ module PennMARC
       # @return [DateTime, nil] The publication date, or nil if date found in record is invalid
       def publication(record)
         record.fields('008').filter_map do |field|
-          year = sanitize_partially_known_date(field.value[7, 4], '0')
-          DateTime.iso8601(year) if year.present?
+          four_digit_year = sanitize_partially_known_date(field.value[7, 4], '0')
+
+          next unless four_digit_year.present?
+
+          DateTime.new(four_digit_year.to_i)
         end.first
       end
 
