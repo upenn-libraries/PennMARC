@@ -16,7 +16,7 @@ module PennMARC
       # @return [Array] contained in values for display
       def contained_in_show(record)
         record.fields('773').map do |field|
-          join_subfields(field, &subfield_not_in(%w[6 7 8 w]))
+          join_subfields(field, &subfield_not_in?(%w[6 7 8 w]))
         end
       end
 
@@ -37,29 +37,23 @@ module PennMARC
 
       # Get notes for "Publication About" from {https://www.oclc.org/bibformats/en/5xx/581.html MARC 581}.
       # @param [MARC::Record] record
-      # @return [Object]
+      # @return [Array]
       def publications_about_show(record)
         datafield_and_linked_alternate(record, '581')
       end
 
+      # Get related work from {RELATED_WORK_FIELDS} in the 7XX range. Require presence of sf t (title) and absence of
+      # an indicator2 value. Prefix returned values with sf i value. Also map relator codes found in sf 4. Ignore sf 0.
       # @param [MARC::Record] record
       # @param [Hash] relator_map
-      # @return [Object]
+      # @return [Array]
       def related_work_show(record, relator_map)
         values = record.fields(RELATED_WORK_FIELDS).filter_map do |field|
           next unless field.indicator2.blank?
 
           next unless subfield_defined?(field, 't')
 
-          subi = remove_paren_value_from_subfield_i(field) || '' # TODO: PP ported this helper in Edition MR
-          related_text = field.filter_map do |sf|
-            if %w[0 4 i].exclude?(sf.code)
-              " #{sf.value}"
-            elsif sf.code == '4'
-              ", #{relator_map[sf.value]}"
-            end
-          end.join
-          [subi, related_text].compact_blank.join(':')
+          values_with_title_prefix(field, sf_exclude: %w[0 4 6 8 i], relator_map: relator_map)
         end
         values + record.fields('880').filter_map do |field|
           next unless field.indicator2.blank?
@@ -68,68 +62,76 @@ module PennMARC
 
           next unless subfield_defined?(field, 't')
 
-          subi = remove_paren_value_from_subfield_i(field) || ''
-          related_text = field.filter_map do |sf|
-            if %w[0 4 i].exclude?(sf.code)
-              " #{sf.value}"
-            elsif sf.code == '4'
-              ", #{relator_map[sf.value]}"
-            end
-          end.join
-          [subi, related_text].compact_blank.join(':')
+          values_with_title_prefix(field, sf_exclude: %w[0 4 6 8 i], relator_map: relator_map)
         end
       end
 
+      # Get "Contains" values from {CONTAINS_FIELDS} in the 7XX range. Must have indicator 2 value of 2 indicating an
+      # "Analytical Entry" meaning that the record is contained by the matching field. Map relator cods in sf 4. Ignore
+      # values in sf 0, 5, 6, and 8.
       # @param [MARC::Record] record
-      # @return [Object]
-      def contains_show(record)
+      # @param [Hash] relator_map
+      # @return [Array]
+      def contains_show(record, relator_map)
         acc = []
-        acc += record.fields(CONTAINS_FIELDS)
-                     .select { |f| f.indicator2 == '2' }
-                     .map do |field|
-          subi = remove_paren_value_from_subfield_i(field) || ''
-          contains = field.map do |sf|
-            if !%w[0 4 5 6 8 i].member?(sf.code)
-              " #{sf.value}"
-            elsif sf.code == '4'
-              ", #{relator_codes[sf.value]}"
-            end
-          end.compact.join
-          [subi, contains].select(&:present?).join(':')
+        acc += record.fields(CONTAINS_FIELDS).filter_map do |field|
+          next unless field.indicator2 == '2'
+
+          values_with_title_prefix(field, sf_exclude: %w[0 4 5 6 8 i], relator_map: relator_map)
         end
-        acc += record.fields('880')
-                     .select { |f| f.indicator2 == '2' }
-                     .select { |f| has_subfield6_value(f, /^(#{CONTAINS_FIELDS.join('|')})/) }
-                     .map do |field|
-          subi = remove_paren_value_from_subfield_i(field) || ''
-          contains = join_subfields(field, &subfield_not_in(%w[0 5 6 8 i]))
-          [subi, contains].select(&:present?).join(':')
+        acc + record.fields('880').filter_map do |field|
+          next unless field.indicator2 == '2'
+
+          next unless subfield_value?(field, '6', /^(#{CONTAINS_FIELDS.join('|')})/)
+
+          values_with_title_prefix(record, sf_include: %w[0 5 6 8 i])
         end
-        acc
       end
 
+      # Get "Constituent Unit" values from {https://www.oclc.org/bibformats/en/7xx/774.html MARC 774}. Include
+      # subfield values in i, a, s and t.
       # @param [MARC::Record] record
-      # @return [Object]
+      # @return [Array]
       def constituent_unit_show(record)
-        acc = []
-        acc += record.fields('774').map do |field|
-          join_subfields(field, &subfield_in(%w[i a s t]))
-        end.select(&:present?)
-        acc += get_880(record, '774') do |sf|
-          %w[i a s t].member?(sf.code)
+        acc = record.fields('774').filter_map do |field|
+          join_subfields(field, &subfield_in?(%w[i a s t]))
         end
-        acc
+        acc + linked_alternate(record, '774', &subfield_in?(%w[i a s t]))
       end
 
+      # Get "Has Supplement" values from {https://www.oclc.org/bibformats/en/7xx/770.html MARC 770}. Ignore
+      # subfield values in 6 and 8.
       # @param [MARC::Record] record
-      # @return [Object]
+      # @return [Array]
       def has_supplement_show(record)
-        acc = []
-        acc += record.fields('770').map do |field|
-          join_subfields(field, &subfield_not_6_or_8)
-        end.select(&:present?)
-        acc += get_880_subfield_not_6_or_8(record, '770')
-        acc
+        acc = record.fields('770').filter_map do |field|
+          join_subfields(field, &subfield_not_in?(%w[6 8]))
+        end
+        acc + linked_alternate_not_6_or_8(record, '770')
+      end
+
+      private
+
+      # Handle common behavior when a relator field references a title in subfield i
+      # @param [MARC::DataField] field
+      # @param [Array, nil] sf_include subfields to include, optional
+      # @param [Array, nil] sf_exclude subfields to exclude, optional
+      # @param [Hash, nil] relator_map map relator in sf4 using this map, optional
+      # @return [Array] array of extracted and processed values from field
+      def values_with_title_prefix(field, sf_include: nil, sf_exclude: nil, relator_map: nil)
+        raise ArgumentError('Define only sf_include or sf_exclude.') if sf_include.present? && sf_exclude.present?
+
+        subi = remove_paren_value_from_subfield_i(field) || ''
+        relator = translate_relator(subfield_values(field, '4').first, relator_map) if relator_map.present?
+        contains = if sf_include.present?
+                     join_subfields(field, &subfield_not_in?(sf_include))
+                   elsif sf_exclude.present?
+                     join_subfields(field, &subfield_not_in?(sf_exclude))
+                   end
+        [
+          subi,
+          [contains, relator].compact_blank.join(', ')
+        ].compact_blank.join(':')
       end
     end
   end

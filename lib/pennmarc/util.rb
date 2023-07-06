@@ -132,7 +132,7 @@ module PennMARC
     # @return [Array] array of linked alternates without 8 or 6 values
     def linked_alternate_not_6_or_8(record, subfield6_value)
       linked_alternate(record, subfield6_value) do |sf|
-        !%w{6 8}.member?(sf.code)
+        !%w[6 8].member?(sf.code)
       end
     end
 
@@ -142,7 +142,7 @@ module PennMARC
     # @return [Array] acc
     def datafield_and_linked_alternate(record, tag)
       record.fields(tag).filter_map do |field|
-        join_subfields(field, &subfield_not_in?(%w{6 8}))
+        join_subfields(field, &subfield_not_in?(%w[6 8]))
       end + linked_alternate_not_6_or_8(record, tag)
     end
 
@@ -171,7 +171,7 @@ module PennMARC
     alias join_and_trim_whitespace join_and_squish
 
 
-    # Get 650 & 880 for Provenance and Chronology: prefix should be 'PRO' or 'CHR' and may be preceeded by a '%'
+    # Get 650 & 880 for Provenance and Chronology: prefix should be 'PRO' or 'CHR' and may be preceded by a '%'
     # @note 11/2018: do not display $5 in PRO or CHR subjs
     # @param [MARC::Record] record
     # @param [String] prefix to select from subject field
@@ -182,10 +182,10 @@ module PennMARC
 
         next unless field.any? { |sf| sf.code == 'a' && sf.value =~ /^(#{prefix}|%#{prefix})/ }
 
-        elements = field.select(&subfield_in(%w{a})).map {|sf|
+        elements = field.select(&subfield_in?(%w[a])).map {|sf|
           sf.value.gsub(/^%?#{prefix}/, '')
         }
-        elements += join_subfields(field, &subfield_not_in(%w{a 6 8 e w 5}))
+        elements << join_subfields(field, &subfield_not_in?(%w[a 6 8 e w 5]))
         join_and_squish elements if elements.any?
       end
 
@@ -196,8 +196,8 @@ module PennMARC
 
         next unless field.any? { |sf| sf.code == 'a' && sf.value =~ /^(#{prefix}|%#{prefix})/ }
 
-        elements = field.select(&subfield_in(%w{a})).map {|sf| sf.value.gsub(/^%?#{prefix}/, '') }
-        elements += join_subfields(field, &subfield_not_in(%w{a 6 8 e w 5}))
+        elements = field.select(&subfield_in?(%w[a])).map {|sf| sf.value.gsub(/^%?#{prefix}/, '') }
+        elements << join_subfields(field, &subfield_not_in?(%w[a 6 8 e w 5]))
         join_and_squish(elements) if elements.any?
       end
     end

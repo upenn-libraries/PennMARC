@@ -14,11 +14,12 @@ require_relative 'helpers/location'
 require_relative 'helpers/subject'
 require_relative 'helpers/title'
 require_relative 'helpers/citation'
+require_relative 'helpers/relation'
 
 module PennMARC
   attr_accessor :mappings
 
-  DEFINED_HELPERS = %w[Creator Database Date Format Genre Language Link Location Subject Title].freeze
+  DEFINED_HELPERS = %w[Creator Database Date Format Genre Language Link Location Subject Title Relation].freeze
 
   # Methods here should return values used in the indexer. The parsing logic should
   # NOT return values specific to any particular site/interface, but just general
