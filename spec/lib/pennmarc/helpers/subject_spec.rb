@@ -39,7 +39,7 @@ describe 'PennMARC::Subject' do
       end
     end
 
-    context 'with a question amr at the end of sf a' do
+    context 'with a question mark at the end of sf a' do
       let(:fields) do
         [marc_field(tag: '650', indicator2: '4', subfields: { a: 'Potential Subject?' })]
       end
@@ -80,7 +80,7 @@ describe 'PennMARC::Subject' do
                                                               '5': 'PU' })]
       end
 
-      it 'des not include the headings' do
+      it 'does not include the headings' do
         expect(values).to be_empty
       end
     end
@@ -140,6 +140,7 @@ describe 'PennMARC::Subject' do
          marc_field(tag: '650', indicator2: '7', subfields: { a: 'Undesirable Heading', '2': 'exclude' }),
          marc_field(tag: '650', indicator2: '2', subfields: { a: 'Nephrology' }),
          marc_field(tag: '650', indicator2: '1', subfields: { a: 'Kidney Diseases' }),
+         marc_field(tag: '690', subfields: { a: 'Local Heading' }),
          marc_field(tag: '690', subfields: { a: 'Local Heading' })]
       end
 

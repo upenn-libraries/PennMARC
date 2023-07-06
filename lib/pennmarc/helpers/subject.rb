@@ -6,7 +6,6 @@ module PennMARC
   # support features (xfacet) that we will no longer support, and ties display and xfacet field parsing together too
   # tightly to be preserved. As a result fo this, display methods and facet methods below are ported from their state
   # prior to Michael's 2/2021 subject parsing changes.
-
   class Subject < Helper
     class << self
       # Tags that serve as sources for Subject search values
@@ -171,10 +170,13 @@ module PennMARC
       # @todo support search field formatting?
       # @param [Symbol] type
       # @param [Hash] term components and information as a hash
+      # @return [String]
       def format_term(type:, term:)
+        return unless type.in? %i[facet display]
+
         normalize_single_subfield(term[:parts].first) if term[:count] == 1
 
-        case type
+        case type.to_sym
         when :facet
           "#{term[:parts].join('--')} #{term[:lasts].join(' ')}".strip
         when :display
@@ -196,9 +198,7 @@ module PennMARC
       # @param [MARC::DataField] field
       # @return [Boolean] whether a MARC field is a local subject field (69X)
       def subject_local_field?(field)
-        return true if field.tag.in? LOCAL_TAGS
-
-        false
+        field.tag.in? LOCAL_TAGS
       end
 
       # @param [MARC::DataField] field
@@ -229,9 +229,7 @@ module PennMARC
       # @param [MARC::DataField] field
       # @return [Boolean]
       def valid_source_code?(field)
-        field.any? do |subfield|
-          subfield.code == '2' && subfield.value.in?(ALLOWED_SOURCE_CODES)
-        end
+        subfield_value_in?(field, '2', ALLOWED_SOURCE_CODES)
       end
 
       # Build a hash of Subject field components for analysis or for building a string.
@@ -241,6 +239,8 @@ module PennMARC
       #       heading. - MG
       # @todo do i need all this?
       # @todo do i need to handle punctuation? see append_new_part
+      # @param [MARC::DataField] field
+      # @return [Hash{Symbol->Integer | Array}]
       def build_subject_hash(field)
         term_info = { count: 0, parts: [], append: [], lasts: [], uri: nil,
                       local: field.indicator2 == '4' || field.tag.starts_with?('69'), # local subject heading
@@ -284,14 +284,12 @@ module PennMARC
       def subject_search_field?(field)
         return false if field.blank? || SEARCH_SOURCE_INDICATORS.exclude?(field.indicator2)
 
-        if subject_search_tag?(field.tag)
-          true
-        elsif field.tag == '880'
-          sub6 = field.find_all { |sf| sf.code == '6' }.map(&:value).first
-          subject_search_tag? sub6
-        else
-          false
-        end
+        tag = if field.tag == '880'
+                subfield_values(field, '6').first
+              else
+                field.tag
+              end
+        subject_search_tag? tag
       end
 
       # Is a given tag a subject search field? Yes if it is contained in {SEARCH_TAGS} or starts with 69.
