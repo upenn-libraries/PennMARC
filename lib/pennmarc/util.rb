@@ -175,7 +175,9 @@ module PennMARC
     # @param [MARC::Field] field
     # @return [String] subfield i without parentheses value
     def remove_paren_value_from_subfield_i(field)
-      val = field.select { |sf| sf.code == 'i' }.map do |sf|
+      val = field.filter_map do |sf|
+        next unless sf.code == 'i'
+
         match = /\((.+?)\)/.match(sf.value)
         if match
           sf.value.sub("(#{match[1]})", '')
