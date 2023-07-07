@@ -51,11 +51,14 @@ module PennMARC
 
       private
 
+      # Assemble a string of relevant edition information.
       # @param [MARC::DataField] field
       # @return [String (frozen)] assembled other version string
       def other_edition_value(field, relator_mapping)
         subi = remove_paren_value_from_subfield_i(field) || ''
         other_editions = field.filter_map do |sf|
+          next if %w[6 8].member?(sf.code)
+
           if %w[s x z].member?(sf.code)
             " #{sf.value}"
           elsif sf.code == 't'
@@ -66,6 +69,8 @@ module PennMARC
           end
         end.join
         other_editions_append = field.filter_map do |sf|
+          next if %w[6 8].member?(sf.code)
+
           if %w[i h s t x z e f o r w y 7].exclude?(sf.code)
             " #{sf.value}"
           elsif sf.code == 'h'
@@ -73,7 +78,12 @@ module PennMARC
           end
         end.join
         prepend = trim_trailing(:period, subi).squish
-        "#{prepend}: #{other_editions} #{other_editions_append}".squish
+
+        if other_editions.present? || other_editions_append.present?
+          "#{prepend}: #{other_editions} #{other_editions_append}".squish
+        else
+          prepend
+        end
       end
     end
   end

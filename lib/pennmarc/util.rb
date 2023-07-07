@@ -132,7 +132,7 @@ module PennMARC
     # @return [Array] array of linked alternates without 8 or 6 values
     def linked_alternate_not_6_or_8(record, subfield6_value)
       linked_alternate(record, subfield6_value) do |sf|
-        !%w{6 8}.member?(sf.code)
+        !%w[6 8].member?(sf.code)
       end
     end
 
@@ -142,7 +142,7 @@ module PennMARC
     # @return [Array] acc
     def datafield_and_linked_alternate(record, tag)
       record.fields(tag).filter_map do |field|
-        join_subfields(field, &subfield_not_in?(%w{6 8}))
+        join_subfields(field, &subfield_not_in?(%w[6 8]))
       end + linked_alternate_not_6_or_8(record, tag)
     end
 
