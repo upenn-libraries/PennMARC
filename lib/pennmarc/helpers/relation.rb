@@ -84,7 +84,7 @@ module PennMARC
 
           next unless subfield_value?(field, '6', /^(#{CONTAINS_FIELDS.join('|')})/)
 
-          values_with_title_prefix(record, sf_include: %w[0 5 6 8 i])
+          values_with_title_prefix(field, sf_include: %w[0 5 6 8 i])
         end
       end
 
@@ -104,10 +104,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array]
       def has_supplement_show(record)
-        acc = record.fields('770').filter_map do |field|
-          join_subfields(field, &subfield_not_in?(%w[6 8]))
-        end
-        acc + linked_alternate_not_6_or_8(record, '770')
+        datafield_and_linked_alternate(record, '770')
       end
 
       private
@@ -117,7 +114,7 @@ module PennMARC
       # @param [Array, nil] sf_include subfields to include, optional
       # @param [Array, nil] sf_exclude subfields to exclude, optional
       # @param [Hash, nil] relator_map map relator in sf4 using this map, optional
-      # @return [Array] array of extracted and processed values from field
+      # @return [String] extracted and processed values from field
       def values_with_title_prefix(field, sf_include: nil, sf_exclude: nil, relator_map: nil)
         raise ArgumentError('Define only sf_include or sf_exclude.') if sf_include.present? && sf_exclude.present?
 
@@ -131,8 +128,40 @@ module PennMARC
         [
           subi,
           [contains, relator].compact_blank.join(', ')
-        ].compact_blank.join(':')
+        ].compact_blank.join(': ')
       end
+
+      # If there's a subfield i, extract its value, and if there's something
+      # in parentheses in that value, extract that.
+      # @todo remove this in favor of method in Util (from PP's Edition MR)
+      # @param [MARC::Field] field
+      # @return [String] subfield i without parentheses value
+      def remove_paren_value_from_subfield_i(field)
+        val = field.filter_map do |sf|
+          next unless sf.code == 'i'
+
+          match = /\((.+?)\)/.match(sf.value)
+          if match
+            sf.value.sub("(#{match[1]})", '')
+          else
+            sf.value
+          end
+        end.first || ''
+        trim_trailing(:colon, trim_trailing(:period, val))
+      end
+
+      # Translate a relator code using mapping
+      # @todo remove this in favor of method in Util (from PP's Edition MR)
+      # @todo handle case of receiving a URI? E.g., http://loc.gov/relator/aut
+      # @param [String] relator_code
+      # @param [Hash] mapping
+      # @return [String, NilClass] full relator string
+      def translate_relator(relator_code, mapping)
+        return unless relator_code.present?
+
+        mapping[relator_code.to_sym]
+      end
+
     end
   end
 end

@@ -5,7 +5,7 @@ describe 'PennMARC::Relation' do
 
   let(:helper) { PennMARC::Relation }
   let(:record) { marc_record fields: fields }
-  let(:relator_map) { { aut: 'Author' } }
+  let(:relator_map) { { aut: 'Author', trl: 'Translator' } }
 
   describe '.contained_in_show' do
     let(:fields) do
@@ -57,23 +57,64 @@ describe 'PennMARC::Relation' do
 
   describe 'related_work_show' do
     let(:fields) do
-      [marc_field(tag: '730', indicator2: '', subfields: { i: 'Adaptation of (work):', a: 'Wayne\'s World' }),
-       marc_field(tag: '700', indicator2: '2', subfields: { i: 'Container of (work):', a: 'Wayne Campbell' }),
-       marc_field(tag: '880', indicator2: '', subfields: { i: 'Alt. Prefix:', a: 'Alt. Wayne' })
-      ]
+      [marc_field(tag: '700', indicator2: '', subfields: { i: 'Translation of (work):', a: 'Some Author',
+                                                           t: 'Aphorisms', '4': 'trl' }),
+       marc_field(tag: '700', indicator2: '2', subfields: { i: 'Adaptation of (work):', t: 'Ignored' }),
+       marc_field(tag: '880', indicator2: '', subfields: { i: 'Alt. Prefix:', a: 'Alt. Author', t: 'Alt. Aphorisms',
+                                                           '6': '700' })]
     end
 
     it 'returns specified subfield values from specified field with blank indicator2' do
       values = helper.related_work_show record, relator_map
-      expect(values).to contain_exactly 'Adaptation of: Wayne\s World', 'Alt. Prefix: Alt. Wayne'
+      expect(values).to contain_exactly 'Translation of: Some Author Aphorisms, Translator',
+                                        'Alt. Prefix: Alt. Author Alt. Aphorisms'
+      expect(values).not_to include 'Ignored'
     end
   end
 
-  describe 'contains_show' do
+  describe '.contains_show' do
+    let(:fields) do
+      [marc_field(tag: '700', indicator2: '2', subfields: { i: 'Container of (work):', a: 'Some Author', t: 'Works',
+                                                            '4': 'aut' }),
+       marc_field(tag: '700', indicator2: '', subfields: { i: 'Adaptation of (work):', t: 'Ignored' }),
+       marc_field(tag: '880', indicator2: '2', subfields: { i: 'Alt. Prefix:', a: 'Alt. Name', '6': '700' })]
+    end
 
+    it 'returns specified subfield values from specified field with blank indicator2' do
+      values = helper.contains_show record, relator_map
+      expect(values).to contain_exactly 'Alt. Prefix: Alt. Name', 'Container of: Some Author Works, Author'
+      expect(values).not_to include 'Ignored'
+    end
+  end
+
+  describe '.constituent_unit_show' do
+    let(:fields) do
+      [marc_field(tag: '774', subfields: { i: 'Container of (manifestation)', a: 'Person, Some',
+                                           t: 'Private Correspondences', w: '(OCoLC)12345' }),
+       marc_field(tag: '880', subfields: { '6': '774', a: 'Alt. Person', t: 'Alt. Title' })]
+    end
+
+    it 'returns specified subfield values from fields and linked alternate' do
+      expect(helper.constituent_unit_show(record)).to(
+        contain_exactly('Alt. Person Alt. Title',
+                        'Container of (manifestation) Person, Some Private Correspondences')
+      )
+    end
   end
 
   describe '.has_supplement_show' do
+    let(:fields) do
+      [marc_field(tag: '770', subfields: { i: 'Supplement (work)', a: 'Person, Some',
+                                           t: 'Diaries, errata', w: '(OCoLC)12345' }),
+       marc_field(tag: '880', subfields: { '6': '770', a: 'Alt. Person', t: 'Alt. Title' })]
+    end
 
+    it 'return all subfield values for the field and linked alternate' do
+      expect(helper.has_supplement_show(record)).to(
+        contain_exactly(
+          'Alt. Person Alt. Title', 'Supplement (work) Person, Some Diaries, errata (OCoLC)12345'
+        )
+      )
+    end
   end
 end
