@@ -28,7 +28,8 @@ describe 'PennMARC::Edition' do
 
   describe '.other_show' do
     it 'returns other edition values' do
-      expect(helper.other_show(record, mapping)).to contain_exactly('Other Edition: Author. (Cool Book)')
+      expect(helper.other_show(record, mapping)).to contain_exactly('Autre Editione',
+                                                                    'Other Edition: Author. (Cool Book)')
     end
   end
 end
