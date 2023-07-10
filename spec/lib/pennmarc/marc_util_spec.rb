@@ -142,8 +142,8 @@ describe 'PennMARC::Util' do
 
   describe '.datafield_and_linked_alternate' do
     let(:record) do
-      marc_record fields: [marc_field(tag: '510', subfields: { a: 'Perkins'}),
-                           marc_field(tag: '880', subfields: { '6': '510', a: 'Snikrep'})]
+      marc_record fields: [marc_field(tag: '510', subfields: { a: 'Perkins' }),
+                           marc_field(tag: '880', subfields: { '6': '510', a: 'Snikrep' })]
     end
 
     it 'returns the datafield and linked alternate' do
@@ -167,7 +167,22 @@ describe 'PennMARC::Util' do
 
   describe '.join_and_squish' do
     it 'joins and squishes' do
-      expect(util.join_and_squish(['ruby   ' ,'   is', '  cool  '])).to eq 'ruby is cool'
+      expect(util.join_and_squish(['ruby   ', '   is', '  cool  '])).to eq 'ruby is cool'
+    end
+  end
+
+  describe '.remove_paren_value_from_subfield_i' do
+    let(:field) { marc_field(tag: '666', subfields: { i: 'Test(Remove).' }) }
+    it 'removes the parantheses value from subfield i' do
+      expect(util.remove_paren_value_from_subfield_i(field)).to eq('Test')
+    end
+  end
+
+  describe '.translate_relator' do
+    let(:mapping) { { aut: 'Author' } }
+
+    it 'translates the code into the relator' do
+      expect(util.translate_relator(:aut, mapping)).to eq('Author')
     end
   end
 end
