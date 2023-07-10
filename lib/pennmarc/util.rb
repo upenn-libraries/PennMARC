@@ -132,7 +132,7 @@ module PennMARC
     # @return [Array] array of linked alternates without 8 or 6 values
     def linked_alternate_not_6_or_8(record, subfield6_value)
       linked_alternate(record, subfield6_value) do |sf|
-        !%w[6 8].member?(sf.code)
+        %w[6 8].exclude?(sf.code)
       end
     end
 

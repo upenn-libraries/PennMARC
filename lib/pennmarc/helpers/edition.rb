@@ -21,10 +21,10 @@ module PennMARC
 
       # Edition values for display in search results. Just grab the first 250 field.
       # @param [MARC::Record] record
-      # @return [String] string of all first 250 subfields, excluding 6 and 8
+      # @return [String, NilClass] string of all first 250 subfields, excluding 6 and 8
       def values(record)
         edition = record.fields('250').first
-        return [] unless edition.present?
+        return unless edition.present?
 
         join_subfields(edition, &subfield_not_in?(%w[6 8]))
       end
@@ -41,9 +41,7 @@ module PennMARC
 
           other_edition_value(field, relator_mapping)
         end + record.fields('880').filter_map do |field|
-          next unless field.indicator2.in? ['', ' ']
-          next unless subfield_value_in? field, '6', %w[775]
-          next unless subfield_defined? field, 'i'
+          next unless field.indicator2.blank? && subfield_value_in?(field, '6'), %w[775] && subfield_defined?(field, 'i')
 
           other_edition_value(field, relator_mapping)
         end
@@ -53,6 +51,7 @@ module PennMARC
 
       # Assemble a string of relevant edition information.
       # @param [MARC::DataField] field
+      # @param [Hash] relator_mapping
       # @return [String (frozen)] assembled other version string
       def other_edition_value(field, relator_mapping)
         subi = remove_paren_value_from_subfield_i(field) || ''
