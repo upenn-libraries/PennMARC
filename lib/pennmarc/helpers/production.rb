@@ -60,7 +60,7 @@ module PennMARC
 
           values += joined264
         end
-        values.filter_map { |value| value.strip if value.present? }
+        values.filter_map { |value| value&.strip } 
       end
 
       # Retrieve publication values for display from
