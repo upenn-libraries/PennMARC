@@ -15,6 +15,7 @@ require_relative 'helpers/subject'
 require_relative 'helpers/title'
 require_relative 'helpers/citation'
 require_relative 'helpers/production'
+require_relative 'helpers/edition'
 
 module PennMARC
   attr_accessor :mappings

@@ -132,7 +132,7 @@ module PennMARC
     # @return [Array] array of linked alternates without 8 or 6 values
     def linked_alternate_not_6_or_8(record, subfield6_value)
       linked_alternate(record, subfield6_value) do |sf|
-        !%w{6 8}.member?(sf.code)
+        %w[6 8].exclude?(sf.code)
       end
     end
 
@@ -142,7 +142,7 @@ module PennMARC
     # @return [Array] acc
     def datafield_and_linked_alternate(record, tag)
       record.fields(tag).filter_map do |field|
-        join_subfields(field, &subfield_not_in?(%w{6 8}))
+        join_subfields(field, &subfield_not_in?(%w[6 8]))
       end + linked_alternate_not_6_or_8(record, tag)
     end
 
@@ -169,5 +169,34 @@ module PennMARC
       array.join(' ').squish
     end
     alias join_and_trim_whitespace join_and_squish
+
+    # If there's a subfield i, extract its value, and if there's something
+    # in parentheses in that value, extract that.
+    # @param [MARC::Field] field
+    # @return [String] subfield i without parentheses value
+    def remove_paren_value_from_subfield_i(field)
+      val = field.filter_map do |sf|
+        next unless sf.code == 'i'
+
+        match = /\((.+?)\)/.match(sf.value)
+        if match
+          sf.value.sub("(#{match[1]})", '')
+        else
+          sf.value
+        end
+      end.first || ''
+      trim_trailing(:colon, trim_trailing(:period, val))
+    end
+
+    # Translate a relator code using mapping
+    # @todo handle case of receiving a URI? E.g., http://loc.gov/relator/aut
+    # @param [String] relator_code
+    # @param [Hash] mapping
+    # @return [String, NilClass] full relator string
+    def translate_relator(relator_code, mapping)
+      return unless relator_code.present?
+
+      mapping[relator_code.to_sym]
+    end
   end
 end
