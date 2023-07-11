@@ -80,7 +80,7 @@ describe 'PennMARC::Relation' do
        marc_field(tag: '880', indicator2: '2', subfields: { i: 'Alt. Prefix:', a: 'Alt. Name', '6': '700' })]
     end
 
-    it 'returns specified subfield values from specified field with blank indicator2' do
+    it "returns specified subfield values from specified field with '2' in indicator2" do
       values = helper.contains_show record, relator_map
       expect(values).to contain_exactly 'Alt. Prefix: Alt. Name', 'Container of: Some Author Works, Author'
       expect(values).not_to include 'Ignored'

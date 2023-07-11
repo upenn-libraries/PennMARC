@@ -67,14 +67,13 @@ module PennMARC
       end
 
       # Get "Contains" values from {CONTAINS_FIELDS} in the 7XX range. Must have indicator 2 value of 2 indicating an
-      # "Analytical Entry" meaning that the record is contained by the matching field. Map relator cods in sf 4. Ignore
+      # "Analytical Entry" meaning that the record is contained by the matching field. Map relator codes in sf 4. Ignore
       # values in sf 0, 5, 6, and 8.
       # @param [MARC::Record] record
       # @param [Hash] relator_map
       # @return [Array]
       def contains_show(record, relator_map)
-        acc = []
-        acc += record.fields(CONTAINS_FIELDS).filter_map do |field|
+        acc = record.fields(CONTAINS_FIELDS).filter_map do |field|
           next unless field.indicator2 == '2'
 
           values_with_title_prefix(field, sf_exclude: %w[0 4 5 6 8 i], relator_map: relator_map)
