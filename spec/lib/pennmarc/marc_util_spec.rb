@@ -173,7 +173,7 @@ describe 'PennMARC::Util' do
 
   describe '.remove_paren_value_from_subfield_i' do
     let(:field) { marc_field(tag: '666', subfields: { i: 'Test(Remove).' }) }
-    it 'removes the parantheses value from subfield i' do
+    it 'removes the parentheses value from subfield i' do
       expect(util.remove_paren_value_from_subfield_i(field)).to eq('Test')
     end
   end

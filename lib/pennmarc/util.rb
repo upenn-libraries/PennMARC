@@ -190,7 +190,7 @@ module PennMARC
 
     # Translate a relator code using mapping
     # @todo handle case of receiving a URI? E.g., http://loc.gov/relator/aut
-    # @param [String] relator_code
+    # @param [String, NilClass] relator_code
     # @param [Hash] mapping
     # @return [String, NilClass] full relator string
     def translate_relator(relator_code, mapping)
