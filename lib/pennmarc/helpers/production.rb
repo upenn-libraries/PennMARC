@@ -31,17 +31,12 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>]
       def publication_values(record)
-        values = []
-
-        inclusive_dates = record.fields('245').first(1).flat_map { |field| subfield_values(field, 'f') }
-
-        values += inclusive_dates
-
+        # first get inclusive dates
+        values = record.fields('245').first(1).flat_map { |field| subfield_values(field, 'f') }
         added_2xx = record.fields(%w[260 261 262])
                           .first(1)
                           .map do |field|
-          results = join_subfields(field, &subfield_not_in?(['6']))
-          join_and_squish([results])
+          join_subfields(field, &subfield_not_in?(['6'])).squish
         end
 
         if added_2xx.present?
@@ -74,9 +69,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Object]
       def publication_show(record)
-        values = []
-
-        values += record.fields('245').first(1).flat_map { |field| subfield_values(field, 'f') }
+        values = record.fields('245').first(1).flat_map { |field| subfield_values(field, 'f') }
 
         values += record.fields(%w[260 261 262]).first(1).map do |field|
           join_subfields(field, &subfield_not_in?(%w[6 8]))
