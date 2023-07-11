@@ -60,12 +60,13 @@ module PennMARC
 
           values += joined264
         end
-        values.filter_map { |value| value&.strip } 
+        values.filter_map { |value| value&.strip }
       end
 
-      # Retrieve publication values for display from
-      # {https://www.oclc.org/bibformats/en/2xx/264.html 245 field},
-      # {https://www.oclc.org/bibformats/en/2xx/260.html 260}-262, and their linked alternates.
+      # Retrieve publication values for display from fields
+      # {https://www.oclc.org/bibformats/en/2xx/245.html 245},
+      # {https://www.oclc.org/bibformats/en/2xx/260.html 260}-262, and their linked alternates,
+      # and {https://www.oclc.org/bibformats/en/2xx/264.html 264} and its linked alternate.
       # @param [MARC::Record] record
       # @return [Object]
       def publication_show(record)
