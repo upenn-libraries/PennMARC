@@ -222,17 +222,6 @@ module PennMARC
         (s + (!%w[. -].member?(s.last) ? '.' : '')).squish
       end
 
-      # Translate a relator code using mapping
-      # @todo handle case of receiving a URI? E.g., http://loc.gov/relator/aut
-      # @param [String] relator_code
-      # @param [Hash] mapping
-      # @return [String, NilClass]
-      def translate_relator(relator_code, mapping)
-        return unless relator_code.present?
-
-        mapping[relator_code.to_sym]
-      end
-
       # Convert "Lastname, First" to "First Lastname"
       # @param [String] name value for processing
       # @return [String]
