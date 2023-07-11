@@ -65,7 +65,7 @@ module PennMARC
 
       # Retrieve publication values for display from fields
       # {https://www.oclc.org/bibformats/en/2xx/245.html 245},
-      # {https://www.oclc.org/bibformats/en/2xx/260.html 260}-262, and their linked alternates,
+      # {https://www.oclc.org/bibformats/en/2xx/260.html 260}-262 and their linked alternates,
       # and {https://www.oclc.org/bibformats/en/2xx/264.html 264} and its linked alternate.
       # @param [MARC::Record] record
       # @return [Object]
