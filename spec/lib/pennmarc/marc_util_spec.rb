@@ -173,7 +173,7 @@ describe 'PennMARC::Util' do
 
   describe '.remove_paren_value_from_subfield_i' do
     let(:field) { marc_field(tag: '666', subfields: { i: 'Test(Remove).' }) }
-    it 'removes the parantheses value from subfield i' do
+    it 'removes the parentheses value from subfield i' do
       expect(util.remove_paren_value_from_subfield_i(field)).to eq('Test')
     end
   end
@@ -183,6 +183,24 @@ describe 'PennMARC::Util' do
 
     it 'translates the code into the relator' do
       expect(util.translate_relator(:aut, mapping)).to eq('Author')
+    end
+  end
+
+  describe '.prefixed_subject_and_alternate' do
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '650', indicator2: '4', subfields: { a: 'PRO Heading' }),
+        marc_field(tag: '650', indicator2: '4', subfields: { a: 'Regular Local Heading' }),
+        marc_field(tag: '650', indicator2: '1', subfields: { a: 'LoC Heading' }),
+        marc_field(tag: '880', indicator2: '4', subfields: { '6': '650', a: 'PRO Alt. Heading' }),
+        marc_field(tag: '880', indicator2: '4', subfields: { '6': '999', a: 'Another Alt.' })
+      ]
+    end
+
+    it 'only includes valid headings' do
+      values = util.prefixed_subject_and_alternate(record, 'PRO')
+      expect(values).to include 'Heading', 'Alt. Heading'
+      expect(values).not_to include 'Regular Local Heading', 'LoC Heading', 'Another Alt.'
     end
   end
 end
