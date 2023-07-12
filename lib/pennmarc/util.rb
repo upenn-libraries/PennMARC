@@ -192,13 +192,32 @@ module PennMARC
 
     # Translate a relator code using mapping
     # @todo handle case of receiving a URI? E.g., http://loc.gov/relator/aut
-    # @param [String] relator_code
+    # @param [String, NilClass] relator_code
     # @param [Hash] mapping
     # @return [String, NilClass] full relator string
     def translate_relator(relator_code, mapping)
       return unless relator_code.present?
 
       mapping[relator_code.to_sym]
+    end
+
+    # Get 650 & 880 for Provenance and Chronology: prefix should be 'PRO' or 'CHR' and may be preceded by a '%'
+    # @note 11/2018: do not display $5 in PRO or CHR subjs
+    # @param [MARC::Record] record
+    # @param [String] prefix to select from subject field
+    # @return [Array] array of values
+    def prefixed_subject_and_alternate(record, prefix)
+      record.fields(%w[650 880]).filter_map do |field|
+        next unless field.indicator2 == '4'
+
+        next if field.tag == '880' && subfield_values(field, '6').exclude?('650')
+
+        next unless field.any? { |sf| sf.code == 'a' && sf.value =~ /^(#{prefix}|%#{prefix})/ }
+
+        elements = field.select(&subfield_in?(%w[a])).map { |sf| sf.value.gsub(/^%?#{prefix}/, '') }
+        elements << join_subfields(field, &subfield_not_in?(%w[a 6 8 e w 5]))
+        join_and_squish elements
+      end
     end
 
     # Does the given field specify an allowed source code?
