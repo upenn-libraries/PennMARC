@@ -16,23 +16,30 @@ module PennMARC
         end
       end
 
-      # Genre values for display
+      # Genre values for display. We display Genre/Term values if they fulfill the following criteria:
+      #  - The field is in {https://www.oclc.org/bibformats/en/6xx/655.html MARC 655}. Or the field is in MARC 880 with
+      #    subfield 6 including '655'.
+      #   AND
+      #    - Above fields have an indicator 2 value of: 0 (LSCH) or 4 (No source specified).
+      #     OR
+      #    - Above fields have a subfield 2 (ontology code) in the list of allowed values.
       #
       # @note legacy method returns a link object
       # @param [MARC::Record] record
       # @return [Array]
       def show(record)
-        record.fields(%w[6558 80]).filter_map do |field|
-          next unless field.indicator2.in?(%w[0 4]) && subfield_value_in?(field, '2', Subject::ALLOWED_SOURCE_CODES)
+        record.fields(%w[655 880]).filter_map do |field|
+          next unless field.indicator2.in?(%w[0 4]) ||
+                      subfield_value_in?(field, '2', PennMARC::HeadingControl::ALLOWED_SOURCE_CODES)
 
           next if field.tag == '880' && subfield_values(field, '6').exclude?('655')
 
-          sub_with_hyphens = field.find_all(&subfield_not_in(%w[0 2 5 6 8 c e w])).map do |sf|
+          sub_with_hyphens = field.find_all(&subfield_not_in?(%w[0 2 5 6 8 c e w])).map do |sf|
             sep = %w[a b].exclude?(sf.code) ? ' -- ' : ' '
             sep + sf.value
           end.join.lstrip
           # TODO: what is w??
-          eandw_with_hyphens = field.find_all(&subfield_in(%w[e w])).join(' -- ')
+          eandw_with_hyphens = field.find_all(&subfield_in?(%w[e w])).join(' -- ')
           "#{sub_with_hyphens} #{eandw_with_hyphens}".strip
         end
       end
@@ -46,7 +53,7 @@ module PennMARC
       def facet(record, location_map)
         locations = Location.location record: record, location_map: location_map, display_value: :specific_location
         manuscript = Format.include_manuscripts?(locations)
-        video = record.fields('007').any? { |field| field.starts_with? 'v' }
+        video = record.fields('007').any? { |field| field.value.starts_with? 'v' }
         return [] unless manuscript || video
 
         record.fields('655').filter_map do |field|

@@ -26,11 +26,6 @@ module PennMARC
       # Local subject heading tags
       LOCAL_TAGS = %w[690 691 697].freeze
 
-      # These codes are expected to be found in sf2 when the indicator2 value is 7, indicating "source specified". There
-      # are some sources whose headings we don't want to display.
-      ALLOWED_SOURCE_CODES = %w[aat cct fast ftamc gmgpc gsafd homoit jlabsh lcgft lcsh lcstt lctgm
-                                local/osu mesh ndlsh nlksh rbbin rbgenr rbmscv rbpap rbpri rbprov rbpub rbtyp].freeze
-
       # All Subjects for searching. This includes most subfield content from any field contained in {SEARCH_TAGS} or 69X,
       # including any linked 880 fields. Fields must have an indicator2 value in {SEARCH_SOURCE_INDICATORS}.
       # @todo this includes subfields that may not be desired like 1 (uri) and 2 (source code) but this might be OK for
@@ -190,7 +185,7 @@ module PennMARC
       def subject_general_display_field?(field)
         return false unless field.tag.in? DISPLAY_TAGS + LOCAL_TAGS
 
-        return false if field.indicator2 == '7' && !valid_source_code?(field)
+        return false if field.indicator2 == '7' && !valid_subject_genre_source_code?(field)
 
         true
       end
@@ -219,17 +214,9 @@ module PennMARC
 
         return true if field.tag.in?(DISPLAY_TAGS) && field.indicator2.in?(%w[0 2 4])
 
-        return true if field.indicator2 == '7' && valid_source_code?(field)
+        return true if field.indicator2 == '7' && valid_subject_genre_source_code?(field)
 
         false
-      end
-
-      # Does the given field specify an allowed source code?
-      #
-      # @param [MARC::DataField] field
-      # @return [Boolean]
-      def valid_source_code?(field)
-        subfield_value_in?(field, '2', ALLOWED_SOURCE_CODES)
       end
 
       # Build a hash of Subject field components for analysis or for building a string.
