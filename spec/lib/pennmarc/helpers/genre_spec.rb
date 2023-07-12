@@ -30,11 +30,12 @@ describe 'PennMARC::Genre' do
                     a: 'Magazines', b: 'Fan literature', z: 'United States', y: '20th century', '5': 'PU'
                   }),
        marc_field(tag: '655', indicator2: '', subfields: { a: 'Zines' }),
+       marc_field(tag: '655', indicator2: '0', subfields: { a: 'Magazine' }),
        marc_field(tag: '655', indicator2: '7', subfields: { a: 'Magazine', c: 'k', '0': '1234567', '2': 'aat' }),
        marc_field(tag: '655', indicator2: '1', subfields: { a: "Children's Genre" })]
     end
 
-    it 'includes only appropriate values, excluding specified subfields, with proper formatting' do
+    it 'includes only appropriate values, without specified subfields, with proper formatting and without duplicates' do
       expect(values).to contain_exactly 'Magazines Fan literature -- United States -- 20th century', 'Magazine'
     end
   end
