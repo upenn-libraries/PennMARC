@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 module PennMARC
-  # Do Relation-y stuff
+  # These MARC parsing method are grouped in virtue of their role as describing the relationship of a record to other
+  # records.
   class Relation < Helper
     class << self
       CHRONOLOGY_PREFIX = 'CHR'

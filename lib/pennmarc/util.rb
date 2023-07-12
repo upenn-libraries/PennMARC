@@ -205,28 +205,16 @@ module PennMARC
     # @param [String] prefix to select from subject field
     # @return [Array] array of values
     def prefixed_subject_and_alternate(record, prefix)
-      values = record.fields('650').filter_map do |field|
+      record.fields(%w[650 880]).filter_map do |field|
         next unless field.indicator2 == '4'
+
+        next if field.tag == '880' && subfield_values(field, '6').exclude?('650')
 
         next unless field.any? { |sf| sf.code == 'a' && sf.value =~ /^(#{prefix}|%#{prefix})/ }
 
-        elements = field.select(&subfield_in?(%w[a])).map {|sf|
-          sf.value.gsub(/^%?#{prefix}/, '')
-        }
+        elements = field.select(&subfield_in?(%w[a])).map { |sf| sf.value.gsub(/^%?#{prefix}/, '') }
         elements << join_subfields(field, &subfield_not_in?(%w[a 6 8 e w 5]))
-        join_and_squish elements if elements.any?
-      end
-
-      values + record.fields('880').filter_map do |field|
-        next unless field.indicator2 == '4'
-
-        next unless subfield_value?(field, '6', /^650/)
-
-        next unless field.any? { |sf| sf.code == 'a' && sf.value =~ /^(#{prefix}|%#{prefix})/ }
-
-        elements = field.select(&subfield_in?(%w[a])).map {|sf| sf.value.gsub(/^%?#{prefix}/, '') }
-        elements << join_subfields(field, &subfield_not_in?(%w[a 6 8 e w 5]))
-        join_and_squish(elements) if elements.any?
+        join_and_squish elements
       end
     end
   end
