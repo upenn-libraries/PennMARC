@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module PennMARC
+  # Shared values for controlling inclusion of subject or genre headings
   module HeadingControl
     # These codes are expected to be found in sf2 when the indicator2 value is 7, indicating "source specified". There
     # are some sources whose headings we don't want to display.

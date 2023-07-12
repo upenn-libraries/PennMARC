@@ -2,8 +2,7 @@
 
 module PennMARC
   # Genre field values come from the {https://www.oclc.org/bibformats/en/6xx/655.html 655}, but for some
-  # contexts we are only interested in a subset of the declared terms in a record. Some configuration/values
-  # in this helper will be shared with the Subject helper.
+  # contexts we are only interested in a subset of the declared terms in a record.
   class Genre < Helper
     class << self
       # Genre values for searching. We're less picky about what is included here to enable discovery via any included
