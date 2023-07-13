@@ -36,7 +36,12 @@ module PennMARC
 
           join_subfields(field, &subfield_in?(%w[a]))
         end
-        local_notes + record.fields(%w[562 563 585 590 880]).map do |field|
+
+        additional_fields = %w[562 563 585 590]
+
+        local_notes + record.fields(additional_fields + ['880']).filter_map do |field|
+          next if field.tag == '880' && subfield_value_not_in?(field, '6', additional_fields)
+
           join_subfields(field, &subfield_not_in?(%w[5 6 8]))
         end
       end
