@@ -37,6 +37,15 @@ module PennMARC
       field.any? { |sf| sf.code == subfield.to_s && sf.value.in?(array) }
     end
 
+    # returns true if a given field does not have a given subfield value in a given array
+    # @param [MARC:DataField] field
+    # @param [String|Integer|Symbol] subfield
+    # @param [Array] array
+    # @return [TrueClass, FalseClass
+    def subfield_value_not_in?(field, subfield, array)
+      field.none? { |sf| sf.code == subfield.to_s && sf.value.in?(array) }
+    end
+
     # returns a lambda checking if passed-in subfield's code is a member of array
     # TODO: include lambda returning methods in their own module?
     # @param [Array] array
