@@ -27,7 +27,7 @@ module PennMARC
       field.any? { |sf| sf.code == subfield.to_s && sf.value =~ regex }
     end
 
-    # returns true iff a given field has a given subfield value in a given array
+    # returns true if a given field has a given subfield value in a given array
     # TODO: example usage
     # @param [MARC:DataField] field
     # @param [String|Integer|Symbol] subfield
