@@ -58,6 +58,8 @@ module PennMARC
 
           next unless field.indicator2.in?([' ', ''])
 
+          next if field.tag == '880' && subfield_value_not_in?(field, '6', %w[561])
+
           next if subfield_value?(field, 'a', /^Athenaeum copy: /)
 
           join_subfields(field, &subfield_in?(%w[a]))
