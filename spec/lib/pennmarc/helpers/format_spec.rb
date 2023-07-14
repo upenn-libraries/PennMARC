@@ -179,4 +179,22 @@ describe 'PennMARC::Format' do
                                                            'Online edition Author, Name Title Uniform Title 12345'
     end
   end
+
+  describe '.includes_manuscript?' do
+    context 'with a manuscript location incldued' do
+      let(:locations) { ['Van Pelt', 'Kislak Center for Special Collections - Manuscripts Storage'] }
+
+      it 'returns true' do
+        expect(helper.include_manuscripts?(locations)).to be true
+      end
+    end
+
+    context 'without a manuscript location included' do
+      let(:locations) { ['Van Pelt'] }
+
+      it 'returns false' do
+        expect(helper.include_manuscripts?(locations)).to be false
+      end
+    end
+  end
 end

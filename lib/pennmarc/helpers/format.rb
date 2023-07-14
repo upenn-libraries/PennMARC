@@ -147,6 +147,13 @@ module PennMARC
         end
       end
 
+      # Check if a set of locations has any locations that include the term 'manuscripts'
+      # @param [Array<String>] locations
+      # @return [Boolean]
+      def include_manuscripts?(locations)
+        locations.any? { |loc| loc =~ /manuscripts/i }
+      end
+
       private
 
       # Get 'Curated' format from.
@@ -282,12 +289,6 @@ module PennMARC
         locations.any? { |loc| loc =~ /archives/i } &&
           locations.none? { |loc| loc =~ /cajs/i } &&
           locations.none? { |loc| loc =~ /nursing/i }
-      end
-
-      # @param [Array<String>] locations
-      # @return [Boolean]
-      def include_manuscripts?(locations)
-        locations.any? { |loc| loc =~ /manuscripts/i }
       end
 
       # Consider {https://www.loc.gov/marc/bibliographic/bd007g.html 007} to determine graphical media format

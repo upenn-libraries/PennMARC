@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'heading_control'
+
 module PennMARC
   # class to hold "utility" methods used in MARC parsing methods
   module Util
@@ -225,6 +227,14 @@ module PennMARC
         elements << join_subfields(field, &subfield_not_in?(%w[a 6 8 e w 5]))
         join_and_squish elements
       end
+    end
+
+    # Does the given field specify an allowed source code?
+    #
+    # @param [MARC::DataField] field
+    # @return [Boolean]
+    def valid_subject_genre_source_code?(field)
+      subfield_value_in?(field, '2', PennMARC::HeadingControl::ALLOWED_SOURCE_CODES)
     end
   end
 end
