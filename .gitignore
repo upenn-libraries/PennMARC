@@ -2,3 +2,5 @@
 # Ignore YARD products
 .yardoc
 doc/
+
+*.gem

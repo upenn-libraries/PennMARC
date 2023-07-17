@@ -2,22 +2,22 @@
 
 source 'https://rubygems.org'
 
-gem 'activesupport'
-gem 'library_stdnums'
-gem 'marc'
-gem 'nokogiri'
-gem 'rake'
+gem 'activesupport', '~> 7'
+gem 'library_stdnums', '~> 1.6'
+gem 'marc', '~> 1.2'
+gem 'nokogiri', '~> 1.15'
+gem 'rake', '~> 13.0'
 
 group :test, :development do
-  gem 'rspec'
+  gem 'rspec', '~> 3.12'
 end
 
 group :test do
-  gem 'simplecov'
+  gem 'simplecov', '~> 0.22'
 end
 
 group :development do
   gem 'upennlib-rubocop', require: false
-  gem 'webrick' # for yard doc server
-  gem 'yard'
+  gem 'webrick', '~> 1.8'
+  gem 'yard', '~> 0.9'
 end

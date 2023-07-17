@@ -104,16 +104,16 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  activesupport
-  library_stdnums
-  marc
-  nokogiri
-  rake
-  rspec
-  simplecov
+  activesupport (~> 7)
+  library_stdnums (~> 1.6)
+  marc (~> 1.2)
+  nokogiri (~> 1.15)
+  rake (~> 13.0)
+  rspec (~> 3.12)
+  simplecov (~> 0.22)
   upennlib-rubocop
-  webrick
-  yard
+  webrick (~> 1.8)
+  yard (~> 0.9)
 
 BUNDLED WITH
    2.4.10
