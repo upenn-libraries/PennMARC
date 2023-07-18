@@ -20,12 +20,12 @@ module PennMARC
         tags_present = SERIES_TAGS.select { |tag| record[tag].present? }
 
         if %w[800 810 811 400 410 411].member?(tags_present.first)
-          acc += process_first_series_tags(record, tags_present.first, relator_mapping)
+          acc += process_author_show_entries(record, tags_present.first, relator_mapping)
         elsif %w[830 440 490].member?(tags_present.first)
-          acc += process_second_series_tags(record, tags_present.first)
+          acc += process_title_show_entries(record, tags_present.first)
         end
 
-        acc += process_remaining_fields(record, tags_present)
+        acc += process_remaining_show_fields(record, tags_present)
         acc += process_880_fields(record)
 
         acc
@@ -87,7 +87,7 @@ module PennMARC
 
       private
 
-      def process_first_series_tags(record, first_tag, relator_mapping)
+      def process_author_show_entries(record, first_tag, relator_mapping)
         acc = []
         record.fields(first_tag).each do |field|
           # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
@@ -105,7 +105,7 @@ module PennMARC
         acc
       end
 
-      def process_second_series_tags(record, first_tag)
+      def process_title_show_entries(record, first_tag)
         acc = []
         record.fields(first_tag).each do |field|
           # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
@@ -116,7 +116,7 @@ module PennMARC
         acc
       end
 
-      def process_remaining_fields(record, tags_present)
+      def process_remaining_show_fields(record, tags_present)
         acc = []
         record.fields(tags_present.drop(1)).each do |field|
           # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
@@ -126,11 +126,12 @@ module PennMARC
         acc
       end
 
+      # TODO: use linked alternate util like this: [{ value: linked_alternate(record, %w[800 811 830 400 411 440 490], &subfield_not_in?(%w[5 6 8])), link: false }]
       def process_880_fields(record)
         acc = []
-        record.fields('880')
-              .select { |f| subfield_value?(f, '6', /^(800|810|811|830|400|410|411|440|490)/) }
-              .each do |field|
+        record.fields('880').filter_map do |field|
+          next unless subfield_value?(field, '6', /^(800|810|811|830|400|410|411|440|490)/)
+
           series = join_subfields(field, &subfield_not_in?(%w[5 6 8]))
           acc << { value: series, link: false }
         end
