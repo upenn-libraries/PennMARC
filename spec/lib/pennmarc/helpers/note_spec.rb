@@ -265,11 +265,16 @@ describe 'PennMARC::Note' do
           marc_field(tag: '347', subfields: { a: 'video file', b: 'DVD video', e: 'region', '3': 'DVD' }),
           marc_field(tag: '880', subfields: { a: 'Alt system details', i: 'Alternative display text', u: 'Alt URI',
                                               '3': 'Alt materials.', '6': '538' }),
-          marc_field(tag: '880', subfields: { a: 'Alt recording', b: 'Alt medium', c: 'Alt playing speed', g: 'Alt channel',
-                                              h: 'Alt characteristic', '3': 'Alt materials.', '3': 'Alt materials.', '6': '344' }),
-          marc_field(tag: '880', subfields: { a: 'Alt presentation format', b: 'Alt projection speed', '3': 'Alt materials.', '6': '345' }),
-          marc_field(tag: '880', subfields: { a: 'Alt video format', b: 'Alt broadcast', '3': 'Alt materials.', '6': '346' }),
-          marc_field(tag: '880', subfields: { a: 'Alt file type', b: 'Alt encoding', '3': 'Alt materials.', '6': 'Alt region' })
+          marc_field(tag: '880', subfields: { a: 'Alt recording', b: 'Alt medium', c: 'Alt playing speed',
+                                              g: 'Alt channel',
+                                              h: 'Alt characteristic', '3': 'Alt materials.', '3': 'Alt materials.',
+                                              '6': '344' }),
+          marc_field(tag: '880', subfields: { a: 'Alt presentation format', b: 'Alt projection speed',
+                                              '3': 'Alt materials.', '6': '345' }),
+          marc_field(tag: '880', subfields: { a: 'Alt video format', b: 'Alt broadcast', '3': 'Alt materials.',
+                                              '6': '346' }),
+          marc_field(tag: '880', subfields: { a: 'Alt file type', b: 'Alt encoding', '3': 'Alt materials.',
+                                              '6': 'Alt region' })
 
         ]
       end
