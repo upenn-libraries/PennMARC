@@ -236,5 +236,9 @@ module PennMARC
     def valid_subject_genre_source_code?(field)
       subfield_value_in?(field, '2', PennMARC::HeadingControl::ALLOWED_SOURCE_CODES)
     end
+
+    def normalize_space(s)
+      s.strip.gsub(/\s{2,}/, ' ')
+    end
   end
 end
