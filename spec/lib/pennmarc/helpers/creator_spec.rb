@@ -184,6 +184,8 @@ describe 'PennMARC::Creator' do
         marc_field(tag: '700', subfields: { a: 'Name', b: 'I', c: 'laureate', d: '1968', e: 'author',
                                             j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
                                             '4': 'aut' }),
+        marc_field(tag: '700', subfields: { a: 'Ignore' }, indicator2: '1'),
+        marc_field(tag: '700', subfields: { i: 'Ignore' }),
         marc_field(tag: '710', subfields: { a: 'Corporation', b: 'A division', c: 'Office', d: '1968', e: 'author',
                                             u: 'affiliation', '3': 'materials',
                                             '4': 'aut' }),
@@ -191,7 +193,8 @@ describe 'PennMARC::Creator' do
                                              d: 'Alt date', e: 'Alt relator', j: 'Alt qualifier', q: 'Alt Fuller Name',
                                              u: 'Alt affiliation', '3': 'Alt materials' }),
         marc_field(tag: '880', subfields: { '6': '710', a: 'Alt Corp Name', b: 'Alt unit', c: 'Alt location', d: 'Alt date',
-                                            e: 'Alt relator', u: 'Alt Affiliation', '3': 'Alt materials' })
+                                            e: 'Alt relator', u: 'Alt Affiliation', '3': 'Alt materials' }),
+        marc_field(tag: '880', subfields: { i: 'Ignore', '6': '700' })
       ]
     end
 
