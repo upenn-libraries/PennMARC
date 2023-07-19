@@ -20,13 +20,13 @@ module PennMARC
         tags_present = SERIES_TAGS.select { |tag| record[tag].present? }
 
         if %w[800 810 811 400 410 411].member?(tags_present.first)
-          acc += process_author_show_entries(record, tags_present.first, relator_mapping)
+          acc += author_show_entries(record, tags_present.first, relator_mapping)
         elsif %w[830 440 490].member?(tags_present.first)
-          acc += process_title_show_entries(record, tags_present.first)
+          acc += title_show_entries(record, tags_present.first)
         end
 
-        acc += process_remaining_show_fields(record, tags_present)
-        acc += process_880_fields(record)
+        acc += remaining_show_fields(record, tags_present)
+        acc += series_880_fields(record)
 
         acc
       end
@@ -49,8 +49,14 @@ module PennMARC
       def search(record)
         acc = []
         acc += record.fields(%w[400 410 411]).filter_map do |field|
-          next join_subfields(field, &subfield_not_in?(%w[4 6 8])) if field.indicator2 == '0'
-          next join_subfields(field, &subfield_not_in?(%w[4 6 8 a])) if field.indicator2 == '1'
+          next if field.indicator2 == '0'
+
+          join_subfields(field, &subfield_not_in?(%w[4 6 8]))
+        end
+        acc += record.fields(%w[400 410 411]).filter_map do |field|
+          next if field.indicator2 == '1'
+
+          join_subfields(field, &subfield_not_in?(%w[4 6 8 a]))
         end
         acc += record.fields(%w[440]).filter_map do |field|
           join_subfields(field, &subfield_not_in?(%w[0 5 6 8 w]))
@@ -62,7 +68,6 @@ module PennMARC
           join_subfields(field, &subfield_not_in?(%w[0 5 6 7 8 w]))
         end
         acc += record.fields(%w[533]).filter_map do |field|
-          # filtered_values = field.filter { |sf| sf.code == 'f' }.map(&:value)
           filtered_values = field.filter_map { |sf| sf.value if sf.code == 'f' }
           next if filtered_values.empty?
 
@@ -81,7 +86,7 @@ module PennMARC
 
       private
 
-      def process_author_show_entries(record, first_tag, relator_mapping)
+      def author_show_entries(record, first_tag, relator_mapping)
         acc = []
         record.fields(first_tag).each do |field|
           # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
@@ -99,7 +104,7 @@ module PennMARC
         acc
       end
 
-      def process_title_show_entries(record, first_tag)
+      def title_show_entries(record, first_tag)
         acc = []
         record.fields(first_tag).each do |field|
           # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
@@ -110,7 +115,7 @@ module PennMARC
         acc
       end
 
-      def process_remaining_show_fields(record, tags_present)
+      def remaining_show_fields(record, tags_present)
         acc = []
         record.fields(tags_present.drop(1)).each do |field|
           # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
@@ -121,7 +126,7 @@ module PennMARC
       end
 
       # TODO: use linked alternate util like this: [{ value: linked_alternate(record, %w[800 811 830 400 411 440 490], &subfield_not_in?(%w[5 6 8])), link: false }]
-      def process_880_fields(record)
+      def series_880_fields(record)
         acc = []
         record.fields('880').filter_map do |field|
           next unless subfield_value?(field, '6', /^(800|810|811|830|400|410|411|440|490)/)
@@ -147,10 +152,10 @@ module PennMARC
 
       # logic for 'Continues' and 'Continued By' is very similar
       def get_continues(record, tag)
-        record.fields
-              .select { |f| f.tag == tag || (f.tag == '880' && has_subfield_value(f, '6', /^#{tag}/)) }
-              .select { |f| f.any?(&subfield_in?(%w[i a s t n d])) }
-              .map do |field|
+        record.fields.filter_map do |field|
+          next unless field.tag == tag || (field.tag == '880' && subfield_value?(field, '6', /^#{tag}/))
+          next unless field.any?(&subfield_in?(%w[i a s t n d]))
+
           join_subfields(field, &subfield_in?(%w[i a s t n d]))
         end
       end
