@@ -237,8 +237,8 @@ describe 'PennMARC::Note' do
         [
           marc_field(tag: '351', subfields: { a: 'Organized into five subseries', b: 'Arrangement pattern', c: 'Series',
                                               '3': 'materials' }),
-          marc_field(tag: '880', subfields: { a: 'Alt organization', b: 'Alt arrangement', c: 'Alt hierarchical level', '
-                                              3': 'Alt materials', '6': '351' })
+          marc_field(tag: '880', subfields: { a: 'Alt organization', b: 'Alt arrangement', c: 'Alt hierarchical level',
+                                              '3': 'Alt materials', '6': '351' })
         ]
       end
 
@@ -267,7 +267,7 @@ describe 'PennMARC::Note' do
                                               '3': 'Alt materials.', '6': '538' }),
           marc_field(tag: '880', subfields: { a: 'Alt recording', b: 'Alt medium', c: 'Alt playing speed',
                                               g: 'Alt channel',
-                                              h: 'Alt characteristic', '3': 'Alt materials.', '3': 'Alt materials.',
+                                              h: 'Alt characteristic', '3': 'Alt materials.',
                                               '6': '344' }),
           marc_field(tag: '880', subfields: { a: 'Alt presentation format', b: 'Alt projection speed',
                                               '3': 'Alt materials.', '6': '345' }),
