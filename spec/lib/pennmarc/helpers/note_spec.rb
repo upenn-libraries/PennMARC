@@ -229,5 +229,65 @@ describe 'PennMARC::Note' do
       expect(values).to contain_exactly('An Abstract Additional Summary ProQuest',
                                         'Alt Abstract Alt Additional Summary Alt ProQuest')
     end
+
+    describe '.arrangement_show' do
+      let(:record) { marc_record(fields: fields) }
+
+      let(:fields) do
+        [
+          marc_field(tag: '351', subfields: { a: 'Organized into five subseries', b: 'Arrangement pattern', c: 'Series',
+                                              '3': 'materials' }),
+          marc_field(tag: '880', subfields: { a: 'Alt organization', b: 'Alt arrangement', c: 'Alt hierarchical level', '
+                                              3': 'Alt materials', '6': '351' })
+        ]
+      end
+
+      let(:values) { helper.arrangement_show(record) }
+
+      it 'returns expected values from 351 and its linked alternate' do
+        expect(values).to contain_exactly('Organized into five subseries Arrangement pattern Series materials',
+                                          'Alt organization Alt arrangement Alt hierarchical level Alt materials')
+      end
+    end
+
+    describe '.system_details_show' do
+      let(:record) { marc_record(fields: fields) }
+
+      let(:fields) do
+        [
+          marc_field(tag: '538', subfields: { a: 'Blu-ray, region A, 1080p High Definition, full screen (1.33:1)',
+                                              i: 'display text for URI', u: 'http://www.universal.resource/locator ',
+                                              '3': ['Blu-ray disc.', '2015'] }),
+          marc_field(tag: '344', subfields: { a: 'digital', b: 'optical', c: '1.4 m/s', g: 'stereo',
+                                              h: 'digital recording', '3': 'audio disc' }),
+          marc_field(tag: '345', subfields: { a: '1 film reel (25 min.)', b: '24 fps', '3': 'Polyester print' }),
+          marc_field(tag: '346', subfields: { a: 'VHS', b: 'NTSC', '3': 'original videocassette' }),
+          marc_field(tag: '347', subfields: { a: 'video file', b: 'DVD video', e: 'region', '3': 'DVD' }),
+          marc_field(tag: '880', subfields: { a: 'Alt system details', i: 'Alternative display text', u: 'Alt URI',
+                                              '3': 'Alt materials.', '6': '538' }),
+          marc_field(tag: '880', subfields: { a: 'Alt recording', b: 'Alt medium', c: 'Alt playing speed', g: 'Alt channel',
+                                              h: 'Alt characteristic', '3': 'Alt materials.', '3': 'Alt materials.', '6': '344' }),
+          marc_field(tag: '880', subfields: { a: 'Alt presentation format', b: 'Alt projection speed', '3': 'Alt materials.', '6': '345' }),
+          marc_field(tag: '880', subfields: { a: 'Alt video format', b: 'Alt broadcast', '3': 'Alt materials.', '6': '346' }),
+          marc_field(tag: '880', subfields: { a: 'Alt file type', b: 'Alt encoding', '3': 'Alt materials.', '6': 'Alt region' })
+
+        ]
+      end
+
+      let(:values) { helper.system_details_show(record) }
+
+      it 'returns expected from 5xx and 3xx fields and their linked alternates' do
+        expect(values).to contain_exactly(
+          'Blu-ray disc: 2015 Blu-ray, region A, 1080p High Definition, full screen (1.33:1) display
+text for URI http://www.universal.resource/locator'.squish,
+          'audio disc digital optical 1.4 m/s stereo digital recording', 'Polyester print 1 film reel (25 min.) 24 fps',
+          'original videocassette VHS NTSC', 'DVD video file DVD video region',
+          'Alt materials Alt system details Alternative display text Alt URI',
+          'Alt materials Alt recording Alt medium Alt playing speed Alt channel Alt characteristic',
+          'Alt materials Alt presentation format Alt projection speed',
+          'Alt materials Alt video format Alt broadcast'
+        )
+      end
+    end
   end
 end

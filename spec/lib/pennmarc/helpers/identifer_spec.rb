@@ -102,4 +102,16 @@ describe 'PennMARC::Identifier' do
       expect(helper.publisher_number_search(record)).to contain_exactly('602537854325', 'B002086600')
     end
   end
+
+  describe '.fingerprint_show' do
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '026', subfields: { a: 'dete nkck', b: 'vess lodo', c: 'Anno Domini MDCXXXVI', d: '3',
+                                            '2': 'fei', '5': 'penn' })
+      ]
+    end
+    it 'returns expected fingerprint values' do
+      expect(helper.fingerprint_show(record)).to contain_exactly('dete nkck vess lodo Anno Domini MDCXXXVI 3')
+    end
+  end
 end

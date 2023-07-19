@@ -180,8 +180,28 @@ describe 'PennMARC::Format' do
     end
   end
 
+  describe 'cartographic_show' do
+    let(:record) do
+      marc_record fields: [marc_field(tag: '255', subfields: {
+                                        a: ' Scale 1:2,534,400. 40 mi. to an in.', b: 'polyconic projection',
+                                        c: '(E 74⁰--E 84⁰/N 20⁰--N 12⁰).', d: 'Declination +90° to -90°',
+                                        e: 'equinox 1950, epoch 1949-1958'
+                                      }),
+                           marc_field(tag: '342', subfields: { a: 'Polyconic', g: '0.9996', h: '0', i: '500,000',
+                                                               j: '0' })]
+    end
+
+    it 'returns expected cartographic values' do
+      expect(helper.cartographic_show(record)).to contain_exactly(
+        'Polyconic 0.9996 0 500,000 0',
+        'Scale 1:2,534,400. 40 mi. to an in. polyconic projection (E 74⁰--E 84⁰/N 20⁰--N 12⁰). Declination +90° to
+         -90° equinox 1950, epoch 1949-1958'.squish
+      )
+    end
+  end
+
   describe '.includes_manuscript?' do
-    context 'with a manuscript location incldued' do
+    context 'with a manuscript location included' do
       let(:locations) { ['Van Pelt', 'Kislak Center for Special Collections - Manuscripts Storage'] }
 
       it 'returns true' do

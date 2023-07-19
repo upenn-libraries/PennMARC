@@ -178,6 +178,32 @@ describe 'PennMARC::Creator' do
     end
   end
 
+  describe '.contributor_show' do
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '700', subfields: { a: 'Name', b: 'I', c: 'laureate', d: '1968', e: 'author',
+                                            j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+                                            '4': 'aut' }),
+        marc_field(tag: '710', subfields: { a: 'Corporation', b: 'A division', c: 'Office', d: '1968', e: 'author',
+                                            u: 'affiliation', '3': 'materials',
+                                            '4': 'aut' }),
+        marc_field(tag: '880', subfields: {  '6': '700', a: 'Alt Name', b: 'Alt num', c: 'Alt title',
+                                             d: 'Alt date', e: 'Alt relator', j: 'Alt qualifier', q: 'Alt Fuller Name',
+                                             u: 'Alt affiliation', '3': 'Alt materials' }),
+        marc_field(tag: '880', subfields: { '6': '710', a: 'Alt Corp Name', b: 'Alt unit', c: 'Alt location', d: 'Alt date',
+                                            e: 'Alt relator', u: 'Alt Affiliation', '3': 'Alt materials' })
+      ]
+    end
+
+    it 'returns expected contributor values' do
+      expect(helper.contributor_show(record, mapping)).to contain_exactly(
+        'Name I laureate 1968 pseud Fuller Name  author affiliation materials, Author',
+        'Corporation A division Office 1968  author affiliation materials, Author',
+        'Alt Name Alt num Alt title Alt date Alt qualifier Alt Fuller Name Alt relator Alt affiliation Alt materials',
+        'Alt Corp Name Alt unit Alt location Alt date Alt relator Alt Affiliation Alt materials')
+    end
+  end
+
   xdescribe '.conference_search'
   xdescribe '.search_aux'
 end
