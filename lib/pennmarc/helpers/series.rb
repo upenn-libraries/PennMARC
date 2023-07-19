@@ -31,11 +31,11 @@ module PennMARC
         acc
       end
 
-      def values(record)
+      def values(record, relator_mapping)
         acc = []
         added_8xx = false
         record.fields(%w[800 810 811 830]).take(1).each do |field|
-          acc << get_series_8xx_field(field)
+          acc << get_series_8xx_field(field, relator_mapping)
           added_8xx = true
         end
         unless added_8xx
@@ -47,34 +47,28 @@ module PennMARC
       end
 
       def search(record)
-        acc += record.fields(%w[400 410 411])
-                     .select { |f| f.indicator2 == '0' }
-                     .map do |field|
-          join_subfields(field, &subfield_not_in?(%w[4 6 8]))
+        acc = []
+        acc += record.fields(%w[400 410 411]).filter_map do |field|
+          next join_subfields(field, &subfield_not_in?(%w[4 6 8])) if field.indicator2 == '0'
+          next join_subfields(field, &subfield_not_in?(%w[4 6 8 a])) if field.indicator2 == '1'
         end
-        acc += record.fields(%w[400 410 411])
-                     .select { |f| f.indicator2 == '1' }
-                     .map do |field|
-          join_subfields(field, &subfield_not_in?(%w[4 6 8 a]))
-        end
-        acc += record.fields(%w[440])
-                     .map do |field|
+        acc += record.fields(%w[440]).filter_map do |field|
           join_subfields(field, &subfield_not_in?(%w[0 5 6 8 w]))
         end
-        acc += record.fields(%w[800 810 811])
-                     .map do |field|
+        acc += record.fields(%w[800 810 811]).filter_map do |field|
           join_subfields(field, &subfield_not_in?(%w[0 4 5 6 7 8 w]))
         end
-        acc += record do |field|
+        acc += record.fields(%w[830]).filter_map do |field|
           join_subfields(field, &subfield_not_in?(%w[0 5 6 7 8 w]))
         end
-        acc + record.fields(%w[533])
-                    .map do |field|
-                field.find_all { |sf| sf.code == 'f' }
-                     .map(&:value)
-                     .map { |v| v.gsub(/\(|\)/, '') }
-                     .join(' ')
-              end
+        acc += record.fields(%w[533]).filter_map do |field|
+          # filtered_values = field.filter { |sf| sf.code == 'f' }.map(&:value)
+          filtered_values = field.filter_map { |sf| sf.value if sf.code == 'f' }
+          next if filtered_values.empty?
+
+          filtered_values.map { |v| v.gsub(/\(|\)/, '') }.join(' ')
+        end
+        acc
       end
 
       def get_continues_display(record)
@@ -136,6 +130,19 @@ module PennMARC
           acc << { value: series, link: false }
         end
         acc
+      end
+
+      def get_series_8xx_field(field, relator_mapping)
+        s = field.map do |sf|
+          # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+          if %w[0 4 5 6 8].exclude?(sf.code)
+            " #{sf.value}"
+          elsif sf.code == '4'
+            ", #{translate_relator(sf.value, relator_mapping)}"
+          end
+        end.compact.join
+        s2 = s + (%w[. -].exclude?(s[-1]) ? '.' : '')
+        normalize_space(s2)
       end
 
       # logic for 'Continues' and 'Continued By' is very similar
