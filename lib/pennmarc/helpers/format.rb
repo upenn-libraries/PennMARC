@@ -147,6 +147,16 @@ module PennMARC
         end
       end
 
+      # Retrieve cartographic reference data for map/atlas formats for display from
+      # {https://www.oclc.org/bibformats/en/2xx/255.html 255} and {https://www.oclc.org/bibformats/en/3xx/342.html 342}
+      # @param [MARC::Record] record
+      # @return [Array<String>]
+      def cartographic_show(record)
+        record.fields(%w[255 342]).map do |field|
+          join_subfields(field, &subfield_not_in?(%w[6 8]))
+        end
+      end
+
       # Check if a set of locations has any locations that include the term 'manuscripts'
       # @param [Array<String>] locations
       # @return [Boolean]

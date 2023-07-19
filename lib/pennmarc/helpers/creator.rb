@@ -183,6 +183,39 @@ module PennMARC
       # @note see get_conference_search_values
       def conference_search(record); end
 
+      # Retrieve contributor values for display from fields {https://www.oclc.org/bibformats/en/7xx/700.html 700}
+      # and {https://www.oclc.org/bibformats/en/7xx/710.html 710} and their linked alternates. Joins subfields
+      # 'a', 'b', 'c', 'd', 'j', and 'q'. Then appends resulting string with joined subfields 'e', 'u', '3', and '4'.
+      # @note legacy version returns array of hash objects including data for display link
+      # @param [MARC::Record] record
+      # @return [Array<String>]
+      def contributor_show(record, mapping)
+        acc = record.fields(%w[700 710])
+                     .select { |f| ['', ' ', '0'].member?(f.indicator2) }
+                     .select { |f| f.none? { |sf| sf.code == 'i' } }
+                     .map do |field|
+          contributor = join_subfields(field, &subfield_in?(%w[a b c d j q]))
+          contributor_append = field.select(&subfield_in?(%w[e u 3 4])).map do |sf|
+            if sf.code == '4'
+              ", #{mapping[sf.value.to_sym]}"
+            else
+              " #{sf.value}"
+            end
+          end.join
+          "#{contributor} #{contributor_append}"
+          # { value: contributor, value_append: contributor_append, link_type: 'author_creator_xfacet2' }
+        end
+        acc += record.fields('880')
+                     .select { |f| subfield_value?(f, '6',/^(700|710)/) && (f.none? { |sf| sf.code == 'i' }) }
+                     .map do |field|
+          contributor = join_subfields(field, &subfield_in?(%w[a b c d j q]))
+          contributor_append = join_subfields(field, &subfield_in?(%w[e u 3]))
+          "#{contributor} #{contributor_append}"
+          # { value: contributor, value_append: contributor_append, link_type: 'author_creator_xfacet2' }
+        end
+        acc
+      end
+
       private
 
       # Trim punctuation method extracted from Traject macro, to ensure consistent output

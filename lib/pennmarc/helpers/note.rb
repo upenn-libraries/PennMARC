@@ -127,6 +127,65 @@ module PennMARC
       def summary_show(record)
         datafield_and_linked_alternate(record, '520')
       end
+
+      # Retrieve arrangement values for display from field field {https://www.oclc.org/bibformats/en/3xx/351.html 351}.
+      # @param [MARC::Record] record
+      # @return [Array<String>]
+      def arrangement_show(record)
+        datafield_and_linked_alternate(record, '351')
+      end
+
+      # Retrieve system details notes for display from fields {https://www.oclc.org/bibformats/en/5xx/538.html 538},
+      # {https://www.oclc.org/bibformats/en/3xx/344.html 344}, {https://www.oclc.org/bibformats/en/3xx/345.html 345},
+      # {https://www.oclc.org/bibformats/en/3xx/345.html 345}, {https://www.oclc.org/bibformats/en/3xx/346.html 346},
+      # {https://www.oclc.org/bibformats/en/3xx/347.html 347}, and their linked alternates.
+      # @param [MARC::Record] record
+      # @return [Array<String>]
+      def system_details_show(record)
+        acc = []
+        acc += record.fields('538').map do |field|
+          get_sub3_and_other_subs(field, &subfield_in?(%w[a i u]))
+        end
+        acc += record.fields('344').map do |field|
+          get_sub3_and_other_subs(field, &subfield_in?(%w[a b c d e f g h]))
+        end
+        acc += record.fields(%w[345 346]).map do |field|
+          get_sub3_and_other_subs(field, &subfield_in?(%w[a b]))
+        end
+        acc += record.fields('347').map do |field|
+          get_sub3_and_other_subs(field, &subfield_in?(%w[a b c d e f]))
+        end
+        acc += record.fields('880')
+                     .select { |f| subfield_value?(f, '6', /^538/) }
+                     .map do |field|
+          get_sub3_and_other_subs(field, &subfield_in?(%w[a i u]))
+        end
+        acc += record.fields('880')
+                     .select { |f| subfield_value?(f, '6', /^344/) }
+                     .map do |field|
+          get_sub3_and_other_subs(field, &subfield_in?(%w[a b c d e f g h]))
+        end
+        acc += record.fields('880')
+                     .select { |f| subfield_value?(f, '6', /^(345|346)/) }
+                     .map do |field|
+          get_sub3_and_other_subs(field, &subfield_in?(%w[a b]))
+        end
+        acc += record.fields('880')
+                     .select { |f| subfield_value?(f, '6', /^347/) }
+                     .map do |field|
+          get_sub3_and_other_subs(field, &subfield_in?(%w[a b c d e f]))
+        end
+        acc
+      end
+
+      private
+
+      # for system details: extract subfield 3 plus other subfields as specified by passed-in block
+      def get_sub3_and_other_subs(field, &block)
+        sub3 = field.select(&subfield_in?(%w[3])).map(&:value).map { |v| trim_trailing('period', v) }.join(': ')
+        oth_subs = join_subfields(field, &block)
+        [sub3, trim_trailing('semicolon', oth_subs)].join(' ')
+      end
     end
   end
 end
