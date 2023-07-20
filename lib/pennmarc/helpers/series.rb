@@ -13,26 +13,24 @@ module PennMARC
       # 411 - Series Statement/Added Entry Meeting Name - https://www.loc.gov/marc/bibliographic/bd411.html
       # 440 - Series Statement/Added Entry-Title - https://www.loc.gov/marc/bibliographic/bd440.html
       # 490 - Series Statement - https://www.loc.gov/marc/bibliographic/bd490.html
-      SERIES_TAGS = %w[800 810 811 830 400 411 440 490].freeze
+      DISPLAY_TAGS = %w[800 810 811 830 400 411 440 490].freeze
 
       # Fields for display that pertain to series information.
       # @param [MARC::Record] record
       # @return [Array<String>] array of series information
       def show(record, relator_mapping)
-        acc = []
+        tags_present = DISPLAY_TAGS.select { |tag| record[tag].present? }
 
-        tags_present = SERIES_TAGS.select { |tag| record[tag].present? }
+        values = if %w[800 810 811 400 410 411].member?(tags_present.first)
+                   author_show_entries(record, tags_present.first, relator_mapping)
+                 elsif %w[830 440 490].member?(tags_present.first)
+                   title_show_entries(record, tags_present.first)
+                 end
 
-        if %w[800 810 811 400 410 411].member?(tags_present.first)
-          acc += author_show_entries(record, tags_present.first, relator_mapping)
-        elsif %w[830 440 490].member?(tags_present.first)
-          acc += title_show_entries(record, tags_present.first)
-        end
+        values += remaining_show_entries(record, tags_present)
+        values += series_880_fields(record)
 
-        acc += remaining_show_entries(record, tags_present)
-        acc += series_880_fields(record)
-
-        acc
+        values
       end
 
       # Extract values from series fields for display in Franklin search result page for each returned record.
@@ -48,7 +46,7 @@ module PennMARC
         end
         unless added_8xx
           record.fields(%w[400 410 411 440 490]).take(1).map do |field|
-            acc << get_series_4xx_field(field)
+            acc << get_series_4xx_field(field, relator_mapping)
           end
         end
         acc
