@@ -120,7 +120,7 @@ module PennMARC
             end
           end
           series_append = pairs.flatten.join.strip
-          { value: series, value_append: series_append, link_type: 'author_search' }
+          "#{series} #{series_append}".squish
         end || []
       end
 
@@ -134,7 +134,7 @@ module PennMARC
         record.fields(first_tag).map do |field|
           series = join_subfields(field, &subfield_not_in?(%w[0 5 6 8 c e w v n]))
           series_append = join_subfields(field, &subfield_in?(%w[c e w v n]))
-          { value: series, value_append: series_append, link_type: 'title_search' }
+          "#{series} #{series_append}".squish
         end || []
       end
 
@@ -145,8 +145,7 @@ module PennMARC
       # @return [Array<Hash>] array of remaining show entry hashes
       def remaining_show_entries(record, tags_present)
         record.fields(tags_present.drop(1)).map do |field|
-          series = join_subfields(field, &subfield_not_in?(%w[0 5 6 8]))
-          { value: series, link: false }
+          join_subfields(field, &subfield_not_in?(%w[0 5 6 8]))
         end
       end || []
 
@@ -160,8 +159,7 @@ module PennMARC
         record.fields('880').filter_map do |field|
           next unless subfield_value?(field, '6', /^(800|810|811|830|400|410|411|440|490)/)
 
-          series = join_subfields(field, &subfield_not_in?(%w[5 6 8]))
-          { value: series, link: false }
+          join_subfields(field, &subfield_not_in?(%w[5 6 8]))
         end || []
       end
 
@@ -179,7 +177,7 @@ module PennMARC
           end
         end.compact.join
         s2 = s + (%w[. -].exclude?(s[-1]) ? '.' : '')
-        normalize_space(s2)
+        s2.squish
       end
 
       # Assemble a formatted string of a given 4xx field.
@@ -196,7 +194,7 @@ module PennMARC
           end
         end.compact.join
         s2 = s + (%w[. -].exclude?(s[-1]) ? '.' : '')
-        normalize_space(s2)
+        s2.squish
       end
 
       # Get subfields from a continues or continued_by field.

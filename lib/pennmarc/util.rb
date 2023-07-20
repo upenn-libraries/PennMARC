@@ -236,12 +236,5 @@ module PennMARC
     def valid_subject_genre_source_code?(field)
       subfield_value_in?(field, '2', PennMARC::HeadingControl::ALLOWED_SOURCE_CODES)
     end
-
-    # Replace two or more consecutive whitespace characters with a single whitespace.
-    # @param [String] string
-    # @return [String] normalized string
-    def normalize_space(string)
-      string.strip.gsub(/\s{2,}/, ' ')
-    end
   end
 end

@@ -18,11 +18,9 @@ describe 'PennMARC::Series' do
 
   describe '.show' do
     it 'returns the series' do
-      expect(helper.show(record, mapping)).to contain_exactly({ link_type: 'author_search',
-                                                                value: 'Bean Bagatolvski 1997-',
-                                                                value_append: 'bk. 1' },
-                                                              { link: false, value: 'Teachings of the feathered pillow' },
-                                                              { link: false, value: 'Учения пернатой подушки' })
+      expect(helper.show(record, mapping)).to contain_exactly('Bean Bagatolvski 1997- bk. 1', 
+                                                              'Teachings of the feathered pillow', 
+                                                              'Учения пернатой подушки')
     end
   end
 
