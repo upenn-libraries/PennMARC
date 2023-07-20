@@ -14,6 +14,10 @@ module PennMARC
       # 440 - Series Statement/Added Entry-Title - https://www.loc.gov/marc/bibliographic/bd440.html
       # 490 - Series Statement - https://www.loc.gov/marc/bibliographic/bd490.html
       SERIES_TAGS = %w[800 810 811 830 400 411 440 490].freeze
+
+      # Fields for display that pertain to series information.
+      # @param [MARC::Record] record
+      # @return [Array<String>] array of series information
       def show(record, relator_mapping)
         acc = []
 
@@ -25,12 +29,16 @@ module PennMARC
           acc += title_show_entries(record, tags_present.first)
         end
 
-        acc += remaining_show_fields(record, tags_present)
+        acc += remaining_show_entries(record, tags_present)
         acc += series_880_fields(record)
 
         acc
       end
 
+      # Series... values?
+      # @param [MARC::Record] record
+      # @param [Hash] relator_mapping
+      # @return [Array<String>] array of series values
       def values(record, relator_mapping)
         acc = []
         added_8xx = false
@@ -46,6 +54,9 @@ module PennMARC
         acc
       end
 
+      # Series fields for search.
+      # @param [MARC::Record] record
+      # @return [Array<String>] array of series values
       def search(record)
         acc = []
         acc += record.fields(%w[400 410 411]).filter_map do |field|
@@ -76,16 +87,34 @@ module PennMARC
         acc
       end
 
+      # Information concerning the immediate predecessor of the target item (chronological relationship). When a note
+      # is generated from this field, the introductory term or phrase may be generated based on the value in the second
+      # indicator position for display.
+      # https://www.loc.gov/marc/bibliographic/bd780.html
+      # @param [MARC::Record] record
+      # @return [String] continues fields string
       def get_continues_display(record)
         get_continues(record, '780')
       end
 
+      # Information concerning the immediate successor to the target item (chronological relationship). When a note is
+      # generated from this field, the introductory phrase may be generated based on the value in the second indicator
+      # position for display.
+      # https://www.loc.gov/marc/bibliographic/bd785.html
+      # @param [MARC::Record] record
+      # @return [String] continued by fields string
       def get_continued_by_display(record)
         get_continues(record, '785')
       end
 
       private
 
+      # If any of these: 800 810 811 400 410 411 are present, this function is called. It returns an array of hashes
+      # with joined subfields, appended values, and a link_type of 'author_search'.
+      # @param [MARC::Record] record
+      # @param [String] first_tag
+      # @param [Hash] relator_mapping
+      # @return [Array<Hash>] array of author show entry hashes
       def author_show_entries(record, first_tag, relator_mapping)
         acc = []
         record.fields(first_tag).each do |field|
@@ -104,6 +133,11 @@ module PennMARC
         acc
       end
 
+      # If any of these values: 830 440 490 are present, this function is called. It returns an array of hashes
+      # with joined subfields, appended values, and link_type of 'title_search'.
+      # @param [MARC::Record] record
+      # @param [String] first_tag
+      # @return [Array<Hash>] array of author show entry hashes
       def title_show_entries(record, first_tag)
         acc = []
         record.fields(first_tag).each do |field|
@@ -115,7 +149,11 @@ module PennMARC
         acc
       end
 
-      def remaining_show_fields(record, tags_present)
+      # Assemble an array of hashes that includes the remaining show entries.
+      # @param [MARC::Record] record
+      # @param [Array<String>] tags_present
+      # @return [Array<Hash>] array of remaining show entry hashes
+      def remaining_show_entries(record, tags_present)
         acc = []
         record.fields(tags_present.drop(1)).each do |field|
           # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
@@ -126,6 +164,11 @@ module PennMARC
       end
 
       # TODO: use linked alternate util like this: [{ value: linked_alternate(record, %w[800 811 830 400 411 440 490], &subfield_not_in?(%w[5 6 8])), link: false }]
+      # Fully content-designated representation, in a different script, of another field in the same record. Field 880
+      # is linked to the associated regular field by subfield $6 (Linkage). A subfield $6 in the associated field also
+      # links that field to the 880 field. The data in field 880 may be in more than one script. This function exists
+      # because it differs than the tradition use of linked_alternate.
+      # @param [MARC::Record] record
       def series_880_fields(record)
         acc = []
         record.fields('880').filter_map do |field|
@@ -137,6 +180,10 @@ module PennMARC
         acc
       end
 
+      # Assemble a formatted string of a given 8xx field.
+      # @param [String] field
+      # @param [Hash] relator_mapping
+      # @return [String] series 8xx field
       def get_series_8xx_field(field, relator_mapping)
         s = field.map do |sf|
           # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
@@ -150,7 +197,10 @@ module PennMARC
         normalize_space(s2)
       end
 
-      # logic for 'Continues' and 'Continued By' is very similar
+      # Get subfields from a continues or continued_by field.
+      # @param [MARC::Record] record
+      # @param [String] tag
+      # @return [String] joined subfields
       def get_continues(record, tag)
         record.fields.filter_map do |field|
           next unless field.tag == tag || (field.tag == '880' && subfield_value?(field, '6', /^#{tag}/))
