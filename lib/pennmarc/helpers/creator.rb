@@ -206,7 +206,7 @@ module PennMARC
               " #{subfield.value}"
             end
           end.join
-          "#{contributor} #{contributor_append}"
+          "#{contributor} #{contributor_append}".squish
         end
         contributors + record.fields('880').filter_map do |field|
           next unless subfield_value_in?(field, '6', %w[700 710])
@@ -214,7 +214,7 @@ module PennMARC
 
           contributor = join_subfields(field, &subfield_in?(%w[a b c d j q]))
           contributor_append = join_subfields(field, &subfield_in?(%w[e u 3]))
-          "#{contributor} #{contributor_append}"
+          "#{contributor} #{contributor_append}".squish
         end
       end
 
