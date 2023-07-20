@@ -193,7 +193,8 @@ module PennMARC
       def contributor_show(record, relator_map)
         contributors = record.fields(%w[700 710]).filter_map do |field|
           next unless ['', ' ', '0'].member?(field.indicator2)
-          next unless field.none? { |subfield| subfield.code == 'i' }
+          next if subfield_defined? field, 'i'
+
 
           contributor = join_subfields(field, &subfield_in?(%w[a b c d j q]))
           contributor_append = field.filter_map do |subfield|
@@ -209,7 +210,7 @@ module PennMARC
         end
         contributors + record.fields('880').filter_map do |field|
           next unless subfield_value_in?(field, '6', %w[700 710])
-          next unless field.none? { |subfield| subfield.code == 'i' }
+          next if subfield_defined?(field, 'i')
 
           contributor = join_subfields(field, &subfield_in?(%w[a b c d j q]))
           contributor_append = join_subfields(field, &subfield_in?(%w[e u 3]))
