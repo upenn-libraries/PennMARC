@@ -201,7 +201,7 @@ module PennMARC
             next unless %w[e u 3 4].member?(subfield.code)
 
             if subfield.code == '4'
-              ", #{relator_map[subfield.value.to_sym]}"
+              ", #{translate_relator(subfield.value, relator_map)}"
             else
               " #{subfield.value}"
             end
