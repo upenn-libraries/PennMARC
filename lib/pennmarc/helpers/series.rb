@@ -54,15 +54,15 @@ module PennMARC
       # @return [Array<String>] array of series values
       def search(record)
         record.fields(%w[400 410 411]).filter_map do |field|
-          next if field.indicator2 == '0'
-
-          join_subfields(field, &subfield_not_in?(%w[4 6 8]))
+          subfields = if field.indicator2 != '0'
+                        %w[4 6 8]
+                      elsif field.indicator2 != '1'
+                        %w[4 6 8 a]
+                      else
+                        next
+                      end
+          join_subfields(field, &subfield_not_in?(subfields))
         end +
-          record.fields(%w[400 410 411]).filter_map do |field|
-            next if field.indicator2 == '1'
-
-            join_subfields(field, &subfield_not_in?(%w[4 6 8 a]))
-          end +
           record.fields(%w[440]).filter_map do |field|
             join_subfields(field, &subfield_not_in?(%w[0 5 6 8 w]))
           end +
