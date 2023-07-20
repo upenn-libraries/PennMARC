@@ -194,7 +194,7 @@ module PennMARC
           end
         end.compact.join
         s2 = s + (%w[. -].exclude?(s[-1]) ? '.' : '')
-        normalize_space(s2)
+        s2.squeeze(' ')
       end
 
       # Get subfields from a continues or continued_by field.
