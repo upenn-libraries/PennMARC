@@ -201,8 +201,8 @@ describe 'PennMARC::Creator' do
 
     it 'returns expected contributor values' do
       expect(helper.contributor_show(record, mapping)).to contain_exactly(
-        'Name I laureate 1968 pseud Fuller Name  author affiliation materials, Author',
-        'Corporation A division Office 1968  author affiliation materials, Author',
+        'Name I laureate 1968 pseud Fuller Name author affiliation materials, Author',
+        'Corporation A division Office 1968 author affiliation materials, Author',
         'Alt Name Alt num Alt title Alt date Alt qualifier Alt Fuller Name Alt relator Alt affiliation Alt materials',
         'Alt Corp Name Alt unit Alt location Alt date Alt relator Alt Affiliation Alt materials'
       )
