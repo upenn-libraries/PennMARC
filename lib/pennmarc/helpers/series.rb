@@ -143,7 +143,7 @@ module PennMARC
       # @param [Array<String>] tags_present
       # @return [Array<Hash>] array of remaining show entry hashes
       def remaining_show_entries(record, tags_present)
-        record.fields(tags_present).map do |field|
+        record.fields(tags_present.drop(1)).map do |field|
           # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
           series = join_subfields(field, &subfield_not_in?(%w[0 5 6 8]))
           { value: series, link: false }
