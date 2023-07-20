@@ -127,6 +127,56 @@ module PennMARC
       def summary_show(record)
         datafield_and_linked_alternate(record, '520')
       end
+
+      # Retrieve arrangement values for display from field field {https://www.oclc.org/bibformats/en/3xx/351.html 351}.
+      # @param [MARC::Record] record
+      # @return [Array<String>]
+      def arrangement_show(record)
+        datafield_and_linked_alternate(record, '351')
+      end
+
+      # Retrieve system details notes for display from fields {https://www.oclc.org/bibformats/en/5xx/538.html 538},
+      # {https://www.oclc.org/bibformats/en/3xx/344.html 344}, {https://www.oclc.org/bibformats/en/3xx/345.html 345},
+      # {https://www.oclc.org/bibformats/en/3xx/346.html 346}, {https://www.oclc.org/bibformats/en/3xx/347.html 347},
+      # and their linked alternates.
+      # @param [MARC::Record] record
+      # @return [Array<String>]
+      def system_details_show(record)
+        system_details_notes = record.fields(%w[538 880]).filter_map do |field|
+          next if field.tag == '880' && subfield_value_not_in?(field, '6', ['538'])
+
+          sub3_and_other_subs(field, &subfield_in?(%w[a i u]))
+        end
+        system_details_notes += record.fields(%w[344 880]).filter_map do |field|
+          next if field.tag == '880' && subfield_value_not_in?(field, '6', ['344'])
+
+          sub3_and_other_subs(field, &subfield_in?(%w[a b c d e f g h]))
+        end
+        system_details_notes += record.fields(%w[345 346 880]).filter_map do |field|
+          next if field.tag == '880' && subfield_value_not_in?(field, '6', %w[345 346])
+
+          sub3_and_other_subs(field, &subfield_in?(%w[a b]))
+        end
+        system_details_notes += record.fields(%w[347 880]).filter_map do |field|
+          next if field.tag == '880' && subfield_value_not_in?(field, '6', ['347'])
+
+          sub3_and_other_subs(field, &subfield_in?(%w[a b c d e f]))
+        end
+        system_details_notes
+      end
+
+      private
+
+      # For system details: extract subfield ǂ3 plus other subfields as specified by passed-in block. Pays special
+      # attention to punctuation, joining subfield ǂ3 values with a colon-space (': ').
+      # @param [MARC::DataField] field
+      # @param [Proc] selector
+      # @return [String]
+      def sub3_and_other_subs(field, &selector)
+        sub3 = field.filter_map { |sf| trim_trailing('period', sf.value) if sf.code == '3' }.join(': ')
+        oth_subs = join_subfields(field, &selector)
+        [sub3, trim_trailing('semicolon', oth_subs)].join(' ')
+      end
     end
   end
 end

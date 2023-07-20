@@ -99,7 +99,7 @@ module PennMARC
       end
 
       # Get publisher issued identifiers for searching of a record. Values extracted from fields
-      # {https://www.oclc.org/bibformats/en/0xx/024.html 024} and {https://www.oclc.org/bibformats/en/0xx/024.html 028}.
+      # {https://www.oclc.org/bibformats/en/0xx/024.html 024} and {https://www.oclc.org/bibformats/en/0xx/028.html 028}.
       #
       # @param [MARC::Record] record
       # @return [Array<String>]
@@ -107,6 +107,15 @@ module PennMARC
         record.fields(%w[024 028]).filter_map do |field|
           joined_identifiers = join_subfields(field, &subfield_in?(%w[a]))
           joined_identifiers if joined_identifiers.present?
+        end
+      end
+
+      # Retrieve fingerprint for display from the {https://www.oclc.org/bibformats/en/0xx/026.html 026} field
+      # @param [MARC::Record] record
+      # @return [Array<String>]
+      def fingerprint_show(record)
+        record.fields('026').map do |field|
+          join_subfields(field, &subfield_not_in?(%w[2 5 6 8]))
         end
       end
 

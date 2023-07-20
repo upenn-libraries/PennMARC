@@ -183,6 +183,41 @@ module PennMARC
       # @note see get_conference_search_values
       def conference_search(record); end
 
+      # Retrieve contributor values for display from fields {https://www.oclc.org/bibformats/en/7xx/700.html 700}
+      # and {https://www.oclc.org/bibformats/en/7xx/710.html 710} and their linked alternates. Joins subfields
+      # 'a', 'b', 'c', 'd', 'j', and 'q'. Then appends resulting string with joined subfields 'e', 'u', '3', and '4'.
+      # @note legacy version returns array of hash objects including data for display link
+      # @param [MARC::Record] record
+      # @ param [Hash] relator_map
+      # @return [Array<String>]
+      def contributor_show(record, relator_map)
+        contributors = record.fields(%w[700 710]).filter_map do |field|
+          next unless ['', ' ', '0'].member?(field.indicator2)
+          next if subfield_defined? field, 'i'
+
+
+          contributor = join_subfields(field, &subfield_in?(%w[a b c d j q]))
+          contributor_append = field.filter_map do |subfield|
+            next unless %w[e u 3 4].member?(subfield.code)
+
+            if subfield.code == '4'
+              ", #{translate_relator(subfield.value, relator_map)}"
+            else
+              " #{subfield.value}"
+            end
+          end.join
+          "#{contributor} #{contributor_append}".squish
+        end
+        contributors + record.fields('880').filter_map do |field|
+          next unless subfield_value_in?(field, '6', %w[700 710])
+          next if subfield_defined?(field, 'i')
+
+          contributor = join_subfields(field, &subfield_in?(%w[a b c d j q]))
+          contributor_append = join_subfields(field, &subfield_in?(%w[e u 3]))
+          "#{contributor} #{contributor_append}".squish
+        end
+      end
+
       private
 
       # Trim punctuation method extracted from Traject macro, to ensure consistent output
