@@ -35,7 +35,7 @@ module PennMARC
         acc
       end
 
-      # Series... values?
+      # Extract values from series fields for display in Franklin search result page for each returned record.
       # @param [MARC::Record] record
       # @param [Hash] relator_mapping
       # @return [Array<String>] array of series values
@@ -188,6 +188,23 @@ module PennMARC
         s = field.map do |sf|
           # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
           if %w[0 4 5 6 8].exclude?(sf.code)
+            " #{sf.value}"
+          elsif sf.code == '4'
+            ", #{translate_relator(sf.value, relator_mapping)}"
+          end
+        end.compact.join
+        s2 = s + (%w[. -].exclude?(s[-1]) ? '.' : '')
+        normalize_space(s2)
+      end
+
+      # Assemble a formatted string of a given 4xx field.
+      # @param [String] field
+      # @param [Hash] relator_mapping
+      # @return [String] series 4xx field
+      def get_series_4xx_field(field, relator_mapping)
+        s = field.map do |sf|
+          # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
+          if %w[0 4 6 8].exclude?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
             ", #{translate_relator(sf.value, relator_mapping)}"
