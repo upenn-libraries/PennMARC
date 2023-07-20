@@ -47,4 +47,3 @@ describe 'PennMARC::Series' do
     end
   end
 end
-
