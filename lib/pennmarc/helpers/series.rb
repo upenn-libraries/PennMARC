@@ -104,13 +104,13 @@ module PennMARC
 
       # If any of these: 800 810 811 400 410 411 are present, this function is called. It returns an array of hashes
       # with joined subfields, appended values, and a link_type of 'author_search'.
+      # @note added 2017/04/10: filter out 0 (authority record numbers) added by Alma
       # @param [MARC::Record] record
       # @param [String] first_tag
       # @param [Hash] relator_mapping
       # @return [Array<Hash>] array of author show entry hashes
       def author_show_entries(record, first_tag, relator_mapping)
         record.fields(first_tag).map do |field|
-          # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
           series = join_subfields(field, &subfield_not_in?(%w[0 5 6 8 e t w v n]))
           pairs = field.map do |sf|
             if %w[e w v n t].member?(sf.code)
@@ -126,12 +126,12 @@ module PennMARC
 
       # If any of these values: 830 440 490 are present, this function is called. It returns an array of hashes
       # with joined subfields, appended values, and link_type of 'title_search'.
+      # @note added 2017/04/10: filter out 0 (authority record numbers) added by Alma
       # @param [MARC::Record] record
       # @param [String] first_tag
       # @return [Array<Hash>] array of author show entry hashes
       def title_show_entries(record, first_tag)
         record.fields(first_tag).map do |field|
-          # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
           series = join_subfields(field, &subfield_not_in?(%w[0 5 6 8 c e w v n]))
           series_append = join_subfields(field, &subfield_in?(%w[c e w v n]))
           { value: series, value_append: series_append, link_type: 'title_search' }
@@ -139,12 +139,12 @@ module PennMARC
       end
 
       # Assemble an array of hashes that includes the remaining show entries.
+      # @note added 2017/04/10: filter out 0 (authority record numbers) added by Alma
       # @param [MARC::Record] record
       # @param [Array<String>] tags_present
       # @return [Array<Hash>] array of remaining show entry hashes
       def remaining_show_entries(record, tags_present)
         record.fields(tags_present.drop(1)).map do |field|
-          # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
           series = join_subfields(field, &subfield_not_in?(%w[0 5 6 8]))
           { value: series, link: false }
         end
@@ -166,12 +166,12 @@ module PennMARC
       end
 
       # Assemble a formatted string of a given 8xx field.
+      # @note added 2017/04/10: filter out 0 (authority record numbers) added by Alma
       # @param [String] field
       # @param [Hash] relator_mapping
       # @return [String] series 8xx field
       def get_series_8xx_field(field, relator_mapping)
         s = field.map do |sf|
-          # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
           if %w[0 4 5 6 8].exclude?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
@@ -183,12 +183,12 @@ module PennMARC
       end
 
       # Assemble a formatted string of a given 4xx field.
+      # @note added 2017/04/10: filter out 0 (authority record numbers) added by Alma
       # @param [String] field
       # @param [Hash] relator_mapping
       # @return [String] series 4xx field
       def get_series_4xx_field(field, relator_mapping)
         s = field.map do |sf|
-          # added 2017/04/10: filter out 0 (authority record numbers) added by Alma
           if %w[0 4 6 8].exclude?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
