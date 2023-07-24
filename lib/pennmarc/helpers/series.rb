@@ -20,6 +20,7 @@ module PennMARC
 
       # Fields for display that pertain to series information.
       # @param [MARC::Record] record
+      # @param [Hash] relator_mapping
       # @return [Array<String>] array of series information
       def show(record, relator_mapping)
         tags_present = DISPLAY_TAGS.select { |tag| record[tag].present? }
