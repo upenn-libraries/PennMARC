@@ -147,7 +147,10 @@ module PennMARC
         end || []
       end
 
-      # TODO: use linked alternate util like this: [{ value: linked_alternate(record, %w[800 811 830 400 411 440 490], &subfield_not_in?(%w[5 6 8])), link: false }]
+      # TODO: use linked alternate in place of this function
+      # @note There are multiple locations in these helpers where we should be able to use the linked_alternate util.
+      # @note This requires a more comprehensive evaluation and refactor of the linked_alternate utility.
+      #
       # Fully content-designated representation, in a different script, of another field in the same record. Field 880
       # is linked to the associated regular field by subfield $6 (Linkage). A subfield $6 in the associated field also
       # links that field to the 880 field. The data in field 880 may be in more than one script. This function exists
@@ -195,7 +198,7 @@ module PennMARC
         s2.squish
       end
 
-      # Get subfields from a continues or continued_by field.
+      # Get subfields from a given field (continues or continued_by).
       # @param [MARC::Record] record
       # @param [String] tag
       # @return [String] joined subfields
