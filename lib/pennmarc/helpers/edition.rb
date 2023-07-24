@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module PennMARC
-  # Do Edition-y stuff
+  # Do Edition and edition-related field processing.
   class Edition < Helper
     class << self
       # Edition values for display on a record page. Field 250 is information relating to the edition of a work as
