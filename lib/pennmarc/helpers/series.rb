@@ -100,8 +100,8 @@ module PennMARC
 
       private
 
-      # If any of these: 800 810 811 400 410 411 are present, this function is called. It returns an array of hashes
-      # with joined subfields, appended values, and a link_type of 'author_search'.
+      # If any of these values: 800 810 811 400 410 411 are present, return a string with series information and
+      # appended values.
       # @note added 2017/04/10: filter out 0 (authority record numbers) added by Alma
       # @param [MARC::Record] record
       # @param [String] first_tag
@@ -122,8 +122,7 @@ module PennMARC
         end || []
       end
 
-      # If any of these values: 830 440 490 are present, this function is called. It returns an array of hashes
-      # with joined subfields, appended values, and link_type of 'title_search'.
+      # If any of these values: 830 440 490 are present, return a string with series information and appended values.
       # @note added 2017/04/10: filter out 0 (authority record numbers) added by Alma
       # @param [MARC::Record] record
       # @param [String] first_tag
