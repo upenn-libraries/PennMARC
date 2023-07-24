@@ -51,7 +51,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>] array of series values
       def search(record)
-        record.fields(%w[400 410 411]).filter_map do |field|
+        values = record.fields(%w[400 410 411]).filter_map do |field|
           subfields = if field.indicator2 != '0'
                         %w[4 6 8]
                       elsif field.indicator2 != '1'
@@ -60,22 +60,23 @@ module PennMARC
                         next
                       end
           join_subfields(field, &subfield_not_in?(subfields))
-        end +
-          record.fields(%w[440]).filter_map do |field|
-            join_subfields(field, &subfield_not_in?(%w[0 5 6 8 w]))
-          end +
-          record.fields(%w[800 810 811]).filter_map do |field|
-            join_subfields(field, &subfield_not_in?(%w[0 4 5 6 7 8 w]))
-          end +
-          record.fields(%w[830]).filter_map do |field|
-            join_subfields(field, &subfield_not_in?(%w[0 5 6 7 8 w]))
-          end +
-          record.fields(%w[533]).filter_map do |field|
-            filtered_values = field.filter_map { |sf| sf.value if sf.code == 'f' }
-            next if filtered_values.empty?
+        end
+        values += record.fields(%w[440]).filter_map do |field|
+          join_subfields(field, &subfield_not_in?(%w[0 5 6 8 w]))
+        end
+        values += record.fields(%w[800 810 811]).filter_map do |field|
+          join_subfields(field, &subfield_not_in?(%w[0 4 5 6 7 8 w]))
+        end
+        values += record.fields(%w[830]).filter_map do |field|
+          join_subfields(field, &subfield_not_in?(%w[0 5 6 7 8 w]))
+        end
+        values += record.fields(%w[533]).filter_map do |field|
+          filtered_values = field.filter_map { |sf| sf.value if sf.code == 'f' }
+          next if filtered_values.empty?
 
-            filtered_values.map { |v| v.gsub(/\(|\)/, '') }.join(' ')
-          end
+          filtered_values.map { |v| v.gsub(/\(|\)/, '') }.join(' ')
+        end
+        values
       end
 
       # Information concerning the immediate predecessor of the target item (chronological relationship). When a note
