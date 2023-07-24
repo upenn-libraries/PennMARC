@@ -28,9 +28,7 @@ module PennMARC
                  end || []
 
         values += remaining_show_entries(record, tags_present)
-        values += series_880_fields(record)
-
-        values
+        values + series_880_fields(record)
       end
 
       # Extract values from series fields for display in Franklin search result page for each returned record.
@@ -146,8 +144,8 @@ module PennMARC
       def remaining_show_entries(record, tags_present)
         record.fields(tags_present.drop(1)).map do |field|
           join_subfields(field, &subfield_not_in?(%w[0 5 6 8]))
-        end
-      end || []
+        end || []
+      end
 
       # TODO: use linked alternate util like this: [{ value: linked_alternate(record, %w[800 811 830 400 411 440 490], &subfield_not_in?(%w[5 6 8])), link: false }]
       # Fully content-designated representation, in a different script, of another field in the same record. Field 880
@@ -169,13 +167,13 @@ module PennMARC
       # @param [Hash] relator_mapping
       # @return [String] series 8xx field
       def get_series_8xx_field(field, relator_mapping)
-        s = field.map do |sf|
+        s = field.filter_map do |sf|
           if %w[0 4 5 6 8].exclude?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
             ", #{translate_relator(sf.value, relator_mapping)}"
           end
-        end.compact.join
+        end.join
         s2 = s + (%w[. -].exclude?(s[-1]) ? '.' : '')
         s2.squish
       end
@@ -186,13 +184,13 @@ module PennMARC
       # @param [Hash] relator_mapping
       # @return [String] series 4xx field
       def get_series_4xx_field(field, relator_mapping)
-        s = field.map do |sf|
+        s = field.filter_map do |sf|
           if %w[0 4 6 8].exclude?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
             ", #{translate_relator(sf.value, relator_mapping)}"
           end
-        end.compact.join
+        end.join
         s2 = s + (%w[. -].exclude?(s[-1]) ? '.' : '')
         s2.squish
       end
