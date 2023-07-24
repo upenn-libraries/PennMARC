@@ -31,17 +31,17 @@ module PennMARC
         values + series_880_fields(record)
       end
 
-      # Extract values from series fields for display in Franklin search result page for each returned record.
+      # Values from series fields for display.
       # @param [MARC::Record] record
       # @param [Hash] relator_mapping
       # @return [Array<String>] array of series values
       def values(record, relator_mapping)
         record.fields(%w[800 810 811 830]).each do |field|
-          return [get_series_8xx_field(field, relator_mapping)]
+          return [series_8xx_field(field, relator_mapping)]
         end
 
         record.fields(%w[400 410 411 440 490]).each do |field|
-          return [get_series_4xx_field(field, relator_mapping)]
+          return [series_4xx_field(field, relator_mapping)]
         end
 
         []
@@ -85,7 +85,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [String] continues fields string
       def get_continues_display(record)
-        get_continues(record, '780')
+        continues(record, '780')
       end
 
       # Information concerning the immediate successor to the target item (chronological relationship). When a note is
@@ -95,7 +95,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [String] continued by fields string
       def get_continued_by_display(record)
-        get_continues(record, '785')
+        continues(record, '785')
       end
 
       private
@@ -165,7 +165,7 @@ module PennMARC
       # @param [String] field
       # @param [Hash] relator_mapping
       # @return [String] series 8xx field
-      def get_series_8xx_field(field, relator_mapping)
+      def series_8xx_field(field, relator_mapping)
         s = field.filter_map do |sf|
           if %w[0 4 5 6 8].exclude?(sf.code)
             " #{sf.value}"
@@ -182,7 +182,7 @@ module PennMARC
       # @param [String] field
       # @param [Hash] relator_mapping
       # @return [String] series 4xx field
-      def get_series_4xx_field(field, relator_mapping)
+      def series_4xx_field(field, relator_mapping)
         s = field.filter_map do |sf|
           if %w[0 4 6 8].exclude?(sf.code)
             " #{sf.value}"
@@ -198,7 +198,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @param [String] tag
       # @return [String] joined subfields
-      def get_continues(record, tag)
+      def continues(record, tag)
         record.fields.filter_map do |field|
           next unless field.tag == tag || (field.tag == '880' && subfield_value?(field, '6', /^#{tag}/))
           next unless field.any?(&subfield_in?(%w[i a s t n d]))
