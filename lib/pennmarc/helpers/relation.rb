@@ -48,7 +48,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @param [Hash] relator_map
       # @return [Array]
-      def related_work_show(record, relator_map)
+      def related_work_show(record, relator_map = Parser.new.relator_map)
         values = record.fields(RELATED_WORK_FIELDS).filter_map do |field|
           next unless field.indicator2.blank?
 
@@ -73,7 +73,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @param [Hash] relator_map
       # @return [Array]
-      def contains_show(record, relator_map)
+      def contains_show(record, relator_map = Parser.new.relator_map)
         acc = record.fields(CONTAINS_FIELDS).filter_map do |field|
           next unless field.indicator2 == '2'
 

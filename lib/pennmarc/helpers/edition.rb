@@ -35,7 +35,7 @@ module PennMARC
       # https://www.loc.gov/marc/bibliographic/bd775.html
       # @param [MARC::Record] record
       # @return [Array<String>] array of other edition strings
-      def other_show(record, relator_mapping)
+      def other_show(record, relator_mapping = Parser.new.relator_map)
         values = record.fields('775').filter_map do |field|
           next unless subfield_defined?(field, :i)
 

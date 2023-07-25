@@ -26,7 +26,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @param [Hash] relator_mapping
       # @return [Array<String>] array of author/creator values for indexing
-      def search(record, relator_mapping)
+      def search(record, relator_mapping = Parser.new.relator_map)
         acc = record.fields(TAGS).map do |field|
           pieces = field.filter_map do |sf|
             if sf.code == 'a'
@@ -90,7 +90,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @param [Hash] relator_mapping
       # @return [Array<String>] array of author/creator values for display
-      def values(record, relator_mapping)
+      def values(record, relator_mapping = Parser.new.relator_map)
         record.fields(TAGS).map do |field|
           name_from_main_entry(field, relator_mapping)
         end
@@ -145,7 +145,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @param [Hash] relator_map
       # @return [Array<String>] array of conference values
-      def conference_show(record, relator_map)
+      def conference_show(record, relator_map = Parser.new.relator_map)
         record.fields('111').filter_map do |field|
           name_from_main_entry field, relator_map
         end
@@ -190,7 +190,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @ param [Hash] relator_map
       # @return [Array<String>]
-      def contributor_show(record, relator_map)
+      def contributor_show(record, relator_map = Parser.new.relator_map)
         contributors = record.fields(%w[700 710]).filter_map do |field|
           next unless ['', ' ', '0'].member?(field.indicator2)
           next if subfield_defined? field, 'i'

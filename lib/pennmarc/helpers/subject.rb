@@ -33,7 +33,7 @@ module PennMARC
       # @param [Hash] relator_map
       # @param [MARC::Record] record
       # @return [Array] array of all subject values for search
-      def search(record, relator_map)
+      def search(record, relator_map = Parser.new.relator_map)
         subject_fields(record, type: :search).filter_map do |field|
           subj_parts = field.filter_map do |subfield|
             # TODO: use term hash here? pro/chr would be rejected...
