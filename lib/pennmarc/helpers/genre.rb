@@ -48,7 +48,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @param [Hash] location_map
       # @return [Array<String>]
-      def facet(record, location_map)
+      def facet(record, location_map = Parser.new.location_map)
         locations = Location.location record: record, location_map: location_map, display_value: :specific_location
         manuscript = Format.include_manuscripts?(locations)
         video = record.fields('007').any? { |field| field.value.starts_with? 'v' }

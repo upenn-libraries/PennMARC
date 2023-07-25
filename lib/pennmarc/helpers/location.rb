@@ -12,7 +12,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @param [Hash] location_map hash with location_code as key and location hash as value
       # @return [Array<String>] Array of library locations retrieved from location_map
-      def library(record, location_map)
+      def library(record, location_map = Parser.new.location_map)
         location(record: record, location_map: location_map, display_value: 'library')
       end
 
@@ -25,7 +25,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @param [Hash] location_map hash with location_code as key and location hash as value
       # @return [Array<String>] Array of specific locations retrieved from location_map
-      def specific_location(record, location_map)
+      def specific_location(record, location_map = Parser.new.location_map)
         location(record: record, location_map: location_map, display_value: 'specific_location')
       end
 
@@ -35,10 +35,10 @@ module PennMARC
       # @see https://developers.exlibrisgroup.com/alma/apis/docs/bibs/R0VUIC9hbG1hd3MvdjEvYmlicy97bW1zX2lkfQ==/
       #   Alma documentation for these added fields
       # @param [MARC::Record] record
-      # @param [Hash] location_map hash with location_code as key and location hash as value
       # @param [Symbol | String] display_value field in location hash to retrieve
+      # @param [Hash] location_map hash with location_code as key and location hash as value
       # @return [Array<String>]
-      def location(record:, location_map:, display_value:)
+      def location(record:, display_value:, location_map: Parser.new.location_map)
         # get enriched marc location tag and subfield code
         location_tag_and_subfield_code(record) => {tag:, subfield_code:}
 

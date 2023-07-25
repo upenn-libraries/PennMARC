@@ -71,7 +71,7 @@ module PennMARC
       # @param [Hash] location_map
       # @return [Array<String>] format values for faceting
 
-      def facet(record, location_map)
+      def facet(record, location_map = Parser.new.location_map)
         formats = []
         format_code = leader_format(record.leader)
         f007 = record.fields('007').map(&:value)
