@@ -10,10 +10,10 @@ module PennMARC
       # @see https://developers.exlibrisgroup.com/alma/apis/docs/bibs/R0VUIC9hbG1hd3MvdjEvYmlicy97bW1zX2lkfQ==/
       #   Alma documentation for these added fields
       # @param [MARC::Record] record
-      # @param [Hash] location_map hash with location_code as key and location hash as value
+      # @param [Hash] location_mapping hash with location_code as key and location hash as value
       # @return [Array<String>] Array of library locations retrieved from location_map
-      def library(record, location_map)
-        location(record: record, location_map: location_map, display_value: 'library')
+      def library(record, location_mapping = location_map)
+        location(record: record, location_mapping: location_mapping, display_value: 'library')
       end
 
       # Retrieves the specific location from enriched marc 'itm' or 'hld' fields, giving priority to the item location
@@ -23,10 +23,10 @@ module PennMARC
       # @see https://developers.exlibrisgroup.com/alma/apis/docs/bibs/R0VUIC9hbG1hd3MvdjEvYmlicy97bW1zX2lkfQ==/
       #   Alma documentation for these added fields
       # @param [MARC::Record] record
-      # @param [Hash] location_map hash with location_code as key and location hash as value
+      # @param [Hash] location_mapping hash with location_code as key and location hash as value
       # @return [Array<String>] Array of specific locations retrieved from location_map
-      def specific_location(record, location_map)
-        location(record: record, location_map: location_map, display_value: 'specific_location')
+      def specific_location(record, location_mapping = location_map)
+        location(record: record, location_mapping: location_mapping, display_value: 'specific_location')
       end
 
       # Base method to retrieve location data from enriched marc 'itm' or 'hld' fields, giving priority to the item
@@ -35,10 +35,10 @@ module PennMARC
       # @see https://developers.exlibrisgroup.com/alma/apis/docs/bibs/R0VUIC9hbG1hd3MvdjEvYmlicy97bW1zX2lkfQ==/
       #   Alma documentation for these added fields
       # @param [MARC::Record] record
-      # @param [Hash] location_map hash with location_code as key and location hash as value
       # @param [Symbol | String] display_value field in location hash to retrieve
+      # @param [Hash] location_mapping hash with location_code as key and location hash as value
       # @return [Array<String>]
-      def location(record:, location_map:, display_value:)
+      def location(record:, display_value:, location_mapping: location_map)
         # get enriched marc location tag and subfield code
         location_tag_and_subfield_code(record) => {tag:, subfield_code:}
 
@@ -56,9 +56,9 @@ module PennMARC
             # sometimes "happening locations" are mistakenly used in holdings records.
             # that's a data problem that should be fixed.
             # here, if we encounter a code we can't map, we ignore it, for faceting purposes
-            next unless location_map.key?(subfield.value.to_sym)
+            next unless location_mapping.key?(subfield.value.to_sym)
 
-            location_map[subfield.value.to_sym][display_value.to_sym]
+            location_mapping[subfield.value.to_sym][display_value.to_sym]
           end.flatten.compact_blank
         end.uniq
         locations << 'Online library' if record.fields(PennMARC::EnrichedMarc::TAG_ELECTRONIC_INVENTORY).any?

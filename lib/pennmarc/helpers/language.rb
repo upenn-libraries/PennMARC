@@ -27,7 +27,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @param [Hash] mapping hash for language code translation
       # @return [String] nice value for language
-      def search(record, mapping)
+      def search(record, mapping = language_map)
         control_field = record['008']&.value
         language_code = control_field[35..37]
         mapping[language_code.to_sym || UNDETERMINED_CODE]

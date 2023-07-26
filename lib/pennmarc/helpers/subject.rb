@@ -30,10 +30,10 @@ module PennMARC
       # including any linked 880 fields. Fields must have an indicator2 value in {SEARCH_SOURCE_INDICATORS}.
       # @todo this includes subfields that may not be desired like 1 (uri) and 2 (source code) but this might be OK for
       #       a search (non-display) field?
-      # @param [Hash] relator_map
+      # @param [Hash] relator_mapping
       # @param [MARC::Record] record
       # @return [Array] array of all subject values for search
-      def search(record, relator_map)
+      def search(record, relator_mapping = relator_map)
         subject_fields(record, type: :search).filter_map do |field|
           subj_parts = field.filter_map do |subfield|
             # TODO: use term hash here? pro/chr would be rejected...
@@ -48,7 +48,7 @@ module PennMARC
               # TODO: use relation mapping method from Title helper? for potential URI support?
               # sf 4 should contain a 3-letter code or URI "that specifies the relationship from the entity described
               # in the record to the entity referenced in the field"
-              "#{subfield.value} #{relator_map[subfield.value.to_sym]}".strip
+              "#{subfield.value} #{relator_mapping[subfield.value.to_sym]}".strip
             else
               subfield.value
             end
