@@ -46,10 +46,10 @@ module PennMARC
       # @todo the Genre facet in Franklin is pretty ugly. It could be cleaned up by limiting the subfields included
       #       here and cleaning up punctuation.
       # @param [MARC::Record] record
-      # @param [Hash] location_map
+      # @param [Hash] location_mapping
       # @return [Array<String>]
-      def facet(record, location_map = Parser.new.location_map)
-        locations = Location.location record: record, location_map: location_map, display_value: :specific_location
+      def facet(record, location_mapping = location_map)
+        locations = Location.location record: record, location_mapping: location_mapping, display_value: :specific_location
         manuscript = Format.include_manuscripts?(locations)
         video = record.fields('007').any? { |field| field.value.starts_with? 'v' }
         return [] unless manuscript || video
