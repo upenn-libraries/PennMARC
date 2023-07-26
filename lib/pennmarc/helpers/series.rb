@@ -22,7 +22,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @param [Hash] relator_mapping
       # @return [Array<String>] array of series information
-      def show(record, relator_mapping = Parser.new.relator_map)
+      def show(record, relator_mapping = relator_map)
         tags_present = DISPLAY_TAGS.select { |tag| record[tag].present? }
 
         values = if %w[800 810 811 400 410 411].member?(tags_present.first)
@@ -39,7 +39,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @param [Hash] relator_mapping
       # @return [Array<String>] array of series values
-      def values(record, relator_mapping = Parser.new.relator_map)
+      def values(record, relator_mapping = relator_map)
         series_8x = record.fields(%w[800 810 811 830]).first
         return Array.wrap(series_8xx_field(series_8x, relator_mapping)) if series_8x
 

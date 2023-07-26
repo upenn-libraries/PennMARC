@@ -46,15 +46,15 @@ module PennMARC
       # Get related work from {RELATED_WORK_FIELDS} in the 7XX range. Require presence of sf t (title) and absence of
       # an indicator2 value. Prefix returned values with sf i value. Also map relator codes found in sf 4. Ignore sf 0.
       # @param [MARC::Record] record
-      # @param [Hash] relator_map
+      # @param [Hash] relator_mapping
       # @return [Array]
-      def related_work_show(record, relator_map = Parser.new.relator_map)
+      def related_work_show(record, relator_mapping = relator_map)
         values = record.fields(RELATED_WORK_FIELDS).filter_map do |field|
           next unless field.indicator2.blank?
 
           next unless subfield_defined?(field, 't')
 
-          values_with_title_prefix(field, sf_exclude: %w[0 4 6 8 i], relator_map: relator_map)
+          values_with_title_prefix(field, sf_exclude: %w[0 4 6 8 i], relator_map: relator_mapping)
         end
         values + record.fields('880').filter_map do |field|
           next unless field.indicator2.blank?
@@ -63,7 +63,7 @@ module PennMARC
 
           next unless subfield_defined?(field, 't')
 
-          values_with_title_prefix(field, sf_exclude: %w[0 4 6 8 i], relator_map: relator_map)
+          values_with_title_prefix(field, sf_exclude: %w[0 4 6 8 i], relator_map: relator_mapping)
         end
       end
 
@@ -71,13 +71,13 @@ module PennMARC
       # "Analytical Entry" meaning that the record is contained by the matching field. Map relator codes in sf 4. Ignore
       # values in sf 0, 5, 6, and 8.
       # @param [MARC::Record] record
-      # @param [Hash] relator_map
+      # @param [Hash] relator_mapping
       # @return [Array]
-      def contains_show(record, relator_map = Parser.new.relator_map)
+      def contains_show(record, relator_mapping = relator_map)
         acc = record.fields(CONTAINS_FIELDS).filter_map do |field|
           next unless field.indicator2 == '2'
 
-          values_with_title_prefix(field, sf_exclude: %w[0 4 5 6 8 i], relator_map: relator_map)
+          values_with_title_prefix(field, sf_exclude: %w[0 4 5 6 8 i], relator_map: relator_mapping)
         end
         acc + record.fields('880').filter_map do |field|
           next unless field.indicator2 == '2'

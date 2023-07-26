@@ -26,7 +26,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @param [Hash] relator_mapping
       # @return [Array<String>] array of author/creator values for indexing
-      def search(record, relator_mapping = Parser.new.relator_map)
+      def search(record, relator_mapping = relator_map)
         acc = record.fields(TAGS).map do |field|
           pieces = field.filter_map do |sf|
             if sf.code == 'a'
@@ -90,7 +90,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @param [Hash] relator_mapping
       # @return [Array<String>] array of author/creator values for display
-      def values(record, relator_mapping = Parser.new.relator_map)
+      def values(record, relator_mapping = relator_map)
         record.fields(TAGS).map do |field|
           name_from_main_entry(field, relator_mapping)
         end
@@ -143,11 +143,11 @@ module PennMARC
       # Conference for display, intended for results display
       # @note ported from get_conference_values
       # @param [MARC::Record] record
-      # @param [Hash] relator_map
+      # @param [Hash] relator_mapping
       # @return [Array<String>] array of conference values
-      def conference_show(record, relator_map = Parser.new.relator_map)
+      def conference_show(record, relator_mapping = relator_map)
         record.fields('111').filter_map do |field|
-          name_from_main_entry field, relator_map
+          name_from_main_entry field, relator_mapping
         end
       end
 
@@ -188,9 +188,9 @@ module PennMARC
       # 'a', 'b', 'c', 'd', 'j', and 'q'. Then appends resulting string with joined subfields 'e', 'u', '3', and '4'.
       # @note legacy version returns array of hash objects including data for display link
       # @param [MARC::Record] record
-      # @ param [Hash] relator_map
+      # @ param [Hash] relator_mapping
       # @return [Array<String>]
-      def contributor_show(record, relator_map = Parser.new.relator_map)
+      def contributor_show(record, relator_mapping = relator_map)
         contributors = record.fields(%w[700 710]).filter_map do |field|
           next unless ['', ' ', '0'].member?(field.indicator2)
           next if subfield_defined? field, 'i'
@@ -201,7 +201,7 @@ module PennMARC
             next unless %w[e u 3 4].member?(subfield.code)
 
             if subfield.code == '4'
-              ", #{translate_relator(subfield.value, relator_map)}"
+              ", #{translate_relator(subfield.value, relator_mapping)}"
             else
               " #{subfield.value}"
             end
