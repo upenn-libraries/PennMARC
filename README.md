@@ -63,6 +63,12 @@ To run the test suite:
 rspec
 ```
 
+## Publishing the Gem
+
+1. Update the version in `pennmarc.gemspec`
+2. Run `gem build pennmarc.gemspec` with the latest code
+3. Run `gem push pennmarc-{version number here}`(e.g. `gem push pennmarc-1.0.0`) to push to RubyGems. You will need access and MFA setup with RubyGems.
+
 ## QA
 
 ### Checking output of an arbitrary MARC XML file
@@ -75,8 +81,6 @@ MARC_FILE=path/to/marc.xml bundle exec rake pennmarc:parse
 
 ## TODO
  - rake task or some similar command to return a full set of values extracted from a specified marcxml file
- - hosting of yard output files?
- - mappings (locations, call number, languages)
  - Pipeline to run tests and publish to Rubygems
     - rubocop check
     - rdoc/yard coverage checks?
