@@ -10,13 +10,13 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [DateTime, nil] The publication date, or nil if date found in record is invalid
       def publication(record)
-        record.fields('008').filter_map do |field|
+        record.fields('008').filter_map { |field|
           four_digit_year = sanitize_partially_known_date(field.value[7, 4], '0')
 
-          next unless four_digit_year.present?
+          next if four_digit_year.blank?
 
           DateTime.new(four_digit_year.to_i)
-        end.first
+        }.first
       end
 
       # Retrieve date added (subfield 'q') from enriched marc 'itm' field.
@@ -24,7 +24,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [DateTime, nil] The date added, or nil if date found in record is invalid
       def added(record)
-        record.fields(EnrichedMarc::TAG_ITEM).flat_map do |field|
+        record.fields(EnrichedMarc::TAG_ITEM).flat_map { |field|
           field.filter_map do |subfield|
             # skip unless field has date created subfield
             next unless subfield_defined?(field, EnrichedMarc::SUB_ITEM_DATE_CREATED)
@@ -42,7 +42,7 @@ module PennMARC
             puts "Error parsing date in date added subfield: #{subfield.value} - #{e}"
             nil
           end
-        end.max
+        }.max
       end
 
       # Retrieve date last updated from {https://www.loc.gov/marc/bibliographic/bd005.html 005 field}.
@@ -51,19 +51,20 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [DateTime, nil] The date last updated, or nil if date found in record is invalid
       def last_updated(record)
-        record.fields('005').filter_map do |field|
-          date_time_string = field.value
+        record.fields('005').filter_map { |field|
+          begin
+            date_time_string = field.value
 
-          next if date_time_string.blank?
+            next if date_time_string.blank?
 
-          next if date_time_string.start_with?('0000')
+            next if date_time_string.start_with?('0000')
 
-          DateTime.iso8601(date_time_string).to_datetime
-
-        rescue ArgumentError => e
-          puts "Error parsing last updated date: #{date_time_string} - #{e}"
-          nil
-        end.first
+            DateTime.iso8601(date_time_string).to_datetime
+          rescue ArgumentError => e
+            puts "Error parsing last updated date: #{date_time_string} - #{e}"
+            nil
+          end
+        }.first
       end
 
       private

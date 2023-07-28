@@ -10,7 +10,7 @@ describe 'PennMARC::Edition' do
                          marc_field(tag: '880', subfields: { '6': '250', b: 'رمستر' }),
                          marc_field(tag: '775', subfields: { i: 'Other Edition (Remove)',
                                                              h: 'Cool Book',
-                                                             t: 'aut'}),
+                                                             t: 'aut' }),
                          marc_field(tag: '880', subfields: { '6': '775', i: 'Autre Editione' })]
   end
 
@@ -33,6 +33,3 @@ describe 'PennMARC::Edition' do
     end
   end
 end
-
-
-

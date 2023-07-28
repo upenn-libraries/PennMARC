@@ -20,6 +20,7 @@ require_relative 'helpers/edition'
 require_relative 'helpers/note'
 require_relative 'helpers/series'
 
+# Top level gem namespace
 module PennMARC
   attr_accessor :mappings
 

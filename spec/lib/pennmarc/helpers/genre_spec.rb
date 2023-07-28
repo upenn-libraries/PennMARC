@@ -49,7 +49,7 @@ describe 'PennMARC::Genre' do
         vanp: { specific_location: 'Van Pelt' } }
     end
 
-    context 'for a non-video, non-manuscript record' do
+    context 'with a non-video, non-manuscript record' do
       let(:fields) do
         [marc_control_field(tag: '007', value: 'x'),
          marc_field(tag: 'hld', subfields: { c: 'vanp' }),
@@ -61,7 +61,7 @@ describe 'PennMARC::Genre' do
       end
     end
 
-    context 'for a video record' do
+    context 'with a video record' do
       let(:fields) do
         [marc_control_field(tag: '007', value: 'v'),
          marc_field(tag: 'hld', subfields: { c: 'vanp' }),
@@ -74,7 +74,7 @@ describe 'PennMARC::Genre' do
       end
     end
 
-    context 'for a manuscript-located record' do
+    context 'with a manuscript-located record' do
       let(:fields) do
         [marc_control_field(tag: '007', value: 'x'),
          marc_field(tag: 'hld', subfields: { c: 'manu' }),

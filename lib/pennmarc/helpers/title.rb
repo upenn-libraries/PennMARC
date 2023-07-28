@@ -82,7 +82,7 @@ module PennMARC
       def sort(record)
         title_field = record.fields('245').first
         # attempt to get number of non-filing characters present, default to 0
-        offset = if title_field.indicator2 =~ /^[0-9]$/
+        offset = if /^[0-9]$/.match?(title_field.indicator2)
                    title_field.indicator2.to_i
                  else
                    0

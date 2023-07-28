@@ -50,14 +50,14 @@ module PennMARC
       # @return [Array]
       def related_work_show(record, relator_mapping = relator_map)
         values = record.fields(RELATED_WORK_FIELDS).filter_map do |field|
-          next unless field.indicator2.blank?
+          next if field.indicator2.present?
 
           next unless subfield_defined?(field, 't')
 
           values_with_title_prefix(field, sf_exclude: %w[0 4 6 8 i], relator_map: relator_mapping)
         end
         values + record.fields('880').filter_map do |field|
-          next unless field.indicator2.blank?
+          next if field.indicator2.present?
 
           next unless subfield_value?(field, '6', /^(#{RELATED_WORK_FIELDS.join('|')})/)
 

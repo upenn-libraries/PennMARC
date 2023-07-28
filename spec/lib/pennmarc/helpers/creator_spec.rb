@@ -9,7 +9,7 @@ describe 'PennMARC::Creator' do
   describe '.search' do
     let(:record) { marc_record fields: fields }
 
-    context 'for a single author record' do
+    context 'with a single author record' do
       let(:fields) do
         [marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345',
                                              e: 'author', d: '1900-2000' }),
@@ -23,7 +23,7 @@ describe 'PennMARC::Creator' do
       end
     end
 
-    context 'for a corporate author record' do
+    context 'with a corporate author record' do
       let(:fields) do
         [marc_field(tag: '110', subfields: { a: 'Group of People', b: 'Annual Meeting', '4': 'aut' }),
          marc_field(tag: '880', subfields: { '6': '110', a: 'Alt. Group Name', b: 'Alt. Annual Meeting' })]
@@ -39,7 +39,7 @@ describe 'PennMARC::Creator' do
   describe '.values' do
     let(:record) { marc_record fields: fields }
 
-    context 'for a single author record' do
+    context 'with a single author record' do
       let(:fields) do
         [marc_field(tag: '100', subfields: { a: 'Author', c: 'Fancy', d: 'active 24th century AD', '4': 'aut' }),
          marc_field(tag: '880', subfields: { '6': '100', a: 'Alt Author', c: 'Alt Fanciness' })]
@@ -52,7 +52,7 @@ describe 'PennMARC::Creator' do
       end
     end
 
-    context 'for a corporate author record' do
+    context 'with a corporate author record' do
       let(:fields) do
         [marc_field(tag: '110', subfields: { a: 'Annual Report', b: 'Leader', e: 'author', '4': 'aut' })]
       end
@@ -66,12 +66,13 @@ describe 'PennMARC::Creator' do
   describe '.show' do
     let(:record) { marc_record fields: fields }
 
-    context 'for a single author record' do
+    context 'with a single author record' do
       let(:fields) do
         [marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345', d: '1900-2000',
                                              e: 'author', '4': 'http://cool.uri/vocabulary/relators/aut' }),
          marc_field(tag: '880', subfields: { a: 'Surname, Alternative', '6': '100' })]
       end
+
       it 'returns single author values with no URIs anywhere' do
         values = helper.show(record)
         expect(values).to contain_exactly 'Surname, Name 1900-2000', 'Surname, Alternative'
@@ -79,11 +80,12 @@ describe 'PennMARC::Creator' do
       end
     end
 
-    context 'for a corporate author record' do
+    context 'with a corporate author record' do
       let(:fields) do
         [marc_field(tag: '110', subfields: { a: 'Group of People', b: 'Annual Meeting', '4': 'aut' }),
          marc_field(tag: '880', subfields: { '6': '110', a: 'Alt. Group Name', b: 'Alt. Annual Meeting' })]
       end
+
       it 'returns corporate author values with no URIs anywhere' do
         values = helper.show(record)
         expect(values).to contain_exactly 'Alt. Group Name Alt. Annual Meeting', 'Group of People Annual Meeting'
@@ -110,7 +112,7 @@ describe 'PennMARC::Creator' do
     let(:record) { marc_record fields: fields }
     let(:values) { helper.facet(record) }
 
-    context 'for a single author record' do
+    context 'with a single author record' do
       let(:fields) do
         [marc_field(tag: '100', subfields: { a: 'Author, Great', d: '1900-2000' }),
          marc_field(tag: '700', subfields: { a: 'Co-Author, Great', d: '1900-2000' }),
@@ -121,7 +123,8 @@ describe 'PennMARC::Creator' do
         expect(values).to contain_exactly 'Author, Added', 'Author, Great 1900-2000', 'Co-Author, Great 1900-2000'
       end
     end
-    context 'for a corporate author record' do
+
+    context 'with a corporate author record' do
       let(:fields) do
         [marc_field(tag: '110', subfields: { a: 'Group of People', b: 'Annual Meeting' }),
          marc_field(tag: '710', subfields: { a: 'A Publisher', e: 'publisher' }),
@@ -134,7 +137,8 @@ describe 'PennMARC::Creator' do
                                           'Group of People Annual Meeting'
       end
     end
-    context 'for a meeting author record' do
+
+    context 'with a meeting author record' do
       let(:fields) do
         [marc_field(tag: '111', subfields: { a: 'Conference on Things', c: 'Earth' }),
          marc_field(tag: '711', subfields: { a: 'Thing Institute', j: 'sponsoring body' }),
@@ -209,6 +213,6 @@ describe 'PennMARC::Creator' do
     end
   end
 
-  xdescribe '.conference_search'
-  xdescribe '.search_aux'
+  # describe '.conference_search'
+  # describe '.search_aux'
 end

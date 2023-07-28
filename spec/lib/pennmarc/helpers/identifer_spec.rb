@@ -84,6 +84,7 @@ describe 'PennMARC::Identifier' do
         marc_field(tag: '880', subfields: { a: '006680200B', b: 'Island', '6': '028' })
       ]
     end
+
     it 'returns expected show values' do
       expect(helper.publisher_number_show(record)).to contain_exactly('602537854325',
                                                                       'B002086600 Island Def Jam Music Group',
@@ -98,6 +99,7 @@ describe 'PennMARC::Identifier' do
         marc_field(tag: '028', subfields: { a: 'B002086600', b: 'Island Def Jam Music Group' })
       ]
     end
+
     it 'returns expected search values' do
       expect(helper.publisher_number_search(record)).to contain_exactly('602537854325', 'B002086600')
     end
@@ -110,6 +112,7 @@ describe 'PennMARC::Identifier' do
                                             '2': 'fei', '5': 'penn' })
       ]
     end
+
     it 'returns expected fingerprint values' do
       expect(helper.fingerprint_show(record)).to contain_exactly('dete nkck vess lodo Anno Domini MDCXXXVI 3')
     end

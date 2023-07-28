@@ -42,8 +42,8 @@ module PennMARC
         # get enriched marc location tag and subfield code
         location_tag_and_subfield_code(record) => {tag:, subfield_code:}
 
-        locations = record.fields(tag).flat_map do |field|
-          field.filter_map do |subfield|
+        locations = record.fields(tag).flat_map { |field|
+          field.filter_map { |subfield|
             # skip unless subfield code does not match enriched marc tag subfield code
             next unless subfield.code == subfield_code
 
@@ -59,8 +59,8 @@ module PennMARC
             next unless location_mapping.key?(subfield.value.to_sym)
 
             location_mapping[subfield.value.to_sym][display_value.to_sym]
-          end.flatten.compact_blank
-        end.uniq
+          }.flatten.compact_blank
+        }.uniq
         locations << 'Online library' if record.fields(PennMARC::EnrichedMarc::TAG_ELECTRONIC_INVENTORY).any?
         locations
       end

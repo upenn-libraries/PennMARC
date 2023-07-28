@@ -17,11 +17,10 @@ describe 'PennMARC::Citation' do
   end
 
   describe '.cite_as_show' do
-    let(:record) { marc_record fields: [marc_field(tag: '524', subfields: {a: 'Perkins Historical Archive, Box 2'})] }
+    let(:record) { marc_record fields: [marc_field(tag: '524', subfields: { a: 'Perkins Historical Archive, Box 2' })] }
 
     it 'returns expected citation values' do
       expect(helper.cite_as_show(record)).to contain_exactly('Perkins Historical Archive, Box 2')
     end
   end
 end
-

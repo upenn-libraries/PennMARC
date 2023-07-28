@@ -173,12 +173,12 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array]
       def curated_format(record)
-        record.fields('944').filter_map do |field|
+        record.fields('944').filter_map { |field|
           subfield_a = field.find { |sf| sf.code == 'a' }
           next if subfield_a.nil? || (subfield_a.value == subfield_a.value.to_i.to_s)
 
           subfield_a.value
-        end.uniq
+        }.uniq
       end
 
       # @param [String] format_code

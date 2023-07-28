@@ -79,12 +79,12 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array] array of all subject values for display
       def show(record)
-        subject_fields(record, type: :all).filter_map do |field|
+        subject_fields(record, type: :all).filter_map { |field|
           term_hash = build_subject_hash(field)
           next if term_hash.blank? || term_hash[:count]&.zero?
 
           format_term type: :display, term: term_hash
-        end.uniq
+        }.uniq
       end
 
       # Get Subjects from "Children" ontology
@@ -93,12 +93,12 @@ module PennMARC
       # @return [Array] array of children's subject values for display
       def childrens_show(record)
         subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '1' })
-          .filter_map do |field|
+          .filter_map { |field|
             term_hash = build_subject_hash(field)
             next if term_hash.blank? || term_hash[:count]&.zero?
 
             format_term type: :display, term: term_hash
-          end.uniq
+          }.uniq
       end
 
       # Get Subjects from "MeSH" ontology
@@ -107,12 +107,12 @@ module PennMARC
       # @return [Array] array of MeSH subject values for display
       def medical_show(record)
         subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '2' })
-          .filter_map do |field|
+          .filter_map { |field|
             term_hash = build_subject_hash(field)
             next if term_hash.blank? || term_hash[:count]&.zero?
 
             format_term type: :display, term: term_hash
-          end.uniq
+          }.uniq
       end
 
       # Get Subject values from {DISPLAY_TAGS} where indicator2 is 4 and {LOCAL_TAGS}. Do not include any values where
@@ -123,14 +123,14 @@ module PennMARC
       def local_show(record)
         local_fields = subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '4' }) +
                        subject_fields(record, type: :local)
-        local_fields.filter_map do |field|
+        local_fields.filter_map { |field|
           next if subfield_value?(field, '2', /penncoi/)
 
           term_hash = build_subject_hash(field)
           next if term_hash.blank? || term_hash[:count]&.zero?
 
           format_term type: :display, term: term_hash
-        end.uniq
+        }.uniq
       end
 
       private

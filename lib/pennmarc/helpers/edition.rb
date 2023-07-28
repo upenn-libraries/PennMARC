@@ -14,9 +14,9 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>] array of editions and their alternates
       def show(record)
-        record.fields('250').map do |field|
+        record.fields('250').map { |field|
           join_subfields(field, &subfield_not_in?(%w[6 8]))
-        end + linked_alternate_not_6_or_8(record, '250')
+        } + linked_alternate_not_6_or_8(record, '250')
       end
 
       # Edition values for display in search results. Just grab the first 250 field.
@@ -24,7 +24,7 @@ module PennMARC
       # @return [String, NilClass] string of all first 250 subfields, excluding 6 and 8
       def values(record)
         edition = record.fields('250').first
-        return unless edition.present?
+        return if edition.blank?
 
         join_subfields(edition, &subfield_not_in?(%w[6 8]))
       end
@@ -59,7 +59,7 @@ module PennMARC
       # @return [String (frozen)] assembled other version string
       def other_edition_value(field, relator_mapping)
         subi = remove_paren_value_from_subfield_i(field) || ''
-        other_editions = field.filter_map do |sf|
+        other_editions = field.filter_map { |sf|
           next if %w[6 8].member?(sf.code)
 
           if %w[s x z].member?(sf.code)
@@ -70,8 +70,8 @@ module PennMARC
 
             " #{relator}. "
           end
-        end.join
-        other_editions_append = field.filter_map do |sf|
+        }.join
+        other_editions_append = field.filter_map { |sf|
           next if %w[6 8].member?(sf.code)
 
           if %w[i h s t x z e f o r w y 7].exclude?(sf.code)
@@ -79,7 +79,7 @@ module PennMARC
           elsif sf.code == 'h'
             " (#{sf.value}) "
           end
-        end.join
+        }.join
         prepend = trim_trailing(:period, subi).squish
 
         if other_editions.present? || other_editions_append.present?

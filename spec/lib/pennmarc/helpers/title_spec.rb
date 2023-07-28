@@ -20,7 +20,9 @@ describe 'PennMARC::Title' do
     end
   end
 
-  xdescribe '.search_aux'
+  describe '.search_aux' do
+    it 'returns search aux values', pending: 'Not implemented yet'
+  end
 
   describe '.show' do
     let(:record) { marc_record fields: [marc_field(tag: '245', subfields: subfields)] }

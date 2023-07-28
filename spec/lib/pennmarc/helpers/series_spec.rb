@@ -18,8 +18,8 @@ describe 'PennMARC::Series' do
 
   describe '.show' do
     it 'returns the series' do
-      expect(helper.show(record, mapping)).to contain_exactly('Bean Bagatolvski 1997- bk. 1', 
-                                                              'Teachings of the feathered pillow', 
+      expect(helper.show(record, mapping)).to contain_exactly('Bean Bagatolvski 1997- bk. 1',
+                                                              'Teachings of the feathered pillow',
                                                               'Учения пернатой подушки')
     end
   end
@@ -34,6 +34,7 @@ describe 'PennMARC::Series' do
     it 'returns the search values' do
       expect(helper.search(record)).to contain_exactly('Bean Bagatolvski 1997- bk. 1')
     end
+
     it 'returns an empty array if no values are found' do
       expect(helper.search(empty_record)).to be_empty
     end

@@ -11,9 +11,9 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>] array of genre values for search
       def search(record)
-        record.fields('655').map do |field|
+        record.fields('655').map { |field|
           join_subfields(field, &subfield_not_in?(%w[0 2 5 c]))
-        end.uniq
+        }.uniq
       end
 
       # Genre values for display. We display Genre/Term values if they fulfill the following criteria:
@@ -29,17 +29,17 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>] array of genre values for display
       def show(record)
-        record.fields(%w[655 880]).filter_map do |field|
+        record.fields(%w[655 880]).filter_map { |field|
           next unless allowed_genre_field?(field)
 
           next if field.tag == '880' && subfield_values(field, '6').exclude?('655')
 
-          sub_with_hyphens = field.find_all(&subfield_not_in?(%w[0 2 5 6 8 c e w])).map do |sf|
+          sub_with_hyphens = field.find_all(&subfield_not_in?(%w[0 2 5 6 8 c e w])).map { |sf|
             sep = %w[a b].exclude?(sf.code) ? ' -- ' : ' '
             sep + sf.value
-          end.join.lstrip
+          }.join.lstrip
           "#{sub_with_hyphens} #{field.find_all(&subfield_in?(%w[e w])).join(' -- ')}".strip
-        end.uniq
+        }.uniq
       end
 
       # Genre values for faceting. We only set Genre facet values for movies (videos) and manuscripts(?)
@@ -49,14 +49,15 @@ module PennMARC
       # @param [Hash] location_mapping
       # @return [Array<String>]
       def facet(record, location_mapping = location_map)
-        locations = Location.location record: record, location_mapping: location_mapping, display_value: :specific_location
+        locations = Location.location record: record, location_mapping: location_mapping,
+                                      display_value: :specific_location
         manuscript = Format.include_manuscripts?(locations)
         video = record.fields('007').any? { |field| field.value.starts_with? 'v' }
         return [] unless manuscript || video
 
-        record.fields('655').filter_map do |field|
+        record.fields('655').filter_map { |field|
           join_subfields field, &subfield_not_in?(%w[0 2 5 c])
-        end.uniq
+        }.uniq
       end
 
       private

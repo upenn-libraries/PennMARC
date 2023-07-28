@@ -41,7 +41,7 @@ module PennMARC
             end
           end
           value = join_and_squish(pieces)
-          if value.end_with?('.') || value.end_with?('-')
+          if value.end_with?('.', '-')
             value
           else
             "#{value}."
@@ -60,7 +60,7 @@ module PennMARC
             end
           end
           value = join_and_squish(pieces)
-          if value.end_with?('.') || value.end_with?('-')
+          if value.end_with?('.', '-')
             value
           else
             "#{value}."
@@ -69,9 +69,9 @@ module PennMARC
         acc += record.fields(%w[880]).filter_map do |field|
           next unless field.any? { |sf| sf.code == '6' && sf.value.in?(%w[100 110]) }
 
-          suba = field.find_all(&subfield_in?(%w[a])).map do |sf|
+          suba = field.find_all(&subfield_in?(%w[a])).map { |sf|
             convert_name_order(sf.value)
-          end.first
+          }.first
           oth = join_and_squish(field.find_all(&subfield_not_in?(%w[6 8 a t])).map(&:value))
           join_and_squish [suba, oth]
         end
@@ -135,7 +135,7 @@ module PennMARC
         }
         source_map.flat_map do |field_num, subfields|
           record.fields(field_num.to_s).map do |field|
-            trim_punctuation(join_subfields(field, &subfield_in?(subfields.split(''))))
+            trim_punctuation(join_subfields(field, &subfield_in?(subfields.chars)))
           end
         end
       end
@@ -195,9 +195,8 @@ module PennMARC
           next unless ['', ' ', '0'].member?(field.indicator2)
           next if subfield_defined? field, 'i'
 
-
           contributor = join_subfields(field, &subfield_in?(%w[a b c d j q]))
-          contributor_append = field.filter_map do |subfield|
+          contributor_append = field.filter_map { |subfield|
             next unless %w[e u 3 4].member?(subfield.code)
 
             if subfield.code == '4'
@@ -205,7 +204,7 @@ module PennMARC
             else
               " #{subfield.value}"
             end
-          end.join
+          }.join
           "#{contributor} #{contributor_append}".squish
         end
         contributors + record.fields('880').filter_map do |field|
@@ -244,7 +243,7 @@ module PennMARC
       # @param [MARC::Field] field
       # @return [String] joined subfield values for value from field
       def name_from_main_entry(field, mapping)
-        s = field.filter_map do |sf|
+        s = field.filter_map { |sf|
           if %w[0 1 4 6 8].exclude?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
@@ -253,8 +252,8 @@ module PennMARC
 
             ", #{relator}"
           end
-        end.join
-        (s + (!%w[. -].member?(s.last) ? '.' : '')).squish
+        }.join
+        (s + (%w[. -].member?(s.last) ? '' : '.')).squish
       end
 
       # Convert "Lastname, First" to "First Lastname"

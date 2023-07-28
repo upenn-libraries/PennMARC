@@ -21,7 +21,7 @@ module PennMARC
       def type(record)
         record.fields('944').filter_map do |field|
           # skip unless specified database format type present
-          next unless subfield_value?(field, 'a', /#{DATABASES_FACET_VALUE}/)
+          next unless subfield_value?(field, 'a', /#{DATABASES_FACET_VALUE}/o)
 
           type = field.find { |subfield| subfield.code == 'b' }
           type&.value
@@ -39,7 +39,7 @@ module PennMARC
 
         record.fields('943').filter_map do |field|
           # skip unless Community of Interest code is in subfield '2'
-          next unless subfield_value?(field, '2', /#{COI_CODE}/)
+          next unless subfield_value?(field, '2', /#{COI_CODE}/o)
 
           category = field.find { |subfield| subfield.code == 'a' }
           category&.value
@@ -60,17 +60,17 @@ module PennMARC
 
         record.fields('943').filter_map do |field|
           # skip unless Community of Interest code is in subfield '2'
-          next unless subfield_value?(field, '2', /#{COI_CODE}/)
+          next unless subfield_value?(field, '2', /#{COI_CODE}/o)
 
           category = field.find { |subfield| subfield.code == 'a' }
 
-          # skip unless category is present
-          next unless category.present?
+          # skip if category is blank
+          next if category.blank?
 
           subcategory = field.find { |subfield| subfield.code == 'b' }
 
-          # skip unless subcategory is present
-          next unless subcategory.present?
+          # skip if subcategory is blank
+          next if subcategory.blank?
 
           "#{category.value}--#{subcategory.value}"
         end
@@ -82,7 +82,7 @@ module PennMARC
       # @param [Marc::Record]
       # @return [TrueClass, FalseClass]
       def curated_db?(record)
-        record.fields('944').any? { |field| subfield_value?(field, 'a', /#{DATABASES_FACET_VALUE}/) }
+        record.fields('944').any? { |field| subfield_value?(field, 'a', /#{DATABASES_FACET_VALUE}/o) }
       end
     end
   end
