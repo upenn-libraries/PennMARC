@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'pennmarc'
-  s.version     = '0.0.3'
+  s.version     = '1.0.0'
   s.summary     = 'Penn Libraries Catalog MARC parsing wisdom for cross-project usage'
   s.description = 'This gem provides methods for parsing a Penn Libraries MARCXML record into string, array and date
                    objects for use in discovery or preservation applications.'
