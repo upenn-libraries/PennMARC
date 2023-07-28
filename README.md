@@ -67,7 +67,7 @@ rspec
 
 1. Update the version in `pennmarc.gemspec`
 2. Run `gem build pennmarc.gemspec` with the latest code
-3. Run `gem push pennmarc-{version number here}`(e.g. `gem push pennmarc-1.0.0) to push to RubyGems. You will need access and MFA setup with RubyGems.
+3. Run `gem push pennmarc-{version number here}`(e.g. `gem push pennmarc-1.0.0`) to push to RubyGems. You will need access and MFA setup with RubyGems.
 
 ## QA
 
