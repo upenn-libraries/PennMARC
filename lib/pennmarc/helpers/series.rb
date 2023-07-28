@@ -170,13 +170,13 @@ module PennMARC
       # @param [Hash] relator_mapping
       # @return [String] series 8xx field
       def series_8xx_field(field, relator_mapping)
-        s = field.filter_map do |sf|
+        s = field.filter_map { |sf|
           if %w[0 4 5 6 8].exclude?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
             ", #{translate_relator(sf.value, relator_mapping)}"
           end
-        end.join
+        }.join
         s2 = s + (%w[. -].exclude?(s[-1]) ? '.' : '')
         s2.squish
       end
@@ -187,13 +187,13 @@ module PennMARC
       # @param [Hash] relator_mapping
       # @return [String] series 4xx field
       def series_4xx_field(field, relator_mapping)
-        s = field.filter_map do |sf|
+        s = field.filter_map { |sf|
           if %w[0 4 6 8].exclude?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
             ", #{translate_relator(sf.value, relator_mapping)}"
           end
-        end.join
+        }.join
         s2 = s + (%w[. -].exclude?(s[-1]) ? '.' : '')
         s2.squish
       end

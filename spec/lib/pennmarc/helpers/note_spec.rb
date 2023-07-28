@@ -199,7 +199,7 @@ describe 'PennMARC::Note' do
 
     let(:fields) do
       [
-        marc_field(tag: '545', subfields: { a: 'A Creator', b: 'Additional Info', 'u': 'URI' }),
+        marc_field(tag: '545', subfields: { a: 'A Creator', b: 'Additional Info', u: 'URI' }),
         marc_field(tag: '880', subfields: { a: 'Alt Bio', b: 'Alt Info', u: 'Alt URI', '6': '545' })
       ]
     end
@@ -217,7 +217,7 @@ describe 'PennMARC::Note' do
 
     let(:fields) do
       [
-        marc_field(tag: '520', subfields: { a: 'An Abstract', b: 'Additional Summary', 'c': 'ProQuest' }),
+        marc_field(tag: '520', subfields: { a: 'An Abstract', b: 'Additional Summary', c: 'ProQuest' }),
         marc_field(tag: '880', subfields: { a: 'Alt Abstract', b: 'Alt Additional Summary', c: 'Alt ProQuest',
                                             '6': '520' })
       ]

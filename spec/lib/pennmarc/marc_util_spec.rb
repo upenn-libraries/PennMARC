@@ -20,11 +20,11 @@ describe 'PennMARC::Util' do
     let(:field) { marc_field subfields: { a: '123' } }
 
     it 'returns true if the specified subfield value matches the regex' do
-      expect(util.subfield_value?(field, 'a', /123/)).to be_truthy
+      expect(util).to be_subfield_value(field, 'a', /123/)
     end
 
     it 'returns false if the subfield value does not match the regex' do
-      expect(util.subfield_value?(field, 'a', /\D/)).to be_falsey
+      expect(util).not_to be_subfield_value(field, 'a', /\D/)
     end
   end
 
@@ -66,12 +66,12 @@ describe 'PennMARC::Util' do
     let(:field) { marc_field subfields: { a: 'Defined' } }
 
     it 'returns true if subfield is present on a field' do
-      expect(util.subfield_defined?(field, :a)).to be_truthy
-      expect(util.subfield_defined?(field, 'a')).to be_truthy
+      expect(util).to be_subfield_defined(field, :a)
+      expect(util).to be_subfield_defined(field, 'a')
     end
 
     it 'returns false if a subfield is not present on a field' do
-      expect(util.subfield_defined?(field, :b)).to be_falsey
+      expect(util).not_to be_subfield_defined(field, :b)
     end
   end
 
@@ -79,12 +79,12 @@ describe 'PennMARC::Util' do
     let(:field) { marc_field subfields: { a: 'Defined' } }
 
     it 'returns true if subfield is not present on a field' do
-      expect(util.subfield_undefined?(field, :b)).to be_truthy
-      expect(util.subfield_undefined?(field, 'b')).to be_truthy
+      expect(util).to be_subfield_undefined(field, :b)
+      expect(util).to be_subfield_undefined(field, 'b')
     end
 
     it 'returns false if a subfield is present on a field' do
-      expect(util.subfield_undefined?(field, :a)).to be_falsey
+      expect(util).not_to be_subfield_undefined(field, :a)
     end
   end
 
@@ -173,6 +173,7 @@ describe 'PennMARC::Util' do
 
   describe '.remove_paren_value_from_subfield_i' do
     let(:field) { marc_field(tag: '666', subfields: { i: 'Test(Remove).' }) }
+
     it 'removes the parentheses value from subfield i' do
       expect(util.remove_paren_value_from_subfield_i(field)).to eq('Test')
     end

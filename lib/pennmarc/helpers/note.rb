@@ -72,11 +72,11 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>]
       def contents_show(record)
-        record.fields(%w[505 880]).filter_map do |field|
+        record.fields(%w[505 880]).filter_map { |field|
           next if field.tag == '880' && subfield_value_not_in?(field, '6', %w[505])
 
           join_subfields(field, &subfield_not_in?(%w[6 8])).split('--')
-        end.flatten
+        }.flatten
       end
 
       # Retrieve access restricted notes for display from field {https://www.oclc.org/bibformats/en/5xx/506.html 506}.
@@ -172,9 +172,9 @@ module PennMARC
       # @param [MARC::DataField] field
       # @param [Proc] selector
       # @return [String]
-      def sub3_and_other_subs(field, &selector)
+      def sub3_and_other_subs(field, &)
         sub3 = field.filter_map { |sf| trim_trailing('period', sf.value) if sf.code == '3' }.join(': ')
-        oth_subs = join_subfields(field, &selector)
+        oth_subs = join_subfields(field, &)
         [sub3, trim_trailing('semicolon', oth_subs)].join(' ')
       end
     end

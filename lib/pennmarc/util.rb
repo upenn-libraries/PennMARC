@@ -9,10 +9,10 @@ module PennMARC
     # @param [MARC::DataField] field
     # @param [Proc] selector
     # @return [String]
-    def join_subfields(field, &selector)
-      field.select { |v| selector.call(v) }.filter_map { |sf|
+    def join_subfields(field, &)
+      field.select(&).filter_map { |sf|
         value = sf.value&.strip
-        next unless value.present?
+        next if value.blank?
 
         value
       }.join(' ').squish
@@ -88,7 +88,7 @@ module PennMARC
       field.filter_map do |sf|
         next unless sf.code == subfield.to_s
 
-        next unless sf.value.present?
+        next if sf.value.blank?
 
         sf.value
       end
@@ -126,11 +126,11 @@ module PennMARC
     # @param [String|Array] subfield6_value either a string to look for in sub6 or an array of them
     # @param selector [Proc] takes a subfield as argument, returns a boolean
     # @return [Array] array of linked alternates
-    def linked_alternate(record, subfield6_value, &selector)
+    def linked_alternate(record, subfield6_value, &)
       record.fields('880').filter_map do |field|
         next unless subfield_value?(field, '6', /^#{Array.wrap(subfield6_value).join('|')}/)
 
-        field.select { |sf| selector.call(sf) }.map(&:value).join(' ')
+        field.select(&).map(&:value).join(' ')
       end
     end
     alias get_880 linked_alternate
@@ -152,9 +152,9 @@ module PennMARC
     # @param [String] tag
     # @return [Array] acc
     def datafield_and_linked_alternate(record, tag)
-      record.fields(tag).filter_map do |field|
+      record.fields(tag).filter_map { |field|
         join_subfields(field, &subfield_not_in?(%w[6 8]))
-      end + linked_alternate_not_6_or_8(record, tag)
+      } + linked_alternate_not_6_or_8(record, tag)
     end
 
     # Get the substring of a string up to a given target character
@@ -186,7 +186,7 @@ module PennMARC
     # @param [MARC::Field] field
     # @return [String] subfield i without parentheses value
     def remove_paren_value_from_subfield_i(field)
-      val = field.filter_map do |sf|
+      val = field.filter_map { |sf|
         next unless sf.code == 'i'
 
         match = /\((.+?)\)/.match(sf.value)
@@ -195,7 +195,7 @@ module PennMARC
         else
           sf.value
         end
-      end.first || ''
+      }.first || ''
       trim_trailing(:colon, trim_trailing(:period, val))
     end
 
@@ -205,7 +205,7 @@ module PennMARC
     # @param [Hash] mapping
     # @return [String, NilClass] full relator string
     def translate_relator(relator_code, mapping)
-      return unless relator_code.present?
+      return if relator_code.blank?
 
       mapping[relator_code.to_sym]
     end

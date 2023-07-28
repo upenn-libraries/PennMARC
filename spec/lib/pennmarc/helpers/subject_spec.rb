@@ -61,11 +61,11 @@ describe 'PennMARC::Subject' do
   end
 
   describe '.facet' do
-    let(:record) { marc_record fields: }
+    let(:record) { marc_record fields: fields }
     let(:values) { helper.facet(record) }
 
     # TODO: find some more inspiring examples in the corpus
-    context 'for a record with poorly-coded heading values' do
+    context 'with a record with poorly-coded heading values' do
       let(:fields) { [marc_field(tag: '650', indicator2: '0', subfields: { a: 'Subject -   Heading' })] }
 
       it 'properly normalizes the heading value' do
@@ -73,7 +73,7 @@ describe 'PennMARC::Subject' do
       end
     end
 
-    context 'for a record with 650 headings with a ǂa that starts with PRO or CHR' do
+    context 'with a record with 650 headings with a ǂa that starts with PRO or CHR' do
       let(:fields) do
         [marc_field(tag: '650', indicator2: '4', subfields: { a: '%CHR 1998', '5': 'PU' }),
          marc_field(tag: '650', indicator2: '4', subfields: { a: 'PRO Potok, Adena (donor) (Potok Collection copy)',
@@ -85,7 +85,7 @@ describe 'PennMARC::Subject' do
       end
     end
 
-    context 'for a record with an indicator2 value of 3, 5 or 6' do
+    context 'with a record with an indicator2 value of 3, 5 or 6' do
       let(:fields) do
         [marc_field(tag: '650', indicator2: '3', subfields: { a: 'Nope' }),
          marc_field(tag: '650', indicator2: '5', subfields: { a: 'Nope' }),
@@ -97,7 +97,7 @@ describe 'PennMARC::Subject' do
       end
     end
 
-    context 'for a record with a valid tag, indicator2 and source specified' do
+    context 'with a record with a valid tag, indicator2 and source specified' do
       let(:fields) do
         [marc_field(tag: '650', indicator2: '7',
                     subfields: {
@@ -129,7 +129,7 @@ describe 'PennMARC::Subject' do
   end
 
   describe '.show' do
-    let(:record) { marc_record fields: }
+    let(:record) { marc_record fields: fields }
     let(:values) { helper.facet(record) }
 
     context 'with a variety of headings' do
@@ -145,8 +145,8 @@ describe 'PennMARC::Subject' do
       end
 
       it 'shows all valid subject headings without duplicates' do
-        expect(helper.show(record)).to match_array ['Nephrology--Periodicals', 'Nephrology',
-                                                    'Kidney Diseases', 'Local Heading']
+        expect(helper.show(record)).to contain_exactly('Nephrology--Periodicals', 'Nephrology', 'Kidney Diseases',
+                                                       'Local Heading')
       end
     end
 

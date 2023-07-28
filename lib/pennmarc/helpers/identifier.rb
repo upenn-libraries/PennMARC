@@ -19,13 +19,13 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>]
       def isxn_search(record)
-        record.fields(%w[020 022]).filter_map do |field|
+        record.fields(%w[020 022]).filter_map { |field|
           if field.tag == '020'
             field.filter_map { |subfield| normalize_isbn(subfield.value) if subfield_in?(%w[a z]).call(subfield) }
           else
             field.filter_map { |subfield| subfield.value if subfield_in?(%w[a l z]).call(subfield) }
           end
-        end.flatten.uniq
+        }.flatten.uniq
       end
 
       # Get ISBN values for display from the {https://www.oclc.org/bibformats/en/0xx/020.html 020 field}
@@ -37,7 +37,7 @@ module PennMARC
       def isbn_show(record)
         isbn_values = record.fields('020').filter_map do |field|
           joined_isbn = join_subfields(field, &subfield_in?(%w[a z]))
-          joined_isbn if joined_isbn.present?
+          joined_isbn.presence
         end
         isbn_values += linked_alternate(record, '020', &subfield_in?(%w[a z]))
         isbn_values
@@ -51,7 +51,7 @@ module PennMARC
       def issn_show(record)
         issn_values = record.fields('022').filter_map do |field|
           joined_issn = join_subfields(field, &subfield_in?(%w[a z]))
-          joined_issn if joined_issn.present?
+          joined_issn.presence
         end
         issn_values += linked_alternate(record, '022', &subfield_in?(%w[a z]))
         issn_values
@@ -92,7 +92,7 @@ module PennMARC
       def publisher_number_show(record)
         publisher_numbers = record.fields(%w[024 028]).filter_map do |field|
           joined_identifiers = join_subfields(field, &subfield_not_in?(%w[5 6]))
-          joined_identifiers if joined_identifiers.present?
+          joined_identifiers.presence
         end
         publisher_numbers += linked_alternate(record, %w[024 028], &subfield_not_in?(%w[5 6]))
         publisher_numbers
@@ -106,7 +106,7 @@ module PennMARC
       def publisher_number_search(record)
         record.fields(%w[024 028]).filter_map do |field|
           joined_identifiers = join_subfields(field, &subfield_in?(%w[a]))
-          joined_identifiers if joined_identifiers.present?
+          joined_identifiers.presence
         end
       end
 

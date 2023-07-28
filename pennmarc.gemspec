@@ -19,5 +19,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'marc', '~> 1.2'
   s.add_dependency 'nokogiri', '~> 1.15'
 
-  s.add_development_dependency 'rspec', '~> 3.12'
+  s.metadata['rubygems_mfa_required'] = 'true'
 end

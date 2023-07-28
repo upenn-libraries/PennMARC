@@ -27,7 +27,7 @@ describe 'PennMARC::Date' do
   end
 
   describe '.added' do
-    context "with date formatted '%Y-%m-%d' " do
+    context "with date formatted '%Y-%m-%d'" do
       let(:fields) { [marc_field(tag: 'itm', subfields: { q: '2023-06-28' })] }
 
       it 'returns expected value' do
@@ -70,9 +70,9 @@ describe 'PennMARC::Date' do
       end
 
       it 'outputs error message' do
-        expect do
+        expect {
           helper.added(record)
-        end.to output("Error parsing date in date added subfield: invalid date - invalid date\n").to_stdout
+        }.to output("Error parsing date in date added subfield: invalid date - invalid date\n").to_stdout
       end
     end
   end
@@ -96,9 +96,9 @@ describe 'PennMARC::Date' do
       end
 
       it 'outputs error message' do
-        expect do
+        expect {
           helper.last_updated(record)
-        end.to output("Error parsing last updated date: invalid date - invalid date\n").to_stdout
+        }.to output("Error parsing last updated date: invalid date - invalid date\n").to_stdout
       end
     end
   end
