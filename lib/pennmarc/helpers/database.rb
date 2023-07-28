@@ -64,12 +64,12 @@ module PennMARC
 
           category = field.find { |subfield| subfield.code == 'a' }
 
-          # skip unless category is present
+          # skip if category is blank
           next if category.blank?
 
           subcategory = field.find { |subfield| subfield.code == 'b' }
 
-          # skip unless subcategory is present
+          # skip if subcategory is blank
           next if subcategory.blank?
 
           "#{category.value}--#{subcategory.value}"
