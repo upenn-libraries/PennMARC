@@ -41,10 +41,10 @@ module PennMARC
       # @return [Array<String>] array of series values
       def values(record, relator_mapping = relator_map)
         series_8x = record.fields(%w[800 810 811 830]).first
-        return Array.wrap(series_8xx_field(series_8x, relator_mapping)) if series_8x
+        return Array.wrap(series_field(series_8x, relator_mapping)) if series_8x
 
         series_4x = record.fields(%w[400 410 411 440 490]).first
-        return Array.wrap(series_4xx_field(series_4x, relator_mapping)) if series_4x
+        return Array.wrap(series_field(series_4x, relator_mapping)) if series_4x
       end
 
       # Series fields for search.
@@ -111,8 +111,9 @@ module PennMARC
       def author_show_entries(record, first_tag, relator_mapping)
         record.fields(first_tag).map do |field|
           series = join_subfields(field, &subfield_not_in?(%w[0 5 6 8 e t w v n]))
+          author_show_subfields = %w[e w v n t]
           pairs = field.map do |sf|
-            if %w[e w v n t].member?(sf.code)
+            if author_show_subfields.member?(sf.code)
               [' ', sf.value]
             elsif sf.code == '4'
               [', ', translate_relator(sf.value, relator_mapping)]
@@ -164,31 +165,19 @@ module PennMARC
         end || []
       end
 
-      # Assemble a formatted string of a given 8xx field.
+      # Assemble a formatted string of a given field.
       # @note added 2017/04/10: filter out 0 (authority record numbers) added by Alma
-      # @param [String] field
-      # @param [Hash] relator_mapping
-      # @return [String] series 8xx field
-      def series_8xx_field(field, relator_mapping)
-        s = field.filter_map { |sf|
-          if %w[0 4 5 6 8].exclude?(sf.code)
-            " #{sf.value}"
-          elsif sf.code == '4'
-            ", #{translate_relator(sf.value, relator_mapping)}"
-          end
-        }.join
-        s2 = s + (%w[. -].exclude?(s[-1]) ? '.' : '')
-        s2.squish
-      end
-
-      # Assemble a formatted string of a given 4xx field.
-      # @note added 2017/04/10: filter out 0 (authority record numbers) added by Alma
-      # @param [String] field
+      # @param [MARC::Field] field
       # @param [Hash] relator_mapping
       # @return [String] series 4xx field
-      def series_4xx_field(field, relator_mapping)
+      def series_field(field, relator_mapping)
+        subfields = if field.tag.start_with? '4'
+                      %w[0 4 6 8]
+                    else
+                      %w[0 4 5 6 8]
+                    end
         s = field.filter_map { |sf|
-          if %w[0 4 6 8].exclude?(sf.code)
+          if subfields.exclude?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
             ", #{translate_relator(sf.value, relator_mapping)}"
