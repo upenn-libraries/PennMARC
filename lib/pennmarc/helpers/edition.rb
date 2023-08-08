@@ -59,10 +59,12 @@ module PennMARC
       # @return [String (frozen)] assembled other version string
       def other_edition_value(field, relator_mapping)
         subi = remove_paren_value_from_subfield_i(field) || ''
+        excluded_subfields = %w[6 8]
+        other_edition_subfields = %w[s x z]
         other_editions = field.filter_map { |sf|
-          next if %w[6 8].member?(sf.code)
+          next if excluded_subfields.member?(sf.code)
 
-          if %w[s x z].member?(sf.code)
+          if other_edition_subfields.member?(sf.code)
             " #{sf.value}"
           elsif sf.code == 't'
             relator = translate_relator(sf.value, relator_mapping)
@@ -71,10 +73,11 @@ module PennMARC
             " #{relator}. "
           end
         }.join
+        other_editions_append_subfields = %w[i h s t x z e f o r w y 7]
         other_editions_append = field.filter_map { |sf|
-          next if %w[6 8].member?(sf.code)
+          next if excluded_subfields.member?(sf.code)
 
-          if %w[i h s t x z e f o r w y 7].exclude?(sf.code)
+          if other_editions_append_subfields.exclude?(sf.code)
             " #{sf.value}"
           elsif sf.code == 'h'
             " (#{sf.value}) "

@@ -142,8 +142,9 @@ module PennMARC
     # @param [String|Array] subfield6_value either a string to look for in sub6 or an array of them
     # @return [Array] array of linked alternates without 8 or 6 values
     def linked_alternate_not_6_or_8(record, subfield6_value)
+      excluded_subfields = %w[6 8]
       linked_alternate(record, subfield6_value) do |sf|
-        %w[6 8].exclude?(sf.code)
+        excluded_subfields.exclude?(sf.code)
       end
     end
 

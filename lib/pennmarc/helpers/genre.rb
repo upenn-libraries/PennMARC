@@ -34,8 +34,9 @@ module PennMARC
 
           next if field.tag == '880' && subfield_values(field, '6').exclude?('655')
 
+          subfields = %w[a b]
           sub_with_hyphens = field.find_all(&subfield_not_in?(%w[0 2 5 6 8 c e w])).map { |sf|
-            sep = %w[a b].exclude?(sf.code) ? ' -- ' : ' '
+            sep = subfields.exclude?(sf.code) ? ' -- ' : ' '
             sep + sf.value
           }.join.lstrip
           "#{sub_with_hyphens} #{field.find_all(&subfield_in?(%w[e w])).join(' -- ')}".strip
