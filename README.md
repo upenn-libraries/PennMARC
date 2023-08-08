@@ -53,6 +53,12 @@ To run rubocop with the configuration:
 rubocop
 ```
 
+#### To regenerate `.rubocop_todo.yml`:
+```shell
+bundle exec rubocop --auto-gen-config  --auto-gen-only-exclude --exclude-limit 10000
+```
+
+
 ### Testing
 
 Testing is done with `rspec`. Test coverage should approach 100% given the relative simplicity of this gem.
