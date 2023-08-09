@@ -26,8 +26,8 @@ module PennMARC
       # Local subject heading tags
       LOCAL_TAGS = %w[690 691 697].freeze
 
-      # All Subjects for searching. This includes most subfield content from any field contained in {SEARCH_TAGS} or 69X,
-      # including any linked 880 fields. Fields must have an indicator2 value in {SEARCH_SOURCE_INDICATORS}.
+      # All Subjects for searching. This includes most subfield content from any field contained in {SEARCH_TAGS} or
+      # 69X, including any linked 880 fields. Fields must have an indicator2 value in {SEARCH_SOURCE_INDICATORS}.
       # @todo this includes subfields that may not be desired like 1 (uri) and 2 (source code) but this might be OK for
       #       a search (non-display) field?
       # @param [Hash] relator_mapping

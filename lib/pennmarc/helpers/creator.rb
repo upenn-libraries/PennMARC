@@ -111,8 +111,7 @@ module PennMARC
         end
       end
 
-      # Author/Creator sort. Does not map and include any relator
-      # codes.
+      # Author/Creator sort. Does not map and include any relator codes.
       # @todo This includes any URI from ǂ0 which could help to disambiguate in sorts, but ǂ1 is excluded...
       # @note ported from get_author_creator_sort_values
       # @param [MARC::Record] record

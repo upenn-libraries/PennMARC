@@ -49,7 +49,6 @@ module PennMARC
     end
 
     # returns a lambda checking if passed-in subfield's code is a member of array
-    # TODO: include lambda returning methods in their own module?
     # @param [Array] array
     # @return [Proc]
     def subfield_in?(array)
@@ -57,7 +56,6 @@ module PennMARC
     end
 
     # returns a lambda checking if passed-in subfield's code is NOT a member of array
-    # TODO: include lambda returning methods in their own module?
     # @param [Array] array
     # @return [Proc]
     def subfield_not_in?(array)
@@ -124,7 +122,6 @@ module PennMARC
     # See: https://www.loc.gov/marc/bibliographic/bd880.html
     # @param [MARC::Record] record
     # @param [String|Array] subfield6_value either a string to look for in sub6 or an array of them
-    # @param selector [Proc] takes a subfield as argument, returns a boolean
     # @return [Array] array of linked alternates
     def linked_alternate(record, subfield6_value, &)
       record.fields('880').filter_map do |field|
