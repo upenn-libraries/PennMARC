@@ -31,7 +31,7 @@ module PennMARC
           pieces = field.filter_map do |sf|
             if sf.code == 'a'
               convert_name_order(sf.value)
-            elsif %w[a 1 4 6 8].exclude?(sf.code)
+            elsif creator_subfields.exclude?(sf.code)
               sf.value
             elsif sf.code == '4'
               relator = translate_relator(sf.value, relator_map)
@@ -48,9 +48,10 @@ module PennMARC
           end
         end
         # a second iteration over the same fields produces name entries with the names not reordered
+        secondary_subfields = %w[4 6 8]
         acc += record.fields(TAGS).map do |field|
           pieces = field.filter_map do |sf|
-            if !%w[4 6 8].member?(sf.code)
+            if secondary_subfields.exclude?(sf.code)
               sf.value
             elsif sf.code == '4'
               relator = translate_relator(sf.value, relator_map)
@@ -192,12 +193,13 @@ module PennMARC
       # @return [Array<String>]
       def contributor_show(record, relator_map: Mappers.relator)
         contributors = record.fields(%w[700 710]).filter_map do |field|
-          next unless ['', ' ', '0'].member?(field.indicator2)
+          next unless indicator_2_options.member?(field.indicator2)
           next if subfield_defined? field, 'i'
 
           contributor = join_subfields(field, &subfield_in?(%w[a b c d j q]))
+          contributor_append_subfields = %w[e u 3 4]
           contributor_append = field.filter_map { |subfield|
-            next unless %w[e u 3 4].member?(subfield.code)
+            next unless contributor_append_subfields.member?(subfield.code)
 
             if subfield.code == '4'
               ", #{translate_relator(subfield.value, relator_map)}"
@@ -243,8 +245,9 @@ module PennMARC
       # @param [MARC::Field] field
       # @return [String] joined subfield values for value from field
       def name_from_main_entry(field, mapping)
+        name_subfields = %w[0 1 4 6 8]
         s = field.filter_map { |sf|
-          if %w[0 1 4 6 8].exclude?(sf.code)
+          if name_subfields.exclude?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
             relator = translate_relator(sf.value, mapping)
