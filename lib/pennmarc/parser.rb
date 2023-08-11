@@ -2,79 +2,53 @@
 
 require 'active_support/all'
 require_relative 'helpers/helper'
-require_relative 'helpers/creator'
-require_relative 'helpers/database'
-require_relative 'helpers/date'
-require_relative 'helpers/format'
-require_relative 'helpers/genre'
-require_relative 'helpers/identifier'
-require_relative 'helpers/language'
-require_relative 'helpers/link'
-require_relative 'helpers/location'
-require_relative 'helpers/subject'
-require_relative 'helpers/title'
-require_relative 'helpers/citation'
-require_relative 'helpers/relation'
-require_relative 'helpers/production'
-require_relative 'helpers/edition'
-require_relative 'helpers/note'
-require_relative 'helpers/series'
+
+# Require all files in helpers directory
+# TODO: this double-requires Helper, but that needs to be required before other helpers...
+Dir[File.join(__dir__, 'helpers', '*.rb')].each { |file| require file }
 
 # Top level gem namespace
 module PennMARC
-  attr_accessor :mappings
-
-  DEFINED_HELPERS = %w[Creator Database Date Format Genre Language Link Location Subject Title Relation].freeze
-
-  # Methods here should return values used in the indexer. The parsing logic should
-  # NOT return values specific to any particular site/interface, but just general
-  # MARC parsing logic for "title", "subject", "author", etc., as much as reasonably
-  # possible. We'll see how it goes.
-  #
-  # Methods should, by default, take in a MARC::Record
+  # Access point for magic calls to helper methods
   class Parser
-    def initialize(helpers: DEFINED_HELPERS)
-      @mappings = {}
-      @helpers = Array.wrap(helpers) # TODO: load helpers dynamically?
+    # Allow calls to `respond_to?` on parser instances to respond accurately by checking helper classes
+    # @param [String, Symbol] name
+    # @return [Boolean]
+    def respond_to_missing?(name, include_private = false)
+      helper, method_name = parse_call(name)
+      begin
+        "PennMARC::#{helper}".constantize.respond_to?(method_name)
+      rescue NameError
+        super # Helper is not defined, so check self
+      end
     end
 
-    def respond_to_missing?(name)
-      name.split('_').first.in? @helpers
-    end
-
-    # Call helper class methods, e.g.,
+    # Call helper class methods, passing along additional arguments as needed, e.g.:
     # #title_show -> PennMARC::Title.show
     # #subject_facet -> PennMARC::Subject.facet
-    def method_missing(name, opts)
+    # @param [Symbol] name
+    # @param [MARC::Record] record
+    # @param [Array] opts
+    def method_missing(name, record, *opts)
+      helper, method_name = parse_call(name)
+      raise NoMethodError unless helper && method_name
+
+      helper_klass = "PennMARC::#{helper.titleize}".constantize
+      if opts.any?
+        helper_klass.public_send(method_name, record, **opts.first)
+      else
+        helper_klass.public_send(method_name, record)
+      end
+    end
+
+    private
+
+    # Parse out a method call name in the way method_missing is configured to handle
+    # @param [String, Symbol] name
+    # @return [Array]
+    def parse_call(name)
       call = name.to_s.split('_')
-      helper = call.shift
-      meth = call.join('_')
-      "PennMARC::#{helper.titleize}".constantize.public_send(meth, opts)
-    end
-
-    # Load language map from YAML and memoize in @mappings hash
-    # @return [Hash]
-    def language_map
-      @mappings[:language] ||= load_map('language.yml')
-    end
-
-    # Load location map from YAML and memoize in @mappings hash
-    # @return [Hash]
-    def location_map
-      @mappings[:location] ||= load_map('locations.yml')
-    end
-
-    # Load relator map from YAML and memoize in @mappings hash
-    # @return [Hash]
-    def relator_map
-      @mappings[:relator] ||= load_map('relator.yml')
-    end
-
-    # @param [String] filename of mapping file in config directory, with file extension
-    # @return [Hash] mapping as hash
-    def load_map(filename)
-      YAML.safe_load(File.read(File.join(File.expand_path(__dir__), 'mappings', filename)),
-                     symbolize_names: true)
+      [call.shift&.titleize, call.join('_').to_sym]
     end
   end
 end

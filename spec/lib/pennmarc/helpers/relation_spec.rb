@@ -65,7 +65,7 @@ describe 'PennMARC::Relation' do
     end
 
     it 'returns specified subfield values from specified field with blank indicator2' do
-      values = helper.related_work_show record, relator_map
+      values = helper.related_work_show record, relator_map: relator_map
       expect(values).to contain_exactly 'Translation of: Some Author Aphorisms, Translator',
                                         'Alt. Prefix: Alt. Author Alt. Aphorisms'
       expect(values).not_to include 'Ignored'
@@ -81,7 +81,7 @@ describe 'PennMARC::Relation' do
     end
 
     it "returns specified subfield values from specified field with '2' in indicator2" do
-      values = helper.contains_show record, relator_map
+      values = helper.contains_show record, relator_map: relator_map
       expect(values).to contain_exactly 'Alt. Prefix: Alt. Name', 'Container of: Some Author Works, Author'
       expect(values).not_to include 'Ignored'
     end

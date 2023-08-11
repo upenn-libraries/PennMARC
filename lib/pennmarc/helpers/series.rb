@@ -20,13 +20,13 @@ module PennMARC
 
       # Fields for display that pertain to series information.
       # @param [MARC::Record] record
-      # @param [Hash] relator_mapping
+      # @param [Hash] relator_map
       # @return [Array<String>] array of series information
-      def show(record, relator_mapping = relator_map)
+      def show(record, relator_map: Mappers.relator)
         tags_present = DISPLAY_TAGS.select { |tag| record[tag].present? }
 
         values = if %w[800 810 811 400 410 411].member?(tags_present.first)
-                   author_show_entries(record, tags_present.first, relator_mapping)
+                   author_show_entries(record, tags_present.first, relator_map)
                  elsif %w[830 440 490].member?(tags_present.first)
                    title_show_entries(record, tags_present.first)
                  end || []
@@ -37,14 +37,14 @@ module PennMARC
 
       # Values from series fields for display.
       # @param [MARC::Record] record
-      # @param [Hash] relator_mapping
+      # @param [Hash] relator_map
       # @return [Array<String>] array of series values
-      def values(record, relator_mapping = relator_map)
+      def values(record, relator_map: Mappers.relator)
         series_8x = record.fields(%w[800 810 811 830]).first
-        return Array.wrap(series_8xx_field(series_8x, relator_mapping)) if series_8x
+        return Array.wrap(series_8xx_field(series_8x, relator_map)) if series_8x
 
         series_4x = record.fields(%w[400 410 411 440 490]).first
-        return Array.wrap(series_4xx_field(series_4x, relator_mapping)) if series_4x
+        Array.wrap(series_4xx_field(series_4x, relator_map)) if series_4x
       end
 
       # Series fields for search.

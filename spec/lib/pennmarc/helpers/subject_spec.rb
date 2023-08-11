@@ -10,7 +10,7 @@ describe 'PennMARC::Subject' do
 
   describe '.search' do
     let(:record) { marc_record fields: fields }
-    let(:values) { helper.search(record, relator_map) }
+    let(:values) { helper.search(record, relator_map: relator_map) }
 
     context 'with a mix of included and excluded tags' do
       let(:fields) do

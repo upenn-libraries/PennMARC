@@ -34,30 +34,29 @@ module PennMARC
       # display.
       # https://www.loc.gov/marc/bibliographic/bd775.html
       # @param [MARC::Record] record
-      # @param [Hash] relator_mapping
+      # @param [Hash] relator_map
       # @return [Array<String>] array of other edition strings
-      def other_show(record, relator_mapping = relator_map)
+      def other_show(record, relator_map: Mappers.relator)
         values = record.fields('775').filter_map do |field|
           next unless subfield_defined?(field, :i)
 
-          other_edition_value(field, relator_mapping)
+          other_edition_value(field, relator_map)
         end
-        values += record.fields('880').filter_map do |field|
+        values + record.fields('880').filter_map do |field|
           next unless field.indicator2.blank? && subfield_value_in?(field, '6', %w[775]) &&
                       subfield_defined?(field, 'i')
 
-          other_edition_value(field, relator_mapping)
+          other_edition_value(field, relator_map)
         end
-        values
       end
 
       private
 
       # Assemble a string of relevant edition information.
       # @param [MARC::DataField] field
-      # @param [Hash] relator_mapping
+      # @param [Hash] relator_map
       # @return [String (frozen)] assembled other version string
-      def other_edition_value(field, relator_mapping)
+      def other_edition_value(field, relator_map)
         subi = remove_paren_value_from_subfield_i(field) || ''
         other_editions = field.filter_map { |sf|
           next if %w[6 8].member?(sf.code)
@@ -65,7 +64,7 @@ module PennMARC
           if %w[s x z].member?(sf.code)
             " #{sf.value}"
           elsif sf.code == 't'
-            relator = translate_relator(sf.value, relator_mapping)
+            relator = translate_relator(sf.value, relator_map)
             next if relator.blank?
 
             " #{relator}. "

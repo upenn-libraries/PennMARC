@@ -24,9 +24,9 @@ module PennMARC
       #       indicator1 tell us the order of the name?
       # @note ported from get_author_creator_1_search_values
       # @param [MARC::Record] record
-      # @param [Hash] relator_mapping
+      # @param [Hash] relator_map
       # @return [Array<String>] array of author/creator values for indexing
-      def search(record, relator_mapping = relator_map)
+      def search(record, relator_map: Mappers.relator)
         acc = record.fields(TAGS).map do |field|
           pieces = field.filter_map do |sf|
             if sf.code == 'a'
@@ -34,7 +34,7 @@ module PennMARC
             elsif %w[a 1 4 6 8].exclude?(sf.code)
               sf.value
             elsif sf.code == '4'
-              relator = translate_relator(sf.value, relator_mapping)
+              relator = translate_relator(sf.value, relator_map)
               next if relator.blank?
 
               relator
@@ -53,7 +53,7 @@ module PennMARC
             if !%w[4 6 8].member?(sf.code)
               sf.value
             elsif sf.code == '4'
-              relator = translate_relator(sf.value, relator_mapping)
+              relator = translate_relator(sf.value, relator_map)
               next if relator.blank?
 
               relator
@@ -88,11 +88,11 @@ module PennMARC
       # All author/creator values for display (like #show, but multivalued?) - no 880 linkage
       # @note ported from get_author_creator_values (indexed as author_creator_a) - shown on results page
       # @param [MARC::Record] record
-      # @param [Hash] relator_mapping
+      # @param [Hash] relator_map
       # @return [Array<String>] array of author/creator values for display
-      def values(record, relator_mapping = relator_map)
+      def values(record, relator_map: Mappers.relator)
         record.fields(TAGS).map do |field|
-          name_from_main_entry(field, relator_mapping)
+          name_from_main_entry(field, relator_map)
         end
       end
 
@@ -143,11 +143,11 @@ module PennMARC
       # Conference for display, intended for results display
       # @note ported from get_conference_values
       # @param [MARC::Record] record
-      # @param [Hash] relator_mapping
+      # @param [Hash] relator_map
       # @return [Array<String>] array of conference values
-      def conference_show(record, relator_mapping = relator_map)
+      def conference_show(record, relator_map: Mappers.relator)
         record.fields('111').filter_map do |field|
-          name_from_main_entry field, relator_mapping
+          name_from_main_entry field, relator_map
         end
       end
 
@@ -188,9 +188,9 @@ module PennMARC
       # 'a', 'b', 'c', 'd', 'j', and 'q'. Then appends resulting string with joined subfields 'e', 'u', '3', and '4'.
       # @note legacy version returns array of hash objects including data for display link
       # @param [MARC::Record] record
-      # @ param [Hash] relator_mapping
+      # @ param [Hash] relator_map
       # @return [Array<String>]
-      def contributor_show(record, relator_mapping = relator_map)
+      def contributor_show(record, relator_map: Mappers.relator)
         contributors = record.fields(%w[700 710]).filter_map do |field|
           next unless ['', ' ', '0'].member?(field.indicator2)
           next if subfield_defined? field, 'i'
@@ -200,7 +200,7 @@ module PennMARC
             next unless %w[e u 3 4].member?(subfield.code)
 
             if subfield.code == '4'
-              ", #{translate_relator(subfield.value, relator_mapping)}"
+              ", #{translate_relator(subfield.value, relator_map)}"
             else
               " #{subfield.value}"
             end

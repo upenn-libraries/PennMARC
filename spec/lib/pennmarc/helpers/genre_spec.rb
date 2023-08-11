@@ -43,7 +43,7 @@ describe 'PennMARC::Genre' do
   end
 
   describe '.facet' do
-    let(:values) { helper.facet(record, location_map) }
+    let(:values) { helper.facet(record, location_map: location_map) }
     let(:location_map) do
       { manu: { specific_location: 'Secure Manuscripts Storage' },
         vanp: { specific_location: 'Van Pelt' } }

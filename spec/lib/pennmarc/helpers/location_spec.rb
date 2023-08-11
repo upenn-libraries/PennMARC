@@ -11,9 +11,9 @@ describe 'PennMARC::Location' do
       let(:record) { marc_record(fields: [marc_field(tag: 'itm', subfields: { g: 'stor' })]) }
 
       it 'returns expected value' do
-        expect(helper.location(record: record, location_mapping: mapping,
+        expect(helper.location(record: record, location_map: mapping,
                                display_value: :library)).to contain_exactly('LIBRA')
-        expect(helper.location(record: record, location_mapping: mapping,
+        expect(helper.location(record: record, location_map: mapping,
                                display_value: 'specific_location')).to contain_exactly('LIBRA')
       end
     end
@@ -22,9 +22,9 @@ describe 'PennMARC::Location' do
       let(:record) { marc_record(fields: [marc_field(tag: 'hld', subfields: { c: 'stor' })]) }
 
       it 'returns expected value' do
-        expect(helper.location(record: record, location_mapping: mapping,
+        expect(helper.location(record: record, location_map: mapping,
                                display_value: :library)).to contain_exactly('LIBRA')
-        expect(helper.location(record: record, location_mapping: mapping,
+        expect(helper.location(record: record, location_map: mapping,
                                display_value: 'specific_location')).to contain_exactly('LIBRA')
       end
     end
@@ -36,7 +36,7 @@ describe 'PennMARC::Location' do
       end
 
       it 'returns item location' do
-        expect(helper.location(record: record, location_mapping: mapping,
+        expect(helper.location(record: record, location_map: mapping,
                                display_value: :library)).to contain_exactly('LIBRA')
       end
     end
@@ -45,7 +45,7 @@ describe 'PennMARC::Location' do
       let(:record) { marc_record(fields: [marc_field(tag: 'itm', subfields: { g: %w[dent] })]) }
 
       it 'returns expected value' do
-        expect(helper.location(record: record, location_mapping: mapping,
+        expect(helper.location(record: record, location_map: mapping,
                                display_value: :library)).to contain_exactly('Health Sciences Libraries',
                                                                             'Levy Dental Medicine Library')
       end
@@ -55,7 +55,7 @@ describe 'PennMARC::Location' do
       let(:record) { marc_record(fields: [marc_field(tag: '852', subfields: { g: 'stor' })]) }
 
       it 'returns expected value' do
-        expect(helper.location(record: record, location_mapping: mapping, display_value: :library)).to be_empty
+        expect(helper.location(record: record, location_map: mapping, display_value: :library)).to be_empty
       end
     end
 
@@ -63,7 +63,7 @@ describe 'PennMARC::Location' do
       let(:record) { marc_record(fields: [marc_field(tag: 'itm', subfields: { g: 'stor' }), marc_field(tag: 'prt')]) }
 
       it 'returns expected value' do
-        expect(helper.location(record: record, location_mapping: mapping,
+        expect(helper.location(record: record, location_map: mapping,
                                display_value: :library)).to contain_exactly('LIBRA', 'Online library')
       end
     end
