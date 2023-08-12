@@ -27,6 +27,7 @@ module PennMARC
       # @param [Hash] relator_map
       # @return [Array<String>] array of author/creator values for indexing
       def search(record, relator_map: Mappers.relator)
+        creator_subfields = %w[a 1 4 6 8]
         acc = record.fields(TAGS).map do |field|
           pieces = field.filter_map do |sf|
             if sf.code == 'a'
