@@ -10,6 +10,8 @@ module PennMARC
     # @param [Proc] selector
     # @return [String]
     def join_subfields(field, &)
+      return '' unless field
+
       field.select(&).filter_map { |sf|
         value = sf.value&.strip
         next if value.blank?
@@ -26,7 +28,7 @@ module PennMARC
     # @param [Regexp] regex
     # @return [TrueClass, FalseClass]
     def subfield_value?(field, subfield, regex)
-      field.any? { |sf| sf.code == subfield.to_s && sf.value =~ regex }
+      field&.any? { |sf| sf.code == subfield.to_s && sf.value =~ regex }
     end
 
     # returns true if a given field has a given subfield value in a given array
