@@ -9,8 +9,8 @@ module PennMARC
     # @param [MARC::DataField] field
     # @param [Proc] selector
     # @return [String]
-    def join_subfields(field, &)
-      field.select(&).filter_map { |sf|
+    def join_subfields(field, &selector)
+      field.select(&selector).filter_map { |sf|
         value = sf.value&.strip
         next if value.blank?
 
@@ -122,15 +122,15 @@ module PennMARC
     # See: https://www.loc.gov/marc/bibliographic/bd880.html
     # @param [MARC::Record] record
     # @param [String|Array] subfield6_value either a string to look for in sub6 or an array of them
+    # @param [Proc] selector takes a subfield as argument, returns a boolean
     # @return [Array] array of linked alternates
-    def linked_alternate(record, subfield6_value, &)
+    def linked_alternate(record, subfield6_value, &selector)
       record.fields('880').filter_map do |field|
         next unless subfield_value?(field, '6', /^#{Array.wrap(subfield6_value).join('|')}/)
 
-        field.select(&).map(&:value).join(' ')
+        field.select(&selector).map(&:value).join(' ')
       end
     end
-    alias get_880 linked_alternate
 
     # Common case of wanting to extract all the subfields besides 6 or 8,
     # from 880 datafield that has a particular subfield 6 value. We exclude 6 because
@@ -177,7 +177,6 @@ module PennMARC
     def join_and_squish(array)
       array.join(' ').squish
     end
-    alias join_and_trim_whitespace join_and_squish
 
     # If there's a subfield i, extract its value, and if there's something
     # in parentheses in that value, extract that.
