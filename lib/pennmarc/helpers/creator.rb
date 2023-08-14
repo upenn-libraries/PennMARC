@@ -193,6 +193,7 @@ module PennMARC
       # @ param [Hash] relator_map
       # @return [Array<String>]
       def contributor_show(record, relator_map: Mappers.relator)
+        indicator_2_options = ['', ' ', '0']
         contributors = record.fields(%w[700 710]).filter_map do |field|
           next unless indicator_2_options.member?(field.indicator2)
           next if subfield_defined? field, 'i'

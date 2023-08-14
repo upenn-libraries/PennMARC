@@ -199,7 +199,7 @@ module PennMARC
       # @param [Hash] options include :tags and :indicator2 values
       # @return [Boolean] whether a MARC field should be considered for display
       def subject_display_field?(field, options)
-        return false if field.blank? || !field.respond_to?(:indicator2)
+        return false unless field.respond_to?(:indicator2)
 
         return true if field.tag.in?(options[:tags]) && field.indicator2.in?(options[:indicator2])
 
@@ -209,7 +209,7 @@ module PennMARC
       # @param [MARC::DataField] field
       # @return [Boolean]
       def subject_facet_field?(field)
-        return false if field.blank? || !field.respond_to?(:indicator2)
+        return false unless field.respond_to?(:indicator2)
 
         return true if field.tag.in?(DISPLAY_TAGS) && field.indicator2.in?(%w[0 2 4])
 
@@ -268,8 +268,7 @@ module PennMARC
       # @param [MARC::DataField] field
       # @return [Boolean]
       def subject_search_field?(field)
-        return false if field.blank? || !field.respond_to?(:indicator2) ||
-          SEARCH_SOURCE_INDICATORS.exclude?(field.indicator2)
+        return false unless field.respond_to?(:indicator2) && SEARCH_SOURCE_INDICATORS.include?(field.indicator2)
 
         tag = if field.tag == '880'
                 subfield_values(field, '6').first

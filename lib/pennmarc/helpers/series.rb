@@ -41,10 +41,10 @@ module PennMARC
       # @return [Array<String>] array of series values
       def values(record, relator_map: Mappers.relator)
         series_8x = record.fields(%w[800 810 811 830]).first
-        return Array.wrap(series_8xx_field(series_8x, relator_map)) if series_8x
+        return Array.wrap(series_field(series_8x, relator_map)) if series_8x
 
         series_4x = record.fields(%w[400 410 411 440 490]).first
-        Array.wrap(series_4xx_field(series_4x, relator_map)) if series_4x
+        Array.wrap(series_field(series_4x, relator_map)) if series_4x
       end
 
       # Series fields for search.
