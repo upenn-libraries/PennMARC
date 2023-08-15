@@ -32,7 +32,6 @@ module PennMARC
         language_code = control_field[35..37]
         language_map[language_code.to_sym || UNDETERMINED_CODE]
       end
-
     end
   end
 end
