@@ -68,10 +68,10 @@ module PennMARC
       #       for this helper method
       # @note ported from get_format
       # @param [MARC::Record] record
-      # @param [Hash] location_mapping
+      # @param [Hash] location_map
       # @return [Array<String>] format values for faceting
 
-      def facet(record, location_mapping = location_map)
+      def facet(record, location_map: Mappers.location)
         formats = []
         format_code = leader_format(record.leader)
         f007 = record.fields('007').map(&:value)
@@ -88,7 +88,7 @@ module PennMARC
         end
 
         # get all specific_location values from inventory info
-        locations = Location.location record: record, location_mapping: location_mapping,
+        locations = Location.location record: record, location_map: location_map,
                                       display_value: :specific_location
 
         if include_manuscripts?(locations)
