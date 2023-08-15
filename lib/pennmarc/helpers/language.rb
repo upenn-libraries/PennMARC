@@ -25,12 +25,12 @@ module PennMARC
       # the 008 control field. Language facet and search values will typically be the same.
       #
       # @param [MARC::Record] record
-      # @param [Hash] mapping hash for language code translation
+      # @param [Hash] language_map hash for language code translation
       # @return [String] nice value for language
-      def search(record, mapping = language_map)
+      def search(record, language_map: Mappers.language)
         control_field = record['008']&.value
         language_code = control_field[35..37]
-        mapping[language_code.to_sym || UNDETERMINED_CODE]
+        language_map[language_code.to_sym || UNDETERMINED_CODE]
       end
     end
   end

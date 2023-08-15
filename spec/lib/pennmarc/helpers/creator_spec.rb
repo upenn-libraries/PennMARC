@@ -17,9 +17,9 @@ describe 'PennMARC::Creator' do
       end
 
       it 'contains the expected search field values for a single author work' do
-        expect(helper.search(record, mapping)).to eq ['Name Surname http://cool.uri/12345 author 1900-2000.',
-                                                      'Surname, Name http://cool.uri/12345 author 1900-2000.',
-                                                      'Alternative Surname']
+        expect(helper.search(record, relator_map: mapping)).to eq ['Name Surname http://cool.uri/12345 author 1900-2000.',
+                                                                   'Surname, Name http://cool.uri/12345 author 1900-2000.',
+                                                                   'Alternative Surname']
       end
     end
 
@@ -30,8 +30,8 @@ describe 'PennMARC::Creator' do
       end
 
       it 'contains the expected search field values for a corporate author work' do
-        expect(helper.search(record, mapping)).to eq ['Group of People Annual Meeting Author.',
-                                                      'Alt. Group Name Alt. Annual Meeting']
+        expect(helper.search(record, relator_map: mapping)).to eq ['Group of People Annual Meeting Author.',
+                                                                   'Alt. Group Name Alt. Annual Meeting']
       end
     end
   end
@@ -46,7 +46,7 @@ describe 'PennMARC::Creator' do
       end
 
       it 'returns values for the author, including mapped relator code from ǂ4' do
-        values = helper.values(record, mapping)
+        values = helper.values(record, relator_map: mapping)
         expect(values).to contain_exactly 'Author Fancy active 24th century AD, Author.'
         expect(values.join.downcase).not_to include 'alt'
       end
@@ -58,7 +58,7 @@ describe 'PennMARC::Creator' do
       end
 
       it 'returns values for the corporate author, including mapped relator code from ǂ4' do
-        expect(helper.values(record, mapping)).to contain_exactly 'Annual Report Leader author, Author.'
+        expect(helper.values(record, relator_map: mapping)).to contain_exactly 'Annual Report Leader author, Author.'
       end
     end
   end
@@ -160,7 +160,7 @@ describe 'PennMARC::Creator' do
     end
 
     it 'returns conference name information for display, ignoring any linked 880 fields' do
-      expect(helper.conference_show(record, mapping)).to eq ['MARC History Symposium, Author.']
+      expect(helper.conference_show(record, relator_map: mapping)).to eq ['MARC History Symposium, Author.']
     end
   end
 
@@ -204,7 +204,7 @@ describe 'PennMARC::Creator' do
     end
 
     it 'returns expected contributor values' do
-      expect(helper.contributor_show(record, mapping)).to contain_exactly(
+      expect(helper.contributor_show(record, relator_map: mapping)).to contain_exactly(
         'Name I laureate 1968 pseud Fuller Name author affiliation materials, Author',
         'Corporation A division Office 1968 author affiliation materials, Author',
         'Alt Name Alt num Alt title Alt date Alt qualifier Alt Fuller Name Alt relator Alt affiliation Alt materials',

@@ -7,7 +7,7 @@ describe 'PennMARC::Format' do
 
   describe '.facet' do
     let(:map) { location_map }
-    let(:formats) { helper.facet(record, map) }
+    let(:formats) { helper.facet(record, location_map: map) }
 
     context 'with an "Archive"' do
       let(:map) do

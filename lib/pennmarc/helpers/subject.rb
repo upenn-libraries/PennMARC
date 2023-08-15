@@ -30,10 +30,10 @@ module PennMARC
       # 69X, including any linked 880 fields. Fields must have an indicator2 value in {SEARCH_SOURCE_INDICATORS}.
       # @todo this includes subfields that may not be desired like 1 (uri) and 2 (source code) but this might be OK for
       #       a search (non-display) field?
-      # @param [Hash] relator_mapping
+      # @param [Hash] relator_map
       # @param [MARC::Record] record
       # @return [Array] array of all subject values for search
-      def search(record, relator_mapping = relator_map)
+      def search(record, relator_map: Mappers.relator)
         subject_fields(record, type: :search).filter_map do |field|
           subj_parts = field.filter_map do |subfield|
             # TODO: use term hash here? pro/chr would be rejected...
@@ -45,10 +45,9 @@ module PennMARC
               # remove any ? at the end
               subfield.value.gsub(/^%?(PRO|CHR)/, '').gsub(/\?$/, '').strip
             when '4'
-              # TODO: use relation mapping method from Title helper? for potential URI support?
               # sf 4 should contain a 3-letter code or URI "that specifies the relationship from the entity described
               # in the record to the entity referenced in the field"
-              "#{subfield.value} #{relator_mapping[subfield.value.to_sym]}".strip
+              "#{subfield.value} #{translate_relator(subfield.value.to_sym, relator_map)}".strip
             else
               subfield.value
             end
@@ -183,7 +182,7 @@ module PennMARC
       # @param [MARC::DataField] field
       # @return [Boolean] whether a MARC field is intended for display under general "Subjects"
       def subject_general_display_field?(field)
-        return false unless field.tag.in? DISPLAY_TAGS + LOCAL_TAGS
+        return false unless field.tag.in?(DISPLAY_TAGS + LOCAL_TAGS) && field.respond_to?(:indicator2)
 
         return false if field.indicator2 == '7' && !valid_subject_genre_source_code?(field)
 
@@ -200,7 +199,7 @@ module PennMARC
       # @param [Hash] options include :tags and :indicator2 values
       # @return [Boolean] whether a MARC field should be considered for display
       def subject_display_field?(field, options)
-        return false if field.blank?
+        return false unless field.respond_to?(:indicator2)
 
         return true if field.tag.in?(options[:tags]) && field.indicator2.in?(options[:indicator2])
 
@@ -210,7 +209,7 @@ module PennMARC
       # @param [MARC::DataField] field
       # @return [Boolean]
       def subject_facet_field?(field)
-        return false if field.blank?
+        return false unless field.respond_to?(:indicator2)
 
         return true if field.tag.in?(DISPLAY_TAGS) && field.indicator2.in?(%w[0 2 4])
 
@@ -269,7 +268,7 @@ module PennMARC
       # @param [MARC::DataField] field
       # @return [Boolean]
       def subject_search_field?(field)
-        return false if field.blank? || SEARCH_SOURCE_INDICATORS.exclude?(field.indicator2)
+        return false unless field.respond_to?(:indicator2) && SEARCH_SOURCE_INDICATORS.include?(field.indicator2)
 
         tag = if field.tag == '880'
                 subfield_values(field, '6').first
