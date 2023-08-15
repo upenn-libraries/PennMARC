@@ -9,10 +9,10 @@ module PennMARC
     # @param [MARC::DataField] field
     # @param [Proc] selector
     # @return [String]
-    def join_subfields(field, &)
+    def join_subfields(field, &selector)
       return '' unless field
 
-      field.select(&).filter_map { |sf|
+      field.select(&selector).filter_map { |sf|
         value = sf.value&.strip
         next if value.blank?
 
@@ -51,7 +51,6 @@ module PennMARC
     end
 
     # returns a lambda checking if passed-in subfield's code is a member of array
-    # TODO: include lambda returning methods in their own module?
     # @param [Array] array
     # @return [Proc]
     def subfield_in?(array)
@@ -59,7 +58,6 @@ module PennMARC
     end
 
     # returns a lambda checking if passed-in subfield's code is NOT a member of array
-    # TODO: include lambda returning methods in their own module?
     # @param [Array] array
     # @return [Proc]
     def subfield_not_in?(array)
@@ -126,16 +124,15 @@ module PennMARC
     # See: https://www.loc.gov/marc/bibliographic/bd880.html
     # @param [MARC::Record] record
     # @param [String|Array] subfield6_value either a string to look for in sub6 or an array of them
-    # @param selector [Proc] takes a subfield as argument, returns a boolean
+    # @param [Proc] selector takes a subfield as argument, returns a boolean
     # @return [Array] array of linked alternates
-    def linked_alternate(record, subfield6_value, &)
+    def linked_alternate(record, subfield6_value, &selector)
       record.fields('880').filter_map do |field|
         next unless subfield_value?(field, '6', /^#{Array.wrap(subfield6_value).join('|')}/)
 
-        field.select(&).map(&:value).join(' ')
+        field.select(&selector).map(&:value).join(' ')
       end
     end
-    alias get_880 linked_alternate
 
     # Common case of wanting to extract all the subfields besides 6 or 8,
     # from 880 datafield that has a particular subfield 6 value. We exclude 6 because
@@ -182,7 +179,6 @@ module PennMARC
     def join_and_squish(array)
       array.join(' ').squish
     end
-    alias join_and_trim_whitespace join_and_squish
 
     # If there's a subfield i, extract its value, and if there's something
     # in parentheses in that value, extract that.
