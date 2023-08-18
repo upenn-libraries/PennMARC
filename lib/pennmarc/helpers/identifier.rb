@@ -91,17 +91,22 @@ module PennMARC
 
       # Get publisher issued identifiers from fields {https://www.oclc.org/bibformats/en/0xx/024.html 024},
       # {https://www.oclc.org/bibformats/en/0xx/024.html 028}, and related
-      # {https://www.oclc.org/bibformats/en/8xx/880.html 880 field}.
+      # {https://www.oclc.org/bibformats/en/8xx/880.html 880 field}. We do not return DOI values stored in 024 ǂ2,
+      # see {PennMARC::Identifier.doi_show} for parsing DOI values.
       #
       # @param [MARC::Record] record
       # @return [Array<string>]
       def publisher_number_show(record)
-        publisher_numbers = record.fields(%w[024 028]).filter_map do |field|
-          joined_identifiers = join_subfields(field, &subfield_not_in?(%w[5 6]))
-          joined_identifiers.presence
+        record.fields(%w[024 028 880]).filter_map do |field|
+          next if field.tag == '880' && subfield_value_not_in?(field, '6', %w[024 028])
+
+          # do not return doi values from 024 ǂ2
+          if field.tag == '024' && subfield_value_is_a_doi?(field, '2')
+            join_subfields(field, &subfield_not_in?(%w[2 5 6])).presence
+          else
+            join_subfields(field, &subfield_not_in?(%w[5 6])).presence
+          end
         end
-        publisher_numbers += linked_alternate(record, %w[024 028], &subfield_not_in?(%w[5 6]))
-        publisher_numbers
       end
 
       # Get publisher issued identifiers for searching of a record. Values extracted from fields
