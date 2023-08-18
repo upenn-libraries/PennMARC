@@ -39,8 +39,7 @@ module PennMARC
           joined_isbn = join_subfields(field, &subfield_in?(%w[a z]))
           joined_isbn.presence
         end
-        isbn_values += linked_alternate(record, '020', &subfield_in?(%w[a z]))
-        isbn_values
+        isbn_values + linked_alternate(record, '020', &subfield_in?(%w[a z]))
       end
 
       # Get ISSN values for display from the {https://www.oclc.org/bibformats/en/0xx/022.html 022 field} and related
@@ -53,8 +52,7 @@ module PennMARC
           joined_issn = join_subfields(field, &subfield_in?(%w[a z]))
           joined_issn.presence
         end
-        issn_values += linked_alternate(record, '022', &subfield_in?(%w[a z]))
-        issn_values
+        issn_values + linked_alternate(record, '022', &subfield_in?(%w[a z]))
       end
 
       # Get numeric OCLC ID of first {https://www.oclc.org/bibformats/en/0xx/035.html 035 field}
@@ -126,11 +124,11 @@ module PennMARC
       # @param [MARC::Subfield]
       # @return [TrueClass, FalseClass]
       def subfield_a_is_oclc?(subfield)
-        subfield.code == 'a' && subfield.value =~ /^\(OCoLC\).*/
+        subfield.code == 'a' && (subfield.value =~ /^\(OCoLC\).*/).present?
       end
 
       # Normalize isbn value using {https://github.com/billdueber/library_stdnums library_stdnums gem}.
-      # Converts ISBN10 (ten-digit) to validated ISBN13 (thriteen-digit) and returns both values. If passed
+      # Converts ISBN10 (ten-digit) to validated ISBN13 (thirteen-digit) and returns both values. If passed
       # ISBN13 parameter, only returns validated ISBN13 value.
       #
       #  @param [String] isbn
