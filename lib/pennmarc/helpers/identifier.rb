@@ -125,6 +125,21 @@ module PennMARC
         end
       end
 
+      # Retrieve DOI values stored in {https://www.oclc.org/bibformats/en/0xx/024.html 024} ǂ2.
+      # {PennMARC::Identifier::DOI_REGEX} is the regular expression used to identify DOI values.
+      # @param [MARC::Record] record
+      # @return [Array<String>]
+      def doi_show(record)
+        record.fields('024').flat_map do |field|
+          field.filter_map do |subfield|
+            next unless subfield.code == '2'
+            next unless subfield_value_is_a_doi?(field, subfield.code)
+
+            subfield.value.match(DOI_REGEX)[0]
+          end
+        end
+      end
+
       private
 
       # Determine if subfield 'a' is an OCLC id.
@@ -143,6 +158,14 @@ module PennMARC
       #  @return [Array<String, String>, nil]
       def normalize_isbn(isbn)
         StdNum::ISBN.allNormalizedValues(isbn)
+      end
+
+      # returns true if field has a subfield value that looks like a DOI
+      # @param [MARC::DataField] field
+      # @param [String|Integer|Symbol] subfield
+      # @return [TrueClass, FalseClass]
+      def subfield_value_is_a_doi?(field, subfield)
+        subfield_value?(field, subfield, DOI_REGEX)
       end
     end
   end
