@@ -5,11 +5,11 @@ module PennMARC
   class Identifier < Helper
     class << self
 
-      # define regex to match doi like values
-      # For detailed explanation of regex see {https://stackoverflow.com/a/10324802}
-      # See {https://www.doi.org/the-identifier/resources/handbook/2_numbering} for DOI specifications
+      # Define regex to match doi like values
+      # For detailed explanation of regex see {https://stackoverflow.com/a/10324802 SO post}
+      # See {https://www.doi.org/the-identifier/resources/handbook/2_numbering doi handbook} for doi specification
       # @todo in the SO post, there are concerns raised about registrant code possibly being shorter than 4 characters
-      # and the valid presence of `<`, '>' in a DOI
+      # and the valid presence of '<', '>' in a DOI
       DOI_REGEX = Regexp.new('\b(10[.][0-9]{4,}(?:[.][0-9]+)*/(?:(?!["&\'<>])\S)+)\b')
 
       # Get Alma MMS ID value
