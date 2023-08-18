@@ -78,30 +78,38 @@ describe 'PennMARC::Identifier' do
   describe '.publisher_number_show' do
     let(:record) do
       marc_record fields: [
-        marc_field(tag: '024', subfields: { a: '602537854325', '6': '880-01' }),
+        marc_field(tag: '024', subfields: { a: '602537854325', '2': '10.18574/9781479842865', '6': '880-01' }),
+        marc_field(tag: '024', subfields: { '2': 'not a doi', '6': '880-01' }),
         marc_field(tag: '028', subfields: { a: 'B002086600', b: 'Island Def Jam Music Group', '6': '880-01' }),
         marc_field(tag: '880', subfields: { a: '523458735206', '6': '024' }),
-        marc_field(tag: '880', subfields: { a: '006680200B', b: 'Island', '6': '028' })
+        marc_field(tag: '880', subfields: { a: '006680200B', b: 'Island', '6': '028' }),
+        marc_field(tag: '880', subfields: { a: '006680200B', b: 'Island', '6': '021' })
       ]
     end
 
     it 'returns expected show values' do
       expect(helper.publisher_number_show(record)).to contain_exactly('602537854325',
                                                                       'B002086600 Island Def Jam Music Group',
-                                                                      '523458735206', '006680200B Island')
+                                                                      '523458735206', '006680200B Island',
+                                                                      'not a doi')
+    end
+
+    it 'does not return DOI values stored in 024 ǂ2' do
+      expect(helper.publisher_number_show(record)).not_to include('10.18574/9781479842865')
     end
   end
 
   describe '.publisher_number_search' do
     let(:record) do
       marc_record fields: [
-        marc_field(tag: '024', subfields: { a: '602537854325' }),
+        marc_field(tag: '024', subfields: { a: '602537854325', '2': '10.18574/9781479842865' }),
         marc_field(tag: '028', subfields: { a: 'B002086600', b: 'Island Def Jam Music Group' })
       ]
     end
 
-    it 'returns expected search values' do
-      expect(helper.publisher_number_search(record)).to contain_exactly('602537854325', 'B002086600')
+    it 'returns publisher numbers from 024/028 ǂa and DOI values in 024 ǂ2' do
+      expect(helper.publisher_number_search(record)).to contain_exactly('602537854325 10.18574/9781479842865',
+                                                                        'B002086600')
     end
   end
 
@@ -115,6 +123,26 @@ describe 'PennMARC::Identifier' do
 
     it 'returns expected fingerprint values' do
       expect(helper.fingerprint_show(record)).to contain_exactly('dete nkck vess lodo Anno Domini MDCXXXVI 3')
+    end
+  end
+
+  describe '.doi_show' do
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '024', subfields: { '2': '10.18574/9781479842865' }),
+        marc_field(tag: '024', subfields: { '2': '10.1038/sdata.2016.18 ' }),
+        marc_field(tag: '024', subfields: { '2': '10.1016.12.31/nature.S0735-1097(98)2000/12?/31/34:7-7' }),
+        marc_field(tag: '024', subfields: { '2': '10.1234.5678/134&56' }),
+        marc_field(tag: '024', subfields: { '2': '10.1000/1>56' }),
+        marc_field(tag: '024', subfields: { '2': '10.100/1234' }),
+        marc_field(tag: '024', subfields: { '2': '1.1234.5678/1234' })
+      ]
+    end
+
+    it 'returns valid DOI values' do
+      expect(helper.doi_show(record)).to contain_exactly('10.1016.12.31/nature.S0735-1097(98)2000/12?/31/34:7-7',
+                                                         '10.1038/sdata.2016.18', '10.1234.5678/134', '10.1000/1',
+                                                         '10.18574/9781479842865')
     end
   end
 end
