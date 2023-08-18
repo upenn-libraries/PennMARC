@@ -116,7 +116,7 @@ module PennMARC
       # @return [Array<String>]
       def publisher_number_search(record)
         record.fields(%w[024 028]).filter_map do |field|
-          joined_identifiers = join_subfields(field, &subfield_in?(%w[a]))
+          joined_identifiers = join_subfields(field, &subfield_in?(%w[a 2]))
           joined_identifiers.presence
         end
       end
