@@ -49,10 +49,10 @@ module PennMARC
       # @return [Array<String>]
       def issn_show(record)
         issn_values = record.fields('022').filter_map do |field|
-          joined_issn = join_subfields(field, &subfield_in?(%w[a z]))
+          joined_issn = join_subfields(field, &subfield_in?(%w[a]))
           joined_issn.presence
         end
-        issn_values += linked_alternate(record, '022', &subfield_in?(%w[a z]))
+        issn_values += linked_alternate(record, '022', &subfield_in?(%w[a]))
         issn_values
       end
 
