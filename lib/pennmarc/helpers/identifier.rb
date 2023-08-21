@@ -35,10 +35,10 @@ module PennMARC
       # @return [Array<String>]
       def isbn_show(record)
         isbn_values = record.fields('020').filter_map do |field|
-          joined_isbn = join_subfields(field, &subfield_in?(%w[a z]))
+          joined_isbn = join_subfields(field, &subfield_in?(%w[a]))
           joined_isbn.presence
         end
-        isbn_values += linked_alternate(record, '020', &subfield_in?(%w[a z]))
+        isbn_values += linked_alternate(record, '020', &subfield_in?(%w[a]))
         isbn_values
       end
 
