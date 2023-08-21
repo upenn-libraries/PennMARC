@@ -128,10 +128,9 @@ module PennMARC
         subfield.code == 'a' && subfield.value =~ /^\(OCoLC\).*/
       end
 
-      # Normalize isbn value using {https://github.com/billdueber/library_stdnums library_stdnums gem}.
-      # Converts ISBN10 (ten-digit) to validated ISBN13 (thriteen-digit) and returns both values. If passed
-      # ISBN13 parameter, only returns validated ISBN13 value.
-      #
+      # Normalize isbn value using {https://github.com/billdueber/library_stdnums library_stdnums gem}. Returns
+      # an array of the ISBN13 and ISBN10 for the passed in value. Returns ISBN13 only if passed in ISBN13 can't be
+      # converted to ISBN10.
       #  @param [String] isbn
       #  @return [Array<String, String>, nil]
       def normalize_isbn(isbn)
