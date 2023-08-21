@@ -33,13 +33,12 @@ module PennMARC
       #
       # @param [MARC::Record] record
       # @return [Array<String>]
-      # @todo look into z subfield for 020 field, should we show cancelled isbn?
       def isbn_show(record)
         isbn_values = record.fields('020').filter_map do |field|
-          joined_isbn = join_subfields(field, &subfield_in?(%w[a z]))
+          joined_isbn = join_subfields(field, &subfield_in?(%w[a]))
           joined_isbn.presence
         end
-        isbn_values += linked_alternate(record, '020', &subfield_in?(%w[a z]))
+        isbn_values += linked_alternate(record, '020', &subfield_in?(%w[a]))
         isbn_values
       end
 
@@ -50,10 +49,10 @@ module PennMARC
       # @return [Array<String>]
       def issn_show(record)
         issn_values = record.fields('022').filter_map do |field|
-          joined_issn = join_subfields(field, &subfield_in?(%w[a z]))
+          joined_issn = join_subfields(field, &subfield_in?(%w[a]))
           joined_issn.presence
         end
-        issn_values += linked_alternate(record, '022', &subfield_in?(%w[a z]))
+        issn_values += linked_alternate(record, '022', &subfield_in?(%w[a]))
         issn_values
       end
 
@@ -129,10 +128,9 @@ module PennMARC
         subfield.code == 'a' && subfield.value =~ /^\(OCoLC\).*/
       end
 
-      # Normalize isbn value using {https://github.com/billdueber/library_stdnums library_stdnums gem}.
-      # Converts ISBN10 (ten-digit) to validated ISBN13 (thriteen-digit) and returns both values. If passed
-      # ISBN13 parameter, only returns validated ISBN13 value.
-      #
+      # Normalize isbn value using {https://github.com/billdueber/library_stdnums library_stdnums gem}. Returns
+      # an array of the ISBN13 and ISBN10 for the passed in value. Returns ISBN13 only if passed in ISBN13 can't be
+      # converted to ISBN10.
       #  @param [String] isbn
       #  @return [Array<String, String>, nil]
       def normalize_isbn(isbn)
