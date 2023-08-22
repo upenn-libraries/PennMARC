@@ -38,7 +38,7 @@ module PennMARC
           joined_isbn = join_subfields(field, &subfield_in?(%w[a]))
           joined_isbn.presence
         end
-        isbn_values + linked_alternate(record, '020', &subfield_in?(%w[a z]))
+        isbn_values + linked_alternate(record, '020', &subfield_in?(%w[a]))
       end
 
       # Get ISSN values for display from the {https://www.oclc.org/bibformats/en/0xx/022.html 022 field} and related
@@ -51,7 +51,7 @@ module PennMARC
           joined_issn = join_subfields(field, &subfield_in?(%w[a]))
           joined_issn.presence
         end
-        issn_values + linked_alternate(record, '022', &subfield_in?(%w[a z]))
+        issn_values + linked_alternate(record, '022', &subfield_in?(%w[a]))
       end
 
       # Get numeric OCLC ID of first {https://www.oclc.org/bibformats/en/0xx/035.html 035 field}
