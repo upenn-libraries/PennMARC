@@ -8,6 +8,7 @@ module PennMARC
   class Language < Helper
     # Used when no value is present in the control field - still mapped
     UNDETERMINED_CODE = :und
+    LANGUAGE_SUBFIELDS = %w[a b d e g h i j k m n p q r t].freeze
 
     class << self
       # Get language values for display from the {https://www.oclc.org/bibformats/en/5xx/546.html 546 field} and
@@ -28,9 +29,16 @@ module PennMARC
       # @param [Hash] language_map hash for language code translation
       # @return [String] nice value for language
       def search(record, language_map: Mappers.language)
+        values = record['041'].filter_map { |sf|
+          next if LANGUAGE_SUBFIELDS.exclude?(sf.code)
+
+          language_map[sf.value.to_sym]
+        }
         control_field = record['008']&.value
         language_code = control_field[35..37]
-        language_map[language_code.to_sym || UNDETERMINED_CODE]
+
+        values << language_map[language_code.to_sym || UNDETERMINED_CODE]
+        values.uniq
       end
     end
   end
