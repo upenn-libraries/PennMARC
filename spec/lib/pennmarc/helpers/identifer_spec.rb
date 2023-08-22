@@ -16,13 +16,14 @@ describe 'PennMARC::Identifier' do
   describe '.isxn_search' do
     let(:record) do
       marc_record fields: [
-        marc_field(tag: '020', subfields: { a: '9781594205071', z: '1594205078' }),
-        marc_field(tag: '022', subfields: { a: '0008-6533', l: '0300-7162', z: '0008-6533' })
+        marc_field(tag: '020', subfields: { a: '9781594205071', z: '1555975275' }),
+        marc_field(tag: '022', subfields: { a: '0008-6533', l: '0300-7162', z: '0799-5946 ' })
       ]
     end
 
     it 'returns expected search values' do
-      expect(helper.isxn_search(record)).to contain_exactly('9781594205071', '1594205078', '0300-7162', '0008-6533')
+      expect(helper.isxn_search(record)).to contain_exactly('9781594205071', '1555975275', '9781555975272',
+                                                            '1594205078', '0300-7162', '0008-6533', '0799-5946 ')
     end
 
     it 'converts ISBN10 values to ISBN13' do
@@ -40,9 +41,9 @@ describe 'PennMARC::Identifier' do
       ]
     end
 
-    it 'returns expected show values' do
-      expect(helper.isbn_show(record)).to contain_exactly('9781594205071 1594205078', '0805073698 9780735222786',
-                                                          '0735222789 9780805073690')
+    it 'returns expected ǂa values' do
+      expect(helper.isbn_show(record)).to contain_exactly('9781594205071', '0805073698',
+                                                          '0735222789')
     end
   end
 
@@ -55,9 +56,9 @@ describe 'PennMARC::Identifier' do
       ]
     end
 
-    it 'returns expected show values' do
-      expect(helper.issn_show(record)).to contain_exactly('0008-6533 0008-6533', '2470-6302 1534-6714',
-                                                          '1080-6512 2213-4360')
+    it 'returns ǂa values' do
+      expect(helper.issn_show(record)).to contain_exactly('0008-6533', '2470-6302',
+                                                          '1080-6512')
     end
   end
 

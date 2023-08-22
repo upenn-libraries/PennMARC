@@ -33,10 +33,9 @@ module PennMARC
       #
       # @param [MARC::Record] record
       # @return [Array<String>]
-      # @todo look into z subfield for 020 field, should we show cancelled isbn?
       def isbn_show(record)
         isbn_values = record.fields('020').filter_map do |field|
-          joined_isbn = join_subfields(field, &subfield_in?(%w[a z]))
+          joined_isbn = join_subfields(field, &subfield_in?(%w[a]))
           joined_isbn.presence
         end
         isbn_values + linked_alternate(record, '020', &subfield_in?(%w[a z]))
@@ -49,7 +48,7 @@ module PennMARC
       # @return [Array<String>]
       def issn_show(record)
         issn_values = record.fields('022').filter_map do |field|
-          joined_issn = join_subfields(field, &subfield_in?(%w[a z]))
+          joined_issn = join_subfields(field, &subfield_in?(%w[a]))
           joined_issn.presence
         end
         issn_values + linked_alternate(record, '022', &subfield_in?(%w[a z]))
