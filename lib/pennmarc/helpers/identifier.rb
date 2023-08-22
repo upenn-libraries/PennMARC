@@ -124,7 +124,6 @@ module PennMARC
 
       # Retrieve DOI values stored in {https://www.oclc.org/bibformats/en/0xx/024.html 024}.
       # Penn MARC records give the first indicator a value of '7' and ǂ2 a value of 'doi' to denote that ǂa is a doi.
-      # {PennMARC::Identifier::DOI_REGEX} is the regular expression used to identify DOI values.
       # @param [MARC::Record] record
       # @return [Array<String>]
       def doi_show(record)
