@@ -11,15 +11,15 @@ ain: Ainu
 ajm: Aljamía
 aka: Akan
 akk: Akkadian
-alb: Albanian
 ale: Aleut
 alg: Algonquian (Other)
+als: Albanian
 alt: Altai
 amh: Amharic
 ang: English, Old (ca. 450-1100)
 anp: Angika
 apa: Apache languages
-ara: Arabic
+arb: Arabic
 arc: Aramaic
 arg: Aragonese
 arm: Armenian
@@ -35,7 +35,8 @@ ava: Avaric
 ave: Avestan
 awa: Awadhi
 aym: Aymara
-aze: Azerbaijani
+azj: Azerbaijani
+azb: South Azerbaijani
 bad: Banda languages
 bai: Bamileke languages
 bak: Bashkir
@@ -78,7 +79,6 @@ cha: Chamorro
 chb: Chibcha
 che: Chechen
 chg: Chagatai
-chi: Chinese
 chk: Chuukese
 chm: Mari
 chn: Chinook jargon
@@ -88,7 +88,9 @@ chr: Cherokee
 chu: Church Slavic
 chv: Chuvash
 chy: Cheyenne
+ckb: Sorani Kurdish
 cmc: Chamic languages
+cmn: Chinese
 cop: Coptic
 cor: Cornish
 cos: Corsican
@@ -121,13 +123,13 @@ dzo: Dzongkha
 efi: Efik
 egy: Egyptian
 eka: Ekajuk
+ekk: Estonian
 elx: Elamite
 eng: English
 enm: English, Middle (1100-1500)
 epo: Esperanto
 esk: Eskimo languages
 esp: Esperanto
-est: Estonian
 eth: Ethiopic
 ewe: Ewe
 ewo: Ewondo
@@ -232,12 +234,14 @@ kaz: Kazakh
 kbd: Kabardian
 kha: Khasi
 khi: Khoisan (Other)
+khk: Mongolian
 khm: Khmer
 kho: Khotanese
 kik: Kikuyu
 kin: Kinyarwanda
 kir: Kyrgyz
 kmb: Kimbundu
+kmr: Kurdish
 kok: Konkani
 kom: Komi
 kon: Kongo
@@ -250,7 +254,6 @@ kro: Kru (Other)
 kru: Kurukh
 kua: Kuanyama
 kum: Kumyk
-kur: Kurdish
 kus: Kusaie
 kut: Kootenai
 lad: Ladino
@@ -260,7 +263,6 @@ lan: Occitan (post 1500)
 lao: Lao
 lap: Sami
 lat: Latin
-lav: Latvian
 lez: Lezgian
 lim: Limburgish
 lin: Lingala
@@ -275,6 +277,7 @@ lui: Luiseño
 lun: Lunda
 luo: Luo (Kenya and Tanzania)
 lus: Lushai
+lvs: Latvian
 mac: Macedonian
 mad: Madurese
 mag: Magahi
@@ -288,7 +291,6 @@ map: Austronesian (Other)
 mar: Marathi
 mas: Maasai
 max: Manx
-may: Malay
 mdf: Moksha
 mdr: Mandar
 men: Mende
@@ -297,7 +299,6 @@ mic: Micmac
 min: Minangkabau
 mis: Miscellaneous languages
 mkh: Mon-Khmer (Other)
-mla: Malagasy
 mlg: Malagasy
 mlt: Maltese
 mnc: Manchu
@@ -305,7 +306,6 @@ mni: Manipuri
 mno: Manobo languages
 moh: Mohawk
 mol: Moldavian
-mon: Mongolian
 mos: Mooré
 mul: Multiple languages
 mun: Munda (Other)
@@ -323,7 +323,6 @@ nbl: Ndebele (South Africa)
 nde: Ndebele (Zimbabwe)
 ndo: Ndonga
 nds: Low German
-nep: Nepali
 new: Newari
 nia: Nias
 nic: Niger-Kordofanian (Other)
@@ -333,6 +332,7 @@ nob: Norwegian (Bokmål)
 nog: Nogai
 non: Old Norse
 nor: Norwegian
+npi: Nepali
 nqo: N'Ko
 nso: Northern Sotho
 nub: Nubian languages
@@ -344,8 +344,8 @@ nyo: Nyoro
 nzi: Nzima
 oci: Occitan (post-1500)
 oji: Ojibwa
-ori: Oriya
 orm: Oromo
+ory: Oriya
 osa: Osage
 oss: Ossetic
 ota: Turkish, Ottoman
@@ -358,10 +358,11 @@ pan: Panjabi
 pap: Papiamento
 pau: Palauan
 peo: Old Persian (ca. 600-400 B.C.)
-per: Persian
+pes: Persian
 phi: Philippine (Other)
 phn: Phoenician
 pli: Pali
+plt: Malagasy
 pol: Polish
 pon: Pohnpeian
 por: Portuguese
@@ -389,7 +390,6 @@ san: Sanskrit
 sao: Samoan
 sas: Sasak
 sat: Santali
-scc: Serbian
 scn: Sicilian Italian
 sco: Scots
 scr: Croatian
@@ -433,8 +433,8 @@ suk: Sukuma
 sun: Sundanese
 sus: Susu
 sux: Sumerian
-swa: Swahili
 swe: Swedish
+swh: Swahili
 swz: Swazi
 syc: Syriac
 syr: Syriac, Modern
@@ -483,7 +483,7 @@ ukr: Ukrainian
 umb: Umbundu
 und: Undetermined
 urd: Urdu
-uzb: Uzbek
+uzn: Uzbek
 vai: Vai
 ven: Venda
 vie: Vietnamese
@@ -509,6 +509,7 @@ zbl: Blissymbolics
 zen: Zenaga
 zha: Zhuang
 znd: Zande languages
+zsm: Malay
 zul: Zulu
 zun: Zuni
 zxx: No linguistic content
