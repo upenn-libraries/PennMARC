@@ -5,11 +5,12 @@ describe 'PennMARC::Language' do
 
   let(:helper) { PennMARC::Language }
   let(:mapping) do
-    { eng: 'English', und: 'Undetermined' }
+    { eng: 'English', und: 'Undetermined', fre: 'French', ger: 'German' }
   end
   let(:record) do
     marc_record fields: [
       marc_control_field(tag: '008', value: '                                   eng'),
+      marc_field(tag: '041', subfields: { a: 'eng', b: 'fre', d: 'ger' }),
       marc_field(tag: '546', subfields: { a: 'Great', c: 'Content', '6': 'Not Included' }),
       marc_field(tag: '546', subfields: { b: 'More!', '8': 'Not Included' }),
       marc_field(tag: '880', subfields: { c: 'Mas!', '6': '546', '8': 'Not Included' })
@@ -18,7 +19,7 @@ describe 'PennMARC::Language' do
 
   describe '.search' do
     it 'returns the expected display value' do
-      expect(helper.search(record, language_map: mapping)).to eq 'English'
+      expect(helper.search(record, language_map: mapping)).to eq %w[English French German]
     end
   end
 
