@@ -22,8 +22,13 @@ module PennMARC
         values + linked_alternate(record, '546', &subfield_not_in?(%w[6 8]))
       end
 
-      # Get language values for searching and faceting of a record. The value is extracted from a defined position in
-      # the 008 control field. Language facet and search values will typically be the same.
+      # @note In franklin, we extracted the language code from the 008 control field. After engaging cataloging unit
+      #   representatives, we decided to extract these values from the 041 field: Includes records for multilingual
+      #   items, items that involve translation, and items where the medium of communication is a sign language.
+      #   https://www.loc.gov/marc/bibliographic/bd041.html
+      #
+      # Get language values for searching and faceting of a record. The values are extracted from subfields
+      # in the 041 field. Language facet and search values will typically be the same.
       #
       # @param [MARC::Record] record
       # @param [Hash] language_map hash for language code translation
