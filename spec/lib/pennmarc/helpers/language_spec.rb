@@ -18,7 +18,7 @@ describe 'PennMARC::Language' do
   end
 
   describe '.search' do
-    it 'returns the expected display value' do
+    it 'returns the expected display values' do
       expect(helper.search(record, language_map: mapping)).to eq %w[English French German]
     end
   end
