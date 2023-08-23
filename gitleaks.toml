@@ -1,0 +1,2 @@
+[file]
+paths-exclude = ["lib/pennmarc/mappings/language.yml"]
