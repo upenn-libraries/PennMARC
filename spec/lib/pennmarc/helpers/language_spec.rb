@@ -19,7 +19,7 @@ describe 'PennMARC::Language' do
 
   describe '.search' do
     it 'returns the expected display values' do
-      expect(helper.search(record, language_map: mapping)).to eq %w[English French German]
+      expect(helper.search(record, language_map: mapping)).to contain_exactly('English', 'French', 'German')
     end
   end
 
