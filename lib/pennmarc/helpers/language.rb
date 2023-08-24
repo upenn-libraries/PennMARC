@@ -28,7 +28,8 @@ module PennMARC
       #   https://www.loc.gov/marc/bibliographic/bd041.html
       #
       # Get language values for searching and faceting of a record. The values are extracted from subfields
-      # in the 041 field. Language facet and search values will typically be the same.
+      # in the 041 field. Language facet and search values will typically be the same, with the exception of `zxx`,
+      # when no linguistic content is found.
       #
       # @param [MARC::Record] record
       # @param [Hash] language_map hash for language code translation
