@@ -16,10 +16,19 @@ describe 'PennMARC::Language' do
       marc_field(tag: '880', subfields: { c: 'Mas!', '6': '546', '8': 'Not Included' })
     ]
   end
+  let(:empty_record) do
+    marc_record fields: [
+      marc_field(tag: '041', subfields: { c: 'test' })
+    ]
+  end
 
   describe '.search' do
     it 'returns the expected display values' do
       expect(helper.search(record, language_map: mapping)).to contain_exactly('English', 'French', 'German')
+    end
+
+    it 'returns undetermined when there are no values' do
+      expect(helper.search(empty_record, language_map: mapping)).to contain_exactly(:und)
     end
   end
 
