@@ -32,18 +32,21 @@ module PennMARC
       # when no linguistic content is found.
       #
       # @param [MARC::Record] record
-      # @param [Hash] language_map hash for language code translation
+      # @param [Hash] iso_639_2_mapping iso-639-2 spec hash for language code translation
+      # @param [Hash] iso_639_3_mapping iso-639-3 spec hash for language code translation
       # @return [Array] array of language values
-      def search(record, language_map: Mappers.language)
+      def search(record, iso_639_2_mapping: Mappers.iso_639_2_language, iso_639_3_mapping: Mappers.iso_639_3_language)
+        mapping = iso_639_2_mapping
         values = record['041']&.filter_map { |sf|
+          mapping = iso_639_3_mapping if sf.code == '2' && sf.value == 'iso639-3'
           next if LANGUAGE_SUBFIELDS.exclude?(sf.code)
 
-          language_map[sf.value.to_sym]
+          mapping[sf.value.to_sym]
         } || []
         control_field = record['008']&.value
         if control_field.present?
           language_code = control_field[35..37]
-          values << language_map[language_code.to_sym || UNDETERMINED_CODE]
+          values << mapping[language_code.to_sym || UNDETERMINED_CODE]
         end
         values.empty? ? values << UNDETERMINED_CODE : values.uniq
       end
