@@ -33,18 +33,19 @@ module PennMARC
       #
       # @param [MARC::Record] record
       # @param [Hash] language_map hash for language code translation
-      # @return [String] nice value for language
+      # @return [Array] array of language values
       def search(record, language_map: Mappers.language)
-        values = record['041'].filter_map { |sf|
+        values = record['041']&.filter_map { |sf|
           next if LANGUAGE_SUBFIELDS.exclude?(sf.code)
 
           language_map[sf.value.to_sym]
-        }
+        } || []
         control_field = record['008']&.value
-        language_code = control_field[35..37]
-
-        values << language_map[language_code.to_sym || UNDETERMINED_CODE]
-        values.uniq
+        if control_field.present?
+          language_code = control_field[35..37]
+          values << language_map[language_code.to_sym || UNDETERMINED_CODE]
+        end
+        values.empty? ? values << UNDETERMINED_CODE : values.uniq
       end
     end
   end
