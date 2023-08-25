@@ -5,8 +5,12 @@ module PennMARC
   class Mappers
     class << self
       # @return [Hash]
-      def language
-        @language ||= load_map('language.yml')
+      def iso_639_2_language
+        @iso_639_2_language ||= load_map('iso639-2-languages.yml')
+      end
+
+      def iso_639_3_language
+        @iso_639_3_language ||= load_map('iso639-3-languages.yml')
       end
 
       # @return [Hash]
