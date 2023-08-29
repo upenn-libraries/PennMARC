@@ -2,3 +2,6 @@ inherit_from: .rubocop_todo.yml
 
 inherit_gem:
   upennlib-rubocop: upennlib_rubocop_defaults.yml
+
+Rails:
+  Enabled: false
