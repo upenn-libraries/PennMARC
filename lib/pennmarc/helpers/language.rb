@@ -4,7 +4,6 @@ module PennMARC
   # Logic for extracting and translating Language values for a record. Penn practice is to verify the value present in
   # the {https://www.oclc.org/bibformats/en/fixedfield/lang.html 008 control field} as a three letter code. This code
   # is then mapped to a display-friendly value using the a provided mapping hash.
-  # @todo should we consider values in the {https://www.oclc.org/bibformats/en/0xx/041.html 041 field}?
   class Language < Helper
     # Used when no value is present in the control field - still mapped
     UNDETERMINED_CODE = :und
