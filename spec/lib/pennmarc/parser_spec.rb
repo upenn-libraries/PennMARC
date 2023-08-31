@@ -13,8 +13,7 @@ describe PennMARC::Parser do
 
   it 'delegates to helper modules properly with extra params' do
     bogus_map = { eng: 'American' }
-    expect(parser.language_values(record, iso_639_2_mapping: bogus_map,
-                                          iso_639_3_mapping: bogus_map)).to contain_exactly 'American'
+    expect(parser.language_values(record, iso_639_2_mapping: bogus_map)).to contain_exactly 'American'
   end
 
   it 'raises an exception if the method call is invalid' do
