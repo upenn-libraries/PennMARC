@@ -22,33 +22,31 @@ module PennMARC
         values + linked_alternate(record, '546', &subfield_not_in?(%w[6 8]))
       end
 
+      # Get language values for searching and faceting of a record. The values are extracted from subfields
+      # in the 041 field. Language facet and search values will typically be the same, with the exception of `zxx`,
+      # when no linguistic content is found.
+      #
       # @note In franklin, we extracted the language code from the 008 control field. After engaging cataloging unit
       #   representatives, we decided to extract these values from the 041 field: Includes records for multilingual
       #   items, items that involve translation, and items where the medium of communication is a sign language.
       #   https://www.loc.gov/marc/bibliographic/bd041.html
       #
-      # Get language values for searching and faceting of a record. The values are extracted from subfields
-      # in the 041 field. Language facet and search values will typically be the same, with the exception of `zxx`,
-      # when no linguistic content is found.
-      #
       # @param [MARC::Record] record
       # @param [Hash] iso_639_2_mapping iso-639-2 spec hash for language code translation
       # @param [Hash] iso_639_3_mapping iso-639-3 spec hash for language code translation
       # @return [Array] array of language values
-      def search(record, iso_639_2_mapping: Mappers.iso_639_2_language, iso_639_3_mapping: Mappers.iso_639_3_language)
-        mapping = iso_639_2_mapping
-        values = record['041']&.filter_map { |sf|
-          mapping = iso_639_3_mapping if sf.code == '2' && sf.value == 'iso639-3'
-          next if LANGUAGE_SUBFIELDS.exclude?(sf.code)
+      def values(record, iso_639_2_mapping: Mappers.iso_639_2_language, iso_639_3_mapping: Mappers.iso_639_3_language)
+        values = record.fields('041').filter_map { |field|
+          mapper = subfield_value?(field, '2', /iso639-3/) ? iso_639_3_mapping : iso_639_2_mapping
+          field.filter_map do |sf|
+            next unless LANGUAGE_SUBFIELDS.include? sf.code
 
-          mapping[sf.value.to_sym]
-        } || []
+            mapper[sf.value&.to_sym]
+          end
+        }.flatten
         control_field = record['008']&.value
-        if control_field.present?
-          language_code = control_field[35..37]
-          values << mapping[language_code.to_sym || UNDETERMINED_CODE]
-        end
-        values.empty? ? values << UNDETERMINED_CODE : values.uniq
+        values << iso_639_2_mapping[control_field[35..37]&.to_sym] if control_field.present?
+        values.empty? ? values << iso_639_2_mapping[UNDETERMINED_CODE] : values.uniq
       end
     end
   end
