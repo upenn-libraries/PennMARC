@@ -20,6 +20,12 @@ describe 'PennMARC::Language' do
     ]
   end
 
+  describe '.show' do
+    it 'returns the expected show values' do
+      expect(helper.show(record)).to contain_exactly 'Great Content', 'More!', 'Mas!'
+    end
+  end
+
   describe '.search' do
     context 'when using iso 639-2 spec' do
       it 'returns the expected display values from iso639-2' do
@@ -67,12 +73,6 @@ describe 'PennMARC::Language' do
                              iso_639_2_mapping: iso_639_2_mapping,
                              iso_639_3_mapping: iso_639_3_mapping)).to contain_exactly('Undetermined')
       end
-    end
-  end
-
-  describe '.show' do
-    it 'returns the expected show values' do
-      expect(helper.show(record)).to contain_exactly 'Great Content', 'More!', 'Mas!'
     end
   end
 end
