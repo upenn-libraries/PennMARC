@@ -16,7 +16,7 @@ module PennMARC
       # 411 - Series Statement/Added Entry Meeting Name - https://www.loc.gov/marc/bibliographic/bd411.html
       # 440 - Series Statement/Added Entry-Title - https://www.loc.gov/marc/bibliographic/bd440.html
       # 490 - Series Statement - https://www.loc.gov/marc/bibliographic/bd490.html
-      DISPLAY_TAGS = %w[800 810 811 830 400 411 440 490].freeze
+      DISPLAY_TAGS = %w[800 810 811 830 400 410 411 440 490].freeze
 
       # Fields for display that pertain to series information.
       # @param [MARC::Record] record
