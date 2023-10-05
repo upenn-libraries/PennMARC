@@ -11,8 +11,6 @@ module PennMARC
       # {https://www.oclc.org/bibformats/en/5xx/550.html 550}, {https://www.oclc.org/bibformats/en/5xx/580.html 580},
       # {https://www.oclc.org/bibformats/en/5xx/586.html 586}, {https://www.oclc.org/bibformats/en/5xx/588.html 588},
       # and their linked alternates.
-      # @todo legacy implementation used conditional to separate join logic for 588 field. However, this doesn't seem
-      #   necessary because 588 only has subfields 'a', '5', '6', and '8'. Do we need to look into this?
       # @param [MARC::Record] record
       # @return [Array<String>]
       def notes_show(record)
