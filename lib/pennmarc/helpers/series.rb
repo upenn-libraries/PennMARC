@@ -4,7 +4,6 @@ module PennMARC
   # Do Series and series-related field processing. Many of these fields are added entries that are justified by
   # corresponding series statements (usually 490). These fields provide information about the published series in which
   # a book, encoded finding aid, or other published work has appeared
-  # @todo We may want to include 410 in the display tags, since it is included in references below.
   class Series < Helper
     class << self
       # 800 - Series Added Entry-Personal Name - https://www.loc.gov/marc/bibliographic/bd800.html
@@ -16,7 +15,7 @@ module PennMARC
       # 411 - Series Statement/Added Entry Meeting Name - https://www.loc.gov/marc/bibliographic/bd411.html
       # 440 - Series Statement/Added Entry-Title - https://www.loc.gov/marc/bibliographic/bd440.html
       # 490 - Series Statement - https://www.loc.gov/marc/bibliographic/bd490.html
-      DISPLAY_TAGS = %w[800 810 811 830 400 411 440 490].freeze
+      DISPLAY_TAGS = %w[800 810 811 830 400 410 411 440 490].freeze
 
       # Fields for display that pertain to series information.
       # @param [MARC::Record] record

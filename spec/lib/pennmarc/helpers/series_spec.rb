@@ -6,7 +6,8 @@ describe 'PennMARC::Series' do
   let(:helper) { PennMARC::Series }
   let(:mapping) { { aut: 'Author' } }
   let(:record) do
-    marc_record fields: [marc_field(tag: '490', subfields: { a: 'Teachings of the feathered pillow' }),
+    marc_record fields: [marc_field(tag: '410', subfields: { a: 'Evil Giant Megacorp' }),
+                         marc_field(tag: '490', subfields: { a: 'Teachings of the feathered pillow' }),
                          marc_field(tag: '880', subfields: { '6': '490', a: 'Учения пернатой подушки' }),
                          marc_field(tag: '800', subfields: { a: 'Bean Bagatolvski', d: '1997-', v: 'bk. 1' }),
                          marc_field(tag: '780', subfields: { a: 'National Comfort Association' }),
@@ -20,7 +21,7 @@ describe 'PennMARC::Series' do
     it 'returns the series' do
       expect(helper.show(record, relator_map: mapping)).to contain_exactly('Bean Bagatolvski 1997- bk. 1',
                                                               'Teachings of the feathered pillow',
-                                                              'Учения пернатой подушки')
+                                                              'Учения пернатой подушки', 'Evil Giant Megacorp')
     end
   end
 
@@ -32,7 +33,7 @@ describe 'PennMARC::Series' do
 
   describe '.search' do
     it 'returns the search values' do
-      expect(helper.search(record)).to contain_exactly('Bean Bagatolvski 1997- bk. 1')
+      expect(helper.search(record)).to contain_exactly('Bean Bagatolvski 1997- bk. 1', 'Evil Giant Megacorp')
     end
 
     it 'returns an empty array if no values are found' do
