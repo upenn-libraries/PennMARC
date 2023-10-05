@@ -168,7 +168,8 @@ module PennMARC
       def format_term(type:, term:)
         return unless type.in? %i[facet display]
 
-        normalize_single_subfield(term[:parts].first) if term[:count] == 1
+        # attempt to handle poorly coded record
+        normalize_single_subfield(term[:parts].first) if term[:count] == 1 && term[:parts].first.present?
 
         case type.to_sym
         when :facet
