@@ -143,7 +143,19 @@ module PennMARC
       # @param [MARC::Subfield]
       # @return [TrueClass, FalseClass]
       def subfield_a_is_oclc?(subfield)
-        subfield.code == 'a' && (subfield.value =~ /^\(OCoLC\).*/).present?
+        subfield.code == 'a' && subfield_is_oclc?(subfield)
+      end
+
+      # @param [MARC::Subfield]
+      # @return [TrueClass, FalseClass]
+      def subfield_is_oclc?(subfield)
+        (subfield.value =~ /^\(OCoLC\).*/).present?
+      end
+
+      # @param [MARC::Subfield]
+      # @return [MatchData, nil]
+      def match_oclc_number(subfield)
+        /^\s*\(OCoLC\)[^1-9]*([1-9][0-9]*).*$/.match(subfield.value)
       end
 
       # Normalize isbn value using {https://github.com/billdueber/library_stdnums library_stdnums gem}.
