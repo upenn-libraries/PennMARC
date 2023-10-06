@@ -78,6 +78,20 @@ describe 'PennMARC::Identifier' do
     end
   end
 
+  describe '.oclc_id_search' do
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '035', subfields: { a: '(PU)4422776-penndb-Voyager' }),
+        marc_field(tag: '035', subfields: { z: '(OCoLC)ocn610094484' }),
+        marc_field(tag: '035', subfields: { a: '(OCoLC)ocn1483169584' })
+      ]
+    end
+
+    it 'returns expected search values' do
+      expect(helper.oclc_id_search(record)).to contain_exactly('610094484', '1483169584')
+    end
+  end
+
   describe '.publisher_number_show' do
     let(:record) do
       marc_record fields: [

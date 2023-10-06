@@ -80,6 +80,30 @@ module PennMARC
         end
       end
 
+      # Retrieve valid and invalid numeric OCLC IDs from {https://www.oclc.org/bibformats/en/0xx/035.html 035 field}
+      # for search.
+      # @param [MARC::Record] record
+      # @return [Array<String>]
+      def oclc_id_search(record)
+        record.fields('035').flat_map do |field|
+          field.filter_map do |subfield|
+            # skip unless subfield 'a' or 'z'
+            next unless subfield.code.in?(%w[a z])
+
+            # skip unless subfield value matches OCLC ID
+            next unless subfield_is_oclc?(subfield)
+
+            # search for numeric part of oclc id
+            match = match_oclc_number(subfield)
+
+            # skip unless search to find numeric part of oclc id has a match
+            next unless match
+
+            match[1]
+          end
+        end
+      end
+
       # Get publisher issued identifiers from fields {https://www.oclc.org/bibformats/en/0xx/024.html 024},
       # {https://www.oclc.org/bibformats/en/0xx/024.html 028}, and related
       # {https://www.oclc.org/bibformats/en/8xx/880.html 880 field}. We do not return DOI values stored in 024 ǂ2,
