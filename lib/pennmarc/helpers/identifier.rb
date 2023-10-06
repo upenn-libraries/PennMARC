@@ -23,7 +23,7 @@ module PennMARC
           if field.tag == '020'
             field.filter_map { |subfield| normalize_isbn(subfield.value) if subfield_in?(%w[a z]).call(subfield) }
           else
-            field.filter_map { |subfield| subfield.value if subfield_in?(%w[a l z]).call(subfield) }
+            field.filter_map { |subfield| subfield.value if subfield_in?(%w[a l m y z]).call(subfield) }
           end
         }.flatten.uniq
       end

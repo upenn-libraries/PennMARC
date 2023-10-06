@@ -17,13 +17,15 @@ describe 'PennMARC::Identifier' do
     let(:record) do
       marc_record fields: [
         marc_field(tag: '020', subfields: { a: '9781594205071', z: '1555975275' }),
-        marc_field(tag: '022', subfields: { a: '0008-6533', l: '0300-7162', z: '0799-5946 ' })
+        marc_field(tag: '022',
+                   subfields: { a: '0008-6533', l: '0300-7162', m: 'cancelled', y: 'incorrect', z: '0799-5946' })
       ]
     end
 
     it 'returns expected search values' do
       expect(helper.isxn_search(record)).to contain_exactly('9781594205071', '1555975275', '9781555975272',
-                                                            '1594205078', '0300-7162', '0008-6533', '0799-5946 ')
+                                                            '1594205078', '0300-7162', '0008-6533', '0799-5946',
+                                                            'cancelled', 'incorrect')
     end
 
     it 'converts ISBN10 values to ISBN13' do
