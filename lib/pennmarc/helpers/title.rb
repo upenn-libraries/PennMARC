@@ -89,7 +89,7 @@ module PennMARC
                  end
         raw_title = join_subfields(title_field, &subfield_in?(['a'])) # get title from subfield a
         value = if offset.between?(1, 9)
-                  { prefix: raw_title[0..offset - 1].strip, filing: raw_title[offset..].strip }
+                  { prefix: raw_title[0..offset - 1]&.strip, filing: raw_title[offset..]&.strip }
                 elsif raw_title.present?
                   handle_bracket_prefix raw_title
                 else
