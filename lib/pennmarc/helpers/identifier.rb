@@ -70,7 +70,7 @@ module PennMARC
             next unless subfield_a_is_oclc?(subfield)
 
             # search for numeric part of oclc id (e.g. '610094484' in '(OCoLC)ocn610094484')
-            match = /^\s*\(OCoLC\)[^1-9]*([1-9][0-9]*).*$/.match(subfield.value)
+            match = match_oclc_number(subfield)
 
             # skip unless search to find numeric part of oclc id has a match
             next unless match
