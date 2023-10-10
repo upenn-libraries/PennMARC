@@ -23,7 +23,7 @@ module PennMARC
           if field.tag == '020'
             field.filter_map { |subfield| normalize_isbn(subfield.value) if subfield_in?(%w[a z]).call(subfield) }
           else
-            field.filter_map { |subfield| subfield.value if subfield_in?(%w[a l z]).call(subfield) }
+            field.filter_map { |subfield| subfield.value if subfield_in?(%w[a l m y z]).call(subfield) }
           end
         }.flatten.uniq
       end
@@ -56,21 +56,42 @@ module PennMARC
 
       # Get numeric OCLC ID of first {https://www.oclc.org/bibformats/en/0xx/035.html 035 field}
       # with an OCLC ID defined in subfield 'a'.
-      #
-      # @todo We should evaluate this to return a single value in the future since subfield a is non-repeatable
       # @param [MARC::Record] record
-      # @return [Array<String>]
-      def oclc_id(record)
-        oclc_id = Array.wrap(record.fields('035')
-                         .find { |field| field.any? { |subfield| subfield_a_is_oclc?(subfield) } })
-
-        oclc_id.flat_map do |field|
+      # @return [String, nil]
+      def oclc_id_show(record)
+        ids = Array.wrap(record.fields('035')
+                           .find { |field| field.any? { |subfield| subfield_a_is_oclc?(subfield) } })
+        ids.flat_map { |field|
           field.filter_map do |subfield|
             # skip unless subfield 'a' is an oclc id value
             next unless subfield_a_is_oclc?(subfield)
 
             # search for numeric part of oclc id (e.g. '610094484' in '(OCoLC)ocn610094484')
-            match = /^\s*\(OCoLC\)[^1-9]*([1-9][0-9]*).*$/.match(subfield.value)
+            match = match_oclc_number(subfield)
+
+            # skip unless search to find numeric part of oclc id has a match
+            next unless match
+
+            match[1]
+          end
+        }.first
+      end
+
+      # Retrieve valid and invalid numeric OCLC IDs from {https://www.oclc.org/bibformats/en/0xx/035.html 035 field}
+      # for search.
+      # @param [MARC::Record] record
+      # @return [Array<String>]
+      def oclc_id_search(record)
+        record.fields('035').flat_map do |field|
+          field.filter_map do |subfield|
+            # skip unless subfield 'a' or 'z'
+            next unless subfield.code.in?(%w[a z])
+
+            # skip unless subfield value matches OCLC ID
+            next unless subfield_is_oclc?(subfield)
+
+            # search for numeric part of oclc id
+            match = match_oclc_number(subfield)
 
             # skip unless search to find numeric part of oclc id has a match
             next unless match
@@ -143,7 +164,19 @@ module PennMARC
       # @param [MARC::Subfield]
       # @return [TrueClass, FalseClass]
       def subfield_a_is_oclc?(subfield)
-        subfield.code == 'a' && (subfield.value =~ /^\(OCoLC\).*/).present?
+        subfield.code == 'a' && subfield_is_oclc?(subfield)
+      end
+
+      # @param [MARC::Subfield]
+      # @return [TrueClass, FalseClass]
+      def subfield_is_oclc?(subfield)
+        (subfield.value =~ /^\(OCoLC\).*/).present?
+      end
+
+      # @param [MARC::Subfield]
+      # @return [MatchData, nil]
+      def match_oclc_number(subfield)
+        /^\s*\(OCoLC\)[^1-9]*([1-9][0-9]*).*$/.match(subfield.value)
       end
 
       # Normalize isbn value using {https://github.com/billdueber/library_stdnums library_stdnums gem}.
