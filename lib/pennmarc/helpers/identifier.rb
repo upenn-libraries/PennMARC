@@ -56,15 +56,12 @@ module PennMARC
 
       # Get numeric OCLC ID of first {https://www.oclc.org/bibformats/en/0xx/035.html 035 field}
       # with an OCLC ID defined in subfield 'a'.
-      #
-      # @todo We should evaluate this to return a single value in the future since subfield a is non-repeatable
       # @param [MARC::Record] record
-      # @return [Array<String>]
-      def oclc_id(record)
-        oclc_id = Array.wrap(record.fields('035')
-                         .find { |field| field.any? { |subfield| subfield_a_is_oclc?(subfield) } })
-
-        oclc_id.flat_map do |field|
+      # @return [String, nil]
+      def oclc_id_show(record)
+        ids = Array.wrap(record.fields('035')
+                           .find { |field| field.any? { |subfield| subfield_a_is_oclc?(subfield) } })
+        ids.flat_map { |field|
           field.filter_map do |subfield|
             # skip unless subfield 'a' is an oclc id value
             next unless subfield_a_is_oclc?(subfield)
@@ -77,7 +74,7 @@ module PennMARC
 
             match[1]
           end
-        end
+        }.first
       end
 
       # Retrieve valid and invalid numeric OCLC IDs from {https://www.oclc.org/bibformats/en/0xx/035.html 035 field}

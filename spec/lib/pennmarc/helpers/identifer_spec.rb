@@ -64,7 +64,7 @@ describe 'PennMARC::Identifier' do
     end
   end
 
-  describe '.oclc_id' do
+  describe '.oclc_id_show' do
     let(:record) do
       marc_record fields: [
         marc_field(tag: '035', subfields: { a: '(PU)4422776-penndb-Voyager' }),
@@ -74,7 +74,7 @@ describe 'PennMARC::Identifier' do
     end
 
     it 'returns expected show values' do
-      expect(helper.oclc_id(record)).to contain_exactly('610094484')
+      expect(helper.oclc_id_show(record)).to eq '610094484'
     end
   end
 
