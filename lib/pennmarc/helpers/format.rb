@@ -41,10 +41,10 @@ module PennMARC
         results += record.fields('880').map do |f|
           subfield_to_ignore = if subfield_value?(f, 6, /^300/)
                                  %w[3 6 8]
-                               elsif subfield_value?(f, 6, /^(254|255|310|342|352|362)/)
-                                 %w[6 8]
                                elsif subfield_value?(f, 6, /^340/)
                                  %w[0 2 6 8]
+                               else
+                                 %w[6 8]
                                end
           join_subfields(f, &subfield_not_in?(subfield_to_ignore))
         end
