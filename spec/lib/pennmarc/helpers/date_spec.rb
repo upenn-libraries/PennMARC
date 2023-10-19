@@ -27,6 +27,22 @@ describe 'PennMARC::Date' do
   end
 
   describe '.added' do
+    context 'with a robust itm tag' do
+      let(:fields) do
+        [marc_field(tag: 'itm', subfields: { g: 'VanPeltLib', i: 'Tw .156', q: '2023-10-19' })]
+      end
+
+      it 'returns only the expected date_added value' do
+        expect(helper.added(record)).to eq DateTime.strptime('2023-10-19', '%Y-%m-%d')
+      end
+
+      it 'does not output any warning to STDOUT' do
+        expect {
+          helper.added(record)
+        }.to_not output(a_string_including('Error parsing date in date added subfield')).to_stdout
+      end
+    end
+
     context "with date formatted '%Y-%m-%d'" do
       let(:fields) { [marc_field(tag: 'itm', subfields: { q: '2023-06-28' })] }
 
