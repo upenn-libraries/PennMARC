@@ -25,21 +25,17 @@ module PennMARC
       # @return [DateTime, nil] The date added, or nil if date found in record is invalid
       def added(record)
         record.fields(EnrichedMarc::TAG_ITEM).flat_map { |field|
-          field.filter_map do |subfield|
-            # skip unless field has date created subfield
-            next unless subfield_defined?(field, EnrichedMarc::SUB_ITEM_DATE_CREATED)
-
+          subfield_values(field, EnrichedMarc::SUB_ITEM_DATE_CREATED).filter_map do |date_added|
             # On 2022-05-02, this field value (as exported in enriched publishing
             # job from Alma) began truncating time to day-level granularity. We have
             # no guarantee that this won't switch back in the future, so for the
             # foreseeable future we should support both formats.
 
-            format = subfield.value.size == 10 ? '%Y-%m-%d' : '%Y-%m-%d %H:%M:%S'
+            format = date_added.size == 10 ? '%Y-%m-%d' : '%Y-%m-%d %H:%M:%S'
 
-            DateTime.strptime(subfield.value, format)
-
+            DateTime.strptime(date_added, format)
           rescue StandardError => e
-            puts "Error parsing date in date added subfield: #{subfield.value} - #{e}"
+            puts "Error parsing date in date added subfield: #{date_added} - #{e}"
             nil
           end
         }.max
