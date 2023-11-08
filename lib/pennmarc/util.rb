@@ -5,6 +5,14 @@ require_relative 'heading_control'
 module PennMARC
   # class to hold "utility" methods used in MARC parsing methods
   module Util
+    # Check if a given record has a field present by tag (e.g., '041')
+    # @param [MARC::Record] record
+    # @param [String] marc_field
+    # @return [Boolean]
+    def field_defined?(record, marc_field)
+      record.select { |field| field.tag == marc_field }.any?
+    end
+
     # Join subfields from a field selected based on a provided proc
     # @param [MARC::DataField] field
     # @param [Proc] selector
