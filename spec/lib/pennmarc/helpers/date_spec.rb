@@ -39,7 +39,7 @@ describe 'PennMARC::Date' do
       it 'does not output any warning to STDOUT' do
         expect {
           helper.added(record)
-        }.to_not output(a_string_including('Error parsing date in date added subfield')).to_stdout
+        }.not_to output(a_string_including('Error parsing date in date added subfield')).to_stdout
       end
     end
 

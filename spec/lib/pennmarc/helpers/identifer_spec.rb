@@ -113,7 +113,6 @@ describe 'PennMARC::Identifier' do
     it 'does not return DOI values' do
       expect(helper.publisher_number_show(record)).not_to include('10.18574/9781479842865')
       expect(helper.publisher_number_show(record)).not_to include('doi')
-
     end
   end
 

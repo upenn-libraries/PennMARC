@@ -17,9 +17,11 @@ describe 'PennMARC::Creator' do
       end
 
       it 'contains the expected search field values for a single author work' do
-        expect(helper.search(record, relator_map: mapping)).to eq ['Name Surname http://cool.uri/12345 author 1900-2000.',
-                                                                   'Surname, Name http://cool.uri/12345 author 1900-2000.',
-                                                                   'Alternative Surname']
+        expect(helper.search(record, relator_map: mapping)).to eq [
+          'Name Surname http://cool.uri/12345 author 1900-2000.',
+          'Surname, Name http://cool.uri/12345 author 1900-2000.',
+          'Alternative Surname'
+        ]
       end
     end
 
@@ -58,7 +60,9 @@ describe 'PennMARC::Creator' do
       end
 
       it 'returns values for the corporate author, including mapped relator code from ǂ4' do
-        expect(helper.values(record, relator_map: mapping)).to contain_exactly 'Annual Report Leader author, Author.'
+        expect(helper.values(record, relator_map: mapping)).to contain_exactly(
+          'Annual Report Leader author, Author.'
+        )
       end
     end
   end
@@ -146,7 +150,8 @@ describe 'PennMARC::Creator' do
       end
 
       it 'includes corporate author and creator values from allowed subfields' do
-        expect(values).to contain_exactly 'Conference on Things Earth', 'Series of Things Earth', 'Thing Institute'
+        expect(values).to contain_exactly 'Conference on Things Earth', 'Series of Things Earth',
+                                          'Thing Institute'
       end
     end
   end
