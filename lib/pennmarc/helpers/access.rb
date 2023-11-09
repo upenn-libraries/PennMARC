@@ -5,20 +5,22 @@ module PennMARC
   class Access < Helper
     ONLINE = 'Online'
     AT_THE_LIBRARY = 'At the library'
+    ELEC_AVAILABILITY_TAG = 'AVE'
+    PHYS_AVAILABILITY_TAG = 'AVA'
 
     class << self
-      # Based primarily on the "enhanced MARC" fields added by Alma, determine if the record has
-      # electronic access or has physical holding, and is therefore "Online" or "At the library". If a record is "At the
-      # library", but has a link to a finding aid in the 856 field (matching certain criteria), also add 'Online' as an
-      # access method.
+      # Based on enhanced metadata fields added by Alma publishing process or API, determine if the record has
+      # electronic access or has physical holdings, and is therefore "Online" or "At the library". If a record is "At
+      # the library", but has a link to a finding aid in the 856 field (matching certain criteria), also add 'Online' as
+      # an access method.
       # @todo What if none of these criteria match? Should we include "At the library" by default? Records with no value
       #       in this field would be lost if the user selects a facet value.
       # @param [MARC::Record] record
       # @return [Array]
       def facet(record)
         acc = record.filter_map do |field|
-          next AT_THE_LIBRARY if field.tag == EnrichedMarc::TAG_HOLDING
-          next ONLINE if field.tag == EnrichedMarc::TAG_ELECTRONIC_INVENTORY
+          next AT_THE_LIBRARY if physical_holding_tag?(field)
+          next ONLINE if electronic_holding_tag?(field)
         end
 
         return acc if acc.size == 2 # return early if all values are already present
@@ -28,6 +30,20 @@ module PennMARC
       end
 
       private
+
+      # Does the record have added electronic holding info?
+      # @param [MARC::Field] field
+      # @return [Boolean]
+      def electronic_holding_tag?(field)
+        field.tag.in? [EnrichedMarc::TAG_ELECTRONIC_INVENTORY, ELEC_AVAILABILITY_TAG]
+      end
+
+      # Does the record have added physical holding info?
+      # @param [MARC::Field] field
+      # @return [Boolean]
+      def physical_holding_tag?(field)
+        field.tag.in? [EnrichedMarc::TAG_HOLDING, PHYS_AVAILABILITY_TAG]
+      end
 
       # Check if a record contains an 856 entry for an online finding aid, meeting these criteria:
       # 1. Indicator 1 is 4 (HTTP resource)
