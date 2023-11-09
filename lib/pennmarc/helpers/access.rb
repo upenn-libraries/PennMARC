@@ -7,8 +7,8 @@ module PennMARC
     AT_THE_LIBRARY = 'At the library'
 
     class << self
-      # Based primarily on the fields added by Alma in the "enhanced MARC" fields, determine if the record has
-      # electronic access or has physical holding, and is therefore "At the library". If a record is "At the library",
+      # Based primarily on the "enhanced MARC" fields added by Alma, determine if the record has
+      # electronic access or has physical holding, and is therefore "Online" or "At the library". If a record is "At the library",
       # but has a link to a finding aid in the 856 field (matching certain criteria), also add 'Online' as an access
       # method.
       # @todo What if none of these criteria match? Should we include "At the library" by default? Records with no value
