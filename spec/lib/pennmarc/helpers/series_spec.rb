@@ -19,9 +19,11 @@ describe 'PennMARC::Series' do
 
   describe '.show' do
     it 'returns the series' do
-      expect(helper.show(record, relator_map: mapping)).to contain_exactly('Bean Bagatolvski 1997- bk. 1',
-                                                              'Teachings of the feathered pillow',
-                                                              'Учения пернатой подушки', 'Evil Giant Megacorp')
+      expect(helper.show(record, relator_map: mapping)).to contain_exactly(
+        'Bean Bagatolvski 1997- bk. 1',
+        'Teachings of the feathered pillow',
+        'Учения пернатой подушки', 'Evil Giant Megacorp'
+      )
     end
   end
 

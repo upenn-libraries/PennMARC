@@ -7,6 +7,18 @@ describe 'PennMARC::Util' do
     Class.new { extend PennMARC::Util }
   end
 
+  describe '.field_defined?' do
+    let(:record) { marc_record fields: [marc_field(tag: '100')] }
+
+    it 'returns true if the field is present in the record' do
+      expect(util.field_defined?(record, '100')).to be true
+    end
+
+    it 'returns false if the field is not present in the record' do
+      expect(util.field_defined?(record, '101')).to be false
+    end
+  end
+
   describe '.join_subfields' do
     let(:field) { marc_field subfields: { a: 'bad', '1': 'join', '3': '', '9': 'subfields' } }
 
