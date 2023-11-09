@@ -37,9 +37,17 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Boolean]
       def finding_aid_linkage?(record)
-        record.fields('856')
-              .select { |f| f.indicator1 == '4' && f.indicator2 != '2' }
-              .flat_map do |field|
+        # record.fields('856')
+        #       .select { |f| f.indicator1 == '4' && f.indicator2 != '2' }
+        #       .flat_map do |field|
+        #   subz = subfield_values(field, 'z')
+        #   subfield_values(field, 'u').filter_map do |value|
+        #     return true if subz.include?('Finding aid') && value.include?('hdl.library.upenn.edu')
+        #   end
+        # end
+        record.fields('856').filter_map do |field|
+          next if field.indicator2 == '2' || field.indicator1 != '4'
+
           subz = subfield_values(field, 'z')
           subfield_values(field, 'u').filter_map do |value|
             return true if subz.include?('Finding aid') && value.include?('hdl.library.upenn.edu')
