@@ -8,9 +8,9 @@ module PennMARC
 
     class << self
       # Based primarily on the "enhanced MARC" fields added by Alma, determine if the record has
-      # electronic access or has physical holding, and is therefore "Online" or "At the library". If a record is "At the library",
-      # but has a link to a finding aid in the 856 field (matching certain criteria), also add 'Online' as an access
-      # method.
+      # electronic access or has physical holding, and is therefore "Online" or "At the library". If a record is "At the
+      # library", but has a link to a finding aid in the 856 field (matching certain criteria), also add 'Online' as an
+      # access method.
       # @todo What if none of these criteria match? Should we include "At the library" by default? Records with no value
       #       in this field would be lost if the user selects a facet value.
       # @param [MARC::Record] record
@@ -37,14 +37,6 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Boolean]
       def finding_aid_linkage?(record)
-        # record.fields('856')
-        #       .select { |f| f.indicator1 == '4' && f.indicator2 != '2' }
-        #       .flat_map do |field|
-        #   subz = subfield_values(field, 'z')
-        #   subfield_values(field, 'u').filter_map do |value|
-        #     return true if subz.include?('Finding aid') && value.include?('hdl.library.upenn.edu')
-        #   end
-        # end
         record.fields('856').filter_map do |field|
           next if field.indicator2 == '2' || field.indicator1 != '4'
 
