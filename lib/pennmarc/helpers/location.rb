@@ -85,9 +85,12 @@ module PennMARC
         tag = PennMARC::EnrichedMarc::TAG_HOLDING
         subfield_code = PennMARC::EnrichedMarc::SUB_HOLDING_SHELVING_LOCATION
 
-        if record.fields(PennMARC::EnrichedMarc::TAG_ITEM).any?
+        if field_defined?(record, PennMARC::EnrichedMarc::TAG_ITEM)
           tag = PennMARC::EnrichedMarc::TAG_ITEM
           subfield_code = PennMARC::EnrichedMarc::SUB_ITEM_CURRENT_LOCATION
+        elsif field_defined?(record, 'AVA')
+          tag = PennMARC::Access::PHYS_AVAILABILITY_TAG
+          subfield_code = 'j'
         end
 
         { tag: tag, subfield_code: subfield_code }
