@@ -26,8 +26,9 @@ module PennMARC
       # when no linguistic content is found.
       #
       # @note In franklin, we extracted the language code from the 008 control field. After engaging cataloging unit
-      #   representatives, we decided to extract these values from the 041 field: Includes records for multilingual
-      #   items, items that involve translation, and items where the medium of communication is a sign language.
+      #   representatives, we decided to also extract these values from the 041 field: Includes records for
+      #   multilingual items, items that involve translation, and items where the medium of communication is a 
+      #   sign language.
       #   https://www.loc.gov/marc/bibliographic/bd041.html
       #
       # @param [MARC::Record] record
