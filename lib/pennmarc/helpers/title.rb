@@ -34,10 +34,17 @@ module PennMARC
       def search_aux(record); end
 
       # Journal Title Search field.
-      # @todo port this, it is way complicated but essential for relevance
       # @param [MARC::Record] record
       # @return [Array<String>] journal title information for search
-      def journal_search(record); end
+      def journal_search(record)
+        record.fields(%w[245 880]).filter_map do |field|
+          next if field.tag == '880' && subfield_value_not_in?(field, '6', %w[245])
+
+          next unless format(record).ends_with?('s')
+
+          join_subfields(field, &subfield_not_in?(%w[c 6 8 h]))
+        end
+      end
 
       # Auxiliary Journal Title Search field.
       # @todo port this, it is way complicated but essential for relevance
@@ -191,6 +198,10 @@ module PennMARC
         else
           { prefix: '', filing: title.strip }
         end
+      end
+
+      def format(rec)
+        rec.leader[6..7]
       end
     end
   end
