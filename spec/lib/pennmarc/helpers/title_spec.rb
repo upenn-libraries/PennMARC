@@ -38,6 +38,26 @@ describe 'PennMARC::Title' do
     end
   end
 
+  describe '.journal_search_aux' do
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '130', subfields: { a: 'Uniform Title', c: '130 not included' }),
+        marc_field(tag: '880', subfields: { '6': '130', a: 'Alternative Uniform Title' }),
+        marc_field(tag: '773', subfields: { a: 'Host Uniform Title', s: '773 not included' }),
+        marc_field(tag: '700', subfields: { t: 'Personal Entry Title', s: '700 not included' }),
+        marc_field(tag: '505', subfields: { t: 'Invalid Formatted Contents Note Title' }, indicator1: 'invalid'),
+        marc_field(tag: '505', subfields: { t: 'Formatted Contents Note Title', s: '505 not included' },
+                   indicator1: '0', indicator2: '0')
+      ], leader: 'ZZZZZnasZa22ZZZZZzZZ4500'
+    end
+
+    it 'returns journal search aux values' do
+      expect(helper.journal_search_aux(record)).to contain_exactly('Uniform Title', 'Alternative Uniform Title',
+                                                                   'Host Uniform Title', 'Personal Entry Title',
+                                                                   'Formatted Contents Note Title')
+    end
+  end
+
   describe '.show' do
     let(:record) { marc_record fields: [marc_field(tag: '245', subfields: subfields)] }
 

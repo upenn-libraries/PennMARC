@@ -50,7 +50,12 @@ module PennMARC
       # @todo port this, it is way complicated but essential for relevance
       # @param [MARC::Record] record
       # @return [Array<String>] journal title information for search
-      def journal_search_aux(record); end
+      def journal_search_aux(record)
+        search_aux_values(record: record, tags: AUX_TITLE_TAGS[:main], journal: true, exclude: %w[c 6 8]) +
+          search_aux_values(record: record, tags: AUX_TITLE_TAGS[:related], journal: true, exclude: %w[s t]) +
+          search_aux_values(record: record, tags: AUX_TITLE_TAGS[:entity], journal: true, include: %w[t]) +
+          search_aux_values(record: record, tags: %w[505], journal: true, include: %w[t])
+      end
 
       # Single-valued Title, for use in headings. Takes the first {https://www.oclc.org/bibformats/en/2xx/245.html 245}
       # value. Special consideration for
@@ -202,6 +207,24 @@ module PennMARC
 
       def format(rec)
         rec.leader[6..7]
+      end
+
+      def search_aux_values(record:, tags:, journal: false, include: [], exclude: [])
+        record.fields(tags + ['880']).filter_map do |field|
+          next if field.tag == '880' && subfield_value_not_in?(field, '6', tags)
+
+          next if field.tag == '505' && !(field.indicator1 == '0' && field.indicator2 == '0')
+
+          next if journal && !format(record).ends_with?('s')
+
+          return StandardError if include.present? && exclude.present?
+
+          if exclude.present?
+            join_subfields(field, &subfield_not_in?(exclude))
+          else
+            join_subfields(field, &subfield_in?(include))
+          end
+        end
       end
     end
   end
