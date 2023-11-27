@@ -24,6 +24,20 @@ describe 'PennMARC::Title' do
     it 'returns search aux values', pending: 'Not implemented yet'
   end
 
+  describe '.journal_search' do
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '245', subfields: { a: 'Some Journal Title' }),
+        marc_field(tag: '880', subfields: { a: 'Alternative Script', '6': '245' }),
+        marc_field(tag: '880', subfields: { a: 'Unrelated 880', '6': 'invalid' })
+      ], leader: 'ZZZZZnasZa22ZZZZZzZZ4500'
+    end
+
+    it 'returns journal search values' do
+      expect(helper.journal_search(record)).to contain_exactly('Some Journal Title', 'Alternative Script')
+    end
+  end
+
   describe '.show' do
     let(:record) { marc_record fields: [marc_field(tag: '245', subfields: subfields)] }
 
