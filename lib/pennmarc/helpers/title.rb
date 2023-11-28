@@ -42,6 +42,8 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>] journal title information for search
       def journal_search(record)
+        return [] if not_a_serial?(record)
+
         record.fields(%w[245 880]).filter_map do |field|
           next if field.tag == '880' && subfield_value_not_in?(field, '6', %w[245])
 
