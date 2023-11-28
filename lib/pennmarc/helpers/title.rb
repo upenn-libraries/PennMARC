@@ -30,8 +30,13 @@ module PennMARC
       # @note Ported from get_title_2_search_values.
       # @todo port this, it is way complicated but essential for relevance
       # @param [MARC::Record] record
-      # @return [Array<String>] array of title values for search
-      def search_aux(record); end
+      # @return [Array<String>] array of auxiliary title values for search
+      def search_aux(record)
+        search_aux_values(record: record, title_type: :main, &subfield_not_in?(%w[c 6 8])) +
+          search_aux_values(record: record, title_type: :related, &subfield_not_in?(%w[s t])) +
+          search_aux_values(record: record, title_type: :entity, &subfield_in?(%w[t])) +
+          search_aux_values(record: record, title_type: :note, &subfield_in?(%w[t]))
+      end
 
       # Journal Title Search field.
       # @param [MARC::Record] record
@@ -51,10 +56,10 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>] journal title information for search
       def journal_search_aux(record)
-        search_aux_values(record: record, tags: AUX_TITLE_TAGS[:main], journal: true, exclude: %w[c 6 8]) +
-          search_aux_values(record: record, tags: AUX_TITLE_TAGS[:related], journal: true, exclude: %w[s t]) +
-          search_aux_values(record: record, tags: AUX_TITLE_TAGS[:entity], journal: true, include: %w[t]) +
-          search_aux_values(record: record, tags: %w[505], journal: true, include: %w[t])
+        search_aux_values(record: record, title_type: :main, journal: true, &subfield_not_in?(%w[c 6 8])) +
+          search_aux_values(record: record, title_type: :related, journal: true, &subfield_not_in?(%w[s t])) +
+          search_aux_values(record: record, title_type: :entity, journal: true, &subfield_in?(%w[t])) +
+          search_aux_values(record: record, title_type: :note, journal: true, &subfield_in?(%w[t]))
       end
 
       # Single-valued Title, for use in headings. Takes the first {https://www.oclc.org/bibformats/en/2xx/245.html 245}
@@ -205,25 +210,40 @@ module PennMARC
         end
       end
 
-      def format(rec)
-        rec.leader[6..7]
+      # Evaluate {https://www.loc.gov/marc/bibliographic/bdleader.html MARC leader} to determine if record is a serial.
+      # @param [MARC::Record] record
+      # @return [Boolean]
+      def not_a_serial?(record)
+        !record.leader[6..7].ends_with?('s')
       end
 
-      def search_aux_values(record:, tags:, journal: false, include: [], exclude: [])
-        record.fields(tags + ['880']).filter_map do |field|
+      # @param [MARC::DataField] field
+      # @param [String] value
+      # @return [Boolean]
+      def indicators_are_not_value?(field, value)
+        field.indicator1 != value && field.indicator2 != value
+      end
+
+      # Retrieve auxiliary title values. Returns no values if a journal is expected but the
+      # {https://www.loc.gov/marc/bibliographic/bdleader.html MARC leader} indicates that the record is not a serial.
+      # We take special consideration for the {https://www.loc.gov/marc/bibliographic/bd505.html 505 field}, extracting
+      # values only when indicator1 and indicator2 are both '0'.
+      # @param [MARC::Record] record
+      # @param [Symbol] title_type
+      # @param [Boolean] journal
+      # @bloc [Proc] join_selector
+      # @return [Array<String>]
+      def search_aux_values(record:, title_type:, journal: false, &join_selector)
+        return [] if journal && not_a_serial?(record)
+
+        tags = AUX_TITLE_TAGS[title_type] + ['880']
+
+        record.fields(tags).filter_map do |field|
+          next if field.tag == '505' && indicators_are_not_value?(field, '0')
+
           next if field.tag == '880' && subfield_value_not_in?(field, '6', tags)
 
-          next if field.tag == '505' && !(field.indicator1 == '0' && field.indicator2 == '0')
-
-          next if journal && !format(record).ends_with?('s')
-
-          return StandardError if include.present? && exclude.present?
-
-          if exclude.present?
-            join_subfields(field, &subfield_not_in?(exclude))
-          else
-            join_subfields(field, &subfield_in?(include))
-          end
+          join_subfields(field, &join_selector)
         end
       end
     end
