@@ -21,24 +21,7 @@ describe 'PennMARC::Title' do
   end
 
   describe '.search_aux' do
-    it 'returns search aux values', pending: 'Not implemented yet'
-  end
-
-  describe '.journal_search' do
-    let(:record) do
-      marc_record fields: [
-        marc_field(tag: '245', subfields: { a: 'Some Journal Title' }),
-        marc_field(tag: '880', subfields: { a: 'Alternative Script', '6': '245' }),
-        marc_field(tag: '880', subfields: { a: 'Unrelated 880', '6': 'invalid' })
-      ], leader: 'ZZZZZnasZa22ZZZZZzZZ4500'
-    end
-
-    it 'returns journal search values' do
-      expect(helper.journal_search(record)).to contain_exactly('Some Journal Title', 'Alternative Script')
-    end
-  end
-
-  describe '.journal_search_aux' do
+    let(:leader) { 'ZZZZZnaaZa22ZZZZZzZZ4500' }
     let(:record) do
       marc_record fields: [
         marc_field(tag: '130', subfields: { a: 'Uniform Title', c: '130 not included' }),
@@ -48,13 +31,75 @@ describe 'PennMARC::Title' do
         marc_field(tag: '505', subfields: { t: 'Invalid Formatted Contents Note Title' }, indicator1: 'invalid'),
         marc_field(tag: '505', subfields: { t: 'Formatted Contents Note Title', s: '505 not included' },
                    indicator1: '0', indicator2: '0')
-      ], leader: 'ZZZZZnasZa22ZZZZZzZZ4500'
+      ], leader: leader
     end
 
-    it 'returns journal search aux values' do
+    it 'returns auxiliary titles' do
+      expect(helper.search_aux(record)).to contain_exactly('Uniform Title', 'Host Uniform Title',
+                                                           'Alternative Uniform Title', 'Personal Entry Title',
+                                                           'Formatted Contents Note Title')
+    end
+
+    context 'when the leader indicates the record is a serial' do
+      let(:leader) { 'ZZZZZnasZa22ZZZZZzZZ4500' }
+
+      it 'returns auxiliary titles' do
+        expect(helper.search_aux(record)).to contain_exactly('Uniform Title', 'Host Uniform Title',
+                                                             'Alternative Uniform Title', 'Personal Entry Title',
+                                                             'Formatted Contents Note Title')
+      end
+    end
+  end
+
+  describe '.journal_search' do
+    let(:leader) { 'ZZZZZnasZa22ZZZZZzZZ4500' }
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '245', subfields: { a: 'Some Journal Title' }),
+        marc_field(tag: '880', subfields: { a: 'Alternative Script', '6': '245' }),
+        marc_field(tag: '880', subfields: { a: 'Unrelated 880', '6': 'invalid' })
+      ], leader: leader
+    end
+
+    it 'returns journal search titles' do
+      expect(helper.journal_search(record)).to contain_exactly('Some Journal Title', 'Alternative Script')
+    end
+
+    context 'when the record is not a serial' do
+      let(:leader) { 'ZZZZZnaaZa22ZZZZZzZZ4500' }
+
+      it 'returns an empty array' do
+        expect(helper.journal_search_aux(record)).to be_empty
+      end
+    end
+  end
+
+  describe '.journal_search_aux' do
+    let(:leader) { 'ZZZZZnasZa22ZZZZZzZZ4500' }
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '130', subfields: { a: 'Uniform Title', c: '130 not included' }),
+        marc_field(tag: '880', subfields: { '6': '130', a: 'Alternative Uniform Title' }),
+        marc_field(tag: '773', subfields: { a: 'Host Uniform Title', s: '773 not included' }),
+        marc_field(tag: '700', subfields: { t: 'Personal Entry Title', s: '700 not included' }),
+        marc_field(tag: '505', subfields: { t: 'Invalid Formatted Contents Note Title' }, indicator1: 'invalid'),
+        marc_field(tag: '505', subfields: { t: 'Formatted Contents Note Title', s: '505 not included' },
+                   indicator1: '0', indicator2: '0')
+      ], leader: leader
+    end
+
+    it 'returns auxiliary journal search titles' do
       expect(helper.journal_search_aux(record)).to contain_exactly('Uniform Title', 'Alternative Uniform Title',
                                                                    'Host Uniform Title', 'Personal Entry Title',
                                                                    'Formatted Contents Note Title')
+    end
+
+    context 'when the record is not a serial' do
+      let(:leader) { 'ZZZZZnaaZa22ZZZZZzZZ4500' }
+
+      it 'returns an empty array' do
+        expect(helper.journal_search_aux(record)).to be_empty
+      end
     end
   end
 
