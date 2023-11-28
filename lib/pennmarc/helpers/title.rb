@@ -4,7 +4,25 @@ module PennMARC
   # This helper contains logic for parsing out Title and Title-related fields.
   class Title < Helper
     class << self
-      # these will be used when completing the *search_aux methods
+      # We use these fields when retrieving auxiliary titles in the *search_aux methods:
+      # {https://www.loc.gov/marc/bibliographic/bd130.html 130},
+      # {https://www.loc.gov/marc/bibliographic/bd210.html 210},
+      # {https://www.loc.gov/marc/bibliographic/bd245.html 245},
+      # {https://www.loc.gov/marc/bibliographic/bd246.html 246},
+      # {https://www.loc.gov/marc/bibliographic/bd247.html 247},
+      # {https://www.loc.gov/marc/bibliographic/bd440.html 440},
+      # {https://www.loc.gov/marc/bibliographic/bd490.html 490},
+      # {https://www.loc.gov/marc/bibliographic/bd730.html 730},
+      # {https://www.loc.gov/marc/bibliographic/bd740.html 740},
+      # {https://www.loc.gov/marc/bibliographic/bd830.html 830},
+      # {https://www.loc.gov/marc/bibliographic/bd773.html 773},
+      # {https://www.loc.gov/marc/bibliographic/bd774.html 774},
+      # {https://www.loc.gov/marc/bibliographic/bd780.html 780},
+      # {https://www.loc.gov/marc/bibliographic/bd785.html 785},
+      # {https://www.loc.gov/marc/bibliographic/bd700.html 700},
+      # {https://www.loc.gov/marc/bibliographic/bd710.html 710},
+      # {https://www.loc.gov/marc/bibliographic/bd711.html 711},
+      # {https://www.loc.gov/marc/bibliographic/bd505.html 505}
       AUX_TITLE_TAGS = {
         main: %w[130 210 240 245 246 247 440 490 730 740 830],
         related: %w[773 774 780 785],
@@ -12,7 +30,7 @@ module PennMARC
         note: %w[505]
       }.freeze
 
-      # Main Title Search field. Takes from 245 and linked 880.
+      # Main Title Search field. Takes from {https://www.loc.gov/marc/bibliographic/bd245.html 245} and linked 880.
       # @note Ported from get_title_1_search_values.
       # @param [MARC::Record] record
       # @return [Array<String>] array of title values for search
@@ -24,9 +42,8 @@ module PennMARC
         end
       end
 
-      # Auxiliary Title Search field. Takes from many fields that contain title-like information.
-      # @note Ported from get_title_2_search_values.
-      # @todo port this, it is way complicated but essential for relevance
+      # Auxiliary Title Search field. Takes from many fields defined in {AUX_TITLE_TAGS} that contain title-like
+      # information.
       # @param [MARC::Record] record
       # @return [Array<String>] array of auxiliary title values for search
       def search_aux(record)
@@ -36,7 +53,9 @@ module PennMARC
           search_aux_values(record: record, title_type: :note, &subfield_in?(%w[t]))
       end
 
-      # Journal Title Search field.
+      # Journal Title Search field. Takes from {https://www.loc.gov/marc/bibliographic/bd245.html 245} and linked 880.
+      # We do not return any values if the {https://www.loc.gov/marc/bibliographic/bdleader.html MARC leader}
+      # indicates that the record is not a serial.
       # @param [MARC::Record] record
       # @return [Array<String>] journal title information for search
       def journal_search(record)
@@ -51,10 +70,11 @@ module PennMARC
         end
       end
 
-      # Auxiliary Journal Title Search field.
-      # @todo port this, it is way complicated but essential for relevance
+      # Auxiliary Journal Title Search field. Takes from many fields defined in {AUX_TITLE_TAGS} that contain title-like
+      # information. Does not return any titles if the {https://www.loc.gov/marc/bibliographic/bdleader.html MARC leader}
+      # indicates that the record is not a serial.
       # @param [MARC::Record] record
-      # @return [Array<String>] journal title information for search
+      # @return [Array<String>] auxiliary journal title information for search
       def journal_search_aux(record)
         search_aux_values(record: record, title_type: :main, journal: true, &subfield_not_in?(%w[c 6 8])) +
           search_aux_values(record: record, title_type: :related, journal: true, &subfield_not_in?(%w[s t])) +
