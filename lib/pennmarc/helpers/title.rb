@@ -8,7 +8,8 @@ module PennMARC
       AUX_TITLE_TAGS = {
         main: %w[130 210 240 245 246 247 440 490 730 740 830],
         related: %w[773 774 780 785],
-        entity: %w[700 710 711]
+        entity: %w[700 710 711],
+        note: %w[505]
       }.freeze
 
       # Main Title Search field. Takes from 245 and linked 880.
