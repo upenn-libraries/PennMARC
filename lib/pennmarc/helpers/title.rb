@@ -64,8 +64,6 @@ module PennMARC
         record.fields(%w[245 880]).filter_map do |field|
           next if field.tag == '880' && subfield_value_not_in?(field, '6', %w[245])
 
-          next unless format(record).ends_with?('s')
-
           join_subfields(field, &subfield_not_in?(%w[c 6 8 h]))
         end
       end
