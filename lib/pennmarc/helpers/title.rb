@@ -16,11 +16,8 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>] array of title values for search
       def search(record)
-        titles = record.fields('245').filter_map do |field|
-          join_subfields(field, &subfield_not_in?(%w[c 6 8 h]))
-        end
-        titles + record.fields('880').filter_map do |field|
-          next unless subfield_value?(field, '6', /245/)
+        record.fields(%w[245 880]).filter_map do |field|
+          next if field.tag == '880' && subfield_value_not_in?(field, '6', %w[245])
 
           join_subfields(field, &subfield_not_in?(%w[c 6 8 h]))
         end
