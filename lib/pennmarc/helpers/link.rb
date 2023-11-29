@@ -10,9 +10,37 @@ module PennMARC
       # @return [Object]
       def offsite(record); end
 
-      def full_text(record:); end
+      # Full text links from MARC 856 fields.
+      # @param [MARC::Record] record
+      # @return [Array] array of hashes
+      def full_text(record:)
+        indicator_2_options = %w[0 1]
+        record.fields('856').filter_map do |field|
+          next unless field.indicator1 == '4' && indicator_2_options.include?(field.indicator2)
+
+          link_text, link_url = link_text_and_url(field)
+          {
+            link_text: link_text.present? ? link_text : link_url,
+            link_url: link_url
+          }
+        end
+      end
 
       def web(record:); end
+
+      private
+
+      # Extract subfield 3 and z/y depending on the presence of either. Extract link url and assemble array
+      # with text and link.
+      # @param [MARC::Field] field
+      # @return [Array]
+      def link_text_and_url(field)
+        subfield3 = join_subfields(field, &subfield_in?(%w[3]))
+        subfield_zy = field.find_all(&subfield_in?(%w[z y])).map(&:value)
+        link_text = [subfield3, subfield_zy.first].compact.join(' ')
+        link_url = field.find_all(&subfield_in?(%w[u])).map(&:value).first || ''
+        [link_text, link_url.sub(' target=_blank', '')]
+      end
     end
   end
 end
