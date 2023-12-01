@@ -14,19 +14,17 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array] array of hashes
       def full_text(record:)
-        indicator_2_options = %w[0 1]
-        record.fields('856').filter_map do |field|
-          next unless field.indicator1 == '4' && indicator_2_options.include?(field.indicator2)
-
-          link_text, link_url = link_text_and_url(field)
-          {
-            link_text: link_text.present? ? link_text : link_url,
-            link_url: link_url
-          }
-        end
+        indicator2_options = %w[0 1]
+        get_links_from_record(record, indicator2_options)
       end
 
-      def web(record:); end
+      # Web text links from MARC 856 fields.
+      # @param [MARC::Record] record
+      # @return [Array] array of hashes
+      def web(record:)
+        indicator2_options = ['2', ' ', '']
+        get_links_from_record(record, indicator2_options)
+      end
 
       private
 
@@ -40,6 +38,21 @@ module PennMARC
         link_text = [subfield3, subfield_zy.first].compact.join(' ')
         link_url = field.find_all(&subfield_in?(%w[u])).map(&:value).first || ''
         [link_text, link_url.sub(' target=_blank', '')]
+      end
+
+      # @param [MARC::Record] record
+      # @param [Array] indicator2_options
+      # @return [Array]
+      def get_links_from_record(record, indicator2_options)
+        record.fields('856').filter_map do |field|
+          next unless field.indicator1 == '4' && indicator2_options.include?(field.indicator2)
+
+          link_text, link_url = link_text_and_url(field)
+          {
+            link_text: link_text.present? ? link_text : link_url,
+            link_url: link_url
+          }
+        end
       end
     end
   end
