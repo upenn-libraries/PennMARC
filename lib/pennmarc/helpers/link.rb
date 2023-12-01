@@ -40,6 +40,8 @@ module PennMARC
         [link_text, link_url.sub(' target=_blank', '')]
       end
 
+      # Assemble array of link text, link URL values from 856 fields. Ensure indicator1 (access method)
+      # is always 4 (HTTP) and indicator2 (relationship) can be specified by caller method.
       # @param [MARC::Record] record
       # @param [Array] indicator2_options
       # @return [Array]
