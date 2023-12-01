@@ -15,7 +15,7 @@ module PennMARC
       # @return [Array] array of hashes
       def full_text(record:)
         indicator2_options = %w[0 1]
-        get_links_from_record(record, indicator2_options)
+        links_from_record(record, indicator2_options)
       end
 
       # Web text links from MARC 856 fields.
@@ -23,7 +23,7 @@ module PennMARC
       # @return [Array] array of hashes
       def web(record:)
         indicator2_options = ['2', ' ', '']
-        get_links_from_record(record, indicator2_options)
+        links_from_record(record, indicator2_options)
       end
 
       private
@@ -45,7 +45,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @param [Array] indicator2_options
       # @return [Array]
-      def get_links_from_record(record, indicator2_options)
+      def links_from_record(record, indicator2_options)
         record.fields('856').filter_map do |field|
           next unless field.indicator1 == '4' && indicator2_options.include?(field.indicator2)
 
