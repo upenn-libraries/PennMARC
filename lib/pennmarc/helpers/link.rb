@@ -33,10 +33,10 @@ module PennMARC
       # @param [MARC::Field] field
       # @return [Array]
       def link_text_and_url(field)
-        subfield3 = join_subfields(field, &subfield_in?(%w[3]))
+        subfield3 = subfield_values(field, 3)
         subfield_zy = field.find_all(&subfield_in?(%w[z y])).map(&:value)
         link_text = [subfield3, subfield_zy.first].compact.join(' ')
-        link_url = field.find_all(&subfield_in?(%w[u])).map(&:value).first || ''
+        link_url = subfield_values(field, 'u')&.first || ''
         [link_text, link_url.sub(' target=_blank', '')]
       end
 
