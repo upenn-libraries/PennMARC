@@ -71,7 +71,7 @@ rspec
 
 ## Publishing the Gem
 
-1. Update the version in `pennmarc.gemspec`
+1. Update the `VERSION` constant in `lib/pennmarc/version.rb`.
 2. Run `gem build pennmarc.gemspec` with the latest code
 3. Run `gem push pennmarc-{version number here}.gem`(e.g. `gem push pennmarc-1.0.0.gem`) to push to RubyGems. You will need access and MFA setup with RubyGems.
 
