@@ -75,6 +75,17 @@ rspec
 2. Run `gem build pennmarc.gemspec` with the latest code
 3. Run `gem push pennmarc-{version number here}.gem`(e.g. `gem push pennmarc-1.0.0.gem`) to push to RubyGems. You will need access and MFA setup with RubyGems.
 
+### Versioning Guidelines
+
+We seek to follow [Semantic Versioning](https://semver.org/) principles. In common cases, here's what to do:
+
+- Fixing a bug in an existing method: increment *PATCH* version.
+- Altering `Parser` class in such a way that would profoundly break downstream usages: increment *MAJOR* version.
+- Adding a new helper class with new parsing methods: increment *MINOR* version.
+- Adding a new parsing method to existing helper class: increment *MINOR* version.
+- Removing or renaming an existing helper class: this could cause exceptions in downstream applications, but such applications should be built in a way to handle such exceptions gracefully. Increment *MINOR* version.
+- Removing or renaming an existing parsing method: same as above.
+
 ## QA
 
 ### Checking output of an arbitrary MARC XML file
