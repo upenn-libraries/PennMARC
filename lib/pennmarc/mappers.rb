@@ -23,6 +23,16 @@ module PennMARC
         @relator ||= load_map('relator.yml')
       end
 
+      # @return [Hash]
+      def loc_classification
+        @loc_classification ||= load_map('loc_classification.yml')
+      end
+
+      # @return [Hash]
+      def dewey_classification
+        @dewey_classification ||= load_map('dewey_classification.yml')
+      end
+
       # @param [String] filename of mapping file in config directory, with file extension
       # @return [Hash] mapping as hash
       def load_map(filename)
