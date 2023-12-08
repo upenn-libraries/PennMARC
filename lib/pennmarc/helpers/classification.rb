@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module PennMARC
-  # Parses values from various library classification systems.
+  # Generates library of congress and dewey classifications using call number data.
   class Classification < Helper
     # Subfield value that identifies Library of Congress call number
     LOC_CALL_NUMBER_TYPE = '0'
@@ -70,8 +70,6 @@ module PennMARC
         map = CLASSIFICATION_MAPS[call_number_type]
 
         return if map.blank?
-
-        return translate_relator(class_code, map)[:title] if loc_call_number_type?(call_number_type)
 
         translate_relator(class_code, map)
       end
