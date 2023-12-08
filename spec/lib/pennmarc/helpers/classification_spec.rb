@@ -16,7 +16,7 @@ describe 'PennMARC::Classification' do
   end
 
   describe '.facet' do
-    context 'with enrichment via the ALma publishing process' do
+    context 'with enrichment via the Alma publishing process' do
       let(:tag) { PennMARC::EnrichedMarc::TAG_ITEM }
       let(:call_number_type_sf) { PennMARC::EnrichedMarc::SUB_ITEM_CALL_NUMBER_TYPE }
       let(:call_number_sf) { PennMARC::EnrichedMarc::SUB_ITEM_CALL_NUMBER }
