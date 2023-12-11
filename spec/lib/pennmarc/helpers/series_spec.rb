@@ -43,15 +43,15 @@ describe 'PennMARC::Series' do
     end
   end
 
-  describe '.get_continues' do
-    it 'gets continues values' do
-      expect(helper.get_continues(record)).to contain_exactly('National Comfort Association')
+  describe '.get_continues_show' do
+    it 'gets continues values for display' do
+      expect(helper.get_continues_show(record)).to contain_exactly('National Comfort Association')
     end
   end
 
-  describe '.get_continued_by' do
-    it 'gets continued by values' do
-      expect(helper.get_continued_by(record)).to contain_exactly('NCA quarterly comfortology bulletin')
+  describe '.get_continued_by_show' do
+    it 'gets continued by values for display' do
+      expect(helper.get_continued_by_show(record)).to contain_exactly('NCA quarterly comfortology bulletin')
     end
   end
 end
