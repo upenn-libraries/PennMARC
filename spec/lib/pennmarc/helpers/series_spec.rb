@@ -18,7 +18,7 @@ describe 'PennMARC::Series' do
   end
 
   describe '.show' do
-    it 'returns the series' do
+    it 'returns the series values for display' do
       expect(helper.show(record, relator_map: mapping)).to contain_exactly(
         'Bean Bagatolvski 1997- bk. 1',
         'Teachings of the feathered pillow',
@@ -28,7 +28,7 @@ describe 'PennMARC::Series' do
   end
 
   describe '.values' do
-    it 'returns the values' do
+    it 'returns the series values' do
       expect(helper.values(record, relator_map: mapping)).to contain_exactly('Bean Bagatolvski 1997- bk. 1.')
     end
   end
@@ -43,15 +43,15 @@ describe 'PennMARC::Series' do
     end
   end
 
-  describe '.get_continues_display' do
-    it 'gets continues for display' do
-      expect(helper.get_continues_display(record)).to contain_exactly('National Comfort Association')
+  describe '.get_continues' do
+    it 'gets continues values' do
+      expect(helper.get_continues(record)).to contain_exactly('National Comfort Association')
     end
   end
 
-  describe '.get_continued_by_display' do
-    it 'gets continued by display' do
-      expect(helper.get_continued_by_display(record)).to contain_exactly('NCA quarterly comfortology bulletin')
+  describe '.get_continued_by' do
+    it 'gets continued by values' do
+      expect(helper.get_continued_by(record)).to contain_exactly('NCA quarterly comfortology bulletin')
     end
   end
 end
