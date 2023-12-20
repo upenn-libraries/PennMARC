@@ -18,7 +18,7 @@ module PennMARC
       # local field 944}. Only returns database subtype if Penn's Database facet value is present in subfield 'a'.
       # @param [Marc::Record]
       # @return [Array<string>] Array of types
-      def type(record)
+      def type_facet(record)
         record.fields('944').filter_map do |field|
           # skip unless specified database format type present
           next unless subfield_value?(field, 'a', /#{DATABASES_FACET_VALUE}/o)
@@ -34,7 +34,7 @@ module PennMARC
       # subfield '2'.
       # @param [Marc::Record]
       # @return [Array<string>] Array of categories
-      def db_category(record)
+      def category_facet(record)
         return [] unless curated_db?(record)
 
         record.fields('943').filter_map do |field|
@@ -55,7 +55,7 @@ module PennMARC
       #   an empty array.
       # @param [Marc::Record]
       # @return [Array<string>] Array of "category--subcategory"
-      def db_subcategory(record)
+      def subcategory_facet(record)
         return [] unless curated_db?(record)
 
         record.fields('943').filter_map do |field|

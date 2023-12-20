@@ -5,7 +5,7 @@ describe 'PennMARC::Link' do
 
   let(:helper) { PennMARC::Link }
 
-  describe '.full_text' do
+  describe '.full_text_link' do
     let(:record) do
       marc_record fields: [marc_field(tag: '856', subfields: { '3': 'Materials specified',
                                                                z: 'Public note',
@@ -15,12 +15,12 @@ describe 'PennMARC::Link' do
     end
 
     it 'returns full text link text and url' do
-      expect(helper.full_text(record)).to contain_exactly({ link_text: 'Materials specified Public note',
-                                                            link_url: 'https://www.test-uri.com/' })
+      expect(helper.full_text_link(record)).to contain_exactly({ link_text: 'Materials specified Public note',
+                                                                 link_url: 'https://www.test-uri.com/' })
     end
   end
 
-  describe '.web' do
+  describe '.web_link' do
     let(:record) do
       marc_record fields: [marc_field(tag: '856', subfields: { '3': 'Materials specified',
                                                                z: 'Public note',
@@ -30,8 +30,8 @@ describe 'PennMARC::Link' do
     end
 
     it 'returns web link text and url' do
-      expect(helper.web(record)).to contain_exactly({ link_text: 'Materials specified Public note',
-                                                      link_url: 'https://www.test-uri.com/' })
+      expect(helper.web_link(record)).to contain_exactly({ link_text: 'Materials specified Public note',
+                                                           link_url: 'https://www.test-uri.com/' })
     end
   end
 end

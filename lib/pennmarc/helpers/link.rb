@@ -13,7 +13,7 @@ module PennMARC
       # Full text links from MARC 856 fields.
       # @param [MARC::Record] record
       # @return [Array] array of hashes
-      def full_text(record)
+      def full_text_links(record)
         indicator2_options = %w[0 1]
         links_from_record(record, indicator2_options)
       end
@@ -21,7 +21,7 @@ module PennMARC
       # Web text links from MARC 856 fields.
       # @param [MARC::Record] record
       # @return [Array] array of hashes
-      def web(record)
+      def web_links(record)
         indicator2_options = ['2', ' ', '']
         links_from_record(record, indicator2_options)
       end
