@@ -195,7 +195,7 @@ describe 'PennMARC::Title' do
     end
   end
 
-  describe '.standardized' do
+  describe '.standardized_show' do
     let(:record) do
       marc_record fields: [
         marc_field(tag: '130', subfields: { a: 'Uniform Title', f: '2000', '8': 'Not Included' }),
@@ -208,7 +208,7 @@ describe 'PennMARC::Title' do
     end
 
     it 'returns the expected standardized title display values' do
-      values = helper.standardized(record)
+      values = helper.standardized_show(record)
       expect(values).to contain_exactly(
         'Another Uniform Title', 'Translated Uniform Title', 'Uniform Title 2000', 'Yet Another Uniform Title'
       )
@@ -216,7 +216,7 @@ describe 'PennMARC::Title' do
     end
   end
 
-  describe '.other' do
+  describe '.other_show' do
     let(:record) do
       marc_record fields: [
         marc_field(tag: '246', subfields: { a: 'Varied Title', f: '2000', '8': 'Not Included' }),
@@ -227,13 +227,13 @@ describe 'PennMARC::Title' do
     end
 
     it 'returns the expected other title display values' do
-      expect(helper.other(record)).to contain_exactly(
+      expect(helper.other_show(record)).to contain_exactly(
         'Alternate Varied Title', 'Uncontrolled Title', 'Varied Title 2000'
       )
     end
   end
 
-  describe '.former' do
+  describe '.former_show' do
     let(:record) do
       marc_record fields: [
         marc_field(tag: '247', subfields: { a: 'Former Title', n: 'Part', '6': 'Linkage', e: 'Append' }),
@@ -242,7 +242,7 @@ describe 'PennMARC::Title' do
     end
 
     it 'returns the expected former title value' do
-      values = helper.former(record)
+      values = helper.former_show(record)
       expect(values).to contain_exactly 'Former Title Part Append', 'Alt Title Part'
       expect(values).not_to include 'Linkage', '247'
     end
