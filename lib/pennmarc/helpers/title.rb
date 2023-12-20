@@ -149,7 +149,7 @@ module PennMARC
       #       title browse and we will not be supporting that at this time
       # @param [MARC::Record] record
       # @return [Array<String>] Array of standardized titles as strings
-      def standardized(record)
+      def standardized_show(record)
         standardized_titles = record.fields(%w[130 240]).map do |field|
           join_subfields(field, &subfield_not_in?(%w[0 6 8 e w]))
         end
@@ -177,7 +177,7 @@ module PennMARC
       #
       # @param [MARC::Record] record
       # @return [Array<String>] Array of other titles as strings
-      def other(record)
+      def other_show(record)
         other_titles = record.fields('246').map do |field|
           join_subfields(field, &subfield_not_in?(%w[6 8]))
         end
@@ -202,7 +202,7 @@ module PennMARC
       # @todo what are e and w subfields?
       # @param [MARC::Record] record
       # @return [Array<String>] array of former titles
-      def former(record)
+      def former_show(record)
         record.fields
               .filter_map do |field|
           next unless field.tag == '247' || (field.tag == '880' && subfield_value?(field, '6', /^247/))
