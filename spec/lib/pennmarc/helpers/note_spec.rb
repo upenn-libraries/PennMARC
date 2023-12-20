@@ -18,6 +18,7 @@ describe 'PennMARC::Note' do
                                 b: 'UK', c: 'Historical Association',
                                 d: '1917', e: '434 reels',
                                 f: '(Seized records)' }),
+        marc_field(tag: '540', subfields: { a: 'Restricted: Copying allowed only for nonprofit organizations' }),
         marc_field(tag: '588', subfields: { a: 'Print version record', '5': 'LoC' }),
         marc_field(tag: '880', subfields: { b: 'Alt PhD', c: 'Alt UPenn', d: 'Alt 2021', '6': '502' }),
         marc_field(tag: '880', subfields: { b: 'Ignore Note', '6': '501' })
@@ -32,6 +33,7 @@ describe 'PennMARC::Note' do
                                         'PhD University of Pennsylvania 2021',
                                         'Includes bibliographical references (pages 329-[342]) and index.',
                                         'Archives Microfilm UK Historical Association 1917 434 reels (Seized records)',
+                                        'Restricted: Copying allowed only for nonprofit organizations',
                                         'Print version record', 'Alt PhD Alt UPenn Alt 2021')
     end
   end
