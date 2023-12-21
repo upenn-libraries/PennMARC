@@ -1,8 +1,4 @@
 ---
-3eastelev:
-  specific_location: Van Pelt - third floor east elevator lobby
-  library: Van Pelt-Dietrich Library Center
-  display: Van Pelt - third floor east elevator lobby
 afro:
   specific_location: Van Pelt - Africana Studies Resource Room
   library: Van Pelt-Dietrich Library Center
@@ -177,12 +173,6 @@ biomlibr:
     - Health Sciences Libraries
     - Holman Biotech Commons
   display: Holman Biotech Commons - Librarian's Office
-biomonli:
-  specific_location: Holman Biotech Commons - Online Office
-  library:
-    - Health Sciences Libraries
-    - Holman Biotech Commons
-  display: Holman Biotech Commons - Online Office
 biomperi:
   specific_location: Holman Biotech Commons - Periodicals
   library:
@@ -550,10 +540,6 @@ dncirc:
     - Health Sciences Libraries
     - Levy Dental Medicine Library
   display: Levy Dental Medicine Library - Circulation
-easiacom:
-  specific_location: Van Pelt - East Asia Compact Shelving
-  library: Van Pelt-Dietrich Library Center
-  display: Van Pelt - East Asia Compact Shelving
 easiacmx:
   specific_location: Van Pelt - East Asia Comics
   library: Van Pelt-Dietrich Library Center
@@ -576,40 +562,6 @@ edcomm:
     - Van Pelt-Dietrich Library Center
     - Education Commons
   display: Education Commons
-engi:
-  specific_location: Engineering Library
-  library: Engineering Library
-  display: Engineering Library
-engicirc:
-  specific_location: Engineering Library - Circulation Desk
-  library: Engineering Library
-  display: Engineering Library - Circulation Desk
-enginewbk:
-  specific_location: Engineering Library - New Book
-  library: Engineering Library
-  display: Engineering Library - New Book
-engiperi:
-  specific_location: Engineering Library - Periodicals
-  library: Engineering Library
-  display: Engineering Library - Periodicals (alphabetical by title)
-engirefe:
-  specific_location: Engineering Library - Reference
-  library: Engineering Library
-  display: Engineering Library - Reference
-engirese:
-  specific_location: Engineering Library - Reserve
-  library:
-    - Engineering Library
-    - Reserve
-  display: Engineering Library - Reserve
-engsc:
-  specific_location: Engineering Library - Study Collection
-  library: Engineering Library
-  display: Engineering Library - Study Collection
-eres:
-  specific_location:
-  library:
-  display: E-reserves
 fanewbook:
   specific_location: Fisher Fine Arts Library - New Book Display
   library: Fisher Fine Arts Library
@@ -684,10 +636,6 @@ finestudio:
   specific_location: Fisher Fine Arts Library - Studio Collection
   library: Fisher Fine Arts Library
   display: Fine Arts Library - Studio Collection
-HARR:
-  specific_location:
-  library:
-  display:
 judaica:
   specific_location: Van Pelt - Judaica and Ancient Near East Resource Room
   library: Van Pelt-Dietrich Library Center
@@ -822,20 +770,6 @@ mideastres:
     - Van Pelt-Dietrich Library Center
     - Reserve
   display: Van Pelt - Middle East Seminar Reserve
-moor:
-  specific_location: Engineering Library
-  library: Engineering Library
-  display: Engineering Library
-moorrefe:
-  specific_location: Engineering Library - Reference
-  library: Engineering Library
-  display: Engineering Library - Reference
-moorrese:
-  specific_location: Engineering Library - Reserve
-  library:
-    - Engineering Library
-    - Reserve
-  display: Engineering Library - Reserve
 muse:
   specific_location: Penn Museum Library
   library: Penn Museum Library
@@ -965,83 +899,6 @@ nursarch:
   specific_location: Nursing Archives
   library: Nursing Archives
   display: Barbara Bates Center for History of Nursing - Fagin Hall 2U
-oobiom:
-  specific_location: On Order
-  library:
-    - Health Sciences Libraries
-    - Holman Biotech Commons
-  display: Ordered for Holman Biotech Commons
-oochem:
-  specific_location: On Order
-  library: Chemistry Library
-  display: Ordered for Chemistry Library
-oocjs:
-  specific_location: On Order
-  library: Library at the Katz Center for Advanced Judaic Studies
-  display: Ordered for Center for Judaic Studies Library
-oodental:
-  specific_location: On Order
-  library:
-    - Health Sciences Libraries
-    - Levy Dental Medicine Library
-  display: Ordered for Levy Dental Medicine Library
-ooeastasia:
-  specific_location: On Order
-  library: Van Pelt-Dietrich Library Center
-  display: Ordered for East Asia
-ooengi:
-  specific_location: On Order
-  library: Engineering Library
-  display: Ordered for Engineering Library
-oofine:
-  specific_location: On Order
-  library: Fisher Fine Arts Library
-  display: Ordered for Fine Arts Library
-oolipp:
-  specific_location: On Order
-  library: Lippincott Library
-  display: Ordered for Lippincott Library
-oomath:
-  specific_location: On Order
-  library: Math/Physics/Astronomy Library
-  display: Ordered for Math-Physics-Astronomy Library
-oomuse:
-  specific_location: On Order
-  library: Penn Museum Library
-  display: Ordered for Museum Library
-oomusic:
-  specific_location: On Order
-  library: Van Pelt-Dietrich Library Center
-  display: Ordered for Music Library
-oonewbolt:
-  specific_location: On Order
-  library:
-    - Health Sciences Libraries
-    - Veterinary
-    - 'Veterinary: du Pont Library (New Bolton)'
-  display: Ordered for New Bolton Library
-ooormandy:
-  specific_location: On Order
-  library: Van Pelt-Dietrich Library Center
-  display: Ordered for Ormandy Center
-oostor:
-  specific_location: On Order
-  library: LIBRA
-  display: Ordered for LIBRA
-oovanp:
-  specific_location: On Order
-  library: Van Pelt-Dietrich Library Center
-  display: Ordered for Van Pelt Library
-oovete:
-  specific_location: On Order
-  library:
-    - Health Sciences Libraries
-    - Veterinary
-  display: 'Ordered for Veterinary: Atwood Library (Campus)'
-ooyarn:
-  specific_location: On Order
-  library: Yarnall Collection
-  display: Ordered for Yarnall collection
 pah:
   specific_location: Pennsylvania Hospital Library
   library:
@@ -1108,24 +965,6 @@ religious:
   specific_location: Van Pelt - Medieval Studies Resource Room
   library: Van Pelt-Dietrich Library Center
   display: Van Pelt - Medieval Studies Resource Room (405)
-rosedesk:
-  specific_location: Van Pelt - Rosengarten Reserve
-  library:
-    - Van Pelt-Dietrich Library Center
-    - Reserve
-  display: Van Pelt - Rosengarten Reserve Desk
-roserefe:
-  specific_location: Van Pelt - Rosengarten Reserve
-  library:
-    - Van Pelt-Dietrich Library Center
-    - Reserve
-  display: Van Pelt - Rosengarten Reserve Reference
-roserese:
-  specific_location: Van Pelt - Rosengarten Reserve
-  library:
-    - Van Pelt-Dietrich Library Center
-    - Reserve
-  display: Van Pelt - Rosengarten Reserve
 rotc:
   specific_location:
   library:
@@ -1526,37 +1365,6 @@ scrunning:
     - Special Collections
     - LIBRA
   display: LIBRA Running Press Collection
-sw3rdfl:
-  specific_location: Van Pelt - Temporarily shelved on third floor southwest corner
-  library: Van Pelt-Dietrich Library Center
-  display: Van Pelt - Temporarily shelved on third floor southwest corner
-refsw3rdfl:
-  specific_location: Van Pelt - Temporarily shelved on third floor southwest reference
-    corner
-  library: Van Pelt-Dietrich Library Center
-  display: Van Pelt - Temporarily shelved on third floor southwest reference corner
-town:
-  specific_location: Engineering Library
-  library: Engineering Library
-  display: Engineering Library
-townrefe:
-  specific_location: Engineering Library - Reference
-  library: Engineering Library
-  display: Engineering Library - Reference
-townrese:
-  specific_location: Engineering Library - Reserve
-  library:
-    - Engineering Library
-    - Reserve
-  display: Engineering Library - Reserve
-townthes:
-  specific_location: Engineering Library - Theses
-  library: Engineering Library
-  display: Engineering Library - Theses
-twcirc:
-  specific_location:
-  library: Engineering Library
-  display: Engineering Library - Circulation Desk
 univarch:
   specific_location: University Archives
   library: University Archives
@@ -1581,10 +1389,6 @@ vanpmicro:
   specific_location: Van Pelt - Microtext
   library: Van Pelt-Dietrich Library Center
   display: Van Pelt - Microtext
-vanpmiddle:
-  specific_location:
-  library:
-  display: Van Pelt - Middle East Tech Services
 vanpNoCirc:
   specific_location: Van Pelt - Non Circulating
   library: Van Pelt-Dietrich Library Center
