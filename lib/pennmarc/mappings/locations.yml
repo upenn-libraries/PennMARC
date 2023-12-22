@@ -1385,6 +1385,10 @@ vanpcgc:
   specific_location: Van Pelt - Center for Global Collections
   library: Van Pelt-Dietrich Library Center
   display: Van Pelt - Center for Global Collections
+vanpcgccm:
+  specific_location: Van Pelt - Global Comics Collection
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Global Comics Collection
 vanpmicro:
   specific_location: Van Pelt - Microtext
   library: Van Pelt-Dietrich Library Center
