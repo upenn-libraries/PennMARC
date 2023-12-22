@@ -1369,6 +1369,10 @@ univarch:
   specific_location: University Archives
   library: University Archives
   display: University Archives
+RDDSXBooks:
+  specific_location: Van Pelt - RDDSX Books
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - RDDSX Books
 vanp:
   specific_location: Van Pelt - Stacks
   library: Van Pelt-Dietrich Library Center
