@@ -77,27 +77,9 @@ rspec
 
 ### Versioning Guidelines
 
-We seek to follow [Semantic Versioning](https://semver.org/) principles. In common cases, here's what to do:
+We do not explicitly follow [Semantic Versioning](https://semver.org/) principles, but follow it's general principles. 
+In common cases, here's what to do:
 
-- Fixing a bug in an existing method: increment *PATCH* version.
-- Altering `Parser` class in such a way that would profoundly break downstream usages: increment *MAJOR* version.
-- Adding a new helper class with new parsing methods: increment *MINOR* version.
-- Adding a new parsing method to existing helper class: increment *MINOR* version.
-- Removing or renaming an existing helper class: this could cause exceptions in downstream applications, but such applications should be built in a way to handle such exceptions gracefully. Increment *MINOR* version.
-- Removing or renaming an existing parsing method: same as above.
-
-## QA
-
-### Checking output of an arbitrary MARC XML file
-
-TODO
-
-```bash
-MARC_FILE=path/to/marc.xml bundle exec rake pennmarc:parse
-```
-
-## TODO
- - rake task or some similar command to return a full set of values extracted from a specified marcxml file
- - Pipeline to run tests and publish to Rubygems
-    - rubocop check
-    - rdoc/yard coverage checks?
+- Increment **MAJOR_VERSION** if the `Parser` class functionality is modified in a breaking fashion.
+- Increment **MINOR_VERSION** if a `Helper` class is renamed, or if an existing helper method is renamed.
+- Increment **PATCH_VERSION** if a new `Helper` class or method is added, of if any non-breaking bugfix is made.
