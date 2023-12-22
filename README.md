@@ -75,18 +75,11 @@ rspec
 2. Run `gem build pennmarc.gemspec` with the latest code
 3. Run `gem push pennmarc-{version number here}.gem`(e.g. `gem push pennmarc-1.0.0.gem`) to push to RubyGems. You will need access and MFA setup with RubyGems.
 
-## QA
+### Versioning Guidelines
 
-### Checking output of an arbitrary MARC XML file
+We do not explicitly follow [Semantic Versioning](https://semver.org/) principles, but follow it's general principles. 
+In common cases, here's what to do:
 
-TODO
-
-```bash
-MARC_FILE=path/to/marc.xml bundle exec rake pennmarc:parse
-```
-
-## TODO
- - rake task or some similar command to return a full set of values extracted from a specified marcxml file
- - Pipeline to run tests and publish to Rubygems
-    - rubocop check
-    - rdoc/yard coverage checks?
+- Increment **MAJOR_VERSION** if the `Parser` class functionality is modified in a breaking fashion.
+- Increment **MINOR_VERSION** if a `Helper` class is renamed, or if an existing helper method is renamed.
+- Increment **PATCH_VERSION** if a new `Helper` class or method is added, of if any non-breaking bugfix is made.
