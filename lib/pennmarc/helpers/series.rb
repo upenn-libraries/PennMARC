@@ -84,7 +84,7 @@ module PennMARC
       # https://www.loc.gov/marc/bibliographic/bd780.html
       # @param [MARC::Record] record
       # @return [String] continues fields string
-      def get_continues_display(record)
+      def get_continues_show(record)
         continues(record, '780')
       end
 
@@ -94,7 +94,7 @@ module PennMARC
       # https://www.loc.gov/marc/bibliographic/bd785.html
       # @param [MARC::Record] record
       # @return [String] continued by fields string
-      def get_continued_by_display(record)
+      def get_continued_by_show(record)
         continues(record, '785')
       end
 

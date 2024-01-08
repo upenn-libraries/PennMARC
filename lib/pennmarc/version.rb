@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module PennMARC
-  VERSION = '1.0.6'
+  VERSION = '1.0.10'
 end

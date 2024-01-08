@@ -21,39 +21,39 @@ describe 'PennMARC::Database' do
                 ])
   end
 
-  describe '.type' do
+  describe '.type_facet' do
     it 'returns database types' do
-      expect(helper.type(record)).to contain_exactly('Dictionaries and Thesauri (language based)',
-                                                     'Reference and Handbooks')
+      expect(helper.type_facet(record)).to contain_exactly('Dictionaries and Thesauri (language based)',
+                                                           'Reference and Handbooks')
     end
 
     context 'with uncurated database' do
       it 'returns empty array' do
-        expect(helper.type(record_uncurated_db)).to be_empty
+        expect(helper.type_facet(record_uncurated_db)).to be_empty
       end
     end
   end
 
-  describe '.db_category' do
+  describe '.category_facet' do
     it 'returns database categories' do
-      expect(helper.db_category(record)).to contain_exactly('Humanities', 'Social Sciences')
+      expect(helper.category_facet(record)).to contain_exactly('Humanities', 'Social Sciences')
     end
 
     context 'with uncurated database' do
       it 'returns empty array' do
-        expect(helper.db_category(record_uncurated_db)).to be_empty
+        expect(helper.category_facet(record_uncurated_db)).to be_empty
       end
     end
   end
 
-  describe '.db_subcategory' do
+  describe '.subcategory_facet' do
     it 'returns database subcategories' do
-      expect(helper.db_subcategory(record)).to contain_exactly('Social Sciences--Linguistics')
+      expect(helper.subcategory_facet(record)).to contain_exactly('Social Sciences--Linguistics')
     end
 
     context 'with uncurated database' do
       it 'returns empty array' do
-        expect(helper.db_subcategory(record_uncurated_db)).to be_empty
+        expect(helper.subcategory_facet(record_uncurated_db)).to be_empty
       end
     end
   end

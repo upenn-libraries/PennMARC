@@ -6,15 +6,16 @@ module PennMARC
     class << self
       # Retrieve notes for display from fields {https://www.oclc.org/bibformats/en/5xx/500.html 500},
       # {https://www.oclc.org/bibformats/en/5xx/502.html 502}, {https://www.oclc.org/bibformats/en/5xx/504.html 504},
-      # {https://www.oclc.org/bibformats/en/5xx/515.html 515}, {https://www.oclc.org/bibformats/en/5xx/518.html 518}
+      # {https://www.oclc.org/bibformats/en/5xx/515.html 515}, {https://www.oclc.org/bibformats/en/5xx/518.html 518},
       # {https://www.oclc.org/bibformats/en/5xx/525.html 525}, {https://www.oclc.org/bibformats/en/5xx/533.html 533},
-      # {https://www.oclc.org/bibformats/en/5xx/550.html 550}, {https://www.oclc.org/bibformats/en/5xx/580.html 580},
-      # {https://www.oclc.org/bibformats/en/5xx/586.html 586}, {https://www.oclc.org/bibformats/en/5xx/588.html 588},
+      # {https://www.oclc.org/bibformats/en/5xx/540.html 540}, {https://www.oclc.org/bibformats/en/5xx/550.html 550},
+      # {https://www.oclc.org/bibformats/en/5xx/580.html 580}, {https://www.oclc.org/bibformats/en/5xx/586.html 586},
+      # {https://www.oclc.org/bibformats/en/5xx/588.html 588}
       # and their linked alternates.
       # @param [MARC::Record] record
       # @return [Array<String>]
       def notes_show(record)
-        notes_fields = %w[500 502 504 515 518 525 533 550 580 586 588]
+        notes_fields = %w[500 502 504 515 518 525 533 540 550 580 586 588]
         record.fields(notes_fields + ['880']).filter_map do |field|
           next if field.tag == '880' && subfield_value_not_in?(field, '6', notes_fields)
 

@@ -32,5 +32,16 @@ module PennMARC
     # a subfield code NOT used by the MARC 21 spec for 852 holdings records.
     # we add this subfield during preprocessing to store boundwith record IDs.
     SUB_BOUND_WITH_ID = 'y'
+
+    # MARC enrichment originating from Alma Api
+    # @see https://developers.exlibrisgroup.com/alma/apis/docs/bibs/R0VUIC9hbG1hd3MvdjEvYmlicy97bW1zX2lkfQ==/ Alma docs
+    module AlmaApi
+      TAG_PHYSICAL_INVENTORY = 'AVA'
+      TAG_DIGITAL_INVENTORY = 'AVA'
+      TAG_ELECTRONIC_INVENTORY = 'AVE'
+
+      SUB_PHYSICAL_CALL_NUMBER = 'd'
+      SUB_PHYSICAL_CALL_NUMBER_TYPE = 'k'
+    end
   end
 end
