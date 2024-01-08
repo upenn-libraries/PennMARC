@@ -70,8 +70,20 @@ describe 'PennMARC::Format' do
         marc_record fields: [marc_field(tag: 'hld', subfields: { h: 'AB123', i: '.456 Microfilm' })]
       end
 
-      it 'returns a facet value of "Microformat"' do
-        expect(formats).to eq ['Microformat']
+      context 'with API enriched fields' do
+        let(:holding_field) { PennMARC::EnrichedMarc::AlmaApi::TAG_PHYSICAL_INVENTORY }
+
+        it 'returns a facet value of "Microformat"' do
+          expect(formats).to eq ['Microformat']
+        end
+      end
+
+      context 'with publishing enriched fields' do
+        let(:holding_field) { PennMARC::EnrichedMarc::TAG_HOLDING }
+
+        it 'returns a facet value of "Microformat"' do
+          expect(formats).to eq ['Microformat']
+        end
       end
     end
 

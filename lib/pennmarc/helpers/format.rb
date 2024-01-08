@@ -80,13 +80,6 @@ module PennMARC
         title_medium = subfield_values_for tag: '245', subfield: :h, record: record
         media_type = subfield_values_for tag: '337', subfield: :a, record: record
 
-        # Get Call Number for holdings - ǂh gives us the 'Classification part' which can contain strings like
-        # 'Microfilm'
-        call_nums = record.fields(EnrichedMarc::TAG_HOLDING).map do |field|
-          join_subfields(field, &subfield_in?([EnrichedMarc::SUB_HOLDING_CLASSIFICATION_PART,
-                                               EnrichedMarc::SUB_HOLDING_ITEM_PART]))
-        end
-
         # get all specific_location values from inventory info
         locations = Location.location record: record, location_map: location_map,
                                       display_value: :specific_location
@@ -95,7 +88,7 @@ module PennMARC
           formats << MANUSCRIPT
         elsif archives_but_not_cajs_or_nursing?(locations)
           formats << ARCHIVE
-        elsif micro_or_microform?(call_nums, locations, media_type, title_medium)
+        elsif micro_or_microform?(call_nums(record), locations, media_type, title_medium)
           formats << MICROFORMAT
         else
           # any of these
@@ -166,6 +159,25 @@ module PennMARC
       end
 
       private
+
+      # Get Call Numbers for holdings using the 'Classification part' which can contain strings like
+      # 'Microfilm'. Look in enriched tags used by both Alma Publishing and API.
+      # @param [MARC::Record] record
+      # @return [Array]
+      def call_nums(record)
+        if field_defined?(record, EnrichedMarc::TAG_HOLDING)
+          record.fields(EnrichedMarc::TAG_HOLDING).map do |field|
+            join_subfields(field, &subfield_in?([EnrichedMarc::SUB_HOLDING_CLASSIFICATION_PART,
+                                                 EnrichedMarc::SUB_HOLDING_ITEM_PART]))
+          end
+        elsif field_defined?(record, EnrichedMarc::AlmaApi::TAG_PHYSICAL_INVENTORY)
+          record.fields(EnrichedMarc::AlmaApi::TAG_PHYSICAL_INVENTORY).map do |field|
+            join_subfields(field, &subfield_in?([EnrichedMarc::AlmaApi::SUB_PHYSICAL_CALL_NUMBER_TYPE]))
+          end
+        else
+          []
+        end
+      end
 
       # Get 'Curated' format from.
       # {https://upennlibrary.atlassian.net/wiki/spaces/ALMA/pages/323912493/Local+9XX+Field+Use+in+Alma local field
