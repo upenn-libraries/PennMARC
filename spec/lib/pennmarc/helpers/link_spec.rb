@@ -16,7 +16,7 @@ describe 'PennMARC::Link' do
 
     it 'returns full text link text and url' do
       expect(helper.full_text_links(record)).to contain_exactly({ link_text: 'Materials specified Public note',
-                                                                 link_url: 'https://www.test-uri.com/' })
+                                                                  link_url: 'https://www.test-uri.com/' })
     end
   end
 
@@ -31,7 +31,7 @@ describe 'PennMARC::Link' do
 
     it 'returns web link text and url' do
       expect(helper.web_links(record)).to contain_exactly({ link_text: 'Materials specified Public note',
-                                                           link_url: 'https://www.test-uri.com/' })
+                                                            link_url: 'https://www.test-uri.com/' })
     end
   end
 end
