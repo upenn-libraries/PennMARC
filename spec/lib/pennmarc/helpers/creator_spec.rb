@@ -17,11 +17,11 @@ describe 'PennMARC::Creator' do
       end
 
       it 'contains the expected search field values for a single author work' do
-        expect(helper.search(record, relator_map: mapping)).to eq [
+        expect(helper.search(record, relator_map: mapping)).to contain_exactly(
           'Name Surname http://cool.uri/12345 author 1900-2000.',
           'Surname, Name http://cool.uri/12345 author 1900-2000.',
           'Alternative Surname'
-        ]
+        )
       end
     end
 
@@ -32,8 +32,33 @@ describe 'PennMARC::Creator' do
       end
 
       it 'contains the expected search field values for a corporate author work' do
-        expect(helper.search(record, relator_map: mapping)).to eq ['Group of People Annual Meeting Author.',
-                                                                   'Alt. Group Name Alt. Annual Meeting']
+        expect(helper.search(record, relator_map: mapping)).to contain_exactly(
+          'Group of People Annual Meeting, Author.',
+          'Alt. Group Name Alt. Annual Meeting'
+        )
+      end
+    end
+  end
+
+  describe '.search_aux' do
+    let(:record) { marc_record fields: fields }
+
+    context 'with a record that has an added name in the 7xx field' do
+      let(:fields) do
+        [marc_field(tag: '100', subfields: { a: 'Author', c: 'Fancy', d: 'active 24th century AD', '4': 'aut' }),
+         marc_field(tag: '700', subfields: { a: 'Author, Added' }),
+         marc_field(tag: '880', subfields: { '6': '100', a: 'Alt Author', c: 'Alt Fanciness' }),
+         marc_field(tag: '880', subfields: { '6': '700', a: 'Alt Added Author' })]
+      end
+
+      it 'contains the expected search_aux field values for a single author work' do
+        expect(helper.search_aux(record, relator_map: mapping)).to contain_exactly(
+          'Author Fancy active 24th century AD, Author.',
+          'Author, Added.',
+          'Added Author.',
+          'Alt Author Alt Fanciness',
+          'Alt Added Author'
+        )
       end
     end
   end
@@ -219,5 +244,4 @@ describe 'PennMARC::Creator' do
   end
 
   # describe '.conference_search'
-  # describe '.search_aux'
 end

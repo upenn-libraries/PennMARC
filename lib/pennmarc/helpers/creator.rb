@@ -10,82 +10,41 @@ module PennMARC
     class << self
       # Main tags for Author/Creator information
       TAGS = %w[100 110].freeze
+
       # Aux tags for Author/Creator information, for use in search_aux method
       AUX_TAGS = %w[100 110 111 400 410 411 700 710 711 800 810 811].freeze
+
+      # subfields NOT to join when combining raw subfield values
+      NAME_EXCLUDED_SUBFIELDS = %w[a 1 4 5 6 8 t].freeze
 
       # Author/Creator search field. Includes all subfield values (even ǂ0 URIs) from
       # {https://www.oclc.org/bibformats/en/1xx/100.html 100 Main Entry--Personal Name} and
       # {https://www.oclc.org/bibformats/en/1xx/110.html 110 Main Entry--Corporate Name}. Maps any relator codes found
       # in ǂ4. To better handle name searches, returns names as both "First Last" and "Last, First" if a comma is found
-      # in ǂa. Also indexes any linked values in the 880. Some of the search fields remain incomplete and may need to be
-      # further investigated and ported when search result relevancy is considered.
-      # @todo this seems bad - why include relator labels? URIs? punctuation? leaving mostly as-is for now,
-      #       but this should be reexamined in the relevancy-tuning phase. URIs should def be removed. and shouldn't
-      #       indicator1 tell us the order of the name?
+      # in ǂa. Also indexes any linked values in the 880.
+      # @todo are we including too many details here and gumming up our index? consider UIRs, relator labels, dates...
+      # @todo shouldn't indicator1 tell us the order of the name? do we not trust the indicator?
       # @note ported from get_author_creator_1_search_values
       # @param [MARC::Record] record
       # @param [Hash] relator_map
       # @return [Array<String>] array of author/creator values for indexing
       def search(record, relator_map: Mappers.relator)
-        creator_subfields = %w[a 1 4 6 8]
-        acc = record.fields(TAGS).map do |field|
-          pieces = field.filter_map do |sf|
-            if sf.code == 'a'
-              convert_name_order(sf.value)
-            elsif creator_subfields.exclude?(sf.code)
-              sf.value
-            elsif sf.code == '4'
-              relator = translate_relator(sf.value, relator_map)
-              next if relator.blank?
-
-              relator
-            end
-          end
-          value = join_and_squish(pieces)
-          if value.end_with?('.', '-')
-            value
-          else
-            "#{value}."
-          end
-        end
-        # a second iteration over the same fields produces name entries with the names not reordered
-        secondary_subfields = %w[4 6 8]
-        acc += record.fields(TAGS).map do |field|
-          pieces = field.filter_map do |sf|
-            if secondary_subfields.exclude?(sf.code)
-              sf.value
-            elsif sf.code == '4'
-              relator = translate_relator(sf.value, relator_map)
-              next if relator.blank?
-
-              relator
-            end
-          end
-          value = join_and_squish(pieces)
-          if value.end_with?('.', '-')
-            value
-          else
-            "#{value}."
-          end
-        end
-        acc += record.fields(%w[880]).filter_map do |field|
-          next unless field.any? { |sf| sf.code == '6' && sf.value.in?(%w[100 110]) }
-
-          suba = field.find_all(&subfield_in?(%w[a])).map { |sf|
-            convert_name_order(sf.value)
-          }.first
-          oth = join_and_squish(field.find_all(&subfield_not_in?(%w[6 8 a t])).map(&:value))
-          join_and_squish [suba, oth]
-        end
-        acc.uniq
+        name_search_values record: record, tags: TAGS, relator_map: relator_map
       end
 
       # Auxiliary Author/Creator search field
+      # This duplicates the values returned by the search method, but adds in additional MARC tags to include
+      # creator-adjacent entities. The added 4xx tags are mostly obsolete, but the 7xx tags are important. See:
+      # {https://www.loc.gov/marc/bibliographic/bd700.html MARC 700},
+      # {https://www.loc.gov/marc/bibliographic/bd710.html MARC 710},
+      # and {https://www.loc.gov/marc/bibliographic/bd711.html MARC 711}. The 800, 810 and 8111 tags are similar in
+      # theme to the 7xx fields but apply to serial records.
       # @note ported from get_author_creator_2_search_values
-      # @todo port this later
       # @param [MARC::Record] record
       # @return [Array<String>] array of extended author/creator values for indexing
-      def search_aux(record); end
+      def search_aux(record, relator_map: Mappers.relator)
+        name_search_values record: record, tags: AUX_TAGS, relator_map: relator_map
+      end
 
       # All author/creator values for display (like #show, but multivalued?) - no 880 linkage
       # @note ported from get_author_creator_values (indexed as author_creator_a) - shown on results page
@@ -222,6 +181,32 @@ module PennMARC
 
       private
 
+      # @param [MARC::Record] record
+      # @param [Array] tags to consider
+      # @param [Hash] relator_map
+      # @return [Array<String>] name values from given tags
+      def name_search_values(record:, tags:, relator_map:)
+        acc = record.fields(tags).filter_map do |field|
+          name_from_main_entry field, relator_map, convert_name_order: false
+        end
+
+        acc += record.fields(tags).filter_map do |field|
+          name_from_main_entry field, relator_map, convert_name_order: true
+        end
+
+        acc += record.fields(['880']).filter_map do |field|
+          next unless field.any? { |sf| sf.code == '6' && sf.value.in?(tags) }
+
+          suba = field.find_all(&subfield_in?(%w[a])).filter_map { |sf|
+            convert_name_order(sf.value)
+          }.first
+          oth = join_and_squish(field.find_all(&subfield_not_in?(%w[6 8 a t])).map(&:value))
+          join_and_squish [suba, oth]
+        end
+
+        acc.uniq
+      end
+
       # Trim punctuation method extracted from Traject macro, to ensure consistent output
       # @todo move to Util?
       # @param [String] string
@@ -245,10 +230,13 @@ module PennMARC
       # Extract the information we care about from 1xx fields, map relator codes, and use appropriate punctuation
       # @param [MARC::Field] field
       # @return [String] joined subfield values for value from field
-      def name_from_main_entry(field, mapping)
-        name_subfields = %w[0 1 4 6 8]
+      # @param [Hash] mapping
+      # @param [Boolean] convert_name_order
+      def name_from_main_entry(field, mapping, convert_name_order: false)
         s = field.filter_map { |sf|
-          if name_subfields.exclude?(sf.code)
+          if sf.code == 'a'
+            convert_name_order ? convert_name_order(sf.value) : sf.value
+          elsif NAME_EXCLUDED_SUBFIELDS.exclude?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
             relator = translate_relator(sf.value, mapping)
