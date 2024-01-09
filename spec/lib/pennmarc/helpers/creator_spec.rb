@@ -212,6 +212,18 @@ describe 'PennMARC::Creator' do
     end
   end
 
+  describe '.conference_search' do
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '111', subfields: { a: 'MARC History Symposium', c: 'Moscow', '4': 'aut' })
+      ]
+    end
+
+    it 'returns conference name information for searching without relator value' do
+      expect(helper.conference_search(record)).to eq ['MARC History Symposium Moscow']
+    end
+  end
+
   describe '.contributor_show' do
     let(:record) do
       marc_record fields: [
@@ -242,6 +254,4 @@ describe 'PennMARC::Creator' do
       )
     end
   end
-
-  # describe '.conference_search'
 end

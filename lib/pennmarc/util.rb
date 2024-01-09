@@ -14,7 +14,7 @@ module PennMARC
     end
 
     # Join subfields from a field selected based on a provided proc
-    # @param [MARC::DataField] field
+    # @param [MARC::DataField, nil] field
     # @param [Proc] selector
     # @return [String]
     def join_subfields(field, &selector)
