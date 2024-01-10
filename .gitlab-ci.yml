@@ -13,7 +13,7 @@ rspec_app_test:
   stage: test
   image: ruby:3.2.2
   before_script:
-    - bundle config set --local deployment true  # Install dependencies into ./vendor/ruby
+#    - bundle config set --local deployment true  # Install dependencies into ./vendor/ruby
     - bundle install -j $(nproc)
   extends:
     - .rspec
