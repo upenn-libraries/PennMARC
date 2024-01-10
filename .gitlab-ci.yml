@@ -43,7 +43,7 @@ gem_publication:
       gem -v
       rm -f ./*.gem
       [ -f "${GEMSPEC_FILE}" ] || (echo "No ${GEMSPEC_FILE} file found!" && exit 1)
-    - '[ -z "${GEM_HOST_API_KEY}" ] && (echo "${GEM_HOST_API_KEY} undefined!" && exit 1)'
+    - '[ -z "${GEM_HOST_API_KEY}" ] && (echo "$GEM_HOST_API_KEY undefined!" && exit 1)'
   script:
     - |
       gem build "${GEMSPEC_FILE}"
