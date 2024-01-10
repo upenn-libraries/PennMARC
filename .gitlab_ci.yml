@@ -1,0 +1,24 @@
+include:
+  - project: "devops/gitlab/ci-templates/ruby"
+    ref: "sans-dind"
+    file:
+      - ".rspec.yml"
+      - ".rubocop.yml"
+  - template: "Workflows/MergeRequest-Pipelines.gitlab-ci.yml"
+
+stages:
+  - test
+
+rspec_app_test:
+  stage: test
+  image: ruby:3.2.2
+  before_script:
+    - ruby -v  # Print out ruby version for debugging
+    # Uncomment next line if your rails app needs a JS runtime:
+    # - apt-get update -q && apt-get install nodejs -yqq
+    - bundle config set --local deployment true  # Install dependencies into ./vendor/ruby
+    - bundle install -j $(nproc)
+  extends:
+    - .rspec
+  tags:
+    - build
