@@ -28,3 +28,5 @@ rubocop_app_test:
     - bundle install -j $(nproc)
   extends:
     - .rubocop
+  tags:
+    - build
