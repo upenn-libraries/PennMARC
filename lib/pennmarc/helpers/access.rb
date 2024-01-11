@@ -35,7 +35,7 @@ module PennMARC
       # @param [MARC::Field] field
       # @return [Boolean]
       def electronic_holding_tag?(field)
-        field.tag.in? [EnrichedMarc::TAG_ELECTRONIC_INVENTORY, ELEC_AVAILABILITY_TAG]
+        field.tag.in? [Enriched::ELECTRONIC_INVENTORY_TAG, ELEC_AVAILABILITY_TAG]
       end
 
       # Does the record have added physical holding info?
