@@ -29,7 +29,6 @@ rubocop_app_test:
     - .rubocop
   tags:
     - build
-  allow_failure: true
 
 # This step was inspired from Gitlab's example of gem publication:
 # https://gitlab.com/gitlab-org/quality/pipeline-common/-/blob/master/ci/gem-release.yml
