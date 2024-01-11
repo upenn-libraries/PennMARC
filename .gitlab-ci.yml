@@ -36,7 +36,6 @@ gem_publication:
   stage: deploy
   image: ruby:3.2.2
   variables:
-    GEM_FILE: "${CI_PROJECT_NAME}-${$CI_COMMIT_TAG}.gem"
     GEMSPEC_FILE: "${CI_PROJECT_NAME}.gemspec"
   before_script:
     - |
@@ -45,12 +44,13 @@ gem_publication:
       [ -f "${GEMSPEC_FILE}" ] || (echo "No ${GEMSPEC_FILE} file found!" && exit 1)
     - '[ -n "${GEM_HOST_API_KEY}" ] || (echo "GEM_HOST_API_KEY is not set!" && exit 1)'
   script:
+    - GEM_FILE=$(echo "${CI_PROJECT_NAME}-${CI_COMMIT_TAG:1}.gem")
     - |
       gem build "${GEMSPEC_FILE}"
       [ -f "${GEM_FILE}" ] || (echo "No ${GEM_FILE} file found!" && exit 1)
     - '[ "${DISABLE_GEM_PUSH}" == "true" ] || gem push "${GEM_FILE}"'
   rules:
-#    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+(\.[a-zA-Z0-9]+)?$
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+(\.[a-zA-Z0-9]+)?$
   artifacts:
     paths:
       - "*.gem"
