@@ -5,8 +5,6 @@ module PennMARC
   class Access < Helper
     ONLINE = 'Online'
     AT_THE_LIBRARY = 'At the library'
-    ELEC_AVAILABILITY_TAG = 'AVE'
-    PHYS_AVAILABILITY_TAG = 'AVA'
 
     class << self
       # Based on enhanced metadata fields added by Alma publishing process or API, determine if the record has
@@ -35,14 +33,14 @@ module PennMARC
       # @param [MARC::Field] field
       # @return [Boolean]
       def electronic_holding_tag?(field)
-        field.tag.in? [Enriched::ELECTRONIC_INVENTORY_TAG, ELEC_AVAILABILITY_TAG]
+        field.tag.in? [EnrichedMarc::TAG_ELECTRONIC_INVENTORY, EnrichedMarc::AlmaApi::TAG_ELECTRONIC_INVENTORY]
       end
 
       # Does the record have added physical holding info?
       # @param [MARC::Field] field
       # @return [Boolean]
       def physical_holding_tag?(field)
-        field.tag.in? [EnrichedMarc::TAG_HOLDING, PHYS_AVAILABILITY_TAG]
+        field.tag.in? [EnrichedMarc::TAG_HOLDING, EnrichedMarc::AlmaApi::TAG_PHYSICAL_INVENTORY]
       end
 
       # Check if a record contains an 856 entry for an online finding aid, meeting these criteria:

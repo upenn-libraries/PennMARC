@@ -60,18 +60,38 @@ describe 'PennMARC::Format' do
       end
 
       it 'returns a facet value of only "Microformat"' do
-        # expect(formats).to eq %w[Microformat Thesis/Dissertation]
         expect(formats).to eq %w[Microformat]
       end
     end
 
     context 'with Microformats as determined by the holding call numbers' do
-      let(:record) do
-        marc_record fields: [marc_field(tag: 'hld', subfields: { h: 'AB123', i: '.456 Microfilm' })]
+      context 'with API enriched fields' do
+        let(:record) do
+          marc_record fields: [
+            marc_field(tag: PennMARC::EnrichedMarc::AlmaApi::TAG_PHYSICAL_INVENTORY, subfields: {
+                         :h => 'AB123',
+                         PennMARC::EnrichedMarc::AlmaApi::SUB_PHYSICAL_CALL_NUMBER_TYPE => '.456 Microfilm'
+                       })
+          ]
+        end
+
+        it 'returns a facet value of "Microformat"' do
+          expect(formats).to eq ['Microformat']
+        end
       end
 
-      it 'returns a facet value of "Microformat"' do
-        expect(formats).to eq ['Microformat']
+      context 'with publishing enriched fields' do
+        let(:record) do
+          marc_record fields: [
+            marc_field(tag: PennMARC::EnrichedMarc::TAG_HOLDING,
+                       subfields: { :h => 'AB123',
+                                    PennMARC::EnrichedMarc::SUB_ITEM_CALL_NUMBER_TYPE => '.456 Microfilm' })
+          ]
+        end
+
+        it 'returns a facet value of "Microformat"' do
+          expect(formats).to eq ['Microformat']
+        end
       end
     end
 

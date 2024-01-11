@@ -18,7 +18,7 @@ describe 'PennMARC::Access' do
       end
 
       context 'with enrichment with availability info via the Alma API' do
-        let(:tag) { PennMARC::Access::ELEC_AVAILABILITY_TAG }
+        let(:tag) { PennMARC::EnrichedMarc::AlmaApi::TAG_ELECTRONIC_INVENTORY }
 
         it 'returns expected access value' do
           expect(helper.facet(record)).to contain_exactly(PennMARC::Access::ONLINE)
@@ -38,7 +38,7 @@ describe 'PennMARC::Access' do
       end
 
       context 'with enrichment with availability info via the Alma API' do
-        let(:tag) { PennMARC::Access::PHYS_AVAILABILITY_TAG }
+        let(:tag) { PennMARC::EnrichedMarc::AlmaApi::TAG_PHYSICAL_INVENTORY }
 
         it 'returns expected access value' do
           expect(helper.facet(record)).to contain_exactly(PennMARC::Access::AT_THE_LIBRARY)
