@@ -33,14 +33,14 @@ module PennMARC
       # @param [MARC::Field] field
       # @return [Boolean]
       def electronic_holding_tag?(field)
-        field.tag.in? [EnrichedMarc::TAG_ELECTRONIC_INVENTORY, EnrichedMarc::AlmaApi::TAG_ELECTRONIC_INVENTORY]
+        field.tag.in? [Enriched::Pub::ELEC_INVENTORY_TAG, Enriched::Api::ELEC_INVENTORY_TAG]
       end
 
       # Does the record have added physical holding info?
       # @param [MARC::Field] field
       # @return [Boolean]
       def physical_holding_tag?(field)
-        field.tag.in? [EnrichedMarc::TAG_HOLDING, EnrichedMarc::AlmaApi::TAG_PHYSICAL_INVENTORY]
+        field.tag.in? [Enriched::Pub::PHYS_INVENTORY_TAG, Enriched::Api::PHYS_INVENTORY_TAG]
       end
 
       # Check if a record contains an 856 entry for an online finding aid, meeting these criteria:

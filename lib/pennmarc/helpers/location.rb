@@ -3,10 +3,12 @@
 module PennMARC
   # Methods that return Library and Location values from Alma enhanced MARC fields
   class Location < Helper
+    ONLINE_LIBRARY = 'Online library'
+
     class << self
       # Retrieves library location from enriched marc 'itm' or 'hld' fields, giving priority to the item location over
       # the holdings location. Returns item's location if available. Otherwise, returns holding's location.
-      # {PennMARC::EnrichedMarc} maps enriched marc fields and subfields created during Alma publishing.
+      # {PennMARC::Enriched} maps enriched marc fields and subfields created during Alma publishing.
       # @see https://developers.exlibrisgroup.com/alma/apis/docs/bibs/R0VUIC9hbG1hd3MvdjEvYmlicy97bW1zX2lkfQ==/
       #   Alma documentation for these added fields
       # @param [MARC::Record] record
@@ -19,7 +21,7 @@ module PennMARC
       # Retrieves the specific location from enriched marc 'itm' or 'hld' fields, giving priority to the item location
       # over the holdings location. Returns item library location if available. Otherwise, returns holdings library
       # location.
-      # {PennMARC::EnrichedMarc} maps enriched marc fields and subfields created during Alma publishing.
+      # {PennMARC::Enriched} maps enriched marc fields and subfields created during Alma publishing.
       # @see https://developers.exlibrisgroup.com/alma/apis/docs/bibs/R0VUIC9hbG1hd3MvdjEvYmlicy97bW1zX2lkfQ==/
       #   Alma documentation for these added fields
       # @param [MARC::Record] record
@@ -31,7 +33,7 @@ module PennMARC
 
       # Base method to retrieve location data from enriched marc 'itm' or 'hld' fields, giving priority to the item
       # location over the holdings location. Returns item location if available. Otherwise, returns holdings location.
-      # {PennMARC::EnrichedMarc} maps enriched marc fields and subfields created during Alma publishing.
+      # {PennMARC::Enriched} maps enriched marc fields and subfields created during Alma publishing.
       # @see https://developers.exlibrisgroup.com/alma/apis/docs/bibs/R0VUIC9hbG1hd3MvdjEvYmlicy97bW1zX2lkfQ==/
       #   Alma documentation for these added fields
       # @param [MARC::Record] record
@@ -61,7 +63,9 @@ module PennMARC
             location_map[subfield.value.to_sym][display_value.to_sym]
           }.flatten.compact_blank
         }.uniq
-        locations << 'Online library' if record.fields(PennMARC::EnrichedMarc::TAG_ELECTRONIC_INVENTORY).any?
+        if record.tags.intersect?([Enriched::Pub::ELEC_INVENTORY_TAG, Enriched::Api::ELEC_INVENTORY_TAG])
+          locations << ONLINE_LIBRARY
+        end
         locations
       end
 
@@ -82,17 +86,18 @@ module PennMARC
         # Since item records may reflect locations more accurately, we use them if they exist;
         # if not, we use the holdings.
 
-        tag = PennMARC::EnrichedMarc::TAG_HOLDING
-        subfield_code = PennMARC::EnrichedMarc::SUB_HOLDING_SHELVING_LOCATION
-
         # if the record has an enriched item field present, use it
-        if field_defined?(record, PennMARC::EnrichedMarc::TAG_ITEM)
-          tag = PennMARC::EnrichedMarc::TAG_ITEM
-          subfield_code = PennMARC::EnrichedMarc::SUB_ITEM_CURRENT_LOCATION
-        # otherwise, use the api enriched field value
-        elsif field_defined?(record, EnrichedMarc::AlmaApi::TAG_PHYSICAL_INVENTORY)
-          tag = EnrichedMarc::AlmaApi::TAG_PHYSICAL_INVENTORY
-          subfield_code = EnrichedMarc::AlmaApi::SUB_HOLDING_LOCATION_CODE
+        if field_defined?(record, PennMARC::Enriched::Pub::ITEM_TAG)
+          tag = PennMARC::Enriched::Pub::ITEM_TAG
+          subfield_code = PennMARC::Enriched::Pub::ITEM_CURRENT_LOCATION
+        # if the record has API inventory tags, use them
+        elsif field_defined?(record, Enriched::Api::PHYS_INVENTORY_TAG)
+          tag = Enriched::Api::PHYS_INVENTORY_TAG
+          subfield_code = Enriched::Api::PHYS_LOCATION_CODE
+        # otherwise use Pub holding tags
+        else
+          tag = PennMARC::Enriched::Pub::PHYS_INVENTORY_TAG
+          subfield_code = PennMARC::Enriched::Pub::HOLDING_LOCATION_CODE
         end
 
         { tag: tag, subfield_code: subfield_code }

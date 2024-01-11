@@ -20,13 +20,13 @@ module PennMARC
       end
 
       # Retrieve date added (subfield 'q') from enriched marc 'itm' field.
-      # {PennMARC::EnrichedMarc} maps enriched marc fields and subfields created during Alma publishing. The enriched
+      # {PennMARC::Enriched} maps enriched marc fields and subfields created during Alma publishing. The enriched
       # metadata provided by the Alma API does not include the date created value, so we can't work with that here.
       # @param [MARC::Record] record
       # @return [DateTime, nil] The date added, or nil if date found in record is invalid
       def added(record)
-        record.fields(EnrichedMarc::TAG_ITEM).flat_map { |field|
-          subfield_values(field, EnrichedMarc::SUB_ITEM_DATE_CREATED).filter_map do |date_added|
+        record.fields(Enriched::Pub::ITEM_TAG).flat_map { |field|
+          subfield_values(field, Enriched::Pub::ITEM_DATE_CREATED).filter_map do |date_added|
             # On 2022-05-02, this field value (as exported in enriched publishing
             # job from Alma) began truncating time to day-level granularity. We have
             # no guarantee that this won't switch back in the future, so for the

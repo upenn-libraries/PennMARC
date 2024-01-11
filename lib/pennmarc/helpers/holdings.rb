@@ -48,15 +48,15 @@ module PennMARC
         #   <subfield code="czcolid">61111058563444000</subfield>
         #   <subfield code="8">5310486800000521</subfield>
         # </datafield>
-        elec = record.fields(EnrichedMarc::TAG_ELECTRONIC_INVENTORY)
+        elec = record.fields(Enriched::TAG_ELEC_INVENTORY)
                      .filter_map do |item|
-          next unless item[EnrichedMarc::SUB_ELEC_COLLECTION_NAME].present?
+          next unless item[Enriched::SUB_ELEC_COLLECTION_NAME].present?
 
           {
-            portfolio_pid: item[EnrichedMarc::SUB_ELEC_PORTFOLIO_PID],
-            url: item[EnrichedMarc::SUB_ELEC_ACCESS_URL],
-            collection: item[EnrichedMarc::SUB_ELEC_COLLECTION_NAME],
-            coverage: item[EnrichedMarc::SUB_ELEC_COVERAGE],
+            portfolio_pid: item[Enriched::SUB_ELEC_PORTFOLIO_PID],
+            url: item[Enriched::SUB_ELEC_ACCESS_URL],
+            collection: item[Enriched::SUB_ELEC_COLLECTION_NAME],
+            coverage: item[Enriched::SUB_ELEC_COVERAGE],
           }
         end
 
@@ -72,15 +72,15 @@ module PennMARC
         #   <subfield code="i">.G63 2009</subfield>
         #   <subfield code="8">226026380000541</subfield>
         # </datafield>
-        phys = record.fields(EnrichedMarc::TAG_HOLDING).map do |item|
+        phys = record.fields(Enriched::TAG_HOLDING).map do |item|
           # Alma never populates subfield 'a' which is 'location'
           # it appears to store the location code in 'c'
           # and display name in 'b'
           {
-            holding_id: item[EnrichedMarc::SUB_HOLDING_SEQUENCE_NUMBER],
-            location: item[EnrichedMarc::SUB_HOLDING_SHELVING_LOCATION],
-            classification_part: item[EnrichedMarc::SUB_HOLDING_CLASSIFICATION_PART],
-            item_part: item[EnrichedMarc::SUB_HOLDING_ITEM_PART],
+            holding_id: item[Enriched::SUB_HOLDING_SEQUENCE_NUMBER],
+            location: item[Enriched::SUB_HOLDING_SHELVING_LOCATION],
+            classification_part: item[Enriched::SUB_HOLDING_CLASSIFICATION_PART],
+            item_part: item[Enriched::SUB_HOLDING_ITEM_PART],
           }
         end
         elec + phys

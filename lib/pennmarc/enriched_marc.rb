@@ -7,8 +7,8 @@ module PennMARC
     # Enriched MARC fields added by configurable setting in the Publishing profile that generates the MARCXML
     module Pub
       # Enrichment Tag Names
-      PHYSICAL_INVENTORY_TAG = 'hld'
-      ELECTRONIC_INVENTORY_TAG = 'prt'
+      PHYS_INVENTORY_TAG = 'hld'
+      ELEC_INVENTORY_TAG = 'prt'
       ITEM_TAG = 'itm'
 
       # Subfields for HLD tags
@@ -59,8 +59,8 @@ module PennMARC
     # We cannot modify these subfield settings
     module Api
       # Enrichment Tag Names
-      PHYSICAL_INVENTORY_TAG = 'AVA'
-      ELECTRONIC_INVENTORY_TAG = 'AVE'
+      PHYS_INVENTORY_TAG = 'AVA'
+      ELEC_INVENTORY_TAG = 'AVE'
 
       # Physical Holding (AVA) subfields
       PHYS_CALL_NUMBER = 'd'

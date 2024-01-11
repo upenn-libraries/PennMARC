@@ -64,7 +64,7 @@ describe 'PennMARC::Location' do
 
       it 'returns expected value' do
         expect(helper.location(record: record, location_map: mapping,
-                               display_value: :library)).to contain_exactly('LIBRA', 'Online library')
+                               display_value: :library)).to contain_exactly('LIBRA', PennMARC::Location::ONLINE_LIBRARY)
       end
     end
 
@@ -76,6 +76,18 @@ describe 'PennMARC::Location' do
       it 'returns expected values' do
         expect(helper.location(record: record, location_map: mapping, display_value: :library)).to(
           contain_exactly('LIBRA')
+        )
+      end
+    end
+
+    context 'with AVE fields' do
+      let(:record) do
+        marc_record(fields: [marc_field(tag: 'AVE', subfields: { m: 'Nature' })])
+      end
+
+      it 'returns expected values' do
+        expect(helper.location(record: record, location_map: mapping, display_value: :library)).to(
+          contain_exactly(PennMARC::Location::ONLINE_LIBRARY)
         )
       end
     end

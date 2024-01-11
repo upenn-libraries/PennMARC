@@ -165,14 +165,14 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array]
       def call_nums(record)
-        if field_defined?(record, EnrichedMarc::TAG_HOLDING)
-          record.fields(EnrichedMarc::TAG_HOLDING).map do |field|
-            join_subfields(field, &subfield_in?([EnrichedMarc::SUB_HOLDING_CLASSIFICATION_PART,
-                                                 EnrichedMarc::SUB_HOLDING_ITEM_PART]))
+        if field_defined?(record, Enriched::Pub::PHYS_INVENTORY_TAG)
+          record.fields(Enriched::Pub::PHYS_INVENTORY_TAG).map do |field|
+            join_subfields(field, &subfield_in?([Enriched::Pub::HOLDING_CLASSIFICATION_PART,
+                                                 Enriched::Pub::HOLDING_ITEM_PART]))
           end
-        elsif field_defined?(record, EnrichedMarc::AlmaApi::TAG_PHYSICAL_INVENTORY)
-          record.fields(EnrichedMarc::AlmaApi::TAG_PHYSICAL_INVENTORY).map do |field|
-            join_subfields(field, &subfield_in?([EnrichedMarc::AlmaApi::SUB_PHYSICAL_CALL_NUMBER_TYPE]))
+        elsif field_defined?(record, Enriched::Api::PHYS_INVENTORY_TAG)
+          record.fields(Enriched::Api::PHYS_INVENTORY_TAG).map do |field|
+            join_subfields(field, &subfield_in?([Enriched::Api::PHYS_CALL_NUMBER_TYPE]))
           end
         else
           []
