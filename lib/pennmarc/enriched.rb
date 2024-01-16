@@ -15,13 +15,13 @@ module PennMARC
 
       # Subfields for HLD tags
       # Follow MARC 852 spec: https://www.loc.gov/marc/holdings/hd852.html, but names are translated into Alma parlance
-      HOLDING_LOCATION_NAME = 'b' # e.g., Libra
-      HOLDING_LOCATION_CODE = 'c' # e.g., stor
+      PHYS_LOCATION_NAME = 'b' # e.g., Libra
+      PHYS_LOCATION_CODE = 'c' # e.g., stor
       HOLDING_CLASSIFICATION_PART = 'h' # "classification part" first part of call num e.g., KF6450
       HOLDING_ITEM_PART = 'i' # "item part?" second part of call num e.g., .C59 1989
-      HOLDING_PUBLIC_NOTE = 'z'
-      HOLDING_INTERNAL_NOTE = 'x'
-      HOLDING_ID = '8'
+      PHYS_PUBLIC_NOTE = 'z'
+      PHYS_INTERNAL_NOTE = 'x'
+      PHYS_HOLDING_ID = '8'
 
       # Subfields for ITM tags
       ITEM_CURRENT_LOCATION = 'g'
