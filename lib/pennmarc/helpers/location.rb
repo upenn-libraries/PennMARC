@@ -87,17 +87,17 @@ module PennMARC
         # if not, we use the holdings.
 
         # if the record has an enriched item field present, use it
-        if field_defined?(record, PennMARC::Enriched::Pub::ITEM_TAG)
-          tag = PennMARC::Enriched::Pub::ITEM_TAG
-          subfield_code = PennMARC::Enriched::Pub::ITEM_CURRENT_LOCATION
+        if field_defined?(record, Enriched::Pub::ITEM_TAG)
+          tag = Enriched::Pub::ITEM_TAG
+          subfield_code = Enriched::Pub::ITEM_CURRENT_LOCATION
         # if the record has API inventory tags, use them
         elsif field_defined?(record, Enriched::Api::PHYS_INVENTORY_TAG)
           tag = Enriched::Api::PHYS_INVENTORY_TAG
           subfield_code = Enriched::Api::PHYS_LOCATION_CODE
         # otherwise use Pub holding tags
         else
-          tag = PennMARC::Enriched::Pub::PHYS_INVENTORY_TAG
-          subfield_code = PennMARC::Enriched::Pub::HOLDING_LOCATION_CODE
+          tag = Enriched::Pub::PHYS_INVENTORY_TAG
+          subfield_code = Enriched::Pub::PHYS_LOCATION_CODE
         end
 
         { tag: tag, subfield_code: subfield_code }

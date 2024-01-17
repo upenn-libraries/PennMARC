@@ -5,8 +5,8 @@
 module PennMARC
   module Enriched
     # Enriched MARC fields added by configurable setting in the Publishing profile that generates the MARCXML
-    # TODO: review if we can modify the subfields used in the pub profile to create parity with API subfields as that
-    #       would simplify tremendously this mapping
+    # TODO: review if we can/should modify the subfields used in the pub profile to create parity with API subfields as
+    #       that could simplify this mapping tremendously
     module Pub
       # Enrichment Tag Names
       PHYS_INVENTORY_TAG = 'hld'

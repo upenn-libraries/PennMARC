@@ -10,7 +10,7 @@ module PennMARC
       # @return [String (frozen)]
       def call_num
         if source == :pub
-          "#{mapper::HOLDING_CLASSIFICATION_PART}#{mapper::HOLDING_ITEM_PART}"
+          "#{field[mapper::HOLDING_CLASSIFICATION_PART]}#{field[mapper::HOLDING_ITEM_PART]}"
         elsif source == :api
           field[mapper::PHYS_CALL_NUMBER]
         end
