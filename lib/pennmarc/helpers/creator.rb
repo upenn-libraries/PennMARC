@@ -194,11 +194,11 @@ module PennMARC
       # @return [Array<String>] name values from given tags
       def name_search_values(record:, tags:, relator_map:)
         acc = record.fields(tags).filter_map do |field|
-          name_from_main_entry field, relator_map, convert_name_order: false
+          name_from_main_entry field, relator_map, should_convert_name_order: false
         end
 
         acc += record.fields(tags).filter_map do |field|
-          name_from_main_entry field, relator_map, convert_name_order: true
+          name_from_main_entry field, relator_map, should_convert_name_order: true
         end
 
         acc += record.fields(['880']).filter_map do |field|
@@ -236,13 +236,13 @@ module PennMARC
 
       # Extract the information we care about from 1xx fields, map relator codes, and use appropriate punctuation
       # @param [MARC::Field] field
-      # @return [String] joined subfield values for value from field
       # @param [Hash] mapping
-      # @param [Boolean] convert_name_order
-      def name_from_main_entry(field, mapping, convert_name_order: false)
+      # @param [Boolean] should_convert_name_order
+      # @return [String] joined subfield values for value from field
+      def name_from_main_entry(field, mapping, should_convert_name_order: false)
         s = field.filter_map { |sf|
           if sf.code == 'a'
-            convert_name_order ? convert_name_order(sf.value) : sf.value
+            should_convert_name_order ? convert_name_order(sf.value) : sf.value
           elsif NAME_EXCLUDED_SUBFIELDS.exclude?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
