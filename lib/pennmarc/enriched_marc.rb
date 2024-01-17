@@ -42,6 +42,8 @@ module PennMARC
 
       SUB_PHYSICAL_CALL_NUMBER = 'd'
       SUB_PHYSICAL_CALL_NUMBER_TYPE = 'k'
+
+      SUB_HOLDING_LOCATION_CODE = 'j'
     end
   end
 end
