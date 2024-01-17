@@ -145,7 +145,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>]
       def conference_search(record)
-        record.fields(CONFERENCE_SEARCH_TAGS).map do |field|
+        record.fields(CONFERENCE_SEARCH_TAGS).filter_map do |field|
           join_subfields(field, &subfield_in?(%w[a c d e]))
         end
       end
