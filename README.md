@@ -71,9 +71,14 @@ rspec
 
 ## Publishing the Gem
 
-1. Update the `VERSION` constant in `lib/pennmarc/version.rb`.
-2. Run `gem build pennmarc.gemspec` with the latest code
-3. Run `gem push pennmarc-{version number here}.gem`(e.g. `gem push pennmarc-1.0.0.gem`) to push to RubyGems. You will need access and MFA setup with RubyGems.
+1. Update the `VERSION` constant in [lib/pennmarc/version.rb](lib/pennmarc/version.rb) following this gem's versioning pattern (ex 1.1.0).
+2. Merge the change into `main`.
+3. Create a Gitlab Release:
+   1. Go to https://gitlab.library.upenn.edu/dld/catalog/pennmarc/-/releases/new
+   2. Create a new tag that matches the version set in step 1 (ex: v1.1.0). 
+   3. Add a release title that is the same as the tag name. 
+   4. Submit by clicking "Create Release".
+4. Once the release is created a pipeline will run to publish the gem to RubyGems. 
 
 ### Versioning Guidelines
 
