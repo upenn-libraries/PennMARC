@@ -70,7 +70,7 @@ describe 'PennMARC::Inventory' do
       it 'returns expected array of hash values' do
         expect(helper.electronic(record)).to contain_exactly(
           { portfolio_id: '234567890', url: 'https://www.iwish.com', collection_name: 'All Articles Repo',
-            coverage: 'All time', note: 'Portfolio public note'}
+            coverage: 'All time', note: 'Portfolio public note' }
         )
       end
     end
@@ -81,7 +81,7 @@ describe 'PennMARC::Inventory' do
       it 'returns expected array of hash values' do
         expect(helper.electronic(record)).to contain_exactly(
           { portfolio_id: '234567890', url: 'https://www.iwish.com', collection_name: 'All Articles Repo',
-            coverage: 'All time', note: 'Portfolio public note'}
+            coverage: 'All time', note: 'Portfolio public note' }
         )
       end
     end
