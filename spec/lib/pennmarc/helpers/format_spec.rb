@@ -68,9 +68,9 @@ describe 'PennMARC::Format' do
       context 'with API enriched fields' do
         let(:record) do
           marc_record fields: [
-            marc_field(tag: PennMARC::EnrichedMarc::AlmaApi::TAG_PHYSICAL_INVENTORY, subfields: {
+            marc_field(tag: PennMARC::Enriched::Api::PHYS_INVENTORY_TAG, subfields: {
                          :h => 'AB123',
-                         PennMARC::EnrichedMarc::AlmaApi::SUB_PHYSICAL_CALL_NUMBER_TYPE => '.456 Microfilm'
+                         PennMARC::Enriched::Api::PHYS_CALL_NUMBER_TYPE => '.456 Microfilm'
                        })
           ]
         end
@@ -83,9 +83,9 @@ describe 'PennMARC::Format' do
       context 'with publishing enriched fields' do
         let(:record) do
           marc_record fields: [
-            marc_field(tag: PennMARC::EnrichedMarc::TAG_HOLDING,
+            marc_field(tag: PennMARC::Enriched::Pub::PHYS_INVENTORY_TAG,
                        subfields: { :h => 'AB123',
-                                    PennMARC::EnrichedMarc::SUB_ITEM_CALL_NUMBER_TYPE => '.456 Microfilm' })
+                                    PennMARC::Enriched::Pub::ITEM_CALL_NUMBER_TYPE => '.456 Microfilm' })
           ]
         end
 

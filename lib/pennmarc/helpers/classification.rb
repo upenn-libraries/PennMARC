@@ -16,13 +16,13 @@ module PennMARC
     }.freeze
 
     # Enriched MARC tags that hold classification data
-    TAGS = [EnrichedMarc::TAG_ITEM, EnrichedMarc::AlmaApi::TAG_PHYSICAL_INVENTORY].freeze
+    TAGS = [Enriched::Pub::ITEM_TAG, Enriched::Api::PHYS_INVENTORY_TAG].freeze
 
     class << self
       # Parse classification values for faceting. We retrieve classification values from enriched MARC fields 'itm' or
       # 'AVA' originating respectively from the Alma publishing process or from the Alma Api. We return the
       # highest level LOC or Dewey classifications from each available call number, joining the class code with
-      # its title in a single string. See {PennMARC::EnrichedMarc} and {PennMARC::EnrichedMarc::AlmaApi} for more
+      # its title in a single string. See {PennMARC::Enriched} and {PennMARC::Enriched::Api} for more
       # information on the enriched MARC fields.
       # @see https://developers.exlibrisgroup.com/alma/apis/docs/bibs/R0VUIC9hbG1hd3MvdjEvYmlicy97bW1zX2lkfQ==/ AVA docs
       # @param [MARC::Record] record
@@ -48,18 +48,18 @@ module PennMARC
       # @param [MARC::DataField] field
       # @return [String]
       def call_number_sf(field)
-        return EnrichedMarc::SUB_ITEM_CALL_NUMBER if field.tag == EnrichedMarc::TAG_ITEM
+        return Enriched::Pub::ITEM_CALL_NUMBER if field.tag == Enriched::Pub::ITEM_TAG
 
-        EnrichedMarc::AlmaApi::SUB_PHYSICAL_CALL_NUMBER
+        Enriched::Api::PHYS_CALL_NUMBER
       end
 
       # Retrieve subfield code that stores call number type on enriched marc field
       # @param [MARC::DataField] field
       # @return [String]
       def call_number_type_sf(field)
-        return EnrichedMarc::SUB_ITEM_CALL_NUMBER_TYPE if field.tag == EnrichedMarc::TAG_ITEM
+        return Enriched::Pub::ITEM_CALL_NUMBER_TYPE if field.tag == Enriched::Pub::ITEM_TAG
 
-        EnrichedMarc::AlmaApi::SUB_PHYSICAL_CALL_NUMBER_TYPE
+        Enriched::Api::PHYS_CALL_NUMBER_TYPE
       end
 
       # retrieve title of classification based on single char classification code and call number type

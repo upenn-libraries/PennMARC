@@ -4,11 +4,15 @@ describe 'PennMARC::Location' do
   include MarcSpecHelpers
 
   let(:helper) { PennMARC::Location }
+  let(:enriched_marc) { PennMARC::Enriched }
   let(:mapping) { location_map }
 
   describe 'location' do
     context "with only 'itm' field present" do
-      let(:record) { marc_record(fields: [marc_field(tag: 'itm', subfields: { g: 'stor' })]) }
+      let(:record) do
+        marc_record(fields: [marc_field(tag: enriched_marc::Pub::ITEM_TAG,
+                                        subfields: { enriched_marc::Pub::ITEM_CURRENT_LOCATION => 'stor' })])
+      end
 
       it 'returns expected value' do
         expect(helper.location(record: record, location_map: mapping,
@@ -19,7 +23,10 @@ describe 'PennMARC::Location' do
     end
 
     context "with only 'hld' field present" do
-      let(:record) { marc_record(fields: [marc_field(tag: 'hld', subfields: { c: 'stor' })]) }
+      let(:record) do
+        marc_record(fields: [marc_field(tag: enriched_marc::Pub::PHYS_INVENTORY_TAG,
+                                        subfields: { enriched_marc::Pub::PHYS_LOCATION_CODE => 'stor' })])
+      end
 
       it 'returns expected value' do
         expect(helper.location(record: record, location_map: mapping,
@@ -29,10 +36,12 @@ describe 'PennMARC::Location' do
       end
     end
 
-    context "with both 'hld' and 'itm' fields present" do
+    context 'with both holding and item tag fields present=' do
       let(:record) do
-        marc_record(fields: [marc_field(tag: 'itm', subfields: { g: 'stor' }),
-                             marc_field(tag: 'hld', subfields: { c: 'dent' })])
+        marc_record(fields: [marc_field(tag: enriched_marc::Pub::ITEM_TAG,
+                                        subfields: { enriched_marc::Pub::ITEM_CURRENT_LOCATION => 'stor' }),
+                             marc_field(tag: enriched_marc::Pub::PHYS_INVENTORY_TAG,
+                                        subfields: { enriched_marc::Pub::PHYS_LOCATION_CODE => 'dent' })])
       end
 
       it 'returns item location' do
@@ -42,7 +51,7 @@ describe 'PennMARC::Location' do
     end
 
     context 'with multiple library locations' do
-      let(:record) { marc_record(fields: [marc_field(tag: 'itm', subfields: { g: %w[dent] })]) }
+      let(:record) { marc_record(fields: [marc_field(tag: enriched_marc::Pub::ITEM_TAG, subfields: { g: %w[dent] })]) }
 
       it 'returns expected value' do
         expect(helper.location(record: record, location_map: mapping,
@@ -60,22 +69,44 @@ describe 'PennMARC::Location' do
     end
 
     context 'with electronic inventory tag' do
-      let(:record) { marc_record(fields: [marc_field(tag: 'itm', subfields: { g: 'stor' }), marc_field(tag: 'prt')]) }
+      let(:record) do
+        marc_record(fields: [marc_field(tag: enriched_marc::Pub::ITEM_TAG,
+                                        subfields: { enriched_marc::Pub::ITEM_CURRENT_LOCATION => 'stor' }),
+                             marc_field(tag: enriched_marc::Pub::ELEC_INVENTORY_TAG)])
+      end
 
       it 'returns expected value' do
         expect(helper.location(record: record, location_map: mapping,
-                               display_value: :library)).to contain_exactly('LIBRA', 'Online library')
+                               display_value: :library)).to contain_exactly('LIBRA', helper::ONLINE_LIBRARY)
       end
     end
 
     context 'with AVA fields' do
       let(:record) do
-        marc_record(fields: [marc_field(tag: 'AVA', subfields: { b: 'Libra', c: 'LIBRA', j: 'stor' })])
+        marc_record(fields: [marc_field(tag: enriched_marc::Api::PHYS_INVENTORY_TAG,
+                                        subfields: {
+                                          enriched_marc::Api::PHYS_LIBRARY_CODE => 'Libra',
+                                          enriched_marc::Api::PHYS_LOCATION_NAME => 'LIBRA',
+                                          enriched_marc::Api::PHYS_LOCATION_CODE => 'stor'
+                                        })])
       end
 
       it 'returns expected values' do
         expect(helper.location(record: record, location_map: mapping, display_value: :library)).to(
           contain_exactly('LIBRA')
+        )
+      end
+    end
+
+    context 'with AVE fields' do
+      let(:record) do
+        marc_record(fields: [marc_field(tag: enriched_marc::Api::ELEC_INVENTORY_TAG,
+                                        subfields: { enriched_marc::Api::ELEC_COLLECTION_NAME => 'Nature' })])
+      end
+
+      it 'returns expected values' do
+        expect(helper.location(record: record, location_map: mapping, display_value: :library)).to(
+          contain_exactly(helper::ONLINE_LIBRARY)
         )
       end
     end

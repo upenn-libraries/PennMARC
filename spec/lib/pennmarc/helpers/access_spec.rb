@@ -10,7 +10,7 @@ describe 'PennMARC::Access' do
       let(:record) { marc_record fields: [marc_field(tag: tag)] }
 
       context 'with enrichment via the Alma publishing process' do
-        let(:tag) { PennMARC::EnrichedMarc::TAG_ELECTRONIC_INVENTORY }
+        let(:tag) { PennMARC::Enriched::Pub::ELEC_INVENTORY_TAG }
 
         it 'returns expected access value' do
           expect(helper.facet(record)).to contain_exactly(PennMARC::Access::ONLINE)
@@ -18,7 +18,7 @@ describe 'PennMARC::Access' do
       end
 
       context 'with enrichment with availability info via the Alma API' do
-        let(:tag) { PennMARC::EnrichedMarc::AlmaApi::TAG_ELECTRONIC_INVENTORY }
+        let(:tag) { PennMARC::Enriched::Api::ELEC_INVENTORY_TAG }
 
         it 'returns expected access value' do
           expect(helper.facet(record)).to contain_exactly(PennMARC::Access::ONLINE)
@@ -30,7 +30,7 @@ describe 'PennMARC::Access' do
       let(:record) { marc_record fields: [marc_field(tag: tag)] }
 
       context 'with enrichment via the Alma publishing process' do
-        let(:tag) { PennMARC::EnrichedMarc::TAG_HOLDING }
+        let(:tag) { PennMARC::Enriched::Pub::PHYS_INVENTORY_TAG }
 
         it 'returns expected access value' do
           expect(helper.facet(record)).to contain_exactly(PennMARC::Access::AT_THE_LIBRARY)
@@ -38,7 +38,7 @@ describe 'PennMARC::Access' do
       end
 
       context 'with enrichment with availability info via the Alma API' do
-        let(:tag) { PennMARC::EnrichedMarc::AlmaApi::TAG_PHYSICAL_INVENTORY }
+        let(:tag) { PennMARC::Enriched::Api::PHYS_INVENTORY_TAG }
 
         it 'returns expected access value' do
           expect(helper.facet(record)).to contain_exactly(PennMARC::Access::AT_THE_LIBRARY)
@@ -48,7 +48,7 @@ describe 'PennMARC::Access' do
 
     context 'with a record containing a link to a finding aid (as a handle link)' do
       let(:record) do
-        marc_record fields: [marc_field(tag: PennMARC::EnrichedMarc::TAG_HOLDING),
+        marc_record fields: [marc_field(tag: PennMARC::Enriched::Pub::PHYS_INVENTORY_TAG),
                              marc_field(tag: '856', subfields: location_and_access_subfields, **indicators)]
       end
 

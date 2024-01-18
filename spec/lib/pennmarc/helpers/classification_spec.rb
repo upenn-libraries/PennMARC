@@ -17,9 +17,9 @@ describe 'PennMARC::Classification' do
 
   describe '.facet' do
     context 'with enrichment via the Alma publishing process' do
-      let(:tag) { PennMARC::EnrichedMarc::TAG_ITEM }
-      let(:call_number_type_sf) { PennMARC::EnrichedMarc::SUB_ITEM_CALL_NUMBER_TYPE }
-      let(:call_number_sf) { PennMARC::EnrichedMarc::SUB_ITEM_CALL_NUMBER }
+      let(:tag) { PennMARC::Enriched::Pub::ITEM_TAG }
+      let(:call_number_type_sf) { PennMARC::Enriched::Pub::ITEM_CALL_NUMBER_TYPE }
+      let(:call_number_sf) { PennMARC::Enriched::Pub::ITEM_CALL_NUMBER }
 
       it 'returns expected values' do
         expect(helper.facet(record)).to contain_exactly('T - Technology', '600 - Technology',
@@ -28,9 +28,9 @@ describe 'PennMARC::Classification' do
     end
 
     context 'with enrichment with availability info via Alma Api' do
-      let(:tag) { PennMARC::EnrichedMarc::AlmaApi::TAG_PHYSICAL_INVENTORY }
-      let(:call_number_type_sf) { PennMARC::EnrichedMarc::AlmaApi::SUB_PHYSICAL_CALL_NUMBER_TYPE }
-      let(:call_number_sf) { PennMARC::EnrichedMarc::AlmaApi::SUB_PHYSICAL_CALL_NUMBER }
+      let(:tag) { PennMARC::Enriched::Api::PHYS_INVENTORY_TAG }
+      let(:call_number_type_sf) { PennMARC::Enriched::Api::PHYS_CALL_NUMBER_TYPE }
+      let(:call_number_sf) { PennMARC::Enriched::Api::PHYS_CALL_NUMBER }
 
       it 'returns expected values' do
         expect(helper.facet(record)).to contain_exactly('T - Technology', '600 - Technology',
