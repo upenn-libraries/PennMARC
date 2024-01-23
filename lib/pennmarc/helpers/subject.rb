@@ -229,7 +229,7 @@ module PennMARC
       # @param [MARC::DataField] field
       # @return [Hash{Symbol => Integer, Array}, Nil]
       def build_subject_hash(field)
-        term_info = { count: 0, main: [], parts: [], append: [], uri: nil,
+        term_info = { count: 0, parts: [], append: [], uri: nil,
                       local: field.indicator2 == '4' || field.tag.starts_with?('69'), # local subject heading
                       vernacular: field.tag == '880' }
         field.each do |subfield|
