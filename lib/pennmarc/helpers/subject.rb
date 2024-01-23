@@ -173,9 +173,9 @@ module PennMARC
 
         case type.to_sym
         when :facet
-          "#{term[:parts].join('--')} #{term[:lasts].join(' ')}".strip
+          term[:parts].join('--').strip
         when :display
-          "#{term[:parts].join('--')} #{term[:lasts].join(' ')} #{term[:append].join(' ')}".strip
+          "#{term[:parts].join('--')} #{term[:append].join(' ')}".strip
         end
       end
 
@@ -227,9 +227,9 @@ module PennMARC
       # @todo do i need all this?
       # @todo do i need to handle punctuation? see append_new_part
       # @param [MARC::DataField] field
-      # @return [Hash{Symbol->Integer | Array}]
+      # @return [Hash{Symbol => Integer, Array}, Nil]
       def build_subject_hash(field)
-        term_info = { count: 0, parts: [], append: [], lasts: [], uri: nil,
+        term_info = { count: 0, main: [], parts: [], append: [], uri: nil,
                       local: field.indicator2 == '4' || field.tag.starts_with?('69'), # local subject heading
                       vernacular: field.tag == '880' }
         field.each do |subfield|
@@ -251,8 +251,8 @@ module PennMARC
             # 'e' is relator term; not sure what 'w' is. These are used to append for record-view display only
             term_info[:append] << subfield.value.strip # TODO: map relator code?
           when 'b', 'c', 'd', 'p', 'q', 't'
-            # these are appended to the last component if possible (i.e., when joined, should have no delimiter)
-            term_info[:lasts] << subfield.value.strip
+            # these are appended to the last component (part) if possible (i.e., when joined, should have no delimiter)
+            term_info[:parts].last << ", #{subfield.value.strip}"
             term_info[:count] += 1
           else
             # the usual case; add a new component to `parts`
