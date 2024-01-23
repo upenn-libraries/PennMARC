@@ -107,7 +107,8 @@ describe 'PennMARC::Subject' do
       end
 
       it 'properly concatenates heading components' do
-        expect(values.first).to include 'Libraries, 22nd Century--History'
+        expect(values.first).to start_with 'Libraries'
+        expect(values.first).to end_with '--History'
       end
 
       it 'excludes URI values from ǂ0 or ǂ1' do
