@@ -14,7 +14,7 @@ module PennMARC
     end
 
     # Join subfields from a field selected based on a provided proc
-    # @param [MARC::DataField] field
+    # @param [MARC::DataField, nil] field
     # @param [Proc] selector
     # @return [String]
     def join_subfields(field, &selector)
@@ -123,6 +123,21 @@ module PennMARC
               comma: /\s*,\s*$/,
               period: /\.\s*$/ } # TODO: revise to exclude "etc."
       string.sub map[trailer.to_sym], ''
+    end
+
+    # Intelligently append given punctuation to the end of a string
+    # @param [Symbol] trailer
+    # @param [String] string
+    # @return [String]
+    def append_trailing(trailer, string)
+      return string if string.end_with?('.', '-')
+
+      map = { semicolon: ';',
+              colon: ':',
+              slash: '/',
+              comma: ',',
+              period: '.' }
+      string + map[trailer.to_sym]
     end
 
     # MARC 880 field "Alternate Graphic Representation" contains text "linked" to another
