@@ -101,13 +101,14 @@ describe 'PennMARC::Subject' do
       let(:fields) do
         [marc_field(tag: '650', indicator2: '7',
                     subfields: {
-                      a: 'Libraries', x: 'History', e: 'relator', d: '22nd Century',
+                      a: 'Libraries', d: '22nd Century', x: 'History', e: 'relator',
                       '2': 'fast', '0': 'http://fast.org/libraries'
                     })]
       end
 
       it 'properly concatenates heading components' do
-        expect(values.first).to include 'Libraries--History'
+        expect(values.first).to start_with 'Libraries'
+        expect(values.first).to end_with '--History'
       end
 
       it 'excludes URI values from ǂ0 or ǂ1' do
@@ -123,14 +124,14 @@ describe 'PennMARC::Subject' do
       end
 
       it 'joins all values in the expected way' do
-        expect(values.first).to eq 'Libraries--History 22nd Century'
+        expect(values.first).to eq 'Libraries, 22nd Century--History'
       end
     end
   end
 
   describe '.show' do
     let(:record) { marc_record fields: fields }
-    let(:values) { helper.facet(record) }
+    let(:values) { helper.show(record) }
 
     context 'with a variety of headings' do
       let(:fields) do
@@ -162,8 +163,28 @@ describe 'PennMARC::Subject' do
       end
 
       it 'properly formats the heading parts' do
-        expect(values.first).to eq 'Subways--Pennsylvania--Philadelphia Metropolitan Area--Maps--1989'
-        expect(values.first).not_to include 'relator'
+        expect(values.first).to eq 'Subways--Pennsylvania--Philadelphia Metropolitan Area--Maps--1989 relator'
+      end
+    end
+
+    context 'with the record including trailing punctuation in the parts' do
+      let(:fields) do
+        [marc_field(tag: '600', indicator2: '7', subfields: {
+                      a: 'Franklin, Benjamin,',
+                      d: '1706-1790',
+                      '2': 'fast',
+                      '0': 'http://id.worldcat.org/fast/34115'
+                    }),
+         marc_field(tag: '600', indicator1: '1', indicator2: '0', subfields: {
+                      a: 'Franklin, Benjamin,',
+                      d: '1706-1790.',
+                      x: 'As inventor.'
+                    })]
+      end
+
+      it 'returns what Franklin shows', pending: 'proper handling of punctuation in subject parts' do
+        expect(values).to contain_exactly 'Franklin, Benjamin, 1706-1790.',
+                                          'Franklin, Benjamin, 1706-1790--As inventor.'
       end
     end
 
@@ -187,14 +208,14 @@ describe 'PennMARC::Subject' do
       let(:fields) do
         [marc_field(tag: '611', indicator2: '0', subfields: {
                       a: 'Conference',
-                      d: '(2002',
-                      n: '2nd',
-                      c: ['Johannesburg, South Africa', 'Cape Town, South Africa)']
+                      c: ['(Johannesburg, South Africa', 'Cape Town, South Africa'],
+                      d: '2002)',
+                      n: '2nd'
                     })]
       end
 
       it 'properly formats the heading parts' do
-        expect(values.first).to eq 'Conference--2nd (2002 Johannesburg, South Africa Cape Town, South Africa)'
+        expect(values.first).to eq 'Conference, (Johannesburg, South Africa, Cape Town, South Africa, 2002)--2nd'
       end
     end
 
@@ -202,14 +223,17 @@ describe 'PennMARC::Subject' do
       let(:fields) do
         [marc_field(tag: '600', indicator2: '0', subfields: {
                       a: 'Person, Significant Author',
+                      b: 'Numerator',
+                      c: %w[Title Rank],
                       d: '1899-1971',
-                      v: 'Early works to 1950',
-                      t: 'Collection'
+                      t: 'Collection',
+                      v: 'Early works to 1950'
                     })]
       end
 
       it 'properly formats the heading parts' do
-        expect(values.first).to eq 'Person, Significant Author--Early works to 1950 1899-1971 Collection'
+        expect(values.first).to eq('Person, Significant Author, Numerator, Title, Rank, 1899-1971, Collection--' \
+                                   'Early works to 1950')
       end
     end
   end
