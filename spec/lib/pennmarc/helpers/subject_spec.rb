@@ -167,6 +167,27 @@ describe 'PennMARC::Subject' do
       end
     end
 
+    context 'with the record including trailing punctuation in the parts' do
+      let(:fields) do
+        [marc_field(tag: '600', indicator2: '7', subfields: {
+                      a: 'Franklin, Benjamin,',
+                      d: '1706-1790',
+                      '2': 'fast',
+                      '0': 'http://id.worldcat.org/fast/34115'
+                    }),
+         marc_field(tag: '600', indicator1: '1', indicator2: '0', subfields: {
+                      a: 'Franklin, Benjamin,',
+                      d: '1706-1790.',
+                      x: 'As inventor.'
+                    })]
+      end
+
+      it 'returns what Franklin shows', pending: 'proper handling of punctuation in subject parts' do
+        expect(values).to contain_exactly 'Franklin, Benjamin, 1706-1790.',
+                                          'Franklin, Benjamin, 1706-1790--As inventor.'
+      end
+    end
+
     context 'with a robust 651 heading including many subfields' do
       let(:fields) do
         [marc_field(tag: '651', indicator2: '4', subfields: {
