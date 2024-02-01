@@ -34,11 +34,12 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>]
       def isbn_show(record)
-        isbn_values = record.fields('020').filter_map do |field|
+        values = record.fields('020').filter_map do |field|
           joined_isbn = join_subfields(field, &subfield_in?(%w[a]))
           joined_isbn.presence
         end
-        isbn_values + linked_alternate(record, '020', &subfield_in?(%w[a]))
+        isbn_values = values + linked_alternate(record, '020', &subfield_in?(%w[a]))
+        isbn_values.uniq
       end
 
       # Get ISSN values for display from the {https://www.oclc.org/bibformats/en/0xx/022.html 022 field} and related
@@ -47,11 +48,12 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>]
       def issn_show(record)
-        issn_values = record.fields('022').filter_map do |field|
+        values = record.fields('022').filter_map do |field|
           joined_issn = join_subfields(field, &subfield_in?(%w[a]))
           joined_issn.presence
         end
-        issn_values + linked_alternate(record, '022', &subfield_in?(%w[a]))
+        issn_values = values + linked_alternate(record, '022', &subfield_in?(%w[a]))
+        issn_values.uniq
       end
 
       # Get numeric OCLC ID of first {https://www.oclc.org/bibformats/en/0xx/035.html 035 field}
@@ -82,7 +84,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>]
       def oclc_id_search(record)
-        record.fields('035').flat_map do |field|
+        record.fields('035').flat_map { |field|
           field.filter_map do |subfield|
             # skip unless subfield 'a' or 'z'
             next unless subfield.code.in?(%w[a z])
@@ -98,7 +100,7 @@ module PennMARC
 
             match[1]
           end
-        end
+        }.uniq
       end
 
       # Get publisher issued identifiers from fields {https://www.oclc.org/bibformats/en/0xx/024.html 024},
@@ -109,7 +111,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<string>]
       def publisher_number_show(record)
-        record.fields(%w[024 028 880]).filter_map do |field|
+        record.fields(%w[024 028 880]).filter_map { |field|
           next if field.tag == '880' && subfield_value_not_in?(field, '6', %w[024 028])
 
           # do not return doi values from 024 ǂ2
@@ -118,7 +120,7 @@ module PennMARC
           else
             join_subfields(field, &subfield_not_in?(%w[5 6])).presence
           end
-        end
+        }.uniq
       end
 
       # Get publisher issued identifiers for searching of a record. Values extracted from fields
@@ -127,19 +129,19 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>]
       def publisher_number_search(record)
-        record.fields(%w[024 028]).filter_map do |field|
+        record.fields(%w[024 028]).filter_map { |field|
           joined_identifiers = join_subfields(field, &subfield_in?(%w[a]))
           joined_identifiers.presence
-        end
+        }.uniq
       end
 
       # Retrieve fingerprint for display from the {https://www.oclc.org/bibformats/en/0xx/026.html 026} field
       # @param [MARC::Record] record
       # @return [Array<String>]
       def fingerprint_show(record)
-        record.fields('026').map do |field|
+        record.fields('026').map { |field|
           join_subfields(field, &subfield_not_in?(%w[2 5 6 8]))
-        end
+        }.uniq
       end
 
       # Retrieve DOI values stored in {https://www.oclc.org/bibformats/en/0xx/024.html 024}.
@@ -147,14 +149,14 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>]
       def doi_show(record)
-        record.fields('024').filter_map do |field|
+        record.fields('024').filter_map { |field|
           # skip unless indicator1 is '7'
           next unless field.indicator1.in?(%w[7])
           # skip unless ǂ2 is the string literal 'doi'
           next unless subfield_value_in?(field, '2', %w[doi])
 
           join_subfields(field, &subfield_in?(%w[a]))
-        end
+        }.uniq
       end
 
       private

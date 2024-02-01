@@ -19,13 +19,13 @@ module PennMARC
       # @param [Marc::Record]
       # @return [Array<string>] Array of types
       def type_facet(record)
-        record.fields('944').filter_map do |field|
+        record.fields('944').filter_map { |field|
           # skip unless specified database format type present
           next unless subfield_value?(field, 'a', /#{DATABASES_FACET_VALUE}/o)
 
           type = field.find { |subfield| subfield.code == 'b' }
           type&.value
-        end
+        }.uniq
       end
 
       # Retrieves database subject category/communities of interest (subfield 'a') from
@@ -37,13 +37,13 @@ module PennMARC
       def category_facet(record)
         return [] unless curated_db?(record)
 
-        record.fields('943').filter_map do |field|
+        record.fields('943').filter_map { |field|
           # skip unless Community of Interest code is in subfield '2'
           next unless subfield_value?(field, '2', /#{COI_CODE}/o)
 
           category = field.find { |subfield| subfield.code == 'a' }
           category&.value
-        end
+        }.uniq
       end
 
       # Concatenates database subject category with database sub subject category in the format "category--subcategory"
@@ -58,7 +58,7 @@ module PennMARC
       def subcategory_facet(record)
         return [] unless curated_db?(record)
 
-        record.fields('943').filter_map do |field|
+        record.fields('943').filter_map { |field|
           # skip unless Community of Interest code is in subfield '2'
           next unless subfield_value?(field, '2', /#{COI_CODE}/o)
 
@@ -73,7 +73,7 @@ module PennMARC
           next if subcategory.blank?
 
           "#{category.value}--#{subcategory.value}"
-        end
+        }.uniq
       end
 
       private

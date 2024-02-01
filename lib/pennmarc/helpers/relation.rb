@@ -14,11 +14,11 @@ module PennMARC
       # in this field should be sufficient to locate host item record.
       #
       # @param [MARC::Record] record
-      # @return [Array] contained in values for display
+      # @return [Array<String>] contained in values for display
       def contained_in_show(record)
-        record.fields('773').map do |field|
+        record.fields('773').map { |field|
           join_subfields(field, &subfield_not_in?(%w[6 7 8 w]))
-        end
+        }.uniq
       end
 
       # Get "chronology" information from specially-prefixed 650 (subject) fields
@@ -56,7 +56,7 @@ module PennMARC
 
           values_with_title_prefix(field, sf_exclude: %w[0 4 6 8 i], relator_map: relator_map)
         end
-        values + record.fields('880').filter_map do |field|
+        relation_values = values + record.fields('880').filter_map do |field|
           next if field.indicator2.present?
 
           next unless subfield_value?(field, '6', /^(#{RELATED_WORK_FIELDS.join('|')})/)
@@ -65,6 +65,7 @@ module PennMARC
 
           values_with_title_prefix(field, sf_exclude: %w[0 4 6 8 i], relator_map: relator_map)
         end
+        relation_values.uniq
       end
 
       # Get "Contains" values from {CONTAINS_FIELDS} in the 7XX range. Must have indicator 2 value of 2 indicating an
@@ -72,20 +73,21 @@ module PennMARC
       # values in sf 0, 5, 6, and 8.
       # @param [MARC::Record] record
       # @param [Hash] relator_map
-      # @return [Array]
+      # @return [Array<String>]
       def contains_show(record, relator_map: Mappers.relator)
-        acc = record.fields(CONTAINS_FIELDS).filter_map do |field|
+        values = record.fields(CONTAINS_FIELDS).filter_map do |field|
           next unless field.indicator2 == '2'
 
           values_with_title_prefix(field, sf_exclude: %w[0 4 5 6 8 i], relator_map: relator_map)
         end
-        acc + record.fields('880').filter_map do |field|
+        contains_values = values + record.fields('880').filter_map do |field|
           next unless field.indicator2 == '2'
 
           next unless subfield_value?(field, '6', /^(#{CONTAINS_FIELDS.join('|')})/)
 
           values_with_title_prefix(field, sf_include: %w[0 5 6 8 i])
         end
+        contains_values.uniq
       end
 
       # Get "Constituent Unit" values from {https://www.oclc.org/bibformats/en/7xx/774.html MARC 774}. Include
@@ -93,10 +95,11 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array]
       def constituent_unit_show(record)
-        acc = record.fields('774').filter_map do |field|
+        values = record.fields('774').filter_map do |field|
           join_subfields(field, &subfield_in?(%w[i a s t]))
         end
-        acc + linked_alternate(record, '774', &subfield_in?(%w[i a s t]))
+        constituent_values = values + linked_alternate(record, '774', &subfield_in?(%w[i a s t]))
+        constituent_values.uniq
       end
 
       # Get "Has Supplement" values from {https://www.oclc.org/bibformats/en/7xx/770.html MARC 770}. Ignore

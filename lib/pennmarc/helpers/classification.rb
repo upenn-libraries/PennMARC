@@ -28,7 +28,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>] array of classifications
       def facet(record)
-        record.fields(TAGS).flat_map do |field|
+        record.fields(TAGS).flat_map { |field|
           call_number_type = subfield_values(field, call_number_type_sf(field))&.first
           call_numbers = subfield_values(field, call_number_sf(field))
 
@@ -39,7 +39,7 @@ module PennMARC
 
             format_facet(class_code, call_number_type, title)
           end
-        end
+        }.uniq
       end
 
       private

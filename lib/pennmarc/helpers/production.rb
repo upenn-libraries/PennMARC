@@ -8,21 +8,21 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>]
       def show(record)
-        get_264_or_880_fields(record, '0')
+        get_264_or_880_fields(record, '0').uniq
       end
 
       # Retrieve distribution values for display from {https://www.oclc.org/bibformats/en/2xx/264.html 264 field}.
       # @param [MARC::Record] record
       # @return [Array<String>]
       def distribution_show(record)
-        get_264_or_880_fields(record, '2')
+        get_264_or_880_fields(record, '2').uniq
       end
 
       # Retrieve manufacture values for display from {https://www.oclc.org/bibformats/en/2xx/264.html 264 field}.
       # @param [MARC::Record] record
       # @return [Array<String>]
       def manufacture_show(record)
-        get_264_or_880_fields(record, '3')
+        get_264_or_880_fields(record, '3').uniq
       end
 
       # Retrieve publication values. Return publication values from
@@ -60,7 +60,7 @@ module PennMARC
 
           values += joined264
         end
-        values.filter_map { |value| value&.strip }
+        values.filter_map { |value| value&.strip }.uniq
       end
 
       # Retrieve publication values for display from fields
@@ -68,7 +68,7 @@ module PennMARC
       # {https://www.oclc.org/bibformats/en/2xx/260.html 260}-262 and their linked alternates,
       # and {https://www.oclc.org/bibformats/en/2xx/264.html 264} and its linked alternate.
       # @param [MARC::Record] record
-      # @return [Object]
+      # @return [Array<String>]
       def publication_show(record)
         values = record.fields('245').first(1).flat_map { |field| subfield_values(field, 'f') }
 
@@ -86,22 +86,22 @@ module PennMARC
         end
 
         values += get_264_or_880_fields(record, '1')
-        values.compact_blank
+        values.compact_blank.uniq
       end
 
       # Retrieve place of publication for display from {https://www.oclc.org/bibformats/en/7xx/752.html 752 field} and
       # its linked alternate.
       # @note legacy version returns array of hash objects including data for display link
       # @param [MARC::Record] record
-      # @return [Object]
+      # @return [Array<String>]
       def place_of_publication_show(record)
-        record.fields(%w[752 880]).filter_map do |field|
+        record.fields(%w[752 880]).filter_map { |field|
           next if field.tag == '880' && subfield_values(field, '6').exclude?('752')
 
           place = join_subfields(field, &subfield_not_in?(%w[6 8 e w]))
           place_extra = join_subfields(field, &subfield_in?(%w[e w]))
           "#{place} #{place_extra}"
-        end
+        }.uniq
       end
 
       private

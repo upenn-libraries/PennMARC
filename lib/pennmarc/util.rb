@@ -173,7 +173,7 @@ module PennMARC
     # Returns the non-6,8 subfields from a datafield and its 880 link.
     # @param [MARC::Record] record
     # @param [String] tag
-    # @return [Array] acc
+    # @return [Array<String>] values
     def datafield_and_linked_alternate(record, tag)
       record.fields(tag).filter_map { |field|
         join_subfields(field, &subfield_not_in?(%w[6 8]))
@@ -248,7 +248,7 @@ module PennMARC
         elements = field.select(&subfield_in?(%w[a])).map { |sf| sf.value.gsub(/^%?#{prefix}/, '') }
         elements << join_subfields(field, &subfield_not_in?(%w[a 6 8 e w 5]))
         join_and_squish elements
-      end
+      end.uniq
     end
 
     # Does the given field specify an allowed source code?

@@ -11,9 +11,9 @@ module PennMARC
       # field 520 (Summary, Etc. Note).
       # https://www.loc.gov/marc/bibliographic/bd510.html
       # @param [MARC::Record] record
-      # @return [Array] array of citations and any linked alternates
+      # @return [Array<String>] array of citations and any linked alternates
       def cited_in_show(record)
-        datafield_and_linked_alternate(record, '510')
+        datafield_and_linked_alternate(record, '510').uniq
       end
 
       # Field 524 is the Preferred Citation of Described Materials Note. It is the Format for the citation of the
@@ -22,9 +22,9 @@ module PennMARC
       # introductory phrase that is generated as a display constant based on the first indicator value.
       # https://www.loc.gov/marc/bibliographic/bd524.html
       # @param [MARC::Record] record
-      # @return [Array] array of citation of described materials note and any linked alternates
+      # @return [Array<String>] array of citation of described materials note and any linked alternates
       def cite_as_show(record)
-        datafield_and_linked_alternate(record, '524')
+        datafield_and_linked_alternate(record, '524').uniq
       end
     end
   end

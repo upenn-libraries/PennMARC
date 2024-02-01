@@ -14,9 +14,10 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>] array of editions and their alternates
       def show(record)
-        record.fields('250').map { |field|
+        editions = record.fields('250').map { |field|
           join_subfields(field, &subfield_not_in?(%w[6 8]))
         } + linked_alternate_not_6_or_8(record, '250')
+        editions.uniq
       end
 
       # Edition values for display in search results. Just grab the first 250 field.
@@ -42,12 +43,13 @@ module PennMARC
 
           other_edition_value(field, relator_map)
         end
-        values + record.fields('880').filter_map do |field|
+        editions = values + record.fields('880').filter_map do |field|
           next unless field.indicator2.blank? && subfield_value_in?(field, '6', %w[775]) &&
                       subfield_defined?(field, 'i')
 
           other_edition_value(field, relator_map)
         end
+        editions.uniq
       end
 
       private

@@ -32,9 +32,9 @@ module PennMARC
       #       a search (non-display) field?
       # @param [Hash] relator_map
       # @param [MARC::Record] record
-      # @return [Array] array of all subject values for search
+      # @return [Array<String>] array of all subject values for search
       def search(record, relator_map: Mappers.relator)
-        subject_fields(record, type: :search).filter_map do |field|
+        subject_fields(record, type: :search).filter_map { |field|
           subj_parts = field.filter_map do |subfield|
             # TODO: use term hash here? pro/chr would be rejected...
             # TODO: should we care about punctuation in a search field? relator mapping?
@@ -55,21 +55,21 @@ module PennMARC
           next if subj_parts.empty?
 
           join_and_squish subj_parts
-        end
+        }.uniq
       end
 
       # All Subjects for faceting
       #
       # @note this is ported mostly form MG's new-style Subject parsing
       # @param [MARC::Record] record
-      # @return [Array] array of all subject values for faceting
+      # @return [Array<String>] array of all subject values for faceting
       def facet(record)
-        subject_fields(record, type: :facet).filter_map do |field|
+        subject_fields(record, type: :facet).filter_map { |field|
           term_hash = build_subject_hash(field)
           next if term_hash.blank? || term_hash[:count]&.zero?
 
           format_term type: :facet, term: term_hash
-        end
+        }.uniq
       end
 
       # All Subjects for display. This includes all {DISPLAY_TAGS} and {LOCAL_TAGS}. For tags that specify a source,

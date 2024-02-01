@@ -67,9 +67,9 @@ module PennMARC
       def show(record)
         fields = record.fields(TAGS)
         fields += record.fields('880').select { |field| subfield_value_in?(field, '6', TAGS) }
-        fields.filter_map do |field|
+        fields.filter_map { |field|
           join_subfields(field, &subfield_not_in?(%w[0 1 4 6 8 e w]))
-        end
+        }.uniq
       end
 
       # Author/Creator sort. Does not map and include any relator codes.
@@ -95,11 +95,11 @@ module PennMARC
           700 => 'abcdjq', 710 => 'abcdjq', 711 => 'abcen',
           800 => 'abcdjq', 810 => 'abcdjq', 811 => 'abcen'
         }
-        source_map.flat_map do |field_num, subfields|
+        source_map.flat_map { |field_num, subfields|
           record.fields(field_num.to_s).map do |field|
             trim_punctuation(join_subfields(field, &subfield_in?(subfields.chars)))
           end
-        end
+        }.uniq
       end
 
       # Conference for display, intended for results display
@@ -108,9 +108,9 @@ module PennMARC
       # @param [Hash] relator_map
       # @return [Array<String>] array of conference values
       def conference_show(record, relator_map: Mappers.relator)
-        record.fields('111').filter_map do |field|
+        record.fields('111').filter_map { |field|
           name_from_main_entry field, relator_map
-        end
+        }.uniq
       end
 
       # Conference detailed display, intended for record show page.
@@ -130,7 +130,7 @@ module PennMARC
           conf_extra = join_subfields field, &subfield_in?(%w[e j w])
           join_and_squish [conf, conf_extra].compact_blank
         end
-        values + record.fields('880').filter_map do |field|
+        conferences = values + record.fields('880').filter_map do |field|
           next unless subfield_value_in? field, '6', %w[111 711]
 
           next if subfield_defined? field, 'i'
@@ -139,15 +139,16 @@ module PennMARC
           conf_extra = join_subfields(field, &subfield_in?(%w[4 e j w]))
           join_and_squish [conf, conf_extra]
         end
+        conferences.uniq
       end
 
       # Conference name values for searching
       # @param [MARC::Record] record
       # @return [Array<String>]
       def conference_search(record)
-        record.fields(CONFERENCE_SEARCH_TAGS).filter_map do |field|
+        record.fields(CONFERENCE_SEARCH_TAGS).filter_map { |field|
           join_subfields(field, &subfield_in?(%w[a c d e]))
-        end
+        }.uniq
       end
 
       # Retrieve contributor values for display from fields {https://www.oclc.org/bibformats/en/7xx/700.html 700}
@@ -159,7 +160,7 @@ module PennMARC
       # @return [Array<String>]
       def contributor_show(record, relator_map: Mappers.relator)
         indicator_2_options = ['', ' ', '0']
-        contributors = record.fields(%w[700 710]).filter_map do |field|
+        values = record.fields(%w[700 710]).filter_map do |field|
           next unless indicator_2_options.member?(field.indicator2)
           next if subfield_defined? field, 'i'
 
@@ -176,7 +177,7 @@ module PennMARC
           }.join
           "#{contributor} #{contributor_append}".squish
         end
-        contributors + record.fields('880').filter_map do |field|
+        contributors = values + record.fields('880').filter_map do |field|
           next unless subfield_value_in?(field, '6', %w[700 710])
           next if subfield_defined?(field, 'i')
 
@@ -184,6 +185,7 @@ module PennMARC
           contributor_append = join_subfields(field, &subfield_in?(%w[e u 3]))
           "#{contributor} #{contributor_append}".squish
         end
+        contributors.uniq
       end
 
       private
