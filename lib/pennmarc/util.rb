@@ -238,7 +238,7 @@ module PennMARC
     # @param [String] prefix to select from subject field
     # @return [Array] array of values
     def prefixed_subject_and_alternate(record, prefix)
-      record.fields(%w[650 880]).filter_map do |field|
+      record.fields(%w[650 880]).filter_map { |field|
         next unless field.indicator2 == '4'
 
         next if field.tag == '880' && subfield_values(field, '6').exclude?('650')
@@ -248,7 +248,7 @@ module PennMARC
         elements = field.select(&subfield_in?(%w[a])).map { |sf| sf.value.gsub(/^%?#{prefix}/, '') }
         elements << join_subfields(field, &subfield_not_in?(%w[a 6 8 e w 5]))
         join_and_squish elements
-      end.uniq
+      }.uniq
     end
 
     # Does the given field specify an allowed source code?
