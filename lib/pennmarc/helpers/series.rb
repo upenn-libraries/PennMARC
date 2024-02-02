@@ -31,7 +31,8 @@ module PennMARC
                  end || []
 
         values += remaining_show_entries(record, tags_present)
-        values + series_880_fields(record)
+        series_values = values + series_880_fields(record)
+        series_values.uniq
       end
 
       # Values from series fields for display.
@@ -75,7 +76,7 @@ module PennMARC
 
           filtered_values.map { |v| v.gsub(/\(|\)/, '') }.join(' ')
         end
-        values
+        values.uniq
       end
 
       # Information concerning the immediate predecessor of the target item (chronological relationship). When a note
@@ -83,9 +84,9 @@ module PennMARC
       # indicator position for display.
       # https://www.loc.gov/marc/bibliographic/bd780.html
       # @param [MARC::Record] record
-      # @return [String] continues fields string
+      # @return [Array<String>] continues fields string
       def get_continues_show(record)
-        continues(record, '780')
+        continues(record, '780').uniq
       end
 
       # Information concerning the immediate successor to the target item (chronological relationship). When a note is
@@ -93,9 +94,9 @@ module PennMARC
       # position for display.
       # https://www.loc.gov/marc/bibliographic/bd785.html
       # @param [MARC::Record] record
-      # @return [String] continued by fields string
+      # @return [Array<String>] continued by fields string
       def get_continued_by_show(record)
-        continues(record, '785')
+        continues(record, '785').uniq
       end
 
       private
@@ -127,7 +128,7 @@ module PennMARC
       # @note added 2017/04/10: filter out 0 (authority record numbers) added by Alma
       # @param [MARC::Record] record
       # @param [String] first_tag
-      # @return [Array<Hash>] array of author show entry hashes
+      # @return [Array<String>] array of author show entry strings
       def title_show_entries(record, first_tag)
         record.fields(first_tag).map do |field|
           series = join_subfields(field, &subfield_not_in?(%w[0 5 6 8 c e w v n]))
@@ -156,6 +157,7 @@ module PennMARC
       # links that field to the 880 field. The data in field 880 may be in more than one script. This function exists
       # because it differs than the tradition use of linked_alternate.
       # @param [MARC::Record] record
+      # @return [Array<String>]
       def series_880_fields(record)
         record.fields('880').filter_map do |field|
           next unless subfield_value?(field, '6', /^(800|810|811|830|400|410|411|440|490)/)
@@ -189,7 +191,7 @@ module PennMARC
       # Get subfields from a given field (continues or continued_by).
       # @param [MARC::Record] record
       # @param [String] tag
-      # @return [String] joined subfields
+      # @return [Array<String>] joined subfields
       def continues(record, tag)
         record.fields.filter_map do |field|
           next unless field.tag == tag || (field.tag == '880' && subfield_value?(field, '6', /^#{tag}/))

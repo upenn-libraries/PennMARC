@@ -35,11 +35,11 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>] array of title values for search
       def search(record)
-        record.fields(%w[245 880]).filter_map do |field|
+        record.fields(%w[245 880]).filter_map { |field|
           next if field.tag == '880' && subfield_value_not_in?(field, '6', %w[245])
 
           join_subfields(field, &subfield_not_in?(%w[c 6 8 h]))
-        end
+        }.uniq
       end
 
       # Auxiliary Title Search field. Takes from many fields defined in {AUX_TITLE_TAGS} that contain title-like
@@ -47,10 +47,11 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>] array of auxiliary title values for search
       def search_aux(record)
-        search_aux_values(record: record, title_type: :main, &subfield_not_in?(%w[c 6 8])) +
-          search_aux_values(record: record, title_type: :related, &subfield_not_in?(%w[s t])) +
-          search_aux_values(record: record, title_type: :entity, &subfield_in?(%w[t])) +
-          search_aux_values(record: record, title_type: :note, &subfield_in?(%w[t]))
+        values = search_aux_values(record: record, title_type: :main, &subfield_not_in?(%w[c 6 8])) +
+                 search_aux_values(record: record, title_type: :related, &subfield_not_in?(%w[s t])) +
+                 search_aux_values(record: record, title_type: :entity, &subfield_in?(%w[t])) +
+                 search_aux_values(record: record, title_type: :note, &subfield_in?(%w[t]))
+        values.uniq
       end
 
       # Journal Title Search field. Takes from {https://www.loc.gov/marc/bibliographic/bd245.html 245} and linked 880.
@@ -61,11 +62,11 @@ module PennMARC
       def journal_search(record)
         return [] if not_a_serial?(record)
 
-        record.fields(%w[245 880]).filter_map do |field|
+        record.fields(%w[245 880]).filter_map { |field|
           next if field.tag == '880' && subfield_value_not_in?(field, '6', %w[245])
 
           join_subfields(field, &subfield_not_in?(%w[c 6 8 h]))
-        end
+        }.uniq
       end
 
       # Auxiliary Journal Title Search field. Takes from many fields defined in {AUX_TITLE_TAGS} that contain title-like
@@ -74,10 +75,11 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>] auxiliary journal title information for search
       def journal_search_aux(record)
-        search_aux_values(record: record, title_type: :main, journal: true, &subfield_not_in?(%w[c 6 8])) +
-          search_aux_values(record: record, title_type: :related, journal: true, &subfield_not_in?(%w[s t])) +
-          search_aux_values(record: record, title_type: :entity, journal: true, &subfield_in?(%w[t])) +
-          search_aux_values(record: record, title_type: :note, journal: true, &subfield_in?(%w[t]))
+        values = search_aux_values(record: record, title_type: :main, journal: true, &subfield_not_in?(%w[c 6 8])) +
+                 search_aux_values(record: record, title_type: :related, journal: true, &subfield_not_in?(%w[s t])) +
+                 search_aux_values(record: record, title_type: :entity, journal: true, &subfield_in?(%w[t])) +
+                 search_aux_values(record: record, title_type: :note, journal: true, &subfield_in?(%w[t]))
+        values.uniq
       end
 
       # Single-valued Title, for use in headings. Takes the first {https://www.oclc.org/bibformats/en/2xx/245.html 245}
@@ -162,12 +164,13 @@ module PennMARC
 
           join_subfields(field, &subfield_not_in?(%w[5 6 8 e w]))
         end
-        standardized_titles + record.fields('880').filter_map do |field|
+        titles = standardized_titles + record.fields('880').filter_map do |field|
           next unless subfield_undefined?(field, 'i') ||
                       subfield_value_in?(field, '6', %w[130 240 730])
 
           join_subfields field, &subfield_not_in?(%w[5 6 8 e w])
         end
+        titles.uniq
       end
 
       # Other Title for display
@@ -187,11 +190,12 @@ module PennMARC
 
           join_subfields(field, &subfield_not_in?(%w[5 6 8]))
         end
-        other_titles + record.fields('880').filter_map do |field|
+        titles = other_titles + record.fields('880').filter_map do |field|
           next unless subfield_value_in? field, '6', %w[246 740]
 
           join_subfields(field, &subfield_not_in?(%w[5 6 8]))
         end
+        titles.uniq
       end
 
       # Former Title for display.
@@ -204,13 +208,13 @@ module PennMARC
       # @return [Array<String>] array of former titles
       def former_show(record)
         record.fields
-              .filter_map do |field|
+              .filter_map { |field|
           next unless field.tag == '247' || (field.tag == '880' && subfield_value?(field, '6', /^247/))
 
           former_title = join_subfields field, &subfield_not_in?(%w[6 8 e w]) # 6 and 8 are not meaningful for display
           former_title_append = join_subfields field, &subfield_in?(%w[e w])
           "#{former_title} #{former_title_append}".strip
-        end
+        }.uniq
       end
 
       private

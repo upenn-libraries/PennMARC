@@ -18,7 +18,8 @@ module PennMARC
         values = record.fields('546').map do |field|
           join_subfields field, &subfield_not_in?(%w[6 8])
         end
-        values + linked_alternate(record, '546', &subfield_not_in?(%w[6 8]))
+        language_values = values + linked_alternate(record, '546', &subfield_not_in?(%w[6 8]))
+        language_values.uniq
       end
 
       # Get language values for searching and faceting of a record. The values are extracted from subfields
@@ -33,7 +34,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @param [Hash] iso_639_2_mapping iso-639-2 spec hash for language code translation
       # @param [Hash] iso_639_3_mapping iso-639-3 spec hash for language code translation
-      # @return [Array] array of language values
+      # @return [Array<String>] array of language values
       def values(record, iso_639_2_mapping: Mappers.iso_639_2_language, iso_639_3_mapping: Mappers.iso_639_3_language)
         values = record.fields('041').filter_map { |field|
           mapper = subfield_value?(field, '2', /iso639-3/) ? iso_639_3_mapping : iso_639_2_mapping

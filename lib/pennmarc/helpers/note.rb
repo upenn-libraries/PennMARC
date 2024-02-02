@@ -16,11 +16,11 @@ module PennMARC
       # @return [Array<String>]
       def notes_show(record)
         notes_fields = %w[500 502 504 515 518 525 533 540 550 580 586 588]
-        record.fields(notes_fields + ['880']).filter_map do |field|
+        record.fields(notes_fields + ['880']).filter_map { |field|
           next if field.tag == '880' && subfield_value_not_in?(field, '6', notes_fields)
 
           join_subfields(field, &subfield_not_in?(%w[5 6 8]))
-        end
+        }.uniq
       end
 
       # Retrieve local notes for display from fields {https://www.oclc.org/bibformats/en/5xx/561.html 561},
@@ -38,11 +38,12 @@ module PennMARC
 
         additional_fields = %w[562 563 585 590]
 
-        local_notes + record.fields(additional_fields + ['880']).filter_map do |field|
+        notes = local_notes + record.fields(additional_fields + ['880']).filter_map do |field|
           next if field.tag == '880' && subfield_value_not_in?(field, '6', additional_fields)
 
           join_subfields(field, &subfield_not_in?(%w[5 6 8]))
         end
+        notes.uniq
       end
 
       # Retrieve provenance notes for display from fields {https://www.oclc.org/bibformats/en/5xx/561.html 561} and
@@ -63,7 +64,8 @@ module PennMARC
 
           join_subfields(field, &subfield_in?(%w[a]))
         end
-        provenance_notes + prefixed_subject_and_alternate(record, 'PRO')
+        notes = provenance_notes + prefixed_subject_and_alternate(record, 'PRO')
+        notes.uniq
       end
 
       # Retrieve contents notes for display from fields {https://www.oclc.org/bibformats/en/5xx/505.html 505} and
@@ -75,16 +77,16 @@ module PennMARC
           next if field.tag == '880' && subfield_value_not_in?(field, '6', %w[505])
 
           join_subfields(field, &subfield_not_in?(%w[6 8])).split('--')
-        }.flatten
+        }.flatten.uniq
       end
 
       # Retrieve access restricted notes for display from field {https://www.oclc.org/bibformats/en/5xx/506.html 506}.
       # @param [MARC::Record] record
       # @return [Array<String>]
       def access_restriction_show(record)
-        record.fields('506').filter_map do |field|
+        record.fields('506').filter_map { |field|
           join_subfields(field, &subfield_not_in?(%w[5 6]))
-        end
+        }.uniq
       end
 
       # Retrieve finding aid notes for display from field {https://www.oclc.org/bibformats/en/5xx/555.html 555} and its
@@ -161,7 +163,7 @@ module PennMARC
 
           sub3_and_other_subs(field, &subfield_in?(%w[a b c d e f]))
         end
-        system_details_notes
+        system_details_notes.uniq
       end
 
       private

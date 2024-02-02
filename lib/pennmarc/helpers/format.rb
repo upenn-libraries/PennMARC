@@ -48,7 +48,7 @@ module PennMARC
                                end
           join_subfields(f, &subfield_not_in?(subfield_to_ignore))
         end
-        results.compact_blank
+        results.compact_blank.uniq
       end
 
       # Get Format values for faceting. Format values are determined using complex logic for each possible format value.
@@ -122,23 +122,24 @@ module PennMARC
                        OTHER
                      end
         end
-        formats.concat(curated_format(record))
+        formats.concat(curated_format(record)).uniq
       end
 
       # Show "Other Format" values from {https://www.oclc.org/bibformats/en/7xx/776.html 776} and any 880 linkage.
       # @todo is 774 an error in the linked field in legacy? i changed to 776 here
       # @param [MARC::Record] record
-      # @return [Array] other format values for display
+      # @return [Array<String>] other format values for display
       def other_show(record)
-        other_formats = record.fields('776').filter_map do |field|
+        values = record.fields('776').filter_map do |field|
           value = join_subfields(field, &subfield_in?(%w[i a s t o]))
           next if value.blank?
 
           value
         end
-        other_formats + linked_alternate(record, '776') do |sf|
+        other_formats = values + linked_alternate(record, '776') do |sf|
           sf.code.in? %w[i a s t o]
         end
+        other_formats.uniq
       end
 
       # Retrieve cartographic reference data for map/atlas formats for display from
@@ -146,9 +147,9 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>]
       def cartographic_show(record)
-        record.fields(%w[255 342]).map do |field|
+        record.fields(%w[255 342]).map { |field|
           join_subfields(field, &subfield_not_in?(%w[6 8]))
-        end
+        }.uniq
       end
 
       # Check if a set of locations has any locations that include the term 'manuscripts'
