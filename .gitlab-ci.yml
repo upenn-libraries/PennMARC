@@ -41,7 +41,6 @@ gem_publication:
   image: ruby:3.2.2
   variables:
     GEMSPEC_FILE: "${CI_PROJECT_NAME}.gemspec"
-    VAULT_VERSION: "1.15.5"
   before_script:
     - !reference [.install_hashicorp_vault, before_script]
     - !reference [.vault_jwt_auth, before_script]
