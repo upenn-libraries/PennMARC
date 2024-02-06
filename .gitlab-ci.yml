@@ -1,4 +1,8 @@
 include:
+  - project: "devops/gitlab/ci-templates/general"
+    file:
+      - ".install_hashicorp_vault.yml"
+      - ".vault_jwt_auth.yml"
   - project: "devops/gitlab/ci-templates/ruby"
     ref: "sans-dind"
     file:
@@ -37,19 +41,9 @@ gem_publication:
   image: ruby:3.2.2
   variables:
     GEMSPEC_FILE: "${CI_PROJECT_NAME}.gemspec"
-    VAULT_VERSION: "1.10.1"
   before_script:
-    - | 
-      apt-get update && apt-get -y install \
-      wget \
-      unzip && \
-      wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip -O /tmp/vault_${VAULT_VERSION}.zip && \
-      unzip /tmp/vault_${VAULT_VERSION}.zip -d /usr/bin && \
-      rm -fr /tmp/vault_${VAULT_VERSION}.zip && \
-      apt-get remove -y wget unzip && \
-      apt-get clean
-    - export VAULT_ADDR=${VAULT_URL}
-    - export VAULT_TOKEN="$(vault write -field=token auth/jwt/${CI_SERVER_HOST}/login role=${JWT_ROLE} jwt=${CI_JOB_JWT})"
+    - !reference [.install_hashicorp_vault, before_script]
+    - !reference [.vault_jwt_auth, before_script]
     - export GEM_HOST_API_KEY="$(vault kv get -field=rubygems_api_key ${VAULT_KV_ENDPOINT}${ENVIRONMENT})"
     - |
       gem -v
