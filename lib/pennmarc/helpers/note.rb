@@ -166,10 +166,11 @@ module PennMARC
         system_details_notes.uniq
       end
 
-      def bound_width_show(record)
-        record.fields(['501']).filter_map do |field|
-          join_subfields(field, &subfield_in?(['a']))
-        end
+      # Retrieve "With" notes for display from field {https://www.loc.gov/marc/bibliographic/bd501.html 501}
+      # @param [Marc::Record] record
+      # @return [Array<String>]
+      def bound_with_show(record)
+        record.fields('501').filter_map { |field| join_subfields(field, &subfield_in?(['a'])).presence }.uniq
       end
 
       private
