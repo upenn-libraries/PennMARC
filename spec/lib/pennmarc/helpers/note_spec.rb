@@ -296,5 +296,23 @@ text for URI http://www.universal.resource/locator'.squish,
         )
       end
     end
+
+    describe '.bound_width_show' do
+      let(:record) { marc_record(fields: fields) }
+
+      let(:fields) do
+        [
+          marc_field(tag: '501', subfields: { a: 'With: Peer Gynt (Suite) no. 1-2 / Edvard Grieg' }),
+          marc_field(tag: '501', subfields: { a: 'With: Schumann, C. Romances, piano, op. 11. No. 2' })
+        ]
+      end
+
+      let(:values) { helper.bound_width_show(record) }
+
+      it 'returns expected values from 351 and its linked alternate' do
+        expect(values).to contain_exactly('With: Peer Gynt (Suite) no. 1-2 / Edvard Grieg',
+                                          'With: Schumann, C. Romances, piano, op. 11. No. 2')
+      end
+    end
   end
 end

@@ -166,12 +166,18 @@ module PennMARC
         system_details_notes.uniq
       end
 
+      def bound_width_show(record)
+        record.fields(['501']).filter_map do |field|
+          join_subfields(field, &subfield_in?(['a']))
+        end
+      end
+
       private
 
       # For system details: extract subfield ǂ3 plus other subfields as specified by passed-in block. Pays special
       # attention to punctuation, joining subfield ǂ3 values with a colon-space (': ').
       # @param [MARC::DataField] field
-      # @param [Proc] selector
+      # @param [Proc] &
       # @return [String]
       def sub3_and_other_subs(field, &)
         sub3 = field.filter_map { |sf| trim_trailing('period', sf.value) if sf.code == '3' }.join(': ')
