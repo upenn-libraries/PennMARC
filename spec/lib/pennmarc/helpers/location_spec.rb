@@ -124,7 +124,7 @@ describe 'PennMARC::Location' do
 
     it 'returns expected values' do
       expect(helper.location(record: record, display_value: :specific_location, location_map: mapping))
-        .to(contain_exactly(helper::ALBRECHT_MUSIC_SPECIFIC_LOCATION, 'LIBRA'))
+        .to(contain_exactly(PennMARC::Mappers.location_overrides[:albrecht][:specific_location], 'LIBRA'))
     end
   end
 end

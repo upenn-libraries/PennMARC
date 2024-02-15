@@ -4,10 +4,7 @@ module PennMARC
   # Methods that return Library and Location values from Alma enhanced MARC fields
   class Location < Helper
     ONLINE_LIBRARY = 'Online library'
-    VAN_PELT_LOCATION_CODE = 'vanp'
     WEB_LOCATION_CODE = 'web'
-    ALBRECHT_MUSIC_SPECIFIC_LOCATION = 'Van Pelt - Albrecht Music Library'
-    LOC_MUSIC_CALL_NUM_PREFIX = 'M'
 
     class << self
       # Retrieves library location from enriched marc 'itm' or 'hld' fields, giving priority to the item location over
