@@ -57,9 +57,11 @@ module PennMARC
 
             next if location_code_to_ignore?(location_map, location_code)
 
-            if specific_location_albrecht?(display_value: display_value, location_code: location_code, field: field,
-                                           call_num_sf: call_num_sf)
-              ALBRECHT_MUSIC_SPECIFIC_LOCATION
+            override = specific_location_override(display_value: display_value, location_code: location_code,
+                                                  field: field, call_num_sf: call_num_sf)
+
+            if override.present?
+              override
             else
               location_map[location_code.to_sym][display_value.to_sym]
             end
@@ -129,20 +131,21 @@ module PennMARC
       # @param [String] location_code
       # @param [MARC::Field] field
       # @param [MARC::Subfield] call_num_sf
-      # @return [Boolean]
-      def specific_location_albrecht?(display_value:, location_code:, field:, call_num_sf:)
-        display_value == :specific_location && location_code == VAN_PELT_LOCATION_CODE && music_call_num?(field,
-                                                                                                          call_num_sf)
-      end
+      # @return [String, Nil]
+      def specific_location_override(display_value:, location_code:, field:, call_num_sf:)
+        return unless display_value == :specific_location
 
-      # Determines whether any call numbers stored in a given field represent a music title according to the Library of
-      # Congress classification
-      # @param [MARC::Field] field
-      # @param [MARC::Subfield] call_num_sf
-      # @return [Boolean]
-      def music_call_num?(field, call_num_sf)
+        locations_overrides = Mappers.location_overrides
+
         call_numbers = subfield_values(field, call_num_sf)
-        call_numbers.any? { |call_num| call_num.chr == LOC_MUSIC_CALL_NUM_PREFIX }
+
+        override = locations_overrides.select do |_key, value|
+          value[:location_code] == location_code && call_numbers.any? { |num| num.match?(value[:call_num_pattern]) }
+        end
+
+        return if override.blank?
+
+        override[override.keys.first][:specific_location]
       end
     end
   end

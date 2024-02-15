@@ -112,7 +112,7 @@ describe 'PennMARC::Location' do
     end
   end
 
-  context 'with item in Albrecht Music library' do
+  context 'with a specific location override' do
     let(:record) do
       marc_record(fields: [marc_field(tag: enriched_marc::Pub::ITEM_TAG,
                                       subfields: { enriched_marc::Pub::ITEM_CURRENT_LOCATION => 'vanp',
