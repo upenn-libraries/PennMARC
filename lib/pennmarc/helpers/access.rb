@@ -23,7 +23,8 @@ module PennMARC
 
         return values if values.size == 2 # return early if all values are already present
 
-        values << ONLINE if values.exclude?(ONLINE) && finding_aid_linkage?(record) # only check if ONLINE isn't already there
+        # only check if ONLINE isn't already there
+        values << ONLINE if values.exclude?(ONLINE) && finding_aid_linkage?(record)
         values.uniq
       end
 
