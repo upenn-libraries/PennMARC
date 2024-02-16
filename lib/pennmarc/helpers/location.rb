@@ -73,8 +73,8 @@ module PennMARC
 
       private
 
-      # Determine enriched marc location tag ('itm' or 'hld') and subfield code, giving priority to using 'itm' tag and
-      # subfield.
+      # Determine enriched marc location tag, location code subfield, and call number subfield,
+      # giving priority to using 'itm', 'AVA', or 'AVE' fields.
       # @param [MARC::Record]
       # @return [Hash<String, String>] containing location tag and subfield code
       # - `:field` (String): The enriched marc location tag
@@ -121,9 +121,8 @@ module PennMARC
         location_map.key?(location_code.to_sym) == false || location_code == WEB_LOCATION_CODE
       end
 
-      # Determine whether the specific location is in "Van Pelt - Albrecht Music Library". If the location_code is
-      # 'vanp' and the record represents a music title using library of congress call number classifications
-      # this returns true.
+      # Retrieves a specific location override based on location code and call number. Specific location overrides are
+      # located in `location_overrides.yml`.
       # @param [String] display_value
       # @param [String] location_code
       # @param [MARC::Field] field
