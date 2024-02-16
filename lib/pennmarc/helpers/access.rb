@@ -16,15 +16,15 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array]
       def facet(record)
-        acc = record.filter_map do |field|
+        values = record.filter_map do |field|
           next AT_THE_LIBRARY if physical_holding_tag?(field)
           next ONLINE if electronic_holding_tag?(field)
         end
 
-        return acc if acc.size == 2 # return early if all values are already present
+        return values if values.size == 2 # return early if all values are already present
 
-        acc << ONLINE if acc.exclude?(ONLINE) && finding_aid_linkage?(record) # only check if ONLINE isn't already there
-        acc
+        values << ONLINE if values.exclude?(ONLINE) && finding_aid_linkage?(record) # only check if ONLINE isn't already there
+        values.uniq
       end
 
       private
