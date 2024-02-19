@@ -72,13 +72,14 @@ module MarcSpecHelpers
   #   location_map[:stor][:library] #=> 'LIBRA'
   # @return [Hash]
   def location_map
-    {
-      dent: {  specific_location: 'Levy Dental Medicine Library - Stacks',
+    { dent: {  specific_location: 'Levy Dental Medicine Library - Stacks',
                library: ['Health Sciences Libraries', 'Levy Dental Medicine Library'],
                display: 'Levy Dental Medicine Library - Stacks' },
       stor: { specific_location: 'LIBRA',
               library: 'LIBRA',
-              display: 'LIBRA' }
-    }
+              display: 'LIBRA' },
+      vanp: { specific_location: 'Van Pelt - Stacks',
+              library: 'Van Pelt-Dietrich Library Center',
+              display: 'Van Pelt Library' } }
   end
 end

@@ -19,6 +19,11 @@ module PennMARC
       end
 
       # @return [Hash]
+      def location_overrides
+        @location_overrides ||= load_map('location_overrides.yml')
+      end
+
+      # @return [Hash]
       def relator
         @relator ||= load_map('relator.yml')
       end

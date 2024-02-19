@@ -111,4 +111,20 @@ describe 'PennMARC::Location' do
       end
     end
   end
+
+  context 'with a specific location override' do
+    let(:record) do
+      marc_record(fields: [marc_field(tag: enriched_marc::Pub::ITEM_TAG,
+                                      subfields: { enriched_marc::Pub::ITEM_CURRENT_LOCATION => 'vanp',
+                                                   enriched_marc::Pub::ITEM_CALL_NUMBER => 'ML3534 .D85 1984' }),
+                           marc_field(tag: enriched_marc::Pub::ITEM_TAG,
+                                      subfields: { enriched_marc::Pub::ITEM_CURRENT_LOCATION => 'stor',
+                                                   enriched_marc::Pub::ITEM_CALL_NUMBER => 'L3534 .D85 1984' })])
+    end
+
+    it 'returns expected values' do
+      expect(helper.location(record: record, display_value: :specific_location, location_map: mapping))
+        .to(contain_exactly(PennMARC::Mappers.location_overrides[:albrecht][:specific_location], 'LIBRA'))
+    end
+  end
 end
