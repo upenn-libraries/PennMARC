@@ -42,10 +42,10 @@ module PennMARC
       # @param [Hash] location_map hash with location_code as key and location hash as value
       # @return [Array<String>]
       def location(record:, display_value:, location_map:)
-        # get enriched marc location tag and subfield code
-        marc_location_fields(record) => {field:, location_code_sf:, call_num_sf:}
+        # get enriched marc location tag and relevant subfields
+        enriched_location_tag_and_subfields(record) => {tag:, location_code_sf:, call_num_sf:}
 
-        locations = record.fields(field).flat_map { |field|
+        locations = record.fields(tag).flat_map { |field|
           field.filter_map { |subfield|
             # skip unless subfield code does not match enriched marc tag subfield code
             next unless subfield.code == location_code_sf
@@ -77,10 +77,10 @@ module PennMARC
       # giving priority to using 'itm', 'AVA', or 'AVE' fields.
       # @param [MARC::Record]
       # @return [Hash<String, String>] containing location tag and subfield code
-      # - `:field` (String): The enriched marc location tag
+      # - `:tag` (String): The enriched marc location tag
       # - `:location_code_sf` (String): The subfield code where location code is stored
       # - `:call_num_sf` (String): The subfield code where call number is stored
-      def marc_location_fields(record)
+      def enriched_location_tag_and_subfields(record)
         # in holdings records, the shelving location is always the permanent location.
         # in item records, the current location takes into account
         # temporary locations and permanent locations. if you update the item's perm location,
@@ -91,21 +91,22 @@ module PennMARC
 
         # if the record has an enriched item field present, use it
         if field_defined?(record, Enriched::Pub::ITEM_TAG)
-          field = Enriched::Pub::ITEM_TAG
+          tag = Enriched::Pub::ITEM_TAG
           location_code_sf = Enriched::Pub::ITEM_CURRENT_LOCATION
           call_num_sf = Enriched::Pub::ITEM_CALL_NUMBER
           # if the record has API inventory tags, use them
         elsif field_defined?(record, Enriched::Api::PHYS_INVENTORY_TAG)
-          field = Enriched::Api::PHYS_INVENTORY_TAG
+          tag = Enriched::Api::PHYS_INVENTORY_TAG
           location_code_sf = Enriched::Api::PHYS_LOCATION_CODE
           call_num_sf = Enriched::Api::PHYS_CALL_NUMBER
           # otherwise use Pub holding tags
         else
-          field = Enriched::Pub::PHYS_INVENTORY_TAG
+          tag = Enriched::Pub::PHYS_INVENTORY_TAG
           location_code_sf = Enriched::Pub::PHYS_LOCATION_CODE
+          call_num_sf = Enriched::Pub::HOLDING_CLASSIFICATION_PART
         end
 
-        { field: field, location_code_sf: location_code_sf, call_num_sf: call_num_sf }
+        { tag: tag, location_code_sf: location_code_sf, call_num_sf: call_num_sf }
       end
 
       # Determines whether to ignore a location code.
@@ -126,7 +127,7 @@ module PennMARC
       # @param [String] display_value
       # @param [String] location_code
       # @param [MARC::Field] field
-      # @param [MARC::Subfield] call_num_sf
+      # @param [String] call_num_sf
       # @return [String, Nil]
       def specific_location_override(display_value:, location_code:, field:, call_num_sf:)
         return unless display_value == :specific_location
