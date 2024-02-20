@@ -27,7 +27,7 @@ module PennMARC
       WEBSITE_DATABASE = 'Website/Database'
 
       # Get any Format values from {https://www.oclc.org/bibformats/en/3xx/300.html 300},
-      # 254, 255, 310, 342, 352 or {https://www.oclc.org/bibformats/en/3xx/340.html 340} field. based on the source
+      # 254, 255, 310, 342, 352, 362 or {https://www.oclc.org/bibformats/en/3xx/340.html 340} field. based on the source
       # field, different subfields are used.
       # @note ported from get_format_display
       # @param [MARC::Record] record
@@ -39,6 +39,9 @@ module PennMARC
         end
         results += record.fields('340').map { |f| join_subfields(f, &subfield_not_in?(%w[0 2 6 8])) }
         results += record.fields('880').map do |f|
+          # skip any 880s associated with non format fields
+          next unless subfield_value_in?(f, '6', %w[254 255 300 310 340 342 352 362])
+
           subfield_to_ignore = if subfield_value?(f, 6, /^300/)
                                  %w[3 6 8]
                                elsif subfield_value?(f, 6, /^340/)

@@ -181,6 +181,20 @@ describe 'PennMARC::Format' do
         expect(value.join(' ')).not_to include 'excluded'
       end
     end
+
+    context 'with an unrelated linked alternate' do
+      let(:fields) do
+        [marc_field(tag: '300', subfields: { a: '96 pages ;', c: '23 cm ' }),
+         marc_field(tag: '880', subfields: { '6': '700', a: 'Schweizer, Shlomo,', d: '1903-',
+                                             '0': 'https://id.loc.gov/authorities/names/no95018724' })]
+      end
+
+      it 'returns the expected format values' do
+        value = helper.show(record)
+        expect(value).to contain_exactly '96 pages ; 23 cm'
+        expect(value.join(' ')).not_to include 'https://id.loc.gov/authorities/names/no95018724'
+      end
+    end
   end
 
   describe '.other_show' do
