@@ -101,7 +101,7 @@ describe 'PennMARC::Subject' do
       let(:fields) do
         [marc_field(tag: '650', indicator2: '7',
                     subfields: {
-                      a: 'Libraries', d: '22nd Century', x: 'History', e: 'relator',
+                      a: 'Libraries,', d: '22nd Century,', x: 'History.', e: 'relator',
                       '2': 'fast', '0': 'http://fast.org/libraries'
                     })]
       end
@@ -127,6 +127,21 @@ describe 'PennMARC::Subject' do
         expect(values.first).to eq 'Libraries, 22nd Century--History'
       end
     end
+
+    context 'with a record with trailing periods' do
+      let(:fields) do
+        [marc_field(tag: '600', indicator2: '0',
+                    subfields: {
+                      a: 'R.G.', q: '(Robert Gordon).',
+                      t: 'Spiritual order and Christian liberty proved to be consistent in the Churches of Christ. '
+                    })]
+      end
+
+      it 'drops the final trailing period' do
+        expect(values).to contain_exactly('R.G. (Robert Gordon). Spiritual order and Christian liberty proved ' \
+                                          'to be consistent in the Churches of Christ')
+      end
+    end
   end
 
   describe '.show' do
@@ -146,8 +161,8 @@ describe 'PennMARC::Subject' do
       end
 
       it 'shows all valid subject headings without duplicates' do
-        expect(helper.show(record)).to contain_exactly('Nephrology--Periodicals', 'Nephrology', 'Kidney Diseases',
-                                                       'Local Heading')
+        expect(helper.show(record)).to contain_exactly('Nephrology--Periodicals.', 'Nephrology.', 'Kidney Diseases.',
+                                                       'Local Heading.')
       end
     end
 
@@ -155,7 +170,7 @@ describe 'PennMARC::Subject' do
       let(:fields) do
         [marc_field(tag: '650', indicator2: '0', subfields: {
                       a: 'Subways',
-                      z: ['Pennsylvania', 'Philadelphia Metropolitan Area'],
+                      z: ['Pennsylvania,', 'Philadelphia Metropolitan Area,'],
                       v: 'Maps',
                       y: '1989',
                       e: 'relator'
@@ -163,7 +178,7 @@ describe 'PennMARC::Subject' do
       end
 
       it 'properly formats the heading parts' do
-        expect(values.first).to eq 'Subways--Pennsylvania--Philadelphia Metropolitan Area--Maps--1989 relator'
+        expect(values.first).to eq 'Subways--Pennsylvania--Philadelphia Metropolitan Area--Maps--1989 relator.'
       end
     end
 
@@ -171,20 +186,37 @@ describe 'PennMARC::Subject' do
       let(:fields) do
         [marc_field(tag: '600', indicator2: '7', subfields: {
                       a: 'Franklin, Benjamin,',
-                      d: '1706-1790',
+                      d: '1706-1790.',
                       '2': 'fast',
                       '0': 'http://id.worldcat.org/fast/34115'
                     }),
          marc_field(tag: '600', indicator1: '1', indicator2: '0', subfields: {
                       a: 'Franklin, Benjamin,',
-                      d: '1706-1790.',
+                      d: '1706-1790',
                       x: 'As inventor.'
+                    }),
+         marc_field(tag: '650', indicator1: '1', indicator2: '0', subfields: {
+                      a: 'Franklin stoves.'
                     })]
       end
 
-      it 'returns what Franklin shows', pending: 'proper handling of punctuation in subject parts' do
+      it 'proper handling of punctuation in subject parts' do
         expect(values).to contain_exactly 'Franklin, Benjamin, 1706-1790.',
-                                          'Franklin, Benjamin, 1706-1790--As inventor.'
+                                          'Franklin, Benjamin, 1706-1790--As inventor.', 'Franklin stoves.'
+      end
+    end
+
+    context 'with a record without trailing period in last subject part' do
+      let(:fields) do
+        [marc_field(tag: '651', indicator2: '7',
+                    subfields: {
+                      a: 'New York State (State)', z: 'New York', '2': 'fast', '0': '(OCoLC)fst01204333',
+                      '1': 'https://id.oclc.org/worldcat/entity/E39QbtfRvQh7864Jh4rDGBFDWc'
+                    })]
+      end
+
+      it 'adds a trailing period' do
+        expect(values).to contain_exactly('New York State (State)--New York.')
       end
     end
 
@@ -200,40 +232,40 @@ describe 'PennMARC::Subject' do
       end
 
       it 'properly formats the heading parts' do
-        expect(values.first).to eq 'Chicago (Ill.)--Moral conditions--Church minutes--1875-1878'
+        expect(values.first).to eq 'Chicago (Ill.)--Moral conditions--Church minutes--1875-1878.'
       end
     end
 
     context 'with a robust 611 heading including many subfields' do
       let(:fields) do
         [marc_field(tag: '611', indicator2: '0', subfields: {
-                      a: 'Conference',
-                      c: ['(Johannesburg, South Africa', 'Cape Town, South Africa'],
+                      a: 'Conference,',
+                      c: ['(Johannesburg, South Africa,', 'Cape Town, South Africa,'],
                       d: '2002)',
                       n: '2nd'
                     })]
       end
 
       it 'properly formats the heading parts' do
-        expect(values.first).to eq 'Conference, (Johannesburg, South Africa, Cape Town, South Africa, 2002)--2nd'
+        expect(values.first).to eq 'Conference, (Johannesburg, South Africa, Cape Town, South Africa, 2002)--2nd.'
       end
     end
 
     context 'with a robust 600 heading including many subfields' do
       let(:fields) do
         [marc_field(tag: '600', indicator2: '0', subfields: {
-                      a: 'Person, Significant Author',
-                      b: 'Numerator',
-                      c: %w[Title Rank],
-                      d: '1899-1971',
+                      a: 'Person, Significant Author,',
+                      b: 'Numerator,',
+                      c: ['Title,', 'Rank,'],
+                      d: '1899-1971,',
                       t: 'Collection',
-                      v: 'Early works to 1950'
+                      v: 'Early works to 1950.'
                     })]
       end
 
       it 'properly formats the heading parts' do
         expect(values.first).to eq('Person, Significant Author, Numerator, Title, Rank, 1899-1971, Collection--' \
-                                   'Early works to 1950')
+                                   'Early works to 1950.')
       end
     end
   end
@@ -249,7 +281,7 @@ describe 'PennMARC::Subject' do
     let(:values) { helper.childrens_show(record) }
 
     it 'includes heading terms only from subject tags with an indicator 2 of "1"' do
-      expect(values).to contain_exactly 'Frogs--Fiction', 'Toads--Fiction'
+      expect(values).to contain_exactly 'Frogs--Fiction.', 'Toads--Fiction.'
     end
   end
 
@@ -267,7 +299,7 @@ describe 'PennMARC::Subject' do
     end
 
     it 'includes heading terms only from subject tags with indicator 2 of "2"' do
-      expect(helper.medical_show(record)).to contain_exactly 'Nephrology'
+      expect(helper.medical_show(record)).to contain_exactly 'Nephrology.'
     end
   end
 
@@ -280,7 +312,7 @@ describe 'PennMARC::Subject' do
     end
 
     it 'includes heading terms only from subject tags with indicator 2 of "4" or in the 69X range' do
-      expect(helper.local_show(record)).to contain_exactly 'Local--Heading', 'Super Local.'
+      expect(helper.local_show(record)).to contain_exactly 'Local--Heading.', 'Super Local.'
     end
   end
 end

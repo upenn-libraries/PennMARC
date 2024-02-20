@@ -115,6 +115,7 @@ module PennMARC
 
     # @param [Symbol|String] trailer to target for removal
     # @param [String] string to modify
+    # @return [String]
     def trim_trailing(trailer, string)
       map = { semicolon: /\s*;\s*$/,
               colon: /\s*:\s*$/,
@@ -123,6 +124,20 @@ module PennMARC
               comma: /\s*,\s*$/,
               period: /\.\s*$/ } # TODO: revise to exclude "etc."
       string.sub map[trailer.to_sym], ''
+    end
+
+    # trim trailing punctuation, manipulating string in place
+    # @param [Symbol|String] trailer to target for removal
+    # @param [String] string to modify
+    # @return [String, Nil] string to modify
+    def trim_trailing!(trailer, string)
+      map = { semicolon: /\s*;\s*$/,
+              colon: /\s*:\s*$/,
+              equal: /=$/,
+              slash: %r{\s*/\s*$},
+              comma: /\s*,\s*$/,
+              period: /\.\s*$/ } # TODO: revise to exclude "etc."
+      string.sub! map[trailer.to_sym], ''
     end
 
     # Intelligently append given punctuation to the end of a string

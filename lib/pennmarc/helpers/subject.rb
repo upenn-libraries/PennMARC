@@ -160,7 +160,6 @@ module PennMARC
 
       # Format a term hash as a string for display
       #
-      # @todo confirm punctuation handling
       # @todo support search field formatting?
       # @param [Symbol] type
       # @param [Hash] term components and information as a hash
@@ -171,11 +170,12 @@ module PennMARC
         # attempt to handle poorly coded record
         normalize_single_subfield(term[:parts].first) if term[:count] == 1 && term[:parts].first.present?
 
-        case type.to_sym
+        case type
         when :facet
-          term[:parts].join('--').strip
+          trim_trailing(:period, term[:parts].join('--').strip)
         when :display
-          "#{term[:parts].join('--')} #{term[:append].join(' ')}".strip
+          display_value = "#{term[:parts].join('--')} #{term[:append].join(' ')}".strip
+          display_value.ends_with?('.') ? display_value : "#{display_value}."
         end
       end
 
@@ -225,9 +225,8 @@ module PennMARC
       #       because we're using (where? - MK) "subdivision count" as a heuristic for the quality level of the
       #       heading. - MG
       # @todo do i need all this?
-      # @todo do i need to handle punctuation? see append_new_part
       # @param [MARC::DataField] field
-      # @return [Hash{Symbol => Integer, Array}, Nil]
+      # @return [Hash{Symbol => Integer, Array, Boolean}, Nil]
       def build_subject_hash(field)
         term_info = { count: 0, parts: [], append: [], uri: nil,
                       local: field.indicator2 == '4' || field.tag.starts_with?('69'), # local subject heading
@@ -243,6 +242,9 @@ module PennMARC
             # filter out PRO/CHR entirely (but only need to check on local heading types)
             return nil if term_info[:local] && subfield.value =~ /^%?(PRO|CHR)([ $]|$)/
 
+            # remove trailing punctuation of previous subject part
+            trim_trailing_commas_or_periods!(term_info[:parts].last)
+
             term_info[:parts] << subfield.value.strip
             term_info[:count] += 1
           when '2'
@@ -252,11 +254,16 @@ module PennMARC
             term_info[:append] << subfield.value.strip # TODO: map relator code?
           when 'b', 'c', 'd', 'p', 'q', 't'
             # these are appended to the last component (part) if possible (i.e., when joined, should have no delimiter)
-            term_info[:parts].last << ", #{subfield.value.strip}"
+            # assume that there is an 'a' preceding value
+            term_info[:parts].last << " #{subfield.value.strip}"
             term_info[:count] += 1
           else
             # the usual case; add a new component to `parts`
             # this typically includes g, v, x, y, z, 4
+
+            # remove trailing punctuation of previous subject part
+            trim_trailing_commas_or_periods!(term_info[:parts].last)
+
             term_info[:parts] << subfield.value.strip
             term_info[:count] += 1
           end
@@ -298,6 +305,15 @@ module PennMARC
         first_part.gsub!(/([[[:alnum:]])])(\s+--\s*|\s*--\s+)([[[:upper:]][[:digit:]]])/, '\1--\3')
         first_part.gsub!(/([[[:alpha:]])])\s+-\s+([[:upper:]]|[[:digit:]]{2,})/, '\1--\2')
         first_part.gsub!(/([[[:alnum:]])])\s+-\s+([[:upper:]])/, '\1--\2')
+      end
+
+      # removes trailing comma or period, manipulating the string in place
+      # @param [String, NilClass] subject_part
+      # @return [String, NilClass]
+      def trim_trailing_commas_or_periods!(subject_part)
+        return if subject_part.blank?
+
+        trim_trailing!(:comma, subject_part) || trim_trailing!(:period, subject_part)
       end
     end
   end
