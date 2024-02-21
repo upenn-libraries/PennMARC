@@ -5,6 +5,13 @@ require_relative 'heading_control'
 module PennMARC
   # class to hold "utility" methods used in MARC parsing methods
   module Util
+    TRAILING_PUNCTUATIONS_PATTERNS = { semicolon: /\s*;\s*$/,
+                                       colon: /\s*:\s*$/,
+                                       equal: /=$/,
+                                       slash: %r{\s*/\s*$},
+                                       comma: /\s*,\s*$/,
+                                       period: /\.\s*$/ }.freeze # TODO: revise to exclude "etc."
+
     # Check if a given record has a field present by tag (e.g., '041')
     # @param [MARC::Record] record
     # @param [String] marc_field
@@ -117,13 +124,7 @@ module PennMARC
     # @param [String] string to modify
     # @return [String]
     def trim_trailing(trailer, string)
-      map = { semicolon: /\s*;\s*$/,
-              colon: /\s*:\s*$/,
-              equal: /=$/,
-              slash: %r{\s*/\s*$},
-              comma: /\s*,\s*$/,
-              period: /\.\s*$/ } # TODO: revise to exclude "etc."
-      string.sub map[trailer.to_sym], ''
+      string.sub TRAILING_PUNCTUATIONS_PATTERNS[trailer.to_sym], ''
     end
 
     # trim trailing punctuation, manipulating string in place
@@ -131,13 +132,7 @@ module PennMARC
     # @param [String] string to modify
     # @return [String, Nil] string to modify
     def trim_trailing!(trailer, string)
-      map = { semicolon: /\s*;\s*$/,
-              colon: /\s*:\s*$/,
-              equal: /=$/,
-              slash: %r{\s*/\s*$},
-              comma: /\s*,\s*$/,
-              period: /\.\s*$/ } # TODO: revise to exclude "etc."
-      string.sub! map[trailer.to_sym], ''
+      string.sub! TRAILING_PUNCTUATIONS_PATTERNS[trailer.to_sym], ''
     end
 
     # Intelligently append given punctuation to the end of a string
