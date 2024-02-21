@@ -200,7 +200,7 @@ describe 'PennMARC::Subject' do
                     })]
       end
 
-      it 'proper handling of punctuation in subject parts' do
+      it 'properly handles punctuation in subject parts' do
         expect(values).to contain_exactly 'Franklin, Benjamin, 1706-1790.',
                                           'Franklin, Benjamin, 1706-1790--As inventor.', 'Franklin stoves.'
       end
