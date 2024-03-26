@@ -238,36 +238,42 @@ cjsambx:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Archives Americana
+  aeon: true
 cjsarc:
   specific_location: Library at the Katz Center - Archives
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Archives Room
+  aeon: true
 cjsarcbox1:
   specific_location: Library at the Katz Center - Archives
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Archives Box 1
+  aeon: true
 cjsarcms:
   specific_location: Library at the Katz Center - Archives
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Archives Room Manuscript
+  aeon: true
 cjsarcths:
   specific_location: Library at the Katz Center - Archives
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Archives Thesis
+  aeon: true
 cjsartif:
   specific_location: Library at the Katz Center - Reading Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Artifacts
+  aeon: true
 cjsbox1:
   specific_location: Library at the Katz Center - Stacks
   library: Library at the Katz Center for Advanced Judaic Studies
@@ -322,24 +328,28 @@ cjsgf:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Genizah Fragments
+  aeon: true
 cjsgrc:
   specific_location: Library at the Katz Center - Archives
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Graphics Collection
+  aeon: true
 cjshur:
   specific_location: Library at the Katz Center - Stacks
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Hurowitz Collection
+  aeon: true
 cjsincun:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Incunabula
+  aeon: true
 cjsinproc:
   specific_location: Library at the Katz Center - Stacks
   library:
@@ -358,12 +368,14 @@ cjsmar:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Margolis Collection
+  aeon: true
 cjsmemor:
   specific_location: Library at the Katz Center - Stacks
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Memorial Collection
+  aeon: true
 cjsmini:
   specific_location: Library at the Katz Center - Stacks
   library: Library at the Katz Center for Advanced Judaic Studies
@@ -410,66 +422,77 @@ cjsrar:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Room
+  aeon: true
 cjsraram:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Americana
+  aeon: true
 cjsrarbx1:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Box 1
+  aeon: true
 cjsrarbx2:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Box 2
+  aeon: true
 cjsrarbx3:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Box 3
+  aeon: true
 cjsrarbx4:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Box 4
+  aeon: true
 cjsrarfol:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Folio
+  aeon: true
 cjsrargiga:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Giant
+  aeon: true
 cjsrarmini:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Miniature
+  aeon: true
 cjsrarms:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Manuscript
+  aeon: true
 cjsrarover:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Oversize
+  aeon: true
 cjsref:
   specific_location: Library at the Katz Center - Reading Room
   library: Library at the Katz Center for Advanced Judaic Studies
@@ -494,6 +517,7 @@ cjsspec:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Special
+  aeon: true
 cjsvideo:
   specific_location: Library at the Katz Center - Stacks
   library: Library at the Katz Center for Advanced Judaic Studies
@@ -580,6 +604,7 @@ finecage:
     - Special Collections
     - Fisher Fine Arts Library
   display: Fine Arts Library - Cage (ask at desk)
+  aeon: true
 finecirc:
   specific_location: Fisher Fine Arts Library - Circulation Desk
   library: Fisher Fine Arts Library
@@ -598,30 +623,35 @@ finelock:
     - Special Collections
     - Fisher Fine Arts Library
   display: Fine Arts Library - Locked Case (ask at desk)
+  aeon: true
 finemaps:
   specific_location: Fisher Fine Arts Library - Map Collection
   library:
     - Special Collections
     - Fisher Fine Arts Library
   display: Fine Arts Library - Map Collection
+  aeon: true
 finerare:
   specific_location: Fisher Fine Arts Library - Rare Book
   library:
     - Special Collections
     - Fisher Fine Arts Library
   display: Fine Arts Library - Rare Book
+  aeon: true
 fineraremp:
   specific_location: Fisher Fine Arts Library - Rare Maps
   library:
     - Special Collections
     - Fisher Fine Arts Library
   display: Fine Arts Library - Rare Map Collection
+  aeon: true
 finerarept:
   specific_location: Fisher Fine Arts Library - Rare Print
   library:
     - Special Collections
     - Fisher Fine Arts Library
   display: Fine Arts Library - Rare Print Collection
+  aeon: true
 finerefe:
   specific_location: Fisher Fine Arts Library - Reference
   library: Fisher Fine Arts Library
@@ -1022,6 +1052,7 @@ scbanks:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Joanna Banks Collection
+  aeon: true
 scblank:
   specific_location: Kislak Center for Special Collections - Blank Collection
   library:
@@ -1057,6 +1088,7 @@ sccurt:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Curtis Collection
+  aeon: true
 scdech:
   specific_location: Kislak Center for Special Collections - Dechert Collection
   library:
@@ -1134,6 +1166,7 @@ scfurn:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Furness Collection
+  aeon: true
 scfurnlib:
   specific_location: Kislak Center for Special Collections - Furness Shakespeare Library
     (Van Pelt 628)
@@ -1170,6 +1203,7 @@ sclea:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Lea Collection
+  aeon: true
 scmap:
   specific_location: Kislak Center for Special Collections - Rare Book Collection
   library:
@@ -1221,6 +1255,7 @@ scrare:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Rare Book Collection
+  aeon: true
 screading:
   specific_location: Kislak Center for Special Collections - Reading Room
   library:
@@ -1235,6 +1270,7 @@ screfe:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Reference Collection
+  aeon: true
 screfestor:
   specific_location: Kislak Center for Special Collections - Reference Storage
   library:
@@ -1263,6 +1299,7 @@ scsmith:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - E.F. Smith Collection
+  aeon: true
 scsmithst:
   specific_location: Kislak Center for Special Collections - E.F. Smith Collection
   library:
@@ -1305,6 +1342,7 @@ sctress:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Arthur Tress Collection
+  aeon: true
 scvilain:
   specific_location: Kislak Center for Special Collections - Vilain-Wieck Collection
   library:
@@ -1345,6 +1383,7 @@ storfine:
   specific_location: LIBRA Fisher Fine Arts
   library: LIBRA
   display: LIBRA Fisher Fine Arts
+  aeon: true
 storm:
   specific_location: LIBRA
   library: LIBRA
