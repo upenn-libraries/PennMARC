@@ -918,6 +918,7 @@ newbrare:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Fairman Rogers Coll.
+  aeon: true
 newbrefe:
   specific_location: 'Veterinary: du Pont Library (New Bolton) - Reference'
   library:
@@ -1031,6 +1032,7 @@ sc1100c:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - 1100C Collection
+  aeon: true
 scadams:
   specific_location: Kislak Center for Special Collections - Adams Collection
   library:
@@ -1060,6 +1062,7 @@ scblank:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Blank Collection
+  aeon: true
 scbyron:
   specific_location: Kislak Center for Special Collections - Byron Collection
   library:
@@ -1067,6 +1070,7 @@ scbyron:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Byron Collection
+  aeon: true
 sccanvas:
   specific_location: Kislak Center for Special Collections - Canvassing Collection
   library:
@@ -1081,6 +1085,7 @@ sccomics:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Comics Collection
+  aeon: true
 sccurt:
   specific_location: Kislak Center for Special Collections - Curtis Collection
   library:
@@ -1096,6 +1101,7 @@ scdech:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Dechert Collection
+  aeon: true
 scdethou:
   specific_location: Kislak Center for Special Collections - De Thou Library
   library:
@@ -1110,6 +1116,7 @@ scdreis:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Dreiser Library
+  aeon: true
 scdrey:
   specific_location: Kislak Center for Special Collections - Dreyfus Collection
   library:
@@ -1117,6 +1124,7 @@ scdrey:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Dreyfus Collection
+  aeon: true
 scelias:
   specific_location: Kislak Center for Special Collections - Swift's Reading Collection
   library:
@@ -1124,6 +1132,7 @@ scelias:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Swift's Reading Collection
+  aeon: true
 scelz:
   specific_location: Kislak Center for Special Collections - Elzevier Collection
   library:
@@ -1131,6 +1140,7 @@ scelz:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Elzevier Collection
+  aeon: true
 scfast:
   specific_location: Kislak Center for Special Collections - Fast Collection
   library:
@@ -1138,6 +1148,7 @@ scfast:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Fast Collection
+  aeon: true
 scforr:
   specific_location: Kislak Center for Special Collections - Forrest Collection
   library:
@@ -1145,6 +1156,7 @@ scforr:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Forrest Collection
+  aeon: true
 scfoun:
   specific_location: Kislak Center for Special Collections - Founders Collection
   library:
@@ -1152,6 +1164,7 @@ scfoun:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Founders Collection
+  aeon: true
 scfreed:
   specific_location: Freedman Jewish Sound Archives
   library:
@@ -1159,6 +1172,7 @@ scfreed:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Van Pelt - Freedman Jewish Sound Archives
+  aeon: true
 scfurn:
   specific_location: Kislak Center for Special Collections - Furness Collection
   library:
@@ -1182,6 +1196,7 @@ scfurnst:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Furness Storage
+  aeon: true
 scgull:
   specific_location: Kislak Center for Special Collections - Gulliver's Travels Collection
   library:
@@ -1196,6 +1211,7 @@ scinc:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Incunables
+  aeon: true
 sclea:
   specific_location: Kislak Center for Special Collections - Lea Collection
   library:
@@ -1218,6 +1234,7 @@ scmss:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Manuscripts
+  aeon: true
 scmst:
   specific_location: Kislak Center for Special Collections - Manuscripts Storage
   library:
@@ -1225,6 +1242,7 @@ scmst:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: 'Kislak Center for Special Collections - Manuscripts Storage, contact '
+  aeon: true
 scmsw:
   specific_location: Kislak Center for Special Collections - Web
   library:
@@ -1239,6 +1257,7 @@ scparts:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Books-in-Parts Collection
+  aeon: true
 scpspa:
   specific_location: Kislak Center for Special Collections - Phila. Society for Promoting
     Agriculture Collection
@@ -1248,6 +1267,7 @@ scpspa:
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Phila. Society for Promoting Agriculture
     Collection
+  aeon: true
 scrare:
   specific_location: Kislak Center for Special Collections - Rare Book Collection
   library:
@@ -1278,6 +1298,7 @@ screfestor:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections Reference Storage
+  aeon: true
 scschimmel:
   specific_location: Kislak Center for Special Collections - Schimmel Collection
   library:
@@ -1292,6 +1313,7 @@ scsing:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Singer-Mendenhall Collection
+  aeon: true
 scsmith:
   specific_location: Kislak Center for Special Collections - E.F. Smith Collection
   library:
@@ -1307,6 +1329,7 @@ scsmithst:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - E.F. Smith Collection Storage
+  aeon: true
 scsterne:
   specific_location: Kislak Center for Special Collections - Day Sterne Collection
   library:
@@ -1321,6 +1344,7 @@ scstor:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Rare Book Collection Storage
+  aeon: true
 scteer:
   specific_location: Kislak Center for Special Collections - Teerink Collection
   library:
@@ -1328,6 +1352,7 @@ scteer:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Teerink Collection
+  aeon: true
 sctehon:
   specific_location: Kislak Center for Special Collections - Tehon Collection
   library:
@@ -1357,6 +1382,7 @@ scwhit:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Whitman Collection
+  aeon: true
 scyarn:
   specific_location: Kislak Center for Special Collections - Yarnall Collection
   library:
@@ -1365,6 +1391,7 @@ scyarn:
     - Van Pelt-Dietrich Library Center
     - Yarnall Collection
   display: Kislak Center for Special Collections - Yarnall Collection
+  aeon: true
 stor:
   specific_location: LIBRA
   library: LIBRA
@@ -1394,18 +1421,21 @@ storlimit:
     - Special Collections
     - LIBRA
   display: LIBRA Limited
+  aeon: true
 storrare:
   specific_location: LIBRA Rare
   library:
     - Special Collections
     - LIBRA
   display: LIBRA Rare
+  aeon: true
 storspec:
   specific_location: LIBRA Special
   library:
     - Special Collections
     - LIBRA
   display: LIBRA Special
+  aeon: true
 scrunning:
   specific_location: LIBRA Running Press Collection
   library:
