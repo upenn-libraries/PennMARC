@@ -45,18 +45,22 @@ amimp:
   specific_location: Athenaeum of Philadelphia - American Imprints
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - American Imprints
+  aeon: true
 archivcoll:
   specific_location: Athenaeum of Philadelphia - Archival Collections
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Archival Collections
+  aeon: true
 atlas:
   specific_location: Athenaeum of Philadelphia - Atlases
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Atlases
+  aeon: true
 britimp:
   specific_location: Athenaeum of Philadelphia - British Imprints
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - British Imprints
+  aeon: true
 carpco:
   specific_location: Athenaeum of Philadelphia - Carpenters' Company
   library: Athenaeum of Philadelphia
@@ -77,6 +81,7 @@ cidirbusrm:
   specific_location: Athenaeum of Philadelphia - City Directories Busch Room
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - City Directories Busch Room
+  aeon: true
 collcare:
   specific_location: Athenaeum of Philadelphia - Collections Care Manager
   library: Athenaeum of Philadelphia
@@ -89,10 +94,12 @@ forimp:
   specific_location: Athenaeum of Philadelphia - Foreign Imprints
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Foreign Imprints
+  aeon: true
 litaward:
   specific_location: Athenaeum of Philadelphia - Literary Award
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Literary Award
+  aeon: true
 microfilm:
   specific_location: Athenaeum of Philadelphia - Microfilm
   library: Athenaeum of Philadelphia
@@ -109,30 +116,37 @@ offsitede:
   specific_location: Athenaeum of Philadelphia - Off-site (Delaware)
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Off-site (Delaware)
+  aeon: true
 rarecoll:
   specific_location: Athenaeum of Philadelphia - Rare Books Collection
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Rare Books Collection
+  aeon: true
 reevecoll:
   specific_location: Athenaeum of Philadelphia - Reeve Collection
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Reeve Collection
+  aeon: true
 ref:
   specific_location: Athenaeum of Philadelphia - Reference
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Reference
+  aeon: true
 ruppcoll:
   specific_location: Athenaeum of Philadelphia - Rupp Collection
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Rupp Collection
+  aeon: true
 serials:
   specific_location: Athenaeum of Philadelphia - Serials
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Serials
+  aeon: true
 tradecat:
   specific_location: Athenaeum of Philadelphia - Trade Catalogues
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Trade Catalogues
+  aeon: true
 videodvd:
   specific_location: Athenaeum of Philadelphia - Videos
   library: Athenaeum of Philadelphia
@@ -145,6 +159,7 @@ athstor:
   specific_location: LIBRA - Athenaeum of Philadelphia
   library: LIBRA
   display: LIBRA - Athenaeum of Philadelphia
+  aeon: true
 athstorcir:
   specific_location: LIBRA - Athenaeum of Philadelphia Circulating
   library: LIBRA
@@ -818,6 +833,7 @@ musebrin:
     - Special Collections
     - Penn Museum Library
   display: Penn Museum Library - Brinton Collection
+  aeon: true
 musedesk:
   specific_location: Penn Museum Library - Circulation
   library: Penn Museum Library
@@ -840,6 +856,7 @@ muselock:
     - Special Collections
     - Penn Museum Library
   display: Penn Museum Library - Locked Cases (ask staff)
+  aeon: true
 musemedia:
   specific_location: Penn Museum Library - Media
   library: Penn Museum Library
@@ -1025,6 +1042,7 @@ scg123:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Rare Book Collection 123
+  aeon: true
 sc1100c:
   specific_location: Kislak Center for Special Collections - 1100C Collection
   library:
@@ -1040,6 +1058,7 @@ scadams:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Adams Collection
+  aeon: true
 scartbk:
   specific_location: Kislak Center for Special Collections - Artists' Books
   library:
@@ -1047,6 +1066,7 @@ scartbk:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Artists' Books
+  aeon: true
 scbanks:
   specific_location: Kislak Center for Special Collections - Joanna Banks Collection
   library:
@@ -1078,6 +1098,7 @@ sccanvas:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Canvassing Collection
+  aeon: true
 sccomics:
   specific_location: Kislak Center for Special Collections - Comics Collection
   library:
@@ -1109,6 +1130,7 @@ scdethou:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - De Thou Library
+  aeon: true
 scdreis:
   specific_location: Kislak Center for Special Collections - Dreiser Library
   library:
@@ -1204,6 +1226,7 @@ scgull:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Gulliver's Travels Collection
+  aeon: true
 scinc:
   specific_location: Kislak Center for Special Collections - Incunables
   library:
@@ -1227,6 +1250,7 @@ scmap:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Rare Book Collection
+  aeon: true
 scmss:
   specific_location: Kislak Center for Special Collections - Manuscripts
   library:
@@ -1250,6 +1274,7 @@ scmsw:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Web
+  aeon: true
 scparts:
   specific_location: Kislak Center for Special Collections - Books-in-Parts Collection
   library:
@@ -1283,6 +1308,7 @@ screading:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections Reading Room
+  aeon: true
 screfe:
   specific_location: Kislak Center for Special Collections - Reference Collection
   library:
@@ -1306,6 +1332,7 @@ scschimmel:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Schimmel Collection
+  aeon: true
 scsing:
   specific_location: Kislak Center for Special Collections - Singer-Mendenhall Collection
   library:
@@ -1337,6 +1364,7 @@ scsterne:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Day Sterne Collection
+  aeon: true
 scstor:
   specific_location: Kislak Center for Special Collections - Rare Book Collection
   library:
@@ -1360,6 +1388,7 @@ sctehon:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Tehon Collection
+  aeon: true
 sctress:
   specific_location: Kislak Center for Special Collections - Arthur Tress Collection
   library:
@@ -1375,6 +1404,7 @@ scvilain:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Vilain-Wieck Collection
+  aeon: true
 scwhit:
   specific_location: Kislak Center for Special Collections - Whitman Collection
   library:
@@ -1442,6 +1472,7 @@ scrunning:
     - Special Collections
     - LIBRA
   display: LIBRA Running Press Collection
+  aeon: true
 univarch:
   specific_location: University Archives
   library: University Archives
