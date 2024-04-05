@@ -1265,7 +1265,7 @@ scmst:
     - Special Collections
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
-  display: 'Kislak Center for Special Collections - Manuscripts Storage, contact '
+  display: Kislak Center for Special Collections - Manuscripts Storage
   aeon: true
 scmsw:
   specific_location: Kislak Center for Special Collections - Web
