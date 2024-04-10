@@ -45,18 +45,22 @@ amimp:
   specific_location: Athenaeum of Philadelphia - American Imprints
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - American Imprints
+  aeon: true
 archivcoll:
   specific_location: Athenaeum of Philadelphia - Archival Collections
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Archival Collections
+  aeon: true
 atlas:
   specific_location: Athenaeum of Philadelphia - Atlases
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Atlases
+  aeon: true
 britimp:
   specific_location: Athenaeum of Philadelphia - British Imprints
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - British Imprints
+  aeon: true
 carpco:
   specific_location: Athenaeum of Philadelphia - Carpenters' Company
   library: Athenaeum of Philadelphia
@@ -77,6 +81,7 @@ cidirbusrm:
   specific_location: Athenaeum of Philadelphia - City Directories Busch Room
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - City Directories Busch Room
+  aeon: true
 collcare:
   specific_location: Athenaeum of Philadelphia - Collections Care Manager
   library: Athenaeum of Philadelphia
@@ -89,10 +94,12 @@ forimp:
   specific_location: Athenaeum of Philadelphia - Foreign Imprints
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Foreign Imprints
+  aeon: true
 litaward:
   specific_location: Athenaeum of Philadelphia - Literary Award
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Literary Award
+  aeon: true
 microfilm:
   specific_location: Athenaeum of Philadelphia - Microfilm
   library: Athenaeum of Philadelphia
@@ -109,30 +116,37 @@ offsitede:
   specific_location: Athenaeum of Philadelphia - Off-site (Delaware)
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Off-site (Delaware)
+  aeon: true
 rarecoll:
   specific_location: Athenaeum of Philadelphia - Rare Books Collection
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Rare Books Collection
+  aeon: true
 reevecoll:
   specific_location: Athenaeum of Philadelphia - Reeve Collection
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Reeve Collection
+  aeon: true
 ref:
   specific_location: Athenaeum of Philadelphia - Reference
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Reference
+  aeon: true
 ruppcoll:
   specific_location: Athenaeum of Philadelphia - Rupp Collection
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Rupp Collection
+  aeon: true
 serials:
   specific_location: Athenaeum of Philadelphia - Serials
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Serials
+  aeon: true
 tradecat:
   specific_location: Athenaeum of Philadelphia - Trade Catalogues
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Trade Catalogues
+  aeon: true
 videodvd:
   specific_location: Athenaeum of Philadelphia - Videos
   library: Athenaeum of Philadelphia
@@ -145,6 +159,7 @@ athstor:
   specific_location: LIBRA - Athenaeum of Philadelphia
   library: LIBRA
   display: LIBRA - Athenaeum of Philadelphia
+  aeon: true
 athstorcir:
   specific_location: LIBRA - Athenaeum of Philadelphia Circulating
   library: LIBRA
@@ -238,36 +253,42 @@ cjsambx:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Archives Americana
+  aeon: true
 cjsarc:
   specific_location: Library at the Katz Center - Archives
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Archives Room
+  aeon: true
 cjsarcbox1:
   specific_location: Library at the Katz Center - Archives
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Archives Box 1
+  aeon: true
 cjsarcms:
   specific_location: Library at the Katz Center - Archives
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Archives Room Manuscript
+  aeon: true
 cjsarcths:
   specific_location: Library at the Katz Center - Archives
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Archives Thesis
+  aeon: true
 cjsartif:
   specific_location: Library at the Katz Center - Reading Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Artifacts
+  aeon: true
 cjsbox1:
   specific_location: Library at the Katz Center - Stacks
   library: Library at the Katz Center for Advanced Judaic Studies
@@ -322,24 +343,28 @@ cjsgf:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Genizah Fragments
+  aeon: true
 cjsgrc:
   specific_location: Library at the Katz Center - Archives
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Graphics Collection
+  aeon: true
 cjshur:
   specific_location: Library at the Katz Center - Stacks
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Hurowitz Collection
+  aeon: true
 cjsincun:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Incunabula
+  aeon: true
 cjsinproc:
   specific_location: Library at the Katz Center - Stacks
   library:
@@ -358,12 +383,14 @@ cjsmar:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Margolis Collection
+  aeon: true
 cjsmemor:
   specific_location: Library at the Katz Center - Stacks
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Memorial Collection
+  aeon: true
 cjsmini:
   specific_location: Library at the Katz Center - Stacks
   library: Library at the Katz Center for Advanced Judaic Studies
@@ -410,66 +437,77 @@ cjsrar:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Room
+  aeon: true
 cjsraram:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Americana
+  aeon: true
 cjsrarbx1:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Box 1
+  aeon: true
 cjsrarbx2:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Box 2
+  aeon: true
 cjsrarbx3:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Box 3
+  aeon: true
 cjsrarbx4:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Box 4
+  aeon: true
 cjsrarfol:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Folio
+  aeon: true
 cjsrargiga:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Giant
+  aeon: true
 cjsrarmini:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Miniature
+  aeon: true
 cjsrarms:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Manuscript
+  aeon: true
 cjsrarover:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Oversize
+  aeon: true
 cjsref:
   specific_location: Library at the Katz Center - Reading Room
   library: Library at the Katz Center for Advanced Judaic Studies
@@ -494,6 +532,7 @@ cjsspec:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Special
+  aeon: true
 cjsvideo:
   specific_location: Library at the Katz Center - Stacks
   library: Library at the Katz Center for Advanced Judaic Studies
@@ -580,6 +619,7 @@ finecage:
     - Special Collections
     - Fisher Fine Arts Library
   display: Fine Arts Library - Cage (ask at desk)
+  aeon: true
 finecirc:
   specific_location: Fisher Fine Arts Library - Circulation Desk
   library: Fisher Fine Arts Library
@@ -598,30 +638,35 @@ finelock:
     - Special Collections
     - Fisher Fine Arts Library
   display: Fine Arts Library - Locked Case (ask at desk)
+  aeon: true
 finemaps:
   specific_location: Fisher Fine Arts Library - Map Collection
   library:
     - Special Collections
     - Fisher Fine Arts Library
   display: Fine Arts Library - Map Collection
+  aeon: true
 finerare:
   specific_location: Fisher Fine Arts Library - Rare Book
   library:
     - Special Collections
     - Fisher Fine Arts Library
   display: Fine Arts Library - Rare Book
+  aeon: true
 fineraremp:
   specific_location: Fisher Fine Arts Library - Rare Maps
   library:
     - Special Collections
     - Fisher Fine Arts Library
   display: Fine Arts Library - Rare Map Collection
+  aeon: true
 finerarept:
   specific_location: Fisher Fine Arts Library - Rare Print
   library:
     - Special Collections
     - Fisher Fine Arts Library
   display: Fine Arts Library - Rare Print Collection
+  aeon: true
 finerefe:
   specific_location: Fisher Fine Arts Library - Reference
   library: Fisher Fine Arts Library
@@ -788,6 +833,7 @@ musebrin:
     - Special Collections
     - Penn Museum Library
   display: Penn Museum Library - Brinton Collection
+  aeon: true
 musedesk:
   specific_location: Penn Museum Library - Circulation
   library: Penn Museum Library
@@ -810,6 +856,7 @@ muselock:
     - Special Collections
     - Penn Museum Library
   display: Penn Museum Library - Locked Cases (ask staff)
+  aeon: true
 musemedia:
   specific_location: Penn Museum Library - Media
   library: Penn Museum Library
@@ -888,6 +935,7 @@ newbrare:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Fairman Rogers Coll.
+  aeon: true
 newbrefe:
   specific_location: 'Veterinary: du Pont Library (New Bolton) - Reference'
   library:
@@ -994,6 +1042,7 @@ scg123:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Rare Book Collection 123
+  aeon: true
 sc1100c:
   specific_location: Kislak Center for Special Collections - 1100C Collection
   library:
@@ -1001,6 +1050,7 @@ sc1100c:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - 1100C Collection
+  aeon: true
 scadams:
   specific_location: Kislak Center for Special Collections - Adams Collection
   library:
@@ -1008,6 +1058,7 @@ scadams:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Adams Collection
+  aeon: true
 scartbk:
   specific_location: Kislak Center for Special Collections - Artists' Books
   library:
@@ -1015,6 +1066,7 @@ scartbk:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Artists' Books
+  aeon: true
 scbanks:
   specific_location: Kislak Center for Special Collections - Joanna Banks Collection
   library:
@@ -1022,6 +1074,7 @@ scbanks:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Joanna Banks Collection
+  aeon: true
 scblank:
   specific_location: Kislak Center for Special Collections - Blank Collection
   library:
@@ -1029,6 +1082,7 @@ scblank:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Blank Collection
+  aeon: true
 scbyron:
   specific_location: Kislak Center for Special Collections - Byron Collection
   library:
@@ -1036,6 +1090,7 @@ scbyron:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Byron Collection
+  aeon: true
 sccanvas:
   specific_location: Kislak Center for Special Collections - Canvassing Collection
   library:
@@ -1043,6 +1098,7 @@ sccanvas:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Canvassing Collection
+  aeon: true
 sccomics:
   specific_location: Kislak Center for Special Collections - Comics Collection
   library:
@@ -1050,6 +1106,7 @@ sccomics:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Comics Collection
+  aeon: true
 sccurt:
   specific_location: Kislak Center for Special Collections - Curtis Collection
   library:
@@ -1057,6 +1114,7 @@ sccurt:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Curtis Collection
+  aeon: true
 scdech:
   specific_location: Kislak Center for Special Collections - Dechert Collection
   library:
@@ -1064,6 +1122,7 @@ scdech:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Dechert Collection
+  aeon: true
 scdethou:
   specific_location: Kislak Center for Special Collections - De Thou Library
   library:
@@ -1071,6 +1130,7 @@ scdethou:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - De Thou Library
+  aeon: true
 scdreis:
   specific_location: Kislak Center for Special Collections - Dreiser Library
   library:
@@ -1078,6 +1138,7 @@ scdreis:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Dreiser Library
+  aeon: true
 scdrey:
   specific_location: Kislak Center for Special Collections - Dreyfus Collection
   library:
@@ -1085,6 +1146,7 @@ scdrey:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Dreyfus Collection
+  aeon: true
 scelias:
   specific_location: Kislak Center for Special Collections - Swift's Reading Collection
   library:
@@ -1092,6 +1154,7 @@ scelias:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Swift's Reading Collection
+  aeon: true
 scelz:
   specific_location: Kislak Center for Special Collections - Elzevier Collection
   library:
@@ -1099,6 +1162,7 @@ scelz:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Elzevier Collection
+  aeon: true
 scfast:
   specific_location: Kislak Center for Special Collections - Fast Collection
   library:
@@ -1106,6 +1170,7 @@ scfast:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Fast Collection
+  aeon: true
 scforr:
   specific_location: Kislak Center for Special Collections - Forrest Collection
   library:
@@ -1113,6 +1178,7 @@ scforr:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Forrest Collection
+  aeon: true
 scfoun:
   specific_location: Kislak Center for Special Collections - Founders Collection
   library:
@@ -1120,6 +1186,7 @@ scfoun:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Founders Collection
+  aeon: true
 scfreed:
   specific_location: Freedman Jewish Sound Archives
   library:
@@ -1127,6 +1194,7 @@ scfreed:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Van Pelt - Freedman Jewish Sound Archives
+  aeon: true
 scfurn:
   specific_location: Kislak Center for Special Collections - Furness Collection
   library:
@@ -1134,6 +1202,7 @@ scfurn:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Furness Collection
+  aeon: true
 scfurnlib:
   specific_location: Kislak Center for Special Collections - Furness Shakespeare Library
     (Van Pelt 628)
@@ -1149,6 +1218,7 @@ scfurnst:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Furness Storage
+  aeon: true
 scgull:
   specific_location: Kislak Center for Special Collections - Gulliver's Travels Collection
   library:
@@ -1156,6 +1226,7 @@ scgull:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Gulliver's Travels Collection
+  aeon: true
 scinc:
   specific_location: Kislak Center for Special Collections - Incunables
   library:
@@ -1163,6 +1234,7 @@ scinc:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Incunables
+  aeon: true
 sclea:
   specific_location: Kislak Center for Special Collections - Lea Collection
   library:
@@ -1170,6 +1242,7 @@ sclea:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Lea Collection
+  aeon: true
 scmap:
   specific_location: Kislak Center for Special Collections - Rare Book Collection
   library:
@@ -1177,6 +1250,7 @@ scmap:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Rare Book Collection
+  aeon: true
 scmss:
   specific_location: Kislak Center for Special Collections - Manuscripts
   library:
@@ -1184,13 +1258,15 @@ scmss:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Manuscripts
+  aeon: true
 scmst:
   specific_location: Kislak Center for Special Collections - Manuscripts Storage
   library:
     - Special Collections
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
-  display: 'Kislak Center for Special Collections - Manuscripts Storage, contact '
+  display: Kislak Center for Special Collections - Manuscripts Storage
+  aeon: true
 scmsw:
   specific_location: Kislak Center for Special Collections - Web
   library:
@@ -1198,6 +1274,7 @@ scmsw:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Web
+  aeon: true
 scparts:
   specific_location: Kislak Center for Special Collections - Books-in-Parts Collection
   library:
@@ -1205,6 +1282,7 @@ scparts:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Books-in-Parts Collection
+  aeon: true
 scpspa:
   specific_location: Kislak Center for Special Collections - Phila. Society for Promoting
     Agriculture Collection
@@ -1214,6 +1292,7 @@ scpspa:
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Phila. Society for Promoting Agriculture
     Collection
+  aeon: true
 scrare:
   specific_location: Kislak Center for Special Collections - Rare Book Collection
   library:
@@ -1221,6 +1300,7 @@ scrare:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Rare Book Collection
+  aeon: true
 screading:
   specific_location: Kislak Center for Special Collections - Reading Room
   library:
@@ -1228,6 +1308,7 @@ screading:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections Reading Room
+  aeon: true
 screfe:
   specific_location: Kislak Center for Special Collections - Reference Collection
   library:
@@ -1235,6 +1316,7 @@ screfe:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Reference Collection
+  aeon: true
 screfestor:
   specific_location: Kislak Center for Special Collections - Reference Storage
   library:
@@ -1242,6 +1324,7 @@ screfestor:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections Reference Storage
+  aeon: true
 scschimmel:
   specific_location: Kislak Center for Special Collections - Schimmel Collection
   library:
@@ -1249,6 +1332,7 @@ scschimmel:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Schimmel Collection
+  aeon: true
 scsing:
   specific_location: Kislak Center for Special Collections - Singer-Mendenhall Collection
   library:
@@ -1256,6 +1340,7 @@ scsing:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Singer-Mendenhall Collection
+  aeon: true
 scsmith:
   specific_location: Kislak Center for Special Collections - E.F. Smith Collection
   library:
@@ -1263,6 +1348,7 @@ scsmith:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - E.F. Smith Collection
+  aeon: true
 scsmithst:
   specific_location: Kislak Center for Special Collections - E.F. Smith Collection
   library:
@@ -1270,6 +1356,7 @@ scsmithst:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - E.F. Smith Collection Storage
+  aeon: true
 scsterne:
   specific_location: Kislak Center for Special Collections - Day Sterne Collection
   library:
@@ -1277,6 +1364,7 @@ scsterne:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Day Sterne Collection
+  aeon: true
 scstor:
   specific_location: Kislak Center for Special Collections - Rare Book Collection
   library:
@@ -1284,6 +1372,7 @@ scstor:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Rare Book Collection Storage
+  aeon: true
 scteer:
   specific_location: Kislak Center for Special Collections - Teerink Collection
   library:
@@ -1291,6 +1380,7 @@ scteer:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Teerink Collection
+  aeon: true
 sctehon:
   specific_location: Kislak Center for Special Collections - Tehon Collection
   library:
@@ -1298,6 +1388,7 @@ sctehon:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Tehon Collection
+  aeon: true
 sctress:
   specific_location: Kislak Center for Special Collections - Arthur Tress Collection
   library:
@@ -1305,6 +1396,7 @@ sctress:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Arthur Tress Collection
+  aeon: true
 scvilain:
   specific_location: Kislak Center for Special Collections - Vilain-Wieck Collection
   library:
@@ -1312,6 +1404,7 @@ scvilain:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Vilain-Wieck Collection
+  aeon: true
 scwhit:
   specific_location: Kislak Center for Special Collections - Whitman Collection
   library:
@@ -1319,6 +1412,7 @@ scwhit:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Whitman Collection
+  aeon: true
 scyarn:
   specific_location: Kislak Center for Special Collections - Yarnall Collection
   library:
@@ -1327,6 +1421,7 @@ scyarn:
     - Van Pelt-Dietrich Library Center
     - Yarnall Collection
   display: Kislak Center for Special Collections - Yarnall Collection
+  aeon: true
 stor:
   specific_location: LIBRA
   library: LIBRA
@@ -1345,6 +1440,7 @@ storfine:
   specific_location: LIBRA Fisher Fine Arts
   library: LIBRA
   display: LIBRA Fisher Fine Arts
+  aeon: true
 storm:
   specific_location: LIBRA
   library: LIBRA
@@ -1355,24 +1451,28 @@ storlimit:
     - Special Collections
     - LIBRA
   display: LIBRA Limited
+  aeon: true
 storrare:
   specific_location: LIBRA Rare
   library:
     - Special Collections
     - LIBRA
   display: LIBRA Rare
+  aeon: true
 storspec:
   specific_location: LIBRA Special
   library:
     - Special Collections
     - LIBRA
   display: LIBRA Special
+  aeon: true
 scrunning:
   specific_location: LIBRA Running Press Collection
   library:
     - Special Collections
     - LIBRA
   display: LIBRA Running Press Collection
+  aeon: true
 univarch:
   specific_location: University Archives
   library: University Archives
