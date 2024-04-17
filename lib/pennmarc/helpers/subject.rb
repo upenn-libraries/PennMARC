@@ -214,7 +214,7 @@ module PennMARC
 
         return true if field.tag.in?(DISPLAY_TAGS) && field.indicator2.in?(%w[0 2 4])
 
-        return true if field.indicator2 == '7' && valid_subject_genre_source_code?(field)
+        return true if field.tag.in?(DISPLAY_TAGS) && field.indicator2 == '7' && valid_subject_genre_source_code?(field)
 
         false
       end
@@ -254,8 +254,10 @@ module PennMARC
             term_info[:append] << subfield.value.strip # TODO: map relator code?
           when 'b', 'c', 'd', 'p', 'q', 't'
             # these are appended to the last component (part) if possible (i.e., when joined, should have no delimiter)
-            # assume that there is an 'a' preceding value
-            term_info[:parts].last << " #{subfield.value.strip}"
+            # if there is no preceding part then this is simply added to the parts array
+            to_append = " #{subfield.value.strip}"
+
+            term_info[:parts].empty? ? term_info[:parts] << subfield.value.strip : term_info[:parts].last << to_append
             term_info[:count] += 1
           else
             # the usual case; add a new component to `parts`
