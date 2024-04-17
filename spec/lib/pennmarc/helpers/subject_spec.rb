@@ -128,6 +128,16 @@ describe 'PennMARC::Subject' do
       end
     end
 
+    context 'with a record with an invalid tag, but valid indicator2 and source specified' do
+      let(:fields) do
+        [marc_field(tag: '654', indicator2: '7', subfields: { c: 'b', a: 'Architectural theory', '2': 'aat' })]
+      end
+
+      it 'does not include the field' do
+        expect(values).to be_empty
+      end
+    end
+
     context 'with a record with trailing periods' do
       let(:fields) do
         [marc_field(tag: '600', indicator2: '0',
@@ -140,6 +150,16 @@ describe 'PennMARC::Subject' do
       it 'drops the final trailing period' do
         expect(values).to contain_exactly('R.G. (Robert Gordon). Spiritual order and Christian liberty proved ' \
                                           'to be consistent in the Churches of Christ')
+      end
+    end
+
+    context 'with a record where a main subject part does not precede other subject parts' do
+      let(:fields) do
+        [marc_field(tag: '650', indicator2: '0', subfields: { b: 'Italian', a: 'Architectural theory' })]
+      end
+
+      it 'treats the first part it comes across as a main subject part' do
+        expect(values).to contain_exactly('Italian--Architectural theory')
       end
     end
   end
