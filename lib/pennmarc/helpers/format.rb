@@ -302,7 +302,7 @@ module PennMARC
         enriched_tag = Enriched::Pub::ITEM_TAG
         enriched_sf = Enriched::Pub::ITEM_CURRENT_LOCATION
 
-        record.fields([enriched_tag, '852']).flat_map do |field|
+        record.fields([enriched_tag, '852']).each do |field|
           return true if field.tag == enriched_tag && subfield_value_in?(field, enriched_sf, locations)
 
           return true if field.tag == '852' && subfield_value_in?(field, 'c', locations)
