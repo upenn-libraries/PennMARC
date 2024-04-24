@@ -74,7 +74,7 @@ module PennMARC
       # @param [Hash] location_map
       # @return [Array<String>] format values for faceting
 
-      def facet(record, location_map: Mappers.location)
+      def facet(record)
         formats = []
         format_code = leader_format(record.leader)
         f007 = record.fields('007').map(&:value)
@@ -83,49 +83,29 @@ module PennMARC
         title_medium = subfield_values_for tag: '245', subfield: :h, record: record
         media_type = subfield_values_for tag: '337', subfield: :a, record: record
 
-        # get all specific_location values from inventory info
-        locations = Location.location record: record, location_map: location_map,
-                                      display_value: :specific_location
-
-        if include_manuscripts?(locations)
-          formats << MANUSCRIPT
-        elsif archives_but_not_cajs_or_nursing?(locations)
-          formats << ARCHIVE
-        elsif micro_or_microform?(call_nums(record), locations, media_type, title_medium)
-          formats << MICROFORMAT
-        else
-          # any of these
-          formats << THESIS_DISSERTATION if thesis_or_dissertation?(format_code, record)
-          formats << CONFERENCE_EVENT if conference_event?(record)
-          formats << NEWSPAPER if newspaper?(f008, format_code)
-          formats << GOVDOC if government_document?(f008, record, format_code)
-
-          # but only one of these
-          formats << if website_database?(f006_forms, format_code)
-                       WEBSITE_DATABASE
-                     elsif book?(format_code, title_medium, record)
-                       BOOK
-                     elsif musical_score?(format_code)
-                       MUSICAL_SCORE
-                     elsif map_atlas?(format_code)
-                       MAP_ATLAS
-                     elsif graphical_media?(format_code)
-                       graphical_media_type(f007)
-                     elsif sound_recording?(format_code)
-                       SOUND_RECORDING
-                     elsif image?(format_code)
-                       IMAGE
-                     elsif datafile?(format_code)
-                       DATAFILE
-                     elsif journal_periodical?(format_code)
-                       JOURNAL_PERIODICAL
-                     elsif three_d_object?(format_code)
-                       THREE_D_OBJECT
-                     else
-                       OTHER
-                     end
-        end
+        # any of these
+        formats << MANUSCRIPT if include_manuscripts?(format_code)
+        formats << ARCHIVE if archives_but_not_cajs_or_nursing?(record)
+        formats << MICROFORMAT if micro_or_microform?(call_nums(record), f007, f008, media_type, title_medium)
+        formats << THESIS_DISSERTATION if thesis_or_dissertation?(format_code, record)
+        formats << CONFERENCE_EVENT if conference_event?(record)
+        formats << NEWSPAPER if newspaper?(f008, format_code)
+        formats << GOVDOC if government_document?(f008, record, format_code)
+        formats << WEBSITE_DATABASE if website_database?(f006_forms, format_code)
+        formats << BOOK if book?(format_code, media_type, record)
+        formats << MUSICAL_SCORE if musical_score?(format_code)
+        formats << MAP_ATLAS if map_atlas?(format_code)
+        formats << graphical_media_type(f007) if graphical_media?(format_code)
+        formats << SOUND_RECORDING if sound_recording?(format_code)
+        formats << IMAGE if image?(format_code)
+        formats << DATAFILE if datafile?(format_code)
+        formats << JOURNAL_PERIODICAL if journal_periodical?(format_code)
+        formats << THREE_D_OBJECT if three_d_object?(format_code)
         formats.concat(curated_format(record)).uniq
+
+        formats << OTHER if formats.empty?
+
+        formats.uniq
       end
 
       # Show "Other Format" values from {https://www.oclc.org/bibformats/en/7xx/776.html 776} and any 880 linkage.
@@ -155,11 +135,11 @@ module PennMARC
         }.uniq
       end
 
-      # Check if a set of locations has any locations that include the term 'manuscripts'
-      # @param [Array<String>] locations
+      # Check if leader format code is either 't', 'f', or 'd'
+      # @param [String] format_code
       # @return [Boolean]
-      def include_manuscripts?(locations)
-        locations.any? { |loc| loc =~ /manuscripts/i }
+      def include_manuscripts?(format_code)
+        format_code.first.in? %w[t f d]
       end
 
       private
@@ -242,18 +222,18 @@ module PennMARC
       # @param [String] format_code
       # @return [Boolean]
       def musical_score?(format_code)
-        format_code.in?(%w[ca cb cd cm cs dm])
+        format_code.in?(%w[ca cb cc cd cm cs dc dm])
       end
 
       # @param [String] format_code
-      # @param [Array<String>] title_medium
+      # @param [Array<String>] media_type
       # @param [MARC::Record] record
       # @return [Boolean]
-      def book?(format_code, title_medium, record)
+      def book?(format_code, media_type, record)
         title_forms = subfield_values_for tag: '245', subfield: :k, record: record
         format_code.in?(%w[aa ac am tm]) &&
           title_forms.none? { |v| v =~ /kit/i } &&
-          title_medium.none? { |v| v =~ /micro/i }
+          media_type.none? { |val| val =~ /micro/i }
       end
 
       # @param [Array<String>] f006_forms
@@ -293,29 +273,38 @@ module PennMARC
       # @param [String] format_code
       # @return [Boolean]
       def thesis_or_dissertation?(format_code, record)
-        record.fields('502').any? && format_code == 'tm'
+        record.fields('502').any? && format_code.in?(%w[am tm dm])
       end
 
+      # @param [Array<String>] call_nums
+      # @param [Array<String>] f007
+      # @param [String] f008
       # @param [Array<String>] title_medium
       # @param [Array<String>] media_type
-      # @param [Array<String>] locations
-      # @param [Array<String>] call_nums
       # @return [Boolean]
-      def micro_or_microform?(call_nums, locations, media_type, title_medium)
-        locations.any? { |loc| loc =~ /micro/i } ||
+      def micro_or_microform?(call_nums, f007, f008, media_type, title_medium)
+        [f008[23], f008[29]].any? { |v| v.in?(%w[a b c]) } ||
+          f007.any? { |v| v.start_with?('h') } ||
           title_medium.any? { |val| val =~ /micro/i } ||
           call_nums.any? { |val| val =~ /micro/i } ||
-          media_type.any? { |val| val =~ /microform/i }
+          media_type.any? { |val| val =~ /micro/i }
       end
 
       # @todo "cajs" has no match in our location map, so it is not doing anything. Does this intend to catch cjsambx
       #       "Library at the Katz Center - Archives"?
-      # @param [Array<String>] locations
+      # Determine archive format by checking if {https://www.loc.gov/marc/bibliographic/hd852.html 852} and
+      # {PennMARC::Enriched} Publishing Tag 'ITM' have values that match any of the following archive locations:
+      # archarch, musearch, scfreed, univarch, archivcoll
+      # @param [MARC::Record] record
       # @return [Boolean]
-      def archives_but_not_cajs_or_nursing?(locations)
-        locations.any? { |loc| loc =~ /archives/i } &&
-          locations.none? { |loc| loc =~ /cajs/i } &&
-          locations.none? { |loc| loc =~ /nursing/i }
+      def archives_but_not_cajs_or_nursing?(record)
+        locations = %w[archarch musearch scfreed univarch archivcoll]
+        record.fields([Enriched::Pub::ITEM_TAG, '852']).flat_map do |field|
+          return true if field.tag == Enriched::Pub::ITEM_TAG && subfield_value_in?(field, 'g', locations)
+
+          return true if field.tag == '852' && subfield_value_in?(field, 'c', locations)
+        end
+        false
       end
 
       # Consider {https://www.loc.gov/marc/bibliographic/bd007g.html 007} to determine graphical media format
