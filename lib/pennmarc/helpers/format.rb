@@ -101,7 +101,7 @@ module PennMARC
         formats << DATAFILE if datafile?(format_code)
         formats << JOURNAL_PERIODICAL if journal_periodical?(format_code)
         formats << THREE_D_OBJECT if three_d_object?(format_code)
-        formats.concat(curated_format(record)).uniq
+        formats.concat(curated_format(record))
 
         formats << OTHER if formats.empty?
 
