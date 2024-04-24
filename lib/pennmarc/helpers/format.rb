@@ -299,8 +299,11 @@ module PennMARC
       # @return [Boolean]
       def archives_but_not_cajs_or_nursing?(record)
         locations = %w[archarch musearch scfreed univarch archivcoll]
-        record.fields([Enriched::Pub::ITEM_TAG, '852']).flat_map do |field|
-          return true if field.tag == Enriched::Pub::ITEM_TAG && subfield_value_in?(field, 'g', locations)
+        enriched_tag = Enriched::Pub::ITEM_TAG
+        enriched_sf = Enriched::Pub::ITEM_CURRENT_LOCATION
+
+        record.fields([enriched_tag, '852']).flat_map do |field|
+          return true if field.tag == enriched_tag && subfield_value_in?(field, enriched_sf, locations)
 
           return true if field.tag == '852' && subfield_value_in?(field, 'c', locations)
         end
