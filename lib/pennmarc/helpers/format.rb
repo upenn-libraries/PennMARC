@@ -26,6 +26,9 @@ module PennMARC
       VIDEO = 'Video'
       WEBSITE_DATABASE = 'Website/Database'
 
+      # Values encoded in MARC that we use to determine "Archive" format
+      ARCHIVE_LOCATIONS = %w[archarch musearch scfreed univarch archivcoll].freeze
+
       # Get any Format values from {https://www.oclc.org/bibformats/en/3xx/300.html 300},
       # 254, 255, 310, 342, 352, 362 or {https://www.oclc.org/bibformats/en/3xx/340.html 340} field. based on the source
       # field, different subfields are used.
@@ -85,7 +88,7 @@ module PennMARC
 
         # any of these
         formats << MANUSCRIPT if include_manuscripts?(format_code)
-        formats << ARCHIVE if archives_but_not_cajs_or_nursing?(record)
+        formats << ARCHIVE if archive?(record)
         formats << MICROFORMAT if micro_or_microform?(call_nums(record), f007, f008, media_type, title_medium)
         formats << THESIS_DISSERTATION if thesis_or_dissertation?(format_code, record)
         formats << CONFERENCE_EVENT if conference_event?(record)
@@ -290,22 +293,19 @@ module PennMARC
           media_type.any? { |val| val =~ /micro/i }
       end
 
-      # @todo "cajs" has no match in our location map, so it is not doing anything. Does this intend to catch cjsambx
-      #       "Library at the Katz Center - Archives"?
       # Determine archive format by checking if {https://www.loc.gov/marc/bibliographic/hd852.html 852} and
       # {PennMARC::Enriched} Publishing Tag 'ITM' have values that match any of the following archive locations:
       # archarch, musearch, scfreed, univarch, archivcoll
       # @param [MARC::Record] record
       # @return [Boolean]
-      def archives_but_not_cajs_or_nursing?(record)
-        locations = %w[archarch musearch scfreed univarch archivcoll]
+      def archive?(record)
         enriched_tag = Enriched::Pub::ITEM_TAG
         enriched_sf = Enriched::Pub::ITEM_CURRENT_LOCATION
 
         record.fields([enriched_tag, '852']).each do |field|
-          return true if field.tag == enriched_tag && subfield_value_in?(field, enriched_sf, locations)
+          return true if field.tag == enriched_tag && subfield_value_in?(field, enriched_sf, ARCHIVE_LOCATIONS)
 
-          return true if field.tag == '852' && subfield_value_in?(field, 'c', locations)
+          return true if field.tag == '852' && subfield_value_in?(field, 'c', ARCHIVE_LOCATIONS)
         end
         false
       end
