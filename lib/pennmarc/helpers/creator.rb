@@ -161,16 +161,21 @@ module PennMARC
       def contributor_show(record, relator_map: Mappers.relator)
         indicator_2_options = ['', ' ', '0']
         values = record.fields(%w[700 710]).filter_map do |field|
-          next unless indicator_2_options.member?(field.indicator2)
+          next unless indicator_2_options.include?(field.indicator2)
           next if subfield_defined? field, 'i'
 
           contributor = join_subfields(field, &subfield_in?(%w[a b c d j q]))
           contributor_append_subfields = %w[e u 3 4]
           contributor_append = field.filter_map { |subfield|
-            next unless contributor_append_subfields.member?(subfield.code)
+            next unless contributor_append_subfields.include?(subfield.code)
+            next if subfield.code == 'e' && relator_code_defined?(field, relator_map)
+
 
             if subfield.code == '4'
-              ", #{translate_relator(subfield.value, relator_map)}"
+              relator = translate_relator(subfield.value, relator_map)
+              next if relator.blank?
+
+              ", #{relator}"
             else
               " #{subfield.value}"
             end
@@ -245,6 +250,8 @@ module PennMARC
         s = field.filter_map { |sf|
           if sf.code == 'a'
             should_convert_name_order ? convert_name_order(sf.value) : sf.value
+          elsif sf.code == 'e' && relator_code_defined?(field, mapping)
+            next
           elsif NAME_EXCLUDED_SUBFIELDS.exclude?(sf.code)
             " #{sf.value}"
           elsif sf.code == '4'
@@ -266,6 +273,13 @@ module PennMARC
         after_comma = join_and_squish([trim_trailing(:comma, substring_after(name, ', '))])
         before_comma = substring_before(name, ', ')
         "#{after_comma} #{before_comma}".squish
+      end
+
+      # @param [MARC::Field] field
+      # @param [Hash] mapping
+      # @return [TrueClass, FalseClass]
+      def relator_code_defined?(field, mapping)
+        subfield_values(field, '4').any? { |value| translate_relator(value, mapping) }
       end
     end
   end

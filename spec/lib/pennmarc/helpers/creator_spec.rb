@@ -86,7 +86,7 @@ describe 'PennMARC::Creator' do
 
       it 'returns values for the corporate author, including mapped relator code from ǂ4' do
         expect(helper.values(record, relator_map: mapping)).to contain_exactly(
-          'Annual Report Leader author, Author.'
+          'Annual Report Leader, Author.'
         )
       end
     end
@@ -247,8 +247,8 @@ describe 'PennMARC::Creator' do
 
     it 'returns expected contributor values' do
       expect(helper.contributor_show(record, relator_map: mapping)).to contain_exactly(
-        'Name I laureate 1968 pseud Fuller Name author affiliation materials, Author',
-        'Corporation A division Office 1968 author affiliation materials, Author',
+        'Name I laureate 1968 pseud Fuller Name affiliation materials, Author',
+        'Corporation A division Office 1968 affiliation materials, Author',
         'Alt Name Alt num Alt title Alt date Alt qualifier Alt Fuller Name Alt relator Alt affiliation Alt materials',
         'Alt Corp Name Alt unit Alt location Alt date Alt relator Alt Affiliation Alt materials'
       )
