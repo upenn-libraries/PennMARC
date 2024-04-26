@@ -170,7 +170,6 @@ module PennMARC
             next unless contributor_append_subfields.include?(subfield.code)
             next if subfield.code == 'e' && relator_code_defined?(field, relator_map)
 
-
             if subfield.code == '4'
               relator = translate_relator(subfield.value, relator_map)
               next if relator.blank?
