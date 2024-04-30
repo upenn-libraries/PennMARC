@@ -85,7 +85,7 @@ module PennMARC
 
           next unless subfield_value?(field, '6', /^(#{CONTAINS_FIELDS.join('|')})/)
 
-          values_with_title_prefix(field, sf_include: %w[0 5 6 8 i])
+          values_with_title_prefix(field, sf_exclude: %w[0 5 6 8 i])
         end
         contains_values.uniq
       end
@@ -124,7 +124,7 @@ module PennMARC
         subi = remove_paren_value_from_subfield_i(field) || ''
         relator = translate_relator(subfield_values(field, '4').first, relator_map) if relator_map.present?
         contains = if sf_include.present?
-                     join_subfields(field, &subfield_not_in?(sf_include))
+                     join_subfields(field, &subfield_in?(sf_include))
                    elsif sf_exclude.present?
                      join_subfields(field, &subfield_not_in?(sf_exclude))
                    end
