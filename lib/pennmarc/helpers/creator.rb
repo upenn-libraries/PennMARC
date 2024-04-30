@@ -64,11 +64,23 @@ module PennMARC
       #       which were part of the link object as 'append' values in franklin
       # @param [MARC::Record] record
       # @return [Array<String>] array of author/creator values for display
-      def show(record)
+      def show(record, relator_map: Mappers.relator)
         fields = record.fields(TAGS)
         fields += record.fields('880').select { |field| subfield_value_in?(field, '6', TAGS) }
         fields.filter_map { |field|
-          join_subfields(field, &subfield_not_in?(%w[0 1 4 6 8 e w]))
+          contributor = join_subfields(field, &subfield_not_in?(%w[0 1 4 6 8 e w]))
+          relator_code_undefined = relator_code_undefined?(field, relator_map)
+          relationship = field.filter_map { |sf|
+            next unless sf.code.in? %w[e 4]
+
+            if sf.code == 'e' && relator_code_undefined
+              ", #{sf.value}"
+            elsif sf.code == '4'
+              relator = translate_relator(sf.value, relator_map)
+              ", #{relator}" if relator.present?
+            end
+          }.join
+          "#{trim_trailing(:comma, contributor)}#{relationship}"
         }.uniq
       end
 
@@ -164,22 +176,19 @@ module PennMARC
           next unless indicator_2_options.include?(field.indicator2)
           next if subfield_defined? field, 'i'
 
-          contributor = join_subfields(field, &subfield_in?(%w[a b c d j q]))
-          contributor_append_subfields = %w[e u 3 4]
-          contributor_append = field.filter_map { |subfield|
-            next unless contributor_append_subfields.include?(subfield.code)
-            next if subfield.code == 'e' && relator_code_defined?(field, relator_map)
+          contributor = join_subfields(field, &subfield_in?(%w[a b c d j q u 3]))
+          relator_code_undefined = relator_code_undefined?(field, relator_map)
+          relation = field.filter_map { |sf|
+            next unless sf.code.in? %w[e 4]
 
-            if subfield.code == '4'
-              relator = translate_relator(subfield.value, relator_map)
-              next if relator.blank?
-
-              ", #{relator}"
-            else
-              " #{subfield.value}"
+            if sf.code == 'e' && relator_code_undefined
+              ", #{sf.value}"
+            elsif sf.code == '4'
+              relator = translate_relator(sf.value, relator_map)
+              ", #{relator}" if relator.present?
             end
           }.join
-          "#{contributor} #{contributor_append}".squish
+          "#{trim_trailing(:comma, contributor)}#{relation}".squish
         end
         contributors = values + record.fields('880').filter_map do |field|
           next unless subfield_value_in?(field, '6', %w[700 710])
@@ -274,11 +283,20 @@ module PennMARC
         "#{after_comma} #{before_comma}".squish
       end
 
+      # Determine if there are any translatable relator codes in a field
       # @param [MARC::Field] field
       # @param [Hash] mapping
       # @return [TrueClass, FalseClass]
       def relator_code_defined?(field, mapping)
         subfield_values(field, '4').any? { |value| translate_relator(value, mapping) }
+      end
+
+      # Determine if there are no translatable relator codes in a field
+      # @param [MARC::Field] field
+      # @param [Hash] mapping
+      # @return [TrueClass, FalseClass]
+      def relator_code_undefined?(field, mapping)
+        subfield_values(field, '4').none? { |value| translate_relator(value, mapping) }
       end
     end
   end
