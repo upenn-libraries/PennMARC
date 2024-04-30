@@ -6,31 +6,36 @@ describe 'PennMARC::Format' do
   let(:helper) { PennMARC::Format }
 
   describe '.facet' do
-    let(:map) { location_map }
-    let(:formats) { helper.facet(record, location_map: map) }
+    let(:formats) { helper.facet(record) }
 
     context 'with an "Archive"' do
-      let(:map) do
-        { musearch: { specific_location: 'Penn Museum Archives',
-                      library: 'Penn Museum Archives',
-                      display: 'Penn Museum Archives, 215-898-8304' },
-          nursarch: { specific_location: 'Nursing Archives',
-                      library: 'Nursing Archives',
-                      display: 'Barbara Bates Center for History of Nursing - Fagin Hall 2U' } }
-      end
+      context 'with an 852 field' do
+        let(:record) do
+          marc_record fields: [marc_field(tag: '852', subfields: { c: 'archarch' })]
+        end
 
-      context 'with a record in "Penn Museum Archives (musearch)"' do
-        let(:record) { marc_record fields: [marc_field(tag: 'hld', subfields: { c: 'musearch' })] }
-
-        it 'returns format values of "Archive" for a record with holdings located in "musearch"' do
+        it 'returns format values of "Archive"' do
           expect(formats).to include 'Archive'
         end
       end
 
-      context 'with a record in "Nursing Archives (nursarch)"' do
-        let(:record) { marc_record fields: [marc_field(tag: 'hld', subfields: { c: 'nursarch' })] }
+      context 'with publishing enriched fields' do
+        let(:record) do
+          marc_record fields: [marc_field(tag: PennMARC::Enriched::Pub::ITEM_TAG, subfields: { g: 'archarch' })]
+        end
 
-        it 'returns format values of without "Archive" for a record with a holding in "nursarch"' do
+        it 'returns format values of "Archive"' do
+          expect(formats).to include 'Archive'
+        end
+      end
+
+      context 'without encoded archive location' do
+        let(:record) do
+          marc_record fields: [marc_field(tag: '852', subfields: { c: 'notanarchive' }),
+                               marc_field(tag: PennMARC::Enriched::Pub::ITEM_TAG, subfields: { g: 'notanarchive' })]
+        end
+
+        it 'does not return format values of "Archive"' do
           expect(formats).not_to include 'Archive'
         end
       end
@@ -47,9 +52,6 @@ describe 'PennMARC::Format' do
       end
     end
 
-    # TODO: confirm this as desired functionality
-    # Inspired by https://franklin.library.upenn.edu/catalog/FRANKLIN_999444703503681
-    # which appears to be a thesis on microfilm, but only has microfilm as a format.
     context 'with a "Thesis" on "Microfilm"' do
       let(:record) do
         marc_record leader: '      tm',
@@ -59,8 +61,8 @@ describe 'PennMARC::Format' do
                     ]
       end
 
-      it 'returns a facet value of only "Microformat"' do
-        expect(formats).to eq %w[Microformat]
+      it 'returns all format values that meet the format facet encoding rules' do
+        expect(formats).to contain_exactly('Manuscript', 'Microformat', 'Thesis/Dissertation', 'Book')
       end
     end
 
@@ -95,6 +97,84 @@ describe 'PennMARC::Format' do
       end
     end
 
+    context 'with Microformats as determined by MARC control fields' do
+      context 'with 007 field' do
+        let(:record) do
+          marc_record fields: [marc_control_field(tag: '007', value: 'h')]
+        end
+
+        it 'returns "Microformat"' do
+          expect(formats).to contain_exactly('Microformat')
+        end
+      end
+
+      context 'with 008 field and valid value at position 23' do
+        let(:record) do
+          marc_record fields: [
+            marc_control_field(tag: '008', value: '                       a')
+          ]
+        end
+
+        it 'returns "Microformat"' do
+          expect(formats).to contain_exactly('Microformat')
+        end
+      end
+
+      context 'with 008 field and valid value at position 29' do
+        let(:record) do
+          marc_record fields: [
+            marc_control_field(tag: '008', value: '                             a')
+          ]
+        end
+
+        it 'returns "Microformat"' do
+          expect(formats).to contain_exactly('Microformat')
+        end
+      end
+    end
+
+    context 'with Microformats as determined by title medium' do
+      let(:record) do
+        marc_record(fields: [marc_field(tag: '245', subfields: { h: 'micro' })])
+      end
+
+      it 'returns "Microformat"' do
+        expect(formats).to contain_exactly('Microformat')
+      end
+    end
+
+    context 'with Microformats as determined by media type' do
+      let(:record) do
+        marc_record(fields: [marc_field(tag: '337', subfields: { a: 'microform' })])
+      end
+
+      it 'returns "Microformat"' do
+        expect(formats).to contain_exactly('Microformat')
+      end
+    end
+
+    context 'with "Manuscript"' do
+      context 'with valid manuscript format code in leader' do
+        let(:record) do
+          marc_record(leader: '      t')
+        end
+
+        it 'returns "Manuscript"' do
+          expect(formats).to contain_exactly('Manuscript')
+        end
+      end
+
+      context 'without valid manuscript format code in leader' do
+        let(:record) do
+          marc_record(leader: '      a')
+        end
+
+        it 'does not return "Manuscript"' do
+          expect(formats).not_to include('Manuscript')
+        end
+      end
+    end
+
     context 'with a "Book"' do
       let(:record) do
         marc_record leader: '      aa',
@@ -103,6 +183,33 @@ describe 'PennMARC::Format' do
 
       it 'returns a facet value including only "Book"' do
         expect(formats).to eq ['Book']
+      end
+
+      context 'with a media type that contains "micro"' do
+        let(:record) do
+          marc_record leader: '      aa',
+                      fields: [
+                        marc_field(tag: '245', subfields: { k: 'blah' }),
+                        marc_field(tag: '337', subfields: { a: 'microform' })
+                      ]
+        end
+
+        it 'does not return a facet value including "Book"' do
+          expect(formats).not_to include('Book')
+        end
+      end
+
+      context 'with a 245 $k value of "kit"' do
+        let(:record) do
+          marc_record leader: '      tm',
+                      fields: [
+                        marc_field(tag: '245', subfields: { k: 'kit' })
+                      ]
+        end
+
+        it 'does not return a facet value including "Book"' do
+          expect(formats).not_to include('Book')
+        end
       end
     end
 
@@ -126,7 +233,7 @@ describe 'PennMARC::Format' do
         let(:subfield_a_value) { 'Book' }
 
         it 'returns a facet value including a curated format of "Book"' do
-          expect(formats).to eq %w[Other Book]
+          expect(formats).to eq ['Book']
         end
       end
 
@@ -135,6 +242,28 @@ describe 'PennMARC::Format' do
 
         it 'returns no content from 944 ǂa' do
           expect(formats).to eq ['Other']
+        end
+      end
+    end
+
+    context 'with Other' do
+      context 'with another facet applied' do
+        let(:record) do
+          marc_record(leader: '      t')
+        end
+
+        it 'does not return "Other"' do
+          expect(formats).not_to include 'Other'
+        end
+      end
+
+      context 'without another facet applied' do
+        let(:record) do
+          marc_record(leader: '      z')
+        end
+
+        it 'returns "Other"' do
+          expect(formats).to contain_exactly 'Other'
         end
       end
     end
@@ -235,19 +364,19 @@ describe 'PennMARC::Format' do
   end
 
   describe '.includes_manuscript?' do
-    context 'with a manuscript location included' do
-      let(:locations) { ['Van Pelt', 'Kislak Center for Special Collections - Manuscripts Storage'] }
+    context 'with a valid manuscript format code' do
+      let(:format_code) { 't' }
 
       it 'returns true' do
-        expect(helper.include_manuscripts?(locations)).to be true
+        expect(helper.include_manuscripts?(format_code)).to be true
       end
     end
 
-    context 'without a manuscript location included' do
-      let(:locations) { ['Van Pelt'] }
+    context 'without a valid manuscript format code' do
+      let(:format_code) { 'at' }
 
       it 'returns false' do
-        expect(helper.include_manuscripts?(locations)).to be false
+        expect(helper.include_manuscripts?(format_code)).to be false
       end
     end
   end
