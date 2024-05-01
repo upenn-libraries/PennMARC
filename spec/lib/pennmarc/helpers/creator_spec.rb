@@ -63,19 +63,21 @@ describe 'PennMARC::Creator' do
     end
   end
 
-  describe '.values' do
+  describe '.show_aux' do
     let(:record) { marc_record fields: fields }
 
     context 'with a single author record' do
       let(:fields) do
-        [marc_field(tag: '100', subfields: { a: 'Author', c: 'Fancy', d: 'active 24th century AD', '4': 'aut' }),
+        [marc_field(tag: '100', subfields: { a: 'Person', c: 'Loquacious', d: 'active 24th century AD', '4': 'aut' }),
          marc_field(tag: '880', subfields: { '6': '100', a: 'Alt Author', c: 'Alt Fanciness' })]
       end
 
-      it 'returns values for the author, including mapped relator code from ǂ4' do
-        values = helper.values(record, relator_map: mapping)
-        expect(values).to contain_exactly 'Author Fancy active 24th century AD, Author.'
-        expect(values.join.downcase).not_to include 'alt'
+      it 'returns mapped relator code from ǂ4 at the end with a terminal period' do
+        expect(helper.show_aux(record, relator_map: mapping).first).to end_with ', Author.'
+      end
+
+      it 'does not include linked 880 field' do
+        expect(helper.show_aux(record, relator_map: mapping).join(' ')).not_to include 'Alt'
       end
     end
 
@@ -85,7 +87,7 @@ describe 'PennMARC::Creator' do
       end
 
       it 'returns values for the corporate author, including mapped relator code from ǂ4' do
-        expect(helper.values(record, relator_map: mapping)).to contain_exactly(
+        expect(helper.show_aux(record, relator_map: mapping)).to contain_exactly(
           'Annual Report Leader, Author.'
         )
       end

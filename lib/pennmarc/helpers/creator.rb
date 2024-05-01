@@ -49,11 +49,12 @@ module PennMARC
       end
 
       # All author/creator values for display (like #show, but multivalued?) - no 880 linkage
+      # Performs additional normalization of author names
       # @note ported from get_author_creator_values (indexed as author_creator_a) - shown on results page
       # @param [MARC::Record] record
       # @param [Hash] relator_map
       # @return [Array<String>] array of author/creator values for display
-      def values(record, relator_map: Mappers.relator)
+      def show_aux(record, relator_map: Mappers.relator)
         record.fields(TAGS).map do |field|
           name_from_main_entry(field, relator_map)
         end

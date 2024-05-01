@@ -43,11 +43,7 @@ describe 'PennMARC::Genre' do
   end
 
   describe '.facet' do
-    let(:values) { helper.facet(record, location_map: location_map) }
-    let(:location_map) do
-      { manu: { specific_location: 'Secure Manuscripts Storage' },
-        vanp: { specific_location: 'Van Pelt' } }
-    end
+    let(:values) { helper.facet(record) }
 
     context 'with a non-video, non-manuscript record' do
       let(:fields) do
@@ -74,10 +70,10 @@ describe 'PennMARC::Genre' do
       end
     end
 
-    context 'with a manuscript-located record' do
+    context 'with a manuscript record' do
+      let(:record) { marc_record fields: fields, leader: '      t' }
       let(:fields) do
         [marc_control_field(tag: '007', value: 'x'),
-         marc_field(tag: 'hld', subfields: { c: 'manu' }),
          marc_field(tag: '655', indicator2: '7', subfields: { a: 'Astronomy', '2': 'zzzz' })]
       end
 
