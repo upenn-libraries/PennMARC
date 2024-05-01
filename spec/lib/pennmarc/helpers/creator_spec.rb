@@ -18,8 +18,8 @@ describe 'PennMARC::Creator' do
 
       it 'contains the expected search field values for a single author work' do
         expect(helper.search(record, relator_map: mapping)).to contain_exactly(
-          'Name Surname http://cool.uri/12345 author 1900-2000.',
-          'Surname, Name http://cool.uri/12345 author 1900-2000.',
+          'Name Surname http://cool.uri/12345 1900-2000, author.',
+          'Surname, Name http://cool.uri/12345 1900-2000, author.',
           'Alternative Surname'
         )
       end
@@ -137,13 +137,13 @@ describe 'PennMARC::Creator' do
       let(:fields) do
         [
           marc_field(tag: '100', subfields: { a: 'Capus, Alex,', e: 'author' }),
-          marc_field(tag: '100', subfields: { a: 'Capus, Alex,', e: 'author', '4': 'doi.org' })
+          marc_field(tag: '100', subfields: { a: 'Bryan, Ashley,', e: %w[author illustrator], '4': 'doi.org' })
         ]
       end
 
       it 'includes relator term' do
         values = helper.show(record)
-        expect(values).to contain_exactly 'Capus, Alex, author'
+        expect(values).to contain_exactly 'Capus, Alex, author', 'Bryan, Ashley, author, illustrator'
       end
     end
 
@@ -307,7 +307,7 @@ describe 'PennMARC::Creator' do
         values = helper.contributor_show(record, relator_map: mapping)
         expect(values).to contain_exactly(
           'Name I laureate 1968 pseud Fuller Name affiliation materials, Author',
-          'Alt Name Alt num Alt title Alt date Alt qualifier Alt Fuller Name Alt relator Alt affiliation Alt materials'
+          'Alt Name Alt num Alt title Alt date Alt qualifier Alt Fuller Name Alt affiliation Alt materials, Alt relator'
         )
       end
     end
@@ -318,7 +318,7 @@ describe 'PennMARC::Creator' do
           marc_field(tag: '710', subfields: { a: 'Corporation', b: 'A division', c: 'Office', d: '1968', e: 'author',
                                               u: 'affiliation', '3': 'materials', '4': 'aut' }),
           marc_field(tag: '880', subfields: { '6': '710', a: 'Alt Corp Name', b: 'Alt unit', c: 'Alt location',
-                                              d: 'Alt date', e: 'Alt relator', u: 'Alt Affiliation',
+                                              d: 'Alt date', e: ['Alt relator', 'another'], u: 'Alt Affiliation',
                                               '3': 'Alt materials' })
         ]
       end
@@ -327,7 +327,7 @@ describe 'PennMARC::Creator' do
         values = helper.contributor_show(record)
         expect(values).to contain_exactly(
           'Corporation A division Office 1968 affiliation materials, Author',
-          'Alt Corp Name Alt unit Alt location Alt date Alt relator Alt Affiliation Alt materials'
+          'Alt Corp Name Alt unit Alt location Alt date Alt Affiliation Alt materials, Alt relator, another'
         )
       end
     end

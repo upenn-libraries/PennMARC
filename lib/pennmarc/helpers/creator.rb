@@ -17,7 +17,9 @@ module PennMARC
       CONFERENCE_SEARCH_TAGS = %w[111 711 811].freeze
 
       # subfields NOT to join when combining raw subfield values
-      NAME_EXCLUDED_SUBFIELDS = %w[a 1 4 5 6 8 t].freeze
+      NAME_EXCLUDED_SUBFIELDS = %w[a e 1 4 5 6 8 t].freeze
+
+      CONTRIBUTOR_TAGS = %w[700 710].freeze
 
       # Author/Creator search field. Includes all subfield values (even ǂ0 URIs) from
       # {https://www.oclc.org/bibformats/en/1xx/100.html 100 Main Entry--Personal Name} and
@@ -60,28 +62,19 @@ module PennMARC
         end
       end
 
-      # Author/Creator values for display
-      # @todo ported from get_author_display - used on record show page. porting did not include 4, e or w values,
-      #       which were part of the link object as 'append' values in franklin
+      # Retrieve creator values for display from fields {https://www.loc.gov/marc/bibliographic/bd100.html 100}
+      # and {https://www.loc.gov/marc/bibliographic/bd110.html 110} and their linked alternates. Appends any encoded
+      # relationships found in $4. If there are no valid encoded relationships, uses the value found in $e.
       # @param [MARC::Record] record
       # @return [Array<String>] array of author/creator values for display
       def show(record, relator_map: Mappers.relator)
         fields = record.fields(TAGS)
         fields += record.fields('880').select { |field| subfield_value_in?(field, '6', TAGS) }
         fields.filter_map { |field|
-          contributor = join_subfields(field, &subfield_not_in?(%w[0 1 4 6 8 e w]))
-          relator_code_undefined = relator_code_undefined?(field, relator_map)
-          relationship = field.filter_map { |sf|
-            next unless sf.code.in? %w[e 4]
-
-            if sf.code == 'e' && relator_code_undefined
-              ", #{sf.value}"
-            elsif sf.code == '4'
-              relator = translate_relator(sf.value, relator_map)
-              ", #{relator}" if relator.present?
-            end
-          }.join
-          "#{trim_trailing(:comma, contributor)}#{relationship}"
+          creator = join_subfields(field, &subfield_not_in?(%w[0 1 4 6 8 e w]))
+          relationship = subfield_values(field, '4').filter_map { |relator| translate_relator(relator, relator_map) }
+          relationship = subfield_values(field, 'e') if relationship.blank?
+          [trim_trailing(:comma, creator), relationship].compact_blank.join(', ').squish
         }.uniq
       end
 
@@ -166,40 +159,25 @@ module PennMARC
 
       # Retrieve contributor values for display from fields {https://www.oclc.org/bibformats/en/7xx/700.html 700}
       # and {https://www.oclc.org/bibformats/en/7xx/710.html 710} and their linked alternates. Joins subfields
-      # 'a', 'b', 'c', 'd', 'j', and 'q'. Then appends resulting string with joined subfields 'e', 'u', '3', and '4'.
+      # 'a', 'b', 'c', 'd', 'j', and 'q', 'u', and '3'. Then appends resulting string with any encoded relationships
+      # found in $4. If there are no valid encoded relationships, uses the value found in $e.
       # @note legacy version returns array of hash objects including data for display link
       # @param [MARC::Record] record
       # @ param [Hash] relator_map
       # @return [Array<String>]
       def contributor_show(record, relator_map: Mappers.relator)
         indicator_2_options = ['', ' ', '0']
-        values = record.fields(%w[700 710]).filter_map do |field|
-          next unless indicator_2_options.include?(field.indicator2)
+        fields = record.fields(CONTRIBUTOR_TAGS)
+        fields += record.fields('880').select { |field| subfield_value_in?(field, '6', CONTRIBUTOR_TAGS) }
+        fields.filter_map { |field|
+          next if indicator_2_options.exclude?(field.indicator2) && field.tag.in?(CONTRIBUTOR_TAGS)
           next if subfield_defined? field, 'i'
 
           contributor = join_subfields(field, &subfield_in?(%w[a b c d j q u 3]))
-          relator_code_undefined = relator_code_undefined?(field, relator_map)
-          relation = field.filter_map { |sf|
-            next unless sf.code.in? %w[e 4]
-
-            if sf.code == 'e' && relator_code_undefined
-              ", #{sf.value}"
-            elsif sf.code == '4'
-              relator = translate_relator(sf.value, relator_map)
-              ", #{relator}" if relator.present?
-            end
-          }.join
-          "#{trim_trailing(:comma, contributor)}#{relation}".squish
-        end
-        contributors = values + record.fields('880').filter_map do |field|
-          next unless subfield_value_in?(field, '6', %w[700 710])
-          next if subfield_defined?(field, 'i')
-
-          contributor = join_subfields(field, &subfield_in?(%w[a b c d j q]))
-          contributor_append = join_subfields(field, &subfield_in?(%w[e u 3]))
-          "#{contributor} #{contributor_append}".squish
-        end
-        contributors.uniq
+          relationship = subfield_values(field, '4').filter_map { |relator| translate_relator(relator, relator_map) }
+          relationship = subfield_values(field, 'e') if relationship.blank?
+          [trim_trailing(:comma, contributor), relationship].compact_blank.join(', ').squish
+        }.uniq
       end
 
       private
@@ -256,21 +234,19 @@ module PennMARC
       # @param [Boolean] should_convert_name_order
       # @return [String] joined subfield values for value from field
       def name_from_main_entry(field, mapping, should_convert_name_order: false)
-        s = field.filter_map { |sf|
+        name = field.filter_map { |sf|
           if sf.code == 'a'
             should_convert_name_order ? convert_name_order(sf.value) : sf.value
-          elsif sf.code == 'e' && relator_code_defined?(field, mapping)
-            next
           elsif NAME_EXCLUDED_SUBFIELDS.exclude?(sf.code)
-            " #{sf.value}"
-          elsif sf.code == '4'
-            relator = translate_relator(sf.value, mapping)
-            next if relator.blank?
-
-            ", #{relator}"
+            sf.value
           end
-        }.join
-        (s + (%w[. -].member?(s.last) ? '' : '.')).squish
+        }.join(' ')
+
+        relationship = subfield_values(field, '4').filter_map { |relator| translate_relator(relator, mapping) }
+        relationship = subfield_values(field, 'e') if relationship.blank?
+
+        value = [trim_trailing(:comma, name), relationship].compact_blank.join(', ')
+        value + (%w[. -].member?(value.last) ? '' : '.').squish
       end
 
       # Convert "Lastname, First" to "First Lastname"
@@ -282,22 +258,6 @@ module PennMARC
         after_comma = join_and_squish([trim_trailing(:comma, substring_after(name, ', '))])
         before_comma = substring_before(name, ', ')
         "#{after_comma} #{before_comma}".squish
-      end
-
-      # Determine if there are any translatable relator codes in a field
-      # @param [MARC::Field] field
-      # @param [Hash] mapping
-      # @return [TrueClass, FalseClass]
-      def relator_code_defined?(field, mapping)
-        subfield_values(field, '4').any? { |value| translate_relator(value, mapping) }
-      end
-
-      # Determine if there are no translatable relator codes in a field
-      # @param [MARC::Field] field
-      # @param [Hash] mapping
-      # @return [TrueClass, FalseClass]
-      def relator_code_undefined?(field, mapping)
-        subfield_values(field, '4').none? { |value| translate_relator(value, mapping) }
       end
     end
   end
