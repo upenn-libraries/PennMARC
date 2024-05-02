@@ -49,45 +49,42 @@ module PennMARC
       # @param [Hash] relator_map
       # @return [Array]
       def related_work_show(record, relator_map: Mappers.relator)
-        values = record.fields(RELATED_WORK_FIELDS).filter_map do |field|
+        fields = record.fields(RELATED_WORK_FIELDS)
+        fields += record.fields('880').select { |field| subfield_value_in?(field, '6', RELATED_WORK_FIELDS) }
+        fields.filter_map { |field|
           next if field.indicator2.present?
 
           next unless subfield_defined?(field, 't')
 
-          values_with_title_prefix(field, sf_exclude: %w[0 4 6 8 i], relator_map: relator_map)
-        end
-        relation_values = values + record.fields('880').filter_map do |field|
-          next if field.indicator2.present?
+          relator_term_sf = field_or_its_linked_alternate?(field, ['711']) ? 'j' : 'e'
 
-          next unless subfield_value?(field, '6', /^(#{RELATED_WORK_FIELDS.join('|')})/)
+          sf_exclude = %w[0 4 6 8 i] << relator_term_sf
 
-          next unless subfield_defined?(field, 't')
-
-          values_with_title_prefix(field, sf_exclude: %w[0 4 6 8 i], relator_map: relator_map)
-        end
-        relation_values.uniq
+          values_with_title_prefix(field, relator_term_sf: relator_term_sf, relator_map: relator_map,
+                                   &subfield_not_in?(sf_exclude))
+        }.uniq
       end
 
       # Get "Contains" values from {CONTAINS_FIELDS} in the 7XX range. Must have indicator 2 value of 2 indicating an
       # "Analytical Entry" meaning that the record is contained by the matching field. Map relator codes in sf 4. Ignore
       # values in sf 0, 5, 6, and 8.
+      # @todo is it okay to include 880 $4 here? Legacy includes untranslated $4, why?
       # @param [MARC::Record] record
       # @param [Hash] relator_map
       # @return [Array<String>]
       def contains_show(record, relator_map: Mappers.relator)
-        values = record.fields(CONTAINS_FIELDS).filter_map do |field|
+        fields = record.fields(CONTAINS_FIELDS)
+        fields += record.fields('880').select { |field| subfield_value_in?(field, '6', CONTAINS_FIELDS) }
+        fields.filter_map { |field|
           next unless field.indicator2 == '2'
 
-          values_with_title_prefix(field, sf_exclude: %w[0 4 5 6 8 i], relator_map: relator_map)
-        end
-        contains_values = values + record.fields('880').filter_map do |field|
-          next unless field.indicator2 == '2'
+          relator_term_sf = field_or_its_linked_alternate?(field, ['711']) ? 'j' : 'e'
 
-          next unless subfield_value?(field, '6', /^(#{CONTAINS_FIELDS.join('|')})/)
+          sf_exclude = %w[0 4 5 6 8 i] << relator_term_sf
 
-          values_with_title_prefix(field, sf_exclude: %w[0 5 6 8 i])
-        end
-        contains_values.uniq
+          values_with_title_prefix(field, relator_term_sf: relator_term_sf,
+                                          relator_map: relator_map, &subfield_not_in?(sf_exclude))
+        }.uniq
       end
 
       # Get "Constituent Unit" values from {https://www.oclc.org/bibformats/en/7xx/774.html MARC 774}. Include
@@ -114,20 +111,20 @@ module PennMARC
 
       # Handle common behavior when a relator field references a title in subfield i
       # @param [MARC::DataField] field
-      # @param [Array, nil] sf_include subfields to include, optional
-      # @param [Array, nil] sf_exclude subfields to exclude, optional
+      # @param [String] relator_term_sf subfield that holds relator term
       # @param [Hash, nil] relator_map map relator in sf4 using this map, optional
+      # @param [Proc] join_selector
       # @return [String] extracted and processed values from field
-      def values_with_title_prefix(field, sf_include: nil, sf_exclude: nil, relator_map: nil)
-        raise ArgumentError('Define only sf_include or sf_exclude.') if sf_include.present? && sf_exclude.present?
-
+      def values_with_title_prefix(field, relator_term_sf:, relator_map: nil, &join_selector)
         subi = remove_paren_value_from_subfield_i(field) || ''
-        relator = translate_relator(subfield_values(field, '4').first, relator_map) if relator_map.present?
-        contains = if sf_include.present?
-                     join_subfields(field, &subfield_in?(sf_include))
-                   elsif sf_exclude.present?
-                     join_subfields(field, &subfield_not_in?(sf_exclude))
-                   end
+
+        if relator_map.present?
+          relator = subfield_values(field, '4').filter_map { |code| translate_relator(code, relator_map) }
+        end
+
+        relator = subfield_values(field, relator_term_sf) if relator.blank?
+
+        contains = join_subfields(field, &join_selector)
         [
           subi,
           [contains, relator].compact_blank.join(', ')

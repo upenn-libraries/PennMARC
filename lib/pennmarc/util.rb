@@ -268,5 +268,16 @@ module PennMARC
     def valid_subject_genre_source_code?(field)
       subfield_value_in?(field, '2', PennMARC::HeadingControl::ALLOWED_SOURCE_CODES)
     end
+
+    # Does a field or its linked alternate match any of the specified tags?
+    # @param [MARC::Field] field
+    # @param [Array<String>] tags
+    # @return [TrueClass, FalseClass]
+    def field_or_its_linked_alternate?(field, tags)
+      return true if field.tag.in? tags
+      return true if field.tag == '880' && subfield_value_in?(field, '6', tags)
+
+      false
+    end
   end
 end
