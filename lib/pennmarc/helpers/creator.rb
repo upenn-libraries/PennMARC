@@ -57,9 +57,9 @@ module PennMARC
       # @param [Hash] relator_map
       # @return [Array<String>] array of author/creator values for display
       def show_aux(record, relator_map: Mappers.relator)
-        record.fields(TAGS).map do |field|
+        record.fields(TAGS).map { |field|
           name_from_main_entry(field, relator_map)
-        end
+        }.uniq
       end
 
       # Retrieve creator values for display from fields {https://www.loc.gov/marc/bibliographic/bd100.html 100}
@@ -122,6 +122,7 @@ module PennMARC
       # Conference detailed display, intended for record show page.
       # @note ported from get_conference_values
       # @todo what is ǂi for?
+      # @todo relator term is in $j for 111 and 711. Do we also need to ensure $e (sub unit) appears at the end?
       # @param [MARC::Record] record
       # @return [Array<String>] array of conference values
       def conference_detail_show(record)
@@ -162,6 +163,7 @@ module PennMARC
       # 'a', 'b', 'c', 'd', 'j', and 'q', 'u', and '3'. Then appends resulting string with any encoded relationships
       # found in $4. If there are no valid encoded relationships, uses the value found in $e.
       # @note legacy version returns array of hash objects including data for display link
+      # @todo is it okay to include 880 $4 here? Legacy includes $4 in main author display 880 but not here.
       # @param [MARC::Record] record
       # @ param [Hash] relator_map
       # @return [Array<String>]
