@@ -125,8 +125,8 @@ module PennMARC
       # @todo relator term is in $j for 111 and 711. Do we also need to ensure $e (sub unit) appears at the end?
       # @param [MARC::Record] record
       # @return [Array<String>] array of conference values
-      def conference_detail_show(record)
-        values = record.fields(%w[111 711]).filter_map do |field|
+      def conference_detail_show(record, relator_map: Mappers.relator)
+        conferences = record.fields(%w[111 711]).filter_map do |field|
           next unless field.indicator2.in? ['', ' ']
 
           conf = if subfield_undefined? field, 'i'
@@ -134,17 +134,27 @@ module PennMARC
                  else
                    ''
                  end
-          conf_extra = join_subfields field, &subfield_in?(%w[e j w])
-          join_and_squish [conf, conf_extra].compact_blank
+          sub_unit = join_subfields(field, &subfield_in?(%w[e w]))
+          conf = [conf, sub_unit].compact_blank.join(' ')
+
+          relationship = subfield_values(field, '4').filter_map { |relator| translate_relator(relator, relator_map) }
+          relationship = subfield_values(field, 'j') if relationship.blank?
+
+          [conf, relationship].compact_blank.join(', ').squish
         end
-        conferences = values + record.fields('880').filter_map do |field|
+        conferences += record.fields('880').filter_map do |field|
           next unless subfield_value_in? field, '6', %w[111 711]
 
           next if subfield_defined? field, 'i'
 
           conf = join_subfields(field, &subfield_not_in?(%w[0 4 5 6 8 e j w]))
-          conf_extra = join_subfields(field, &subfield_in?(%w[4 e j w]))
-          join_and_squish [conf, conf_extra]
+          sub_unit = join_subfields(field, &subfield_in?(%w[e w]))
+          conf = [conf, sub_unit].compact_blank.join(' ')
+
+          relationship = subfield_values(field, '4').filter_map { |relator| translate_relator(relator, relator_map) }
+          relationship = subfield_values(field, 'j') if relationship.blank?
+
+          [conf, relationship].compact_blank.join(', ').squish
         end
         conferences.uniq
       end

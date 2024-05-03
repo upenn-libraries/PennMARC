@@ -275,18 +275,22 @@ describe 'PennMARC::Creator' do
   describe '.conference_detail_show' do
     let(:record) do
       marc_record fields: [
-        marc_field(tag: '111', subfields: { a: 'MARC History Symposium', c: 'Moscow' }),
+        marc_field(tag: '111', subfields: { a: 'MARC History Symposium', e: 'Advisory Committee', c: 'Moscow',
+                                            j: 'author', '4': 'aut' }),
         marc_field(tag: '711', subfields: { a: 'Russian Library Conference', j: 'author' }),
         marc_field(tag: '711', indicator2: '1', subfields: { a: 'Ignored Entry', j: 'author' }),
         marc_field(tag: '880', subfields: { a: 'Proceedings', '6': '111' }),
+        marc_field(tag: '880', subfields: { a: 'Opening Remarks', j: 'author', '4': 'aut', '6': '711' }),
         marc_field(tag: '880', subfields: { a: 'Not Included', i: 'something', '6': '111' })
       ]
     end
 
     it 'returns detailed conference name information for display, including linked 880 fields without ǂi, and ignoring
         any 111 or 711 with a defined indicator 2 value' do
-      expect(helper.conference_detail_show(record)).to eq ['MARC History Symposium Moscow',
-                                                           'Russian Library Conference author', 'Proceedings']
+      expect(helper.conference_detail_show(record, relator_map: mapping)).to contain_exactly(
+        'MARC History Symposium Moscow Advisory Committee, Author',
+        'Russian Library Conference, author', 'Proceedings', 'Opening Remarks, Author'
+      )
     end
   end
 
