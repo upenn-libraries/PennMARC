@@ -216,4 +216,25 @@ describe 'PennMARC::Util' do
       expect(values).not_to include 'Regular Local Heading', 'LoC Heading', 'Another Alt.'
     end
   end
+
+  describe '.field_or_its_linked_alternate?' do
+    let(:field) { marc_field(tag: '100', subfields: { a: 'Sylvia Wynter' }) }
+    let(:linked_alternate) { marc_field(tag: '880', subfields: { '6': '100' }) }
+
+    it "returns true when tags include the field's tag" do
+      expect(util.field_or_its_linked_alternate?(field, %w[100 200])).to be true
+    end
+
+    it "returns true when tags include linked alternate's $6 value" do
+      expect(util.field_or_its_linked_alternate?(linked_alternate, %w[100 200])).to be true
+    end
+
+    it "returns false when tags exclude the field's tag" do
+      expect(util.field_or_its_linked_alternate?(field, %w[200 300])).to be false
+    end
+
+    it "returns false when tags exclude the linked alternate's $6 value" do
+      expect(util.field_or_its_linked_alternate?(linked_alternate, %w[200 300])).to be false
+    end
+  end
 end
