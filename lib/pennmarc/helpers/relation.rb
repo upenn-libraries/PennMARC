@@ -118,17 +118,15 @@ module PennMARC
       def values_with_title_prefix(field, relator_term_sf:, relator_map: nil, &join_selector)
         subi = remove_paren_value_from_subfield_i(field) || ''
 
-        if relator_map.present?
-          relator = subfield_values(field, '4').filter_map { |code| translate_relator(code, relator_map) }
-        end
+        title = join_subfields(field, &join_selector)
 
-        relator = subfield_values(field, relator_term_sf) if relator.blank?
+        title_with_relator = append_relator(field: field,
+                                            str: title,
+                                            relator_term_sf:
+                                              relator_term_sf,
+                                            relator_map: relator_map)
 
-        contains = join_subfields(field, &join_selector)
-        [
-          subi,
-          [contains, relator].compact_blank.join(', ')
-        ].compact_blank.join(': ')
+        [subi, title_with_relator].compact_blank.join(': ')
       end
     end
   end

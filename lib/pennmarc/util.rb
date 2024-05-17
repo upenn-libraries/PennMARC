@@ -279,5 +279,29 @@ module PennMARC
 
       false
     end
+
+    # Match any open dates ending a given string to determine join separator for relator term in 1xx/7xx fields.
+    # @param [String] str
+    # @return [String (frozen)]
+    def relator_join_separator(str)
+      /\b\d+-\z/.match?(str) ? ' ' : ', '
+    end
+
+    # Appends a relator value to the given string. Prioritizes relator terms encoded in $4, and uses the provided
+    # relator term subfield only if no relators are defined in $4. For use in 1xx/7xx fields.
+    # @param [MARC::Field] field where relator values are stored
+    # @param [String] str the string to which the relator is appended
+    # @param [String (frozen)] relator_term_sf MARC subfield that stores relator term
+    # @param [Hash] relator_map
+    # @return [String]
+    def append_relator(field:, str:, relator_term_sf: 'e', relator_map: nil)
+      if relator_map.present?
+        relator = subfield_values(field, '4').filter_map { |code| translate_relator(code, relator_map) }
+      end
+
+      relator = subfield_values(field, relator_term_sf) if relator.blank?
+      relator_separator = relator_join_separator(str)
+      [str, relator].compact_blank.join(relator_separator).squish
+    end
   end
 end
