@@ -287,21 +287,41 @@ module PennMARC
       /\b\d+-\z/.match?(str) ? ' ' : ', '
     end
 
-    # Appends a relator value to the given string. Prioritizes relator terms encoded in $4, and uses the provided
-    # relator term subfield only if no relators are defined in $4. For use in 1xx/7xx fields.
+    # For a given field, determine in which subfield to find relator term
+    # The following fields and their linked alternates use $j for relator terms:
+    # {https://www.loc.gov/marc/bibliographic/bd111.html 111}, {https://www.loc.gov/marc/bibliographic/bd411.html 411},
+    # {https://www.loc.gov/marc/bibliographic/bd611.html 611}, {https://www.loc.gov/marc/bibliographic/bd711.html 711},
+    # {https://www.loc.gov/marc/bibliographic/bd811.html 811}
+    # @param [MARC:Field] field
+    # @return [String (frozen)]
+    def relator_term_subfield(field)
+      field_or_its_linked_alternate?(field, %w[111 411 611 711 811]) ? 'j' : 'e'
+    end
+
+    # Appends a relator value to the given string. It prioritizes relator codes found in subfield $4
+    # and falls back to the specified relator term subfield (defaulting to 'e') if no valid codes are found in $4.
+    # Use with 1xx/7xx fields.
     # @param [MARC::Field] field where relator values are stored
-    # @param [String] str the string to which the relator is appended
+    # @param [String] joined_subfields the string to which the relator is appended
     # @param [String (frozen)] relator_term_sf MARC subfield that stores relator term
     # @param [Hash] relator_map
     # @return [String]
-    def append_relator(field:, str:, relator_term_sf: 'e', relator_map: nil)
+    def append_relator(field:, joined_subfields:, relator_term_sf: nil, relator_map: nil)
+      joined_subfields = trim_trailing(:comma, joined_subfields)
+
       if relator_map.present?
         relator = subfield_values(field, '4').filter_map { |code| translate_relator(code, relator_map) }
       end
 
+      relator_term_sf = relator_term_subfield(field) if relator_term_sf.blank?
+
       relator = subfield_values(field, relator_term_sf) if relator.blank?
-      relator_separator = relator_join_separator(str)
-      [str, relator].compact_blank.join(relator_separator).squish
+
+      relator = append_trailing(:period, relator.join(', ')) if relator.present?
+
+      join_separator = relator_join_separator(joined_subfields)
+
+      [joined_subfields, relator].compact_blank.join(join_separator).squish
     end
   end
 end

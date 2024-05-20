@@ -17,7 +17,7 @@ module PennMARC
       CONFERENCE_SEARCH_TAGS = %w[111 711 811].freeze
 
       # subfields NOT to join when combining raw subfield values
-      NAME_EXCLUDED_SUBFIELDS = %w[a e 1 4 5 6 8 t].freeze
+      NAME_EXCLUDED_SUBFIELDS = %w[a 1 4 5 6 8 t].freeze
 
       CONTRIBUTOR_TAGS = %w[700 710].freeze
 
@@ -71,8 +71,8 @@ module PennMARC
         fields = record.fields(TAGS)
         fields += record.fields('880').select { |field| subfield_value_in?(field, '6', TAGS) }
         fields.filter_map { |field|
-          creator = trim_trailing(:comma, join_subfields(field, &subfield_not_in?(%w[0 1 4 6 8 e w])))
-          append_relator(field: field, str: creator, relator_map: relator_map)
+          creator = join_subfields(field, &subfield_not_in?(%w[0 1 4 6 8 e w]))
+          append_relator(field: field, joined_subfields: creator, relator_map: relator_map)
         }.uniq
       end
 
@@ -135,7 +135,7 @@ module PennMARC
           sub_unit = join_subfields(field, &subfield_in?(%w[e w]))
           conf = [conf, sub_unit].compact_blank.join(' ')
 
-          append_relator(field: field, str: conf, relator_term_sf: 'j', relator_map: relator_map)
+          append_relator(field: field, joined_subfields: conf, relator_term_sf: 'j', relator_map: relator_map)
         end
         conferences += record.fields('880').filter_map do |field|
           next unless subfield_value_in? field, '6', %w[111 711]
@@ -146,7 +146,7 @@ module PennMARC
           sub_unit = join_subfields(field, &subfield_in?(%w[e w]))
           conf = [conf, sub_unit].compact_blank.join(' ')
 
-          append_relator(field: field, str: conf, relator_term_sf: 'j', relator_map: relator_map)
+          append_relator(field: field, joined_subfields: conf, relator_term_sf: 'j', relator_map: relator_map)
         end
         conferences.uniq
       end
@@ -177,8 +177,8 @@ module PennMARC
           next if indicator_2_options.exclude?(field.indicator2) && field.tag.in?(CONTRIBUTOR_TAGS)
           next if subfield_defined? field, 'i'
 
-          contributor = trim_trailing(:comma, join_subfields(field, &subfield_in?(%w[a b c d j q u 3])))
-          append_relator(field: field, str: contributor, relator_map: relator_map)
+          contributor = join_subfields(field, &subfield_in?(%w[a b c d j q u 3]))
+          append_relator(field: field, joined_subfields: contributor, relator_map: relator_map)
         }.uniq
       end
 
@@ -236,17 +236,22 @@ module PennMARC
       # @param [Boolean] should_convert_name_order
       # @return [String] joined subfield values for value from field
       def name_from_main_entry(field, mapping, should_convert_name_order: false)
-        name_values = field.filter_map do |sf|
+        relator_term_sf = relator_term_subfield(field)
+        name = field.filter_map { |sf|
           if sf.code == 'a'
             should_convert_name_order ? convert_name_order(sf.value) : sf.value
+          elsif sf.code == relator_term_sf
+            next
           elsif NAME_EXCLUDED_SUBFIELDS.exclude?(sf.code)
             sf.value
           end
-        end
+        }.join(' ')
 
-        name = trim_trailing(:comma, name_values.join(' '))
+        name_and_relator = append_relator(field: field,
+                                          joined_subfields: name,
+                                          relator_term_sf: relator_term_sf,
+                                          relator_map: mapping)
 
-        name_and_relator = append_relator(field: field, str: name, relator_map: mapping)
         name_and_relator + (%w[. -].member?(name_and_relator.last) ? '' : '.')
       end
 

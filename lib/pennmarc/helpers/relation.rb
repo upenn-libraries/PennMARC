@@ -56,11 +56,13 @@ module PennMARC
 
           next unless subfield_defined?(field, 't')
 
-          relator_term_sf = field_or_its_linked_alternate?(field, ['711']) ? 'j' : 'e'
+          relator_term_sf = relator_term_subfield(field)
 
           sf_exclude = %w[0 4 6 8 i] << relator_term_sf
 
-          values_with_title_prefix(field, relator_term_sf: relator_term_sf, relator_map: relator_map,
+          values_with_title_prefix(field,
+                                   relator_term_sf: relator_term_sf,
+                                   relator_map: relator_map,
                                    &subfield_not_in?(sf_exclude))
         }.uniq
       end
@@ -78,12 +80,14 @@ module PennMARC
         fields.filter_map { |field|
           next unless field.indicator2 == '2'
 
-          relator_term_sf = field_or_its_linked_alternate?(field, ['711']) ? 'j' : 'e'
+          relator_term_sf = relator_term_subfield(field)
 
           sf_exclude = %w[0 4 5 6 8 i] << relator_term_sf
 
-          values_with_title_prefix(field, relator_term_sf: relator_term_sf,
-                                          relator_map: relator_map, &subfield_not_in?(sf_exclude))
+          values_with_title_prefix(field,
+                                   relator_term_sf: relator_term_sf,
+                                   relator_map: relator_map,
+                                   &subfield_not_in?(sf_exclude))
         }.uniq
       end
 
@@ -111,19 +115,18 @@ module PennMARC
 
       # Handle common behavior when a relator field references a title in subfield i
       # @param [MARC::DataField] field
-      # @param [String] relator_term_sf subfield that holds relator term
+      # @param [String, nil] relator_term_sf subfield that holds relator term
       # @param [Hash, nil] relator_map map relator in sf4 using this map, optional
       # @param [Proc] join_selector
       # @return [String] extracted and processed values from field
-      def values_with_title_prefix(field, relator_term_sf:, relator_map: nil, &join_selector)
+      def values_with_title_prefix(field, relator_term_sf: nil, relator_map: nil, &join_selector)
         subi = remove_paren_value_from_subfield_i(field) || ''
 
         title = join_subfields(field, &join_selector)
 
         title_with_relator = append_relator(field: field,
-                                            str: title,
-                                            relator_term_sf:
-                                              relator_term_sf,
+                                            joined_subfields: title,
+                                            relator_term_sf: relator_term_sf,
                                             relator_map: relator_map)
 
         [subi, title_with_relator].compact_blank.join(': ')

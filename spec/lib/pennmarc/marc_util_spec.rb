@@ -237,4 +237,101 @@ describe 'PennMARC::Util' do
       expect(util.field_or_its_linked_alternate?(linked_alternate, %w[200 300])).to be false
     end
   end
+
+  describe '.relator_join_separator' do
+    it 'returns a space when string ends with an open date' do
+      expect(util.relator_join_separator('Nalo Hopkinson 1960-')).to be ' '
+    end
+
+    it 'returns a comma and a space (", ") when string does not end with an open date' do
+      expect(util.relator_join_separator('Audre Lorde 1934-1992')).to be ', '
+    end
+
+    context 'when a word character precedes the open date' do
+      it 'returns a comma and a space (", ")' do
+        expect(util.relator_join_separator('word120-')).to be ', '
+      end
+    end
+  end
+
+  describe '.relator_term_subfield' do
+    context 'with a field that uses $j for relator term' do
+      let(:field) { marc_field(tag: '111', subfields: { a: 'Code4Lib' }) }
+
+      it 'returns "j"' do
+        expect(util.relator_term_subfield(field)).to eq 'j'
+      end
+    end
+
+    context 'with any field that does not use $j for relator term' do
+      let(:field) { marc_field(tag: '100', subfields: { a: 'J.R.R. Tolkien' }) }
+
+      it 'defaults to "e"' do
+        expect(util.relator_term_subfield(field)).to eq 'e'
+      end
+    end
+  end
+
+  describe '.append_relator' do
+    let(:joined_subfields) { field.subfields.first.value }
+    let(:relator_map) { { aut: 'Author', ill: 'Illustrator' } }
+    let(:result) { util.append_relator(field: field, joined_subfields: joined_subfields, relator_map: relator_map) }
+
+    context 'when joined subfield values ends with a a comma' do
+      let(:field) { marc_field(tag: '100', subfields: { a: 'Capus, Alex,', '4': 'aut' }) }
+
+      it 'removes the trailing comma before joining the relator' do
+        expect(result).to eq 'Capus, Alex, Author.'
+      end
+    end
+
+    context 'with relator term and translatable relator code' do
+      let(:field) { marc_field(tag: '100', subfields: { a: 'Capus, Alex', e: 'editor', '4': 'aut' }) }
+
+      it 'only appends translatable relator' do
+        expect(result).to eq 'Capus, Alex, Author.'
+      end
+    end
+
+    context 'with multiple translatable relator codes' do
+      let(:field) { marc_field(tag: '100', subfields: { a: 'Capus, Alex', e: 'editor', '4': %w[aut ill doi] }) }
+
+      it 'appends all translatable relators with expected punctuation' do
+        expect(result).to eq 'Capus, Alex, Author, Illustrator.'
+      end
+    end
+
+    context 'with multiple relator terms' do
+      let(:field) { marc_field(tag: '100', subfields: { a: 'Capus, Alex', e: %w[author illustrator] }) }
+
+      it 'appends all translatable relators with expected punctuation' do
+        expect(result).to eq 'Capus, Alex, author, illustrator.'
+      end
+    end
+
+    context 'without translatable relator code' do
+      let(:field) { marc_field(tag: '100', subfields: { a: 'Capus, Alex,', e: %w[author illustrator], '4': 'doi' }) }
+
+      it 'appends relator term' do
+        expect(result).to eq 'Capus, Alex, author, illustrator.'
+      end
+    end
+
+    context 'when relator term has trailing period' do
+      let(:field) { marc_field(tag: '100', subfields: { a: 'Capus, Alex,', e: 'author.' }) }
+
+      it 'punctuates the value as expected' do
+        expect(result).to eq 'Capus, Alex, author.'
+      end
+    end
+
+    context 'when joined subfield values ends with an open date' do
+      let(:joined_subfields) { [field.subfields.first.value, field.subfields.second.value].join(' ') }
+      let(:field) { marc_field(tag: '100', subfields: { a: 'Capus, Alex,', d: '1808-', '4': %w[aut ill] }) }
+
+      it 'uses a space when appending the relator' do
+        expect(result).to eq 'Capus, Alex, 1808- Author, Illustrator.'
+      end
+    end
+  end
 end

@@ -66,7 +66,7 @@ describe 'PennMARC::Relation' do
 
     it 'returns specified subfield values from specified field with blank indicator2' do
       values = helper.related_work_show record, relator_map: relator_map
-      expect(values).to contain_exactly 'Translation of: Some Author Aphorisms, Translator',
+      expect(values).to contain_exactly 'Translation of: Some Author Aphorisms, Translator.',
                                         'Alt. Prefix: Alt. Author Alt. Aphorisms'
       expect(values).not_to include 'Ignored'
     end
@@ -81,45 +81,8 @@ describe 'PennMARC::Relation' do
 
       it 'appends relator term found in $j' do
         values = helper.related_work_show(record, relator_map: relator_map)
-        expect(values).to contain_exactly('Index to: The Law of Outer Space Advisory Board Proceedings, author',
-                                          'Alt. Prefix: Alt. Name Alt. Title, author')
-      end
-    end
-
-    context 'with relator term and translatable relator code' do
-      let(:fields) do
-        [marc_field(tag: '700', indicator2: '', subfields: { i: 'Translation of (work):', a: 'Some Author', e: 'Author',
-                                                             t: 'Aphorisms', '4': 'trl' })]
-      end
-
-      it 'only appends translatable relator' do
-        values = helper.related_work_show(record, relator_map: relator_map)
-        expect(values).to contain_exactly('Translation of: Some Author Aphorisms, Translator')
-      end
-    end
-
-    context 'with multiple translatable relator codes' do
-      let(:fields) do
-        [marc_field(tag: '700', indicator2: '', subfields: { i: 'Translation of (work):', a: 'Some Author',
-
-                                                             t: 'Aphorisms', '4': %w[aut trl] })]
-      end
-
-      it 'appends all translatable relators' do
-        values = helper.related_work_show record, relator_map: relator_map
-        expect(values).to contain_exactly('Translation of: Some Author Aphorisms, Author, Translator')
-      end
-    end
-
-    context 'without translatable relator code' do
-      let(:fields) do
-        [marc_field(tag: '700', indicator2: '', subfields: { i: 'Translation of (work):', a: 'Some Author', e: 'Author',
-                                                             t: 'Aphorisms' })]
-      end
-
-      it 'appends relator term' do
-        values = helper.related_work_show record, relator_map: nil
-        expect(values).to contain_exactly('Translation of: Some Author Aphorisms, Author')
+        expect(values).to contain_exactly('Index to: The Law of Outer Space Advisory Board Proceedings, author.',
+                                          'Alt. Prefix: Alt. Name Alt. Title, author.')
       end
     end
   end
@@ -129,16 +92,33 @@ describe 'PennMARC::Relation' do
       [marc_field(tag: '700', indicator2: '2', subfields: { i: 'Container of (work):', a: 'Some Author', t: 'Works',
                                                             '4': 'aut' }),
        marc_field(tag: '700', indicator2: '', subfields: { i: 'Adaptation of (work):', t: 'Ignored' }),
-       marc_field(tag: '880', indicator2: '2', subfields: { i: 'Alt. Prefix:', a: 'Alt. Name', '6': '700' })]
+       marc_field(tag: '880', indicator2: '2', subfields: { i: 'Alt. Prefix:', a: 'Alt. Name', e: 'Alt relator',
+                                                            '6': '700' })]
     end
 
     it "returns specified subfield values from specified field with '2' in indicator2" do
       values = helper.contains_show record, relator_map: relator_map
-      expect(values).to contain_exactly 'Alt. Prefix: Alt. Name', 'Container of: Some Author Works, Author'
+      expect(values).to contain_exactly 'Alt. Prefix: Alt. Name, Alt relator.',
+                                        'Container of: Some Author Works, Author.'
       expect(values).not_to include 'Ignored'
     end
 
-    context 'with translatable relator codes in an linked alternate' do
+    context 'with a translatable relator code in a 711 field and its linked alternate' do
+      let(:fields) do
+        [marc_field(tag: '711', indicator2: '2', subfields: { i: 'Index to (work):', a: 'The Law of Outer Space',
+                                                              e: 'Advisory Board', j: 'author', t: 'Proceedings' }),
+         marc_field(tag: '880', indicator2: '2', subfields: { i: 'Alt. Prefix:', a: 'Alt. Name', j: 'author',
+                                                              t: 'Alt. Title', '6': '711' })]
+      end
+
+      it 'appends relator term found in $j' do
+        values = helper.contains_show(record, relator_map: relator_map)
+        expect(values).to contain_exactly('Index to: The Law of Outer Space Advisory Board Proceedings, author.',
+                                          'Alt. Prefix: Alt. Name Alt. Title, author.')
+      end
+    end
+
+    context 'with translatable relator codes in a linked alternate' do
       let(:fields) do
         [marc_field(tag: '880', indicator2: '2', subfields: { i: 'Alt. Prefix:', a: 'Alt. Name', '4': 'aut',
                                                               '6': '700' })]
@@ -146,7 +126,7 @@ describe 'PennMARC::Relation' do
 
       it 'appends translatable relator codes' do
         values = helper.contains_show record, relator_map: relator_map
-        expect(values).to contain_exactly 'Alt. Prefix: Alt. Name, Author'
+        expect(values).to contain_exactly 'Alt. Prefix: Alt. Name, Author.'
       end
     end
   end

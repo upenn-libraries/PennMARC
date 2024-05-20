@@ -138,51 +138,14 @@ describe 'PennMARC::Creator' do
     context 'with a single author record' do
       let(:fields) do
         [marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345', d: '1900-2000',
-                                             e: 'author', '4': 'http://cool.uri/vocabulary/relators/aut' }),
+                                             e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
          marc_field(tag: '880', subfields: { a: 'Surname, Alternative', '6': '100' })]
       end
 
       it 'returns single author values with no URIs anywhere' do
         values = helper.show(record)
-        expect(values).to contain_exactly 'Surname, Name 1900-2000, author', 'Surname, Alternative'
+        expect(values).to contain_exactly 'Surname, Name 1900-2000, author.', 'Surname, Alternative'
         expect(values.join.downcase).not_to include 'http'
-      end
-    end
-
-    context 'with relator term and translatable relator code' do
-      let(:fields) do
-        [marc_field(tag: '100', subfields: { a: 'Capus, Alex,', e: 'author', '4': 'aut' })]
-      end
-
-      it 'only appends translatable relator' do
-        values = helper.show(record, relator_map: mapping)
-        expect(values).to contain_exactly 'Capus, Alex, Author'
-      end
-    end
-
-    context 'with multiple translatable relator codes' do
-      let(:mapping) { { aut: 'Author', ill: 'Illustrator' } }
-      let(:fields) do
-        [marc_field(tag: '100', subfields: { a: 'Capus, Alex,', e: 'author', '4': %w[aut ill doi.org] })]
-      end
-
-      it 'appends all translatable relators' do
-        values = helper.show(record)
-        expect(values).to contain_exactly 'Capus, Alex, Author, Illustrator'
-      end
-    end
-
-    context 'without translatable relator code' do
-      let(:fields) do
-        [
-          marc_field(tag: '100', subfields: { a: 'Capus, Alex,', e: 'author' }),
-          marc_field(tag: '100', subfields: { a: 'Bryan, Ashley,', e: %w[author illustrator], '4': 'doi.org' })
-        ]
-      end
-
-      it 'appends relator term' do
-        values = helper.show(record, relator_map: mapping)
-        expect(values).to contain_exactly 'Capus, Alex, author', 'Bryan, Ashley, author, illustrator'
       end
     end
 
@@ -195,7 +158,7 @@ describe 'PennMARC::Creator' do
       it 'returns corporate author values with no URIs anywhere' do
         values = helper.show(record, relator_map: mapping)
         expect(values).to contain_exactly 'Alt. Group Name Alt. Annual Meeting',
-                                          'Group of People Annual Meeting, Author'
+                                          'Group of People Annual Meeting, Author.'
         expect(values.join.downcase).not_to include 'http'
       end
     end
@@ -288,8 +251,8 @@ describe 'PennMARC::Creator' do
     it 'returns detailed conference name information for display, including linked 880 fields without ǂi, and ignoring
         any 111 or 711 with a defined indicator 2 value' do
       expect(helper.conference_detail_show(record, relator_map: mapping)).to contain_exactly(
-        'MARC History Symposium Moscow Advisory Committee, Author',
-        'Russian Library Conference, author', 'Proceedings', 'Opening Remarks, Author'
+        'MARC History Symposium Moscow Advisory Committee, Author.',
+        'Russian Library Conference, author.', 'Proceedings', 'Opening Remarks, Author.'
       )
     end
   end
@@ -342,15 +305,15 @@ describe 'PennMARC::Creator' do
                                               '4': 'aut' }),
           marc_field(tag: '880', subfields: {  '6': '700', a: 'Alt Name', b: 'Alt num', c: 'Alt title',
                                                d: 'Alt date', e: 'Alt relator', j: 'Alt qualifier',
-                                               q: 'Alt Fuller Name', u: 'Alt affiliation', '3': 'Alt materials' })
+                                               q: 'Alt Fuller Name', u: 'Alt affiliation', '3': 'Alt material' })
         ]
       end
 
       it 'returns expected contributor values' do
         values = helper.contributor_show(record, relator_map: mapping)
         expect(values).to contain_exactly(
-          'Name I laureate 1968 pseud Fuller Name affiliation materials, Author',
-          'Alt Name Alt num Alt title Alt date Alt qualifier Alt Fuller Name Alt affiliation Alt materials, Alt relator'
+          'Name I laureate 1968 pseud Fuller Name affiliation materials, Author.',
+          'Alt Name Alt num Alt title Alt date Alt qualifier Alt Fuller Name Alt affiliation Alt material, Alt relator.'
         )
       end
     end
@@ -369,45 +332,9 @@ describe 'PennMARC::Creator' do
       it 'returns expected contributor values' do
         values = helper.contributor_show(record)
         expect(values).to contain_exactly(
-          'Corporation A division Office 1968 affiliation materials, Author',
-          'Alt Corp Name Alt unit Alt location Alt date Alt Affiliation Alt materials, Alt relator, another'
+          'Corporation A division Office 1968 affiliation materials, Author.',
+          'Alt Corp Name Alt unit Alt location Alt date Alt Affiliation Alt materials, Alt relator, another.'
         )
-      end
-    end
-
-    context 'with relator term and translatable relator code' do
-      let(:fields) do
-        [marc_field(tag: '700', subfields: { a: 'Name', b: 'I', c: 'laureate', d: '1968', e: 'editor', '4': 'aut' })]
-      end
-
-      it 'only appends translatable relator' do
-        values = helper.contributor_show(record, relator_map: mapping)
-        expect(values).to contain_exactly 'Name I laureate 1968, Author'
-      end
-    end
-
-    context 'with multiple translatable relator codes' do
-      let(:fields) do
-        [marc_field(tag: '700', subfields: { a: 'Personal Name', e: 'author', '4': %w[aut ill doi.org] })]
-      end
-      let(:mapping) { { aut: 'Author', ill: 'Illustrator' } }
-
-      it 'appends all translatable relators' do
-        values = helper.contributor_show(record, relator_map: mapping)
-        expect(values).to contain_exactly 'Personal Name, Author, Illustrator'
-      end
-    end
-
-    context 'without translatable relator code' do
-      let(:record) do
-        marc_record fields: [
-          marc_field(tag: '700', subfields: { a: 'Name', b: 'I', c: 'laureate', d: '1968', e: 'author' })
-        ]
-      end
-
-      it 'appends relator term' do
-        values = helper.contributor_show(record)
-        expect(values).to contain_exactly('Name I laureate 1968, author')
       end
     end
   end
