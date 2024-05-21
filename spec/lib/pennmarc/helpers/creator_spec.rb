@@ -120,8 +120,8 @@ describe 'PennMARC::Creator' do
 
       it 'returns values for the corporate author, including mapped relator code from ǂ4' do
         expect(helper.show_aux(record, relator_map: mapping)).to contain_exactly(
-                                                                   'Annual Report Leader, Author.'
-                                                                 )
+          'Annual Report Leader, Author.'
+        )
       end
     end
 
@@ -133,8 +133,8 @@ describe 'PennMARC::Creator' do
 
       it 'only appends translatable relator' do
         expect(helper.show_aux(record, relator_map: mapping)).to contain_exactly(
-                                                                   'Person Loquacious active 24th century AD, Author.'
-                                                                 )
+          'Person Loquacious active 24th century AD, Author.'
+        )
       end
     end
 
@@ -147,8 +147,8 @@ describe 'PennMARC::Creator' do
 
       it 'appends all translatable relators' do
         expect(helper.show_aux(record, relator_map: mapping)).to contain_exactly(
-                                                                   'Person Loquacious active 24th century AD, Author, Storyteller.'
-                                                                 )
+          'Person Loquacious active 24th century AD, Author, Storyteller.'
+        )
       end
     end
 
