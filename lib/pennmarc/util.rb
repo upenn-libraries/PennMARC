@@ -303,23 +303,19 @@ module PennMARC
     # Use with 1xx/7xx fields.
     # @param [MARC::Field] field where relator values are stored
     # @param [String] joined_subfields the string to which the relator is appended
-    # @param [String (frozen)] relator_term_sf MARC subfield that stores relator term
+    # @param [String] relator_term_sf MARC subfield that stores relator term
     # @param [Hash] relator_map
     # @return [String]
-    def append_relator(field:, joined_subfields:, relator_term_sf: nil, relator_map: nil)
+    def append_relator(field:, joined_subfields:, relator_term_sf:, relator_map: Mappers.relator)
       joined_subfields = trim_trailing(:comma, joined_subfields)
 
-      if relator_map.present?
-        relator = subfield_values(field, '4').filter_map { |code| translate_relator(code, relator_map) }
-      end
+      join_separator = relator_join_separator(joined_subfields)
 
-      relator_term_sf = relator_term_subfield(field) if relator_term_sf.blank?
+      relator = subfield_values(field, '4').filter_map { |code| translate_relator(code, relator_map) }
 
       relator = subfield_values(field, relator_term_sf) if relator.blank?
 
       relator = append_trailing(:period, relator.join(', ')) if relator.present?
-
-      join_separator = relator_join_separator(joined_subfields)
 
       [joined_subfields, relator].compact_blank.join(join_separator).squish
     end

@@ -275,7 +275,7 @@ describe 'PennMARC::Util' do
   describe '.append_relator' do
     let(:joined_subfields) { field.subfields.first.value }
     let(:relator_map) { { aut: 'Author', ill: 'Illustrator' } }
-    let(:result) { util.append_relator(field: field, joined_subfields: joined_subfields, relator_map: relator_map) }
+    let(:result) { util.append_relator(field: field, joined_subfields: joined_subfields, relator_term_sf: 'e') }
 
     context 'when joined subfield values ends with a a comma' do
       let(:field) { marc_field(tag: '100', subfields: { a: 'Capus, Alex,', '4': 'aut' }) }
