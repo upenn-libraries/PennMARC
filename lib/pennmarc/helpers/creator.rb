@@ -72,7 +72,7 @@ module PennMARC
         fields += record.fields('880').select { |field| subfield_value_in?(field, '6', TAGS) }
         fields.filter_map { |field|
           creator = join_subfields(field, &subfield_not_in?(%w[0 1 4 6 8 e w]))
-          append_relator(field: field, joined_subfields: creator, relator_map: relator_map)
+          append_relator(field: field, joined_subfields: creator, relator_term_sf: 'e', relator_map: relator_map)
         }.uniq
       end
 
@@ -178,7 +178,7 @@ module PennMARC
           next if subfield_defined? field, 'i'
 
           contributor = join_subfields(field, &subfield_in?(%w[a b c d j q u 3]))
-          append_relator(field: field, joined_subfields: contributor, relator_map: relator_map)
+          append_relator(field: field, joined_subfields: contributor, relator_term_sf: 'e', relator_map: relator_map)
         }.uniq
       end
 
