@@ -112,7 +112,7 @@ module PennMARC
       # @return [Array<string>]
       def publisher_number_show(record)
         record.fields(%w[024 028 880]).filter_map { |field|
-          next if field.tag == '880' && subfield_value_not_in?(field, '6', %w[024 028])
+          next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^(024|028)/)
 
           # do not return doi values from 024 ǂ2
           if field.tag == '024' && subfield_value_in?(field, '2', %w[doi])
