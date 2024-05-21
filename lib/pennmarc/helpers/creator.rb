@@ -50,18 +50,6 @@ module PennMARC
         name_search_values record: record, tags: AUX_TAGS, relator_map: relator_map
       end
 
-      # All author/creator values for display (like #show, but multivalued?) - no 880 linkage
-      # Performs additional normalization of author names
-      # @note ported from get_author_creator_values (indexed as author_creator_a) - shown on results page
-      # @param [MARC::Record] record
-      # @param [Hash] relator_map
-      # @return [Array<String>] array of author/creator values for display
-      def show_aux(record, relator_map: Mappers.relator)
-        record.fields(TAGS).map { |field|
-          name_from_main_entry(field, relator_map)
-        }.uniq
-      end
-
       # Retrieve creator values for display from fields {https://www.loc.gov/marc/bibliographic/bd100.html 100}
       # and {https://www.loc.gov/marc/bibliographic/bd110.html 110} and their linked alternates. Appends any encoded
       # relationships found in $4. If there are no valid encoded relationships, uses the value found in $e.
@@ -73,6 +61,18 @@ module PennMARC
         fields.filter_map { |field|
           creator = join_subfields(field, &subfield_not_in?(%w[0 1 4 6 8 e w]))
           append_relator(field: field, joined_subfields: creator, relator_term_sf: 'e', relator_map: relator_map)
+        }.uniq
+      end
+
+      # All author/creator values for display (like #show, but multivalued?) - no 880 linkage
+      # Performs additional normalization of author names
+      # @note ported from get_author_creator_values (indexed as author_creator_a) - shown on results page
+      # @param [MARC::Record] record
+      # @param [Hash] relator_map
+      # @return [Array<String>] array of author/creator values for display
+      def show_aux(record, relator_map: Mappers.relator)
+        record.fields(TAGS).map { |field|
+          name_from_main_entry(field, relator_map)
         }.uniq
       end
 
