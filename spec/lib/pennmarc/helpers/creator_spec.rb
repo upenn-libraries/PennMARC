@@ -63,75 +63,6 @@ describe 'PennMARC::Creator' do
     end
   end
 
-  describe '.show_aux' do
-    let(:record) { marc_record fields: fields }
-
-    context 'with a single author record' do
-      let(:fields) do
-        [marc_field(tag: '100', subfields: { a: 'Person', c: 'Loquacious', d: 'active 24th century AD', '4': 'aut' }),
-         marc_field(tag: '880', subfields: { '6': '100', a: 'Alt Author', c: 'Alt Fanciness' })]
-      end
-
-      it 'returns mapped relator code from ǂ4 at the end with a terminal period' do
-        expect(helper.show_aux(record, relator_map: mapping).first).to end_with ', Author.'
-      end
-
-      it 'does not include linked 880 field' do
-        expect(helper.show_aux(record, relator_map: mapping).join(' ')).not_to include 'Alt'
-      end
-    end
-
-    context 'with a corporate author record' do
-      let(:fields) do
-        [marc_field(tag: '110', subfields: { a: 'Annual Report', b: 'Leader', e: 'author', '4': 'aut' })]
-      end
-
-      it 'returns values for the corporate author, including mapped relator code from ǂ4' do
-        expect(helper.show_aux(record, relator_map: mapping)).to contain_exactly(
-          'Annual Report Leader, Author.'
-        )
-      end
-    end
-
-    context 'with relator term and translatable relator code' do
-      let(:fields) do
-        [marc_field(tag: '100', subfields: { a: 'Person', c: 'Loquacious', d: 'active 24th century AD', e: 'Ignore',
-                                             '4': 'aut' })]
-      end
-
-      it 'only appends translatable relator' do
-        expect(helper.show_aux(record, relator_map: mapping)).to contain_exactly(
-          'Person Loquacious active 24th century AD, Author.'
-        )
-      end
-    end
-
-    context 'with multiple translatable relator codes' do
-      let(:mapping) { { aut: 'Author', stl: 'Storyteller' } }
-      let(:fields) do
-        [marc_field(tag: '100', subfields: { a: 'Person', c: 'Loquacious', d: 'active 24th century AD',
-                                             '4': %w[aut stl] })]
-      end
-
-      it 'appends all translatable relators' do
-        expect(helper.show_aux(record, relator_map: mapping)).to contain_exactly(
-          'Person Loquacious active 24th century AD, Author, Storyteller.'
-        )
-      end
-    end
-
-    context 'without translatable relator code' do
-      let(:fields) do
-        [marc_field(tag: '100', subfields: { a: 'Person', c: 'Loquacious', d: 'active 24th century AD',
-                                             e: 'author' })]
-      end
-
-      it 'appends all translatable relators' do
-        expect(helper.show_aux(record)).to contain_exactly('Person Loquacious active 24th century AD, author.')
-      end
-    end
-  end
-
   describe '.show' do
     let(:record) { marc_record fields: fields }
 
@@ -160,6 +91,75 @@ describe 'PennMARC::Creator' do
         expect(values).to contain_exactly 'Alt. Group Name Alt. Annual Meeting',
                                           'Group of People Annual Meeting, Author.'
         expect(values.join.downcase).not_to include 'http'
+      end
+    end
+  end
+
+  describe '.show_aux' do
+    let(:record) { marc_record fields: fields }
+
+    context 'with a single author record' do
+      let(:fields) do
+        [marc_field(tag: '100', subfields: { a: 'Person', c: 'Loquacious', d: 'active 24th century AD', '4': 'aut' }),
+         marc_field(tag: '880', subfields: { '6': '100', a: 'Alt Author', c: 'Alt Fanciness' })]
+      end
+
+      it 'returns mapped relator code from ǂ4 at the end with a terminal period' do
+        expect(helper.show_aux(record, relator_map: mapping).first).to end_with ', Author.'
+      end
+
+      it 'does not include linked 880 field' do
+        expect(helper.show_aux(record, relator_map: mapping).join(' ')).not_to include 'Alt'
+      end
+    end
+
+    context 'with a corporate author record' do
+      let(:fields) do
+        [marc_field(tag: '110', subfields: { a: 'Annual Report', b: 'Leader', e: 'author', '4': 'aut' })]
+      end
+
+      it 'returns values for the corporate author, including mapped relator code from ǂ4' do
+        expect(helper.show_aux(record, relator_map: mapping)).to contain_exactly(
+                                                                   'Annual Report Leader, Author.'
+                                                                 )
+      end
+    end
+
+    context 'with relator term and translatable relator code' do
+      let(:fields) do
+        [marc_field(tag: '100', subfields: { a: 'Person', c: 'Loquacious', d: 'active 24th century AD', e: 'Ignore',
+                                             '4': 'aut' })]
+      end
+
+      it 'only appends translatable relator' do
+        expect(helper.show_aux(record, relator_map: mapping)).to contain_exactly(
+                                                                   'Person Loquacious active 24th century AD, Author.'
+                                                                 )
+      end
+    end
+
+    context 'with multiple translatable relator codes' do
+      let(:mapping) { { aut: 'Author', stl: 'Storyteller' } }
+      let(:fields) do
+        [marc_field(tag: '100', subfields: { a: 'Person', c: 'Loquacious', d: 'active 24th century AD',
+                                             '4': %w[aut stl] })]
+      end
+
+      it 'appends all translatable relators' do
+        expect(helper.show_aux(record, relator_map: mapping)).to contain_exactly(
+                                                                   'Person Loquacious active 24th century AD, Author, Storyteller.'
+                                                                 )
+      end
+    end
+
+    context 'without translatable relator code' do
+      let(:fields) do
+        [marc_field(tag: '100', subfields: { a: 'Person', c: 'Loquacious', d: 'active 24th century AD',
+                                             e: 'author' })]
+      end
+
+      it 'appends all translatable relators' do
+        expect(helper.show_aux(record)).to contain_exactly('Person Loquacious active 24th century AD, author.')
       end
     end
   end
