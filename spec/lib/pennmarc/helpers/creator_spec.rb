@@ -18,8 +18,8 @@ describe 'PennMARC::Creator' do
 
       it 'contains the expected search field values for a single author work' do
         expect(helper.search(record, relator_map: mapping)).to contain_exactly(
-          'Name Surname http://cool.uri/12345 author 1900-2000.',
-          'Surname, Name http://cool.uri/12345 author 1900-2000.',
+          'Name Surname http://cool.uri/12345 1900-2000, author.',
+          'Surname, Name http://cool.uri/12345 1900-2000, author.',
           'Alternative Surname'
         )
       end
@@ -63,6 +63,38 @@ describe 'PennMARC::Creator' do
     end
   end
 
+  describe '.show' do
+    let(:record) { marc_record fields: fields }
+
+    context 'with a single author record' do
+      let(:fields) do
+        [marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345', d: '1900-2000',
+                                             e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
+         marc_field(tag: '880', subfields: { a: 'Surname, Alternative', '6': '100' })]
+      end
+
+      it 'returns single author values with no URIs anywhere' do
+        values = helper.show(record)
+        expect(values).to contain_exactly 'Surname, Name 1900-2000, author.', 'Surname, Alternative'
+        expect(values.join.downcase).not_to include 'http'
+      end
+    end
+
+    context 'with a corporate author record' do
+      let(:fields) do
+        [marc_field(tag: '110', subfields: { a: 'Group of People', b: 'Annual Meeting', '4': 'aut' }),
+         marc_field(tag: '880', subfields: { '6': '110', a: 'Alt. Group Name', b: 'Alt. Annual Meeting' })]
+      end
+
+      it 'returns corporate author values with no URIs anywhere' do
+        values = helper.show(record, relator_map: mapping)
+        expect(values).to contain_exactly 'Alt. Group Name Alt. Annual Meeting',
+                                          'Group of People Annual Meeting, Author.'
+        expect(values.join.downcase).not_to include 'http'
+      end
+    end
+  end
+
   describe '.show_aux' do
     let(:record) { marc_record fields: fields }
 
@@ -88,39 +120,46 @@ describe 'PennMARC::Creator' do
 
       it 'returns values for the corporate author, including mapped relator code from ǂ4' do
         expect(helper.show_aux(record, relator_map: mapping)).to contain_exactly(
-          'Annual Report Leader author, Author.'
+          'Annual Report Leader, Author.'
         )
       end
     end
-  end
 
-  describe '.show' do
-    let(:record) { marc_record fields: fields }
-
-    context 'with a single author record' do
+    context 'with relator term and translatable relator code' do
       let(:fields) do
-        [marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345', d: '1900-2000',
-                                             e: 'author', '4': 'http://cool.uri/vocabulary/relators/aut' }),
-         marc_field(tag: '880', subfields: { a: 'Surname, Alternative', '6': '100' })]
+        [marc_field(tag: '100', subfields: { a: 'Person', c: 'Loquacious', d: 'active 24th century AD', e: 'Ignore',
+                                             '4': 'aut' })]
       end
 
-      it 'returns single author values with no URIs anywhere' do
-        values = helper.show(record)
-        expect(values).to contain_exactly 'Surname, Name 1900-2000', 'Surname, Alternative'
-        expect(values.join.downcase).not_to include 'http'
+      it 'only appends translatable relator' do
+        expect(helper.show_aux(record, relator_map: mapping)).to contain_exactly(
+          'Person Loquacious active 24th century AD, Author.'
+        )
       end
     end
 
-    context 'with a corporate author record' do
+    context 'with multiple translatable relator codes' do
+      let(:mapping) { { aut: 'Author', stl: 'Storyteller' } }
       let(:fields) do
-        [marc_field(tag: '110', subfields: { a: 'Group of People', b: 'Annual Meeting', '4': 'aut' }),
-         marc_field(tag: '880', subfields: { '6': '110', a: 'Alt. Group Name', b: 'Alt. Annual Meeting' })]
+        [marc_field(tag: '100', subfields: { a: 'Person', c: 'Loquacious', d: 'active 24th century AD',
+                                             '4': %w[aut stl] })]
       end
 
-      it 'returns corporate author values with no URIs anywhere' do
-        values = helper.show(record)
-        expect(values).to contain_exactly 'Alt. Group Name Alt. Annual Meeting', 'Group of People Annual Meeting'
-        expect(values.join.downcase).not_to include 'http'
+      it 'appends all translatable relators' do
+        expect(helper.show_aux(record, relator_map: mapping)).to contain_exactly(
+          'Person Loquacious active 24th century AD, Author, Storyteller.'
+        )
+      end
+    end
+
+    context 'without translatable relator code' do
+      let(:fields) do
+        [marc_field(tag: '100', subfields: { a: 'Person', c: 'Loquacious', d: 'active 24th century AD',
+                                             e: 'author' })]
+      end
+
+      it 'appends all translatable relators' do
+        expect(helper.show_aux(record)).to contain_exactly('Person Loquacious active 24th century AD, author.')
       end
     end
   end
@@ -199,18 +238,22 @@ describe 'PennMARC::Creator' do
   describe '.conference_detail_show' do
     let(:record) do
       marc_record fields: [
-        marc_field(tag: '111', subfields: { a: 'MARC History Symposium', c: 'Moscow' }),
+        marc_field(tag: '111', subfields: { a: 'MARC History Symposium', e: 'Advisory Committee', c: 'Moscow',
+                                            j: 'author', '4': 'aut' }),
         marc_field(tag: '711', subfields: { a: 'Russian Library Conference', j: 'author' }),
         marc_field(tag: '711', indicator2: '1', subfields: { a: 'Ignored Entry', j: 'author' }),
         marc_field(tag: '880', subfields: { a: 'Proceedings', '6': '111' }),
+        marc_field(tag: '880', subfields: { a: 'Opening Remarks', j: 'author', '4': 'aut', '6': '711' }),
         marc_field(tag: '880', subfields: { a: 'Not Included', i: 'something', '6': '111' })
       ]
     end
 
     it 'returns detailed conference name information for display, including linked 880 fields without ǂi, and ignoring
         any 111 or 711 with a defined indicator 2 value' do
-      expect(helper.conference_detail_show(record)).to eq ['MARC History Symposium Moscow',
-                                                           'Russian Library Conference author', 'Proceedings']
+      expect(helper.conference_detail_show(record, relator_map: mapping)).to contain_exactly(
+        'MARC History Symposium Moscow Advisory Committee, Author.',
+        'Russian Library Conference, author.', 'Proceedings', 'Opening Remarks, Author.'
+      )
     end
   end
 
@@ -227,33 +270,72 @@ describe 'PennMARC::Creator' do
   end
 
   describe '.contributor_show' do
-    let(:record) do
-      marc_record fields: [
-        marc_field(tag: '700', subfields: { a: 'Name', b: 'I', c: 'laureate', d: '1968', e: 'author',
-                                            j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
-                                            '4': 'aut' }),
-        marc_field(tag: '700', subfields: { a: 'Ignore' }, indicator2: '1'),
-        marc_field(tag: '700', subfields: { i: 'Ignore' }),
-        marc_field(tag: '710', subfields: { a: 'Corporation', b: 'A division', c: 'Office', d: '1968', e: 'author',
-                                            u: 'affiliation', '3': 'materials',
-                                            '4': 'aut' }),
-        marc_field(tag: '880', subfields: {  '6': '700', a: 'Alt Name', b: 'Alt num', c: 'Alt title',
-                                             d: 'Alt date', e: 'Alt relator', j: 'Alt qualifier', q: 'Alt Fuller Name',
-                                             u: 'Alt affiliation', '3': 'Alt materials' }),
-        marc_field(tag: '880', subfields: { '6': '710', a: 'Alt Corp Name', b: 'Alt unit', c: 'Alt location',
-                                            d: 'Alt date', e: 'Alt relator', u: 'Alt Affiliation',
-                                            '3': 'Alt materials' }),
-        marc_field(tag: '880', subfields: { i: 'Ignore', '6': '700' })
-      ]
+    let(:record) { marc_record fields: fields }
+
+    context 'when idicator2 is "1"' do
+      let(:fields) do
+        [marc_field(tag: '700', subfields: { a: 'Ignore' }, indicator2: '1')]
+      end
+
+      it 'ignores the field' do
+        values = helper.contributor_show(record, relator_map: mapping)
+        expect(values).to be_empty
+      end
     end
 
-    it 'returns expected contributor values' do
-      expect(helper.contributor_show(record, relator_map: mapping)).to contain_exactly(
-        'Name I laureate 1968 pseud Fuller Name author affiliation materials, Author',
-        'Corporation A division Office 1968 author affiliation materials, Author',
-        'Alt Name Alt num Alt title Alt date Alt qualifier Alt Fuller Name Alt relator Alt affiliation Alt materials',
-        'Alt Corp Name Alt unit Alt location Alt date Alt relator Alt Affiliation Alt materials'
-      )
+    context 'with subfield "i"' do
+      let(:fields) do
+        [
+          marc_field(tag: '700', subfields: { i: 'Ignore' }),
+          marc_field(tag: '880', subfields: { i: 'Ignore', '6': '700' })
+        ]
+      end
+
+      it 'ignores the field' do
+        values = helper.contributor_show(record, relator_map: mapping)
+        expect(values).to be_empty
+      end
+    end
+
+    context 'with a single contributor and linked alternate' do
+      let(:fields) do
+        [
+          marc_field(tag: '700', subfields: { a: 'Name', b: 'I', c: 'laureate', d: '1968', e: 'author',
+                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+                                              '4': 'aut' }),
+          marc_field(tag: '880', subfields: {  '6': '700', a: 'Alt Name', b: 'Alt num', c: 'Alt title',
+                                               d: 'Alt date', e: 'Alt relator', j: 'Alt qualifier',
+                                               q: 'Alt Fuller Name', u: 'Alt affiliation', '3': 'Alt material' })
+        ]
+      end
+
+      it 'returns expected contributor values' do
+        values = helper.contributor_show(record, relator_map: mapping)
+        expect(values).to contain_exactly(
+          'Name I laureate 1968 pseud Fuller Name affiliation materials, Author.',
+          'Alt Name Alt num Alt title Alt date Alt qualifier Alt Fuller Name Alt affiliation Alt material, Alt relator.'
+        )
+      end
+    end
+
+    context 'with a corporate contributor and linked alternate' do
+      let(:fields) do
+        [
+          marc_field(tag: '710', subfields: { a: 'Corporation', b: 'A division', c: 'Office', d: '1968', e: 'author',
+                                              u: 'affiliation', '3': 'materials', '4': 'aut' }),
+          marc_field(tag: '880', subfields: { '6': '710', a: 'Alt Corp Name', b: 'Alt unit', c: 'Alt location',
+                                              d: 'Alt date', e: ['Alt relator', 'another'], u: 'Alt Affiliation',
+                                              '3': 'Alt materials' })
+        ]
+      end
+
+      it 'returns expected contributor values' do
+        values = helper.contributor_show(record)
+        expect(values).to contain_exactly(
+          'Corporation A division Office 1968 affiliation materials, Author.',
+          'Alt Corp Name Alt unit Alt location Alt date Alt Affiliation Alt materials, Alt relator, another.'
+        )
+      end
     end
   end
 end

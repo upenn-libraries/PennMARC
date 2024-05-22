@@ -278,5 +278,56 @@ module PennMARC
     def valid_subject_genre_source_code?(field)
       subfield_value_in?(field, '2', PennMARC::HeadingControl::ALLOWED_SOURCE_CODES)
     end
+
+    # Does a field or its linked alternate match any of the specified tags?
+    # @param [MARC::Field] field
+    # @param [Array<String>] tags
+    # @return [TrueClass, FalseClass]
+    def field_or_its_linked_alternate?(field, tags)
+      return true if field.tag.in? tags
+      return true if field.tag == '880' && subfield_value_in?(field, '6', tags)
+
+      false
+    end
+
+    # Match any open dates ending a given string to determine join separator for relator term in 1xx/7xx fields.
+    # @param [String] str
+    # @return [String (frozen)]
+    def relator_join_separator(str)
+      /\b\d+-\z/.match?(str) ? ' ' : ', '
+    end
+
+    # For a given field, determine in which subfield to find relator term
+    # The following fields and their linked alternates use $j for relator terms:
+    # {https://www.loc.gov/marc/bibliographic/bd111.html 111}, {https://www.loc.gov/marc/bibliographic/bd411.html 411},
+    # {https://www.loc.gov/marc/bibliographic/bd611.html 611}, {https://www.loc.gov/marc/bibliographic/bd711.html 711},
+    # {https://www.loc.gov/marc/bibliographic/bd811.html 811}
+    # @param [MARC:Field] field
+    # @return [String (frozen)]
+    def relator_term_subfield(field)
+      field_or_its_linked_alternate?(field, %w[111 411 611 711 811]) ? 'j' : 'e'
+    end
+
+    # Appends a relator value to the given string. It prioritizes relator codes found in subfield $4
+    # and falls back to the specified relator term subfield (defaulting to 'e') if no valid codes are found in $4.
+    # Use with 1xx/7xx fields.
+    # @param [MARC::Field] field where relator values are stored
+    # @param [String] joined_subfields the string to which the relator is appended
+    # @param [String] relator_term_sf MARC subfield that stores relator term
+    # @param [Hash] relator_map
+    # @return [String]
+    def append_relator(field:, joined_subfields:, relator_term_sf:, relator_map: Mappers.relator)
+      joined_subfields = trim_trailing(:comma, joined_subfields)
+
+      join_separator = relator_join_separator(joined_subfields)
+
+      relator = subfield_values(field, '4').filter_map { |code| translate_relator(code, relator_map) }
+
+      relator = subfield_values(field, relator_term_sf) if relator.blank?
+
+      relator = append_trailing(:period, relator.join(', ')) if relator.present?
+
+      [joined_subfields, relator].compact_blank.join(join_separator).squish
+    end
   end
 end
