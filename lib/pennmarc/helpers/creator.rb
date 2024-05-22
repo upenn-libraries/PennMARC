@@ -120,7 +120,6 @@ module PennMARC
       # Conference detailed display, intended for record show page.
       # @note ported from get_conference_values
       # @todo what is ǂi for?
-      # @todo relator term is in $j for 111 and 711. Do we also need to ensure $e (sub unit) appears at the end?
       # @param [MARC::Record] record
       # @return [Array<String>] array of conference values
       def conference_detail_show(record, relator_map: Mappers.relator)
