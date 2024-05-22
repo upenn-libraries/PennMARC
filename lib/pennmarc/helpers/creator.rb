@@ -19,6 +19,8 @@ module PennMARC
       # subfields NOT to join when combining raw subfield values
       NAME_EXCLUDED_SUBFIELDS = %w[a 1 4 5 6 8 t].freeze
 
+      CONTRIBUTOR_TAGS = %w[700 710].freeze
+
       # Author/Creator search field. Includes all subfield values (even ǂ0 URIs) from
       # {https://www.oclc.org/bibformats/en/1xx/100.html 100 Main Entry--Personal Name} and
       # {https://www.oclc.org/bibformats/en/1xx/110.html 110 Main Entry--Corporate Name}. Maps any relator codes found
@@ -48,6 +50,20 @@ module PennMARC
         name_search_values record: record, tags: AUX_TAGS, relator_map: relator_map
       end
 
+      # Retrieve creator values for display from fields {https://www.loc.gov/marc/bibliographic/bd100.html 100}
+      # and {https://www.loc.gov/marc/bibliographic/bd110.html 110} and their linked alternates. Appends any encoded
+      # relationships found in $4. If there are no valid encoded relationships, uses the value found in $e.
+      # @param [MARC::Record] record
+      # @return [Array<String>] array of author/creator values for display
+      def show(record, relator_map: Mappers.relator)
+        fields = record.fields(TAGS)
+        fields += record.fields('880').select { |field| subfield_value_in?(field, '6', TAGS) }
+        fields.filter_map { |field|
+          creator = join_subfields(field, &subfield_not_in?(%w[0 1 4 6 8 e w]))
+          append_relator(field: field, joined_subfields: creator, relator_term_sf: 'e', relator_map: relator_map)
+        }.uniq
+      end
+
       # All author/creator values for display (like #show, but multivalued?) - no 880 linkage
       # Performs additional normalization of author names
       # @note ported from get_author_creator_values (indexed as author_creator_a) - shown on results page
@@ -55,21 +71,8 @@ module PennMARC
       # @param [Hash] relator_map
       # @return [Array<String>] array of author/creator values for display
       def show_aux(record, relator_map: Mappers.relator)
-        record.fields(TAGS).map do |field|
+        record.fields(TAGS).map { |field|
           name_from_main_entry(field, relator_map)
-        end
-      end
-
-      # Author/Creator values for display
-      # @todo ported from get_author_display - used on record show page. porting did not include 4, e or w values,
-      #       which were part of the link object as 'append' values in franklin
-      # @param [MARC::Record] record
-      # @return [Array<String>] array of author/creator values for display
-      def show(record)
-        fields = record.fields(TAGS)
-        fields += record.fields('880').select { |field| subfield_value_in?(field, '6', TAGS) }
-        fields.filter_map { |field|
-          join_subfields(field, &subfield_not_in?(%w[0 1 4 6 8 e w]))
         }.uniq
       end
 
@@ -119,8 +122,8 @@ module PennMARC
       # @todo what is ǂi for?
       # @param [MARC::Record] record
       # @return [Array<String>] array of conference values
-      def conference_detail_show(record)
-        values = record.fields(%w[111 711]).filter_map do |field|
+      def conference_detail_show(record, relator_map: Mappers.relator)
+        conferences = record.fields(%w[111 711]).filter_map do |field|
           next unless field.indicator2.in? ['', ' ']
 
           conf = if subfield_undefined? field, 'i'
@@ -128,17 +131,21 @@ module PennMARC
                  else
                    ''
                  end
-          conf_extra = join_subfields field, &subfield_in?(%w[e j w])
-          join_and_squish [conf, conf_extra].compact_blank
+          sub_unit = join_subfields(field, &subfield_in?(%w[e w]))
+          conf = [conf, sub_unit].compact_blank.join(' ')
+
+          append_relator(field: field, joined_subfields: conf, relator_term_sf: 'j', relator_map: relator_map)
         end
-        conferences = values + record.fields('880').filter_map do |field|
+        conferences += record.fields('880').filter_map do |field|
           next unless subfield_value_in? field, '6', %w[111 711]
 
           next if subfield_defined? field, 'i'
 
           conf = join_subfields(field, &subfield_not_in?(%w[0 4 5 6 8 e j w]))
-          conf_extra = join_subfields(field, &subfield_in?(%w[4 e j w]))
-          join_and_squish [conf, conf_extra]
+          sub_unit = join_subfields(field, &subfield_in?(%w[e w]))
+          conf = [conf, sub_unit].compact_blank.join(' ')
+
+          append_relator(field: field, joined_subfields: conf, relator_term_sf: 'j', relator_map: relator_map)
         end
         conferences.uniq
       end
@@ -154,39 +161,24 @@ module PennMARC
 
       # Retrieve contributor values for display from fields {https://www.oclc.org/bibformats/en/7xx/700.html 700}
       # and {https://www.oclc.org/bibformats/en/7xx/710.html 710} and their linked alternates. Joins subfields
-      # 'a', 'b', 'c', 'd', 'j', and 'q'. Then appends resulting string with joined subfields 'e', 'u', '3', and '4'.
+      # 'a', 'b', 'c', 'd', 'j', and 'q', 'u', and '3'. Then appends resulting string with any encoded relationships
+      # found in $4. If there are no valid encoded relationships, uses the value found in $e.
       # @note legacy version returns array of hash objects including data for display link
+      # @todo is it okay to include 880 $4 here? Legacy includes $4 in main author display 880 but not here.
       # @param [MARC::Record] record
       # @ param [Hash] relator_map
       # @return [Array<String>]
       def contributor_show(record, relator_map: Mappers.relator)
         indicator_2_options = ['', ' ', '0']
-        values = record.fields(%w[700 710]).filter_map do |field|
-          next unless indicator_2_options.member?(field.indicator2)
+        fields = record.fields(CONTRIBUTOR_TAGS)
+        fields += record.fields('880').select { |field| subfield_value_in?(field, '6', CONTRIBUTOR_TAGS) }
+        fields.filter_map { |field|
+          next if indicator_2_options.exclude?(field.indicator2) && field.tag.in?(CONTRIBUTOR_TAGS)
           next if subfield_defined? field, 'i'
 
-          contributor = join_subfields(field, &subfield_in?(%w[a b c d j q]))
-          contributor_append_subfields = %w[e u 3 4]
-          contributor_append = field.filter_map { |subfield|
-            next unless contributor_append_subfields.member?(subfield.code)
-
-            if subfield.code == '4'
-              ", #{translate_relator(subfield.value, relator_map)}"
-            else
-              " #{subfield.value}"
-            end
-          }.join
-          "#{contributor} #{contributor_append}".squish
-        end
-        contributors = values + record.fields('880').filter_map do |field|
-          next unless subfield_value_in?(field, '6', %w[700 710])
-          next if subfield_defined?(field, 'i')
-
-          contributor = join_subfields(field, &subfield_in?(%w[a b c d j q]))
-          contributor_append = join_subfields(field, &subfield_in?(%w[e u 3]))
-          "#{contributor} #{contributor_append}".squish
-        end
-        contributors.uniq
+          contributor = join_subfields(field, &subfield_in?(%w[a b c d j q u 3]))
+          append_relator(field: field, joined_subfields: contributor, relator_term_sf: 'e', relator_map: relator_map)
+        }.uniq
       end
 
       private
@@ -243,19 +235,23 @@ module PennMARC
       # @param [Boolean] should_convert_name_order
       # @return [String] joined subfield values for value from field
       def name_from_main_entry(field, mapping, should_convert_name_order: false)
-        s = field.filter_map { |sf|
+        relator_term_sf = relator_term_subfield(field)
+        name = field.filter_map { |sf|
           if sf.code == 'a'
             should_convert_name_order ? convert_name_order(sf.value) : sf.value
+          elsif sf.code == relator_term_sf
+            next
           elsif NAME_EXCLUDED_SUBFIELDS.exclude?(sf.code)
-            " #{sf.value}"
-          elsif sf.code == '4'
-            relator = translate_relator(sf.value, mapping)
-            next if relator.blank?
-
-            ", #{relator}"
+            sf.value
           end
-        }.join
-        (s + (%w[. -].member?(s.last) ? '' : '.')).squish
+        }.join(' ')
+
+        name_and_relator = append_relator(field: field,
+                                          joined_subfields: name,
+                                          relator_term_sf: relator_term_sf,
+                                          relator_map: mapping)
+
+        name_and_relator + (%w[. -].member?(name_and_relator.last) ? '' : '.')
       end
 
       # Convert "Lastname, First" to "First Lastname"
