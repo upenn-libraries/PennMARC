@@ -165,7 +165,7 @@ module PennMARC
           join_subfields(field, &subfield_not_in?(%w[5 6 8 e w]))
         end
         titles = standardized_titles + record.fields('880').filter_map do |field|
-          next unless subfield_undefined?(field, 'i') ||
+          next unless subfield_undefined?(field, 'i') &&
                       subfield_value?(field, '6', /^(130|240|730)/)
 
           join_subfields field, &subfield_not_in?(%w[5 6 8 e w])
