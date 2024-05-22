@@ -263,7 +263,7 @@ module PennMARC
         record.fields(tags).filter_map do |field|
           next if field.tag == '505' && indicators_are_not_value?(field, '0')
 
-          next if field.tag == '880' && subfield_value_not_in?(field, '6', tags)
+          next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^(#{tags.join('|')})/)
 
           join_subfields(field, &join_selector)
         end

@@ -261,7 +261,7 @@ module PennMARC
       record.fields(%w[650 880]).filter_map { |field|
         next unless field.indicator2 == '4'
 
-        next if field.tag == '880' && subfield_values(field, '6').exclude?('650')
+        next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^650/)
 
         next unless field.any? { |sf| sf.code == 'a' && sf.value =~ /^(#{prefix}|%#{prefix})/ }
 
