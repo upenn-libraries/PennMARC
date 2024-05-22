@@ -1579,6 +1579,10 @@ vpfeatdvd:
   specific_location: Van Pelt - Featured DVD Display - First Floor
   library: Van Pelt-Dietrich Library Center
   display: Van Pelt - Featured DVD Display - First Floor
+vpfolio:
+  specific_location: Van Pelt - Folios
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt Library
 vpjuv:
   specific_location: Van Pelt - Notable Juvenile Books
   library: Van Pelt-Dietrich Library Center
