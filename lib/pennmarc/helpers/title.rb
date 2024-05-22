@@ -63,7 +63,7 @@ module PennMARC
         return [] if not_a_serial?(record)
 
         record.fields(%w[245 880]).filter_map { |field|
-          next if field.tag == '880' && no_subfield_value_matches?(field, '6', /245/)
+          next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^245/)
 
           join_subfields(field, &subfield_not_in?(%w[c 6 8 h]))
         }.uniq
