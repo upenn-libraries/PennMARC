@@ -36,7 +36,7 @@ module PennMARC
       # @return [Array<String>] array of title values for search
       def search(record)
         record.fields(%w[245 880]).filter_map { |field|
-          next if field.tag == '880' && subfield_value_not_in?(field, '6', %w[245])
+          next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^245/)
 
           join_subfields(field, &subfield_not_in?(%w[c 6 8 h]))
         }.uniq
@@ -63,7 +63,7 @@ module PennMARC
         return [] if not_a_serial?(record)
 
         record.fields(%w[245 880]).filter_map { |field|
-          next if field.tag == '880' && subfield_value_not_in?(field, '6', %w[245])
+          next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^245/)
 
           join_subfields(field, &subfield_not_in?(%w[c 6 8 h]))
         }.uniq
@@ -166,7 +166,7 @@ module PennMARC
         end
         titles = standardized_titles + record.fields('880').filter_map do |field|
           next unless subfield_undefined?(field, 'i') ||
-                      subfield_value_in?(field, '6', %w[130 240 730])
+                      subfield_value?(field, '6', /^(130|240|730)/)
 
           join_subfields field, &subfield_not_in?(%w[5 6 8 e w])
         end
@@ -191,7 +191,7 @@ module PennMARC
           join_subfields(field, &subfield_not_in?(%w[5 6 8]))
         end
         titles = other_titles + record.fields('880').filter_map do |field|
-          next unless subfield_value_in? field, '6', %w[246 740]
+          next unless subfield_value? field, '6', /^(246|740)/
 
           join_subfields(field, &subfield_not_in?(%w[5 6 8]))
         end
@@ -263,7 +263,7 @@ module PennMARC
         record.fields(tags).filter_map do |field|
           next if field.tag == '505' && indicators_are_not_value?(field, '0')
 
-          next if field.tag == '880' && subfield_value_not_in?(field, '6', tags)
+          next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^(#{tags.join('|')})/)
 
           join_subfields(field, &join_selector)
         end

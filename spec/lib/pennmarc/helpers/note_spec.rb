@@ -276,7 +276,7 @@ describe 'PennMARC::Note' do
           marc_field(tag: '880', subfields: { a: 'Alt video format', b: 'Alt broadcast', '3': 'Alt materials.',
                                               '6': '346' }),
           marc_field(tag: '880', subfields: { a: 'Alt file type', b: 'Alt encoding', '3': 'Alt materials.',
-                                              '6': 'Alt region' })
+                                              '6': '347-02' })
 
         ]
       end
@@ -292,7 +292,8 @@ text for URI http://www.universal.resource/locator'.squish,
           'Alt materials Alt system details Alternative display text Alt URI',
           'Alt materials Alt recording Alt medium Alt playing speed Alt channel Alt characteristic',
           'Alt materials Alt presentation format Alt projection speed',
-          'Alt materials Alt video format Alt broadcast'
+          'Alt materials Alt video format Alt broadcast',
+          'Alt materials Alt file type Alt encoding'
         )
       end
     end

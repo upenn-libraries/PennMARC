@@ -57,7 +57,7 @@ module PennMARC
       # @return [Array<String>] array of author/creator values for display
       def show(record, relator_map: Mappers.relator)
         fields = record.fields(TAGS)
-        fields += record.fields('880').select { |field| subfield_value_in?(field, '6', TAGS) }
+        fields += record.fields('880').select { |field| subfield_value?(field, '6', /^(#{TAGS.join('|')})/) }
         fields.filter_map { |field|
           creator = join_subfields(field, &subfield_not_in?(%w[0 1 4 6 8 e w]))
           append_relator(field: field, joined_subfields: creator, relator_term_sf: 'e', relator_map: relator_map)
@@ -137,7 +137,7 @@ module PennMARC
           append_relator(field: field, joined_subfields: conf, relator_term_sf: 'j', relator_map: relator_map)
         end
         conferences += record.fields('880').filter_map do |field|
-          next unless subfield_value_in? field, '6', %w[111 711]
+          next unless subfield_value? field, '6', /^(111|711)/
 
           next if subfield_defined? field, 'i'
 
@@ -171,7 +171,7 @@ module PennMARC
       def contributor_show(record, relator_map: Mappers.relator)
         indicator_2_options = ['', ' ', '0']
         fields = record.fields(CONTRIBUTOR_TAGS)
-        fields += record.fields('880').select { |field| subfield_value_in?(field, '6', CONTRIBUTOR_TAGS) }
+        fields += record.fields('880').select { |f| subfield_value?(f, '6', /^(#{CONTRIBUTOR_TAGS.join('|')})/) }
         fields.filter_map { |field|
           next if indicator_2_options.exclude?(field.indicator2) && field.tag.in?(CONTRIBUTOR_TAGS)
           next if subfield_defined? field, 'i'
@@ -197,7 +197,7 @@ module PennMARC
         end
 
         acc += record.fields(['880']).filter_map do |field|
-          next unless field.any? { |sf| sf.code == '6' && sf.value.in?(tags) }
+          next unless subfield_value?(field, '6', /^(#{tags.join('|')})/)
 
           suba = field.find_all(&subfield_in?(%w[a])).filter_map { |sf|
             convert_name_order(sf.value)

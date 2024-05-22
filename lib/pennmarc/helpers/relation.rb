@@ -50,7 +50,7 @@ module PennMARC
       # @return [Array]
       def related_work_show(record, relator_map: Mappers.relator)
         fields = record.fields(RELATED_WORK_FIELDS)
-        fields += record.fields('880').select { |field| subfield_value_in?(field, '6', RELATED_WORK_FIELDS) }
+        fields += record.fields('880').select { |f| subfield_value?(f, '6', /^(#{RELATED_WORK_FIELDS.join('|')})/) }
         fields.filter_map { |field|
           next if field.indicator2.present?
 
@@ -76,7 +76,7 @@ module PennMARC
       # @return [Array<String>]
       def contains_show(record, relator_map: Mappers.relator)
         fields = record.fields(CONTAINS_FIELDS)
-        fields += record.fields('880').select { |field| subfield_value_in?(field, '6', CONTAINS_FIELDS) }
+        fields += record.fields('880').select { |f| subfield_value?(f, '6', /^(#{CONTAINS_FIELDS.join('|')})/) }
         fields.filter_map { |field|
           next unless field.indicator2 == '2'
 

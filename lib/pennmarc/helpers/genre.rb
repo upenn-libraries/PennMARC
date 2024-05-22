@@ -32,7 +32,7 @@ module PennMARC
         record.fields(%w[655 880]).filter_map { |field|
           next unless allowed_genre_field?(field)
 
-          next if field.tag == '880' && subfield_values(field, '6').exclude?('655')
+          next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^655/)
 
           subfields = %w[a b]
           sub_with_hyphens = field.find_all(&subfield_not_in?(%w[0 2 5 6 8 c e w])).map { |sf|
