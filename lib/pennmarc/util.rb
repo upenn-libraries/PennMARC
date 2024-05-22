@@ -285,7 +285,7 @@ module PennMARC
     # @return [TrueClass, FalseClass]
     def field_or_its_linked_alternate?(field, tags)
       return true if field.tag.in? tags
-      return true if field.tag == '880' && subfield_value_in?(field, '6', tags)
+      return true if field.tag == '880' && subfield_value?(field, '6', /^(#{tags.join('|')})/)
 
       false
     end
