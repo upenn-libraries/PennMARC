@@ -47,7 +47,7 @@ module PennMARC
 
         locations = record.fields(tag).flat_map { |field|
           field.filter_map { |subfield|
-            # skip unless subfield code does not match enriched marc tag subfield code
+            # skip unless subfield matches enriched marc tag subfield code
             next unless subfield.code == location_code_sf
 
             location_code = subfield.value
@@ -57,11 +57,7 @@ module PennMARC
             override = specific_location_override(display_value: display_value, location_code: location_code,
                                                   field: field, call_num_sf: call_num_sf)
 
-            if override.present?
-              override
-            else
-              location_map[location_code.to_sym][display_value.to_sym]
-            end
+            override || location_map[location_code.to_sym][display_value.to_sym]
           }.flatten.compact_blank
         }.uniq
         if record.tags.intersect?([Enriched::Pub::ELEC_INVENTORY_TAG, Enriched::Api::ELEC_INVENTORY_TAG])
@@ -124,25 +120,23 @@ module PennMARC
 
       # Retrieves a specific location override based on location code and call number. Specific location overrides are
       # located in `location_overrides.yml`.
-      # @param [String] display_value
+      # @param [String | Symbol] display_value
       # @param [String] location_code
       # @param [MARC::Field] field
       # @param [String] call_num_sf
       # @return [String, Nil]
       def specific_location_override(display_value:, location_code:, field:, call_num_sf:)
-        return unless display_value == :specific_location
+        return unless display_value.to_sym == :specific_location
 
         locations_overrides = Mappers.location_overrides
 
         call_numbers = subfield_values(field, call_num_sf)
 
-        override = locations_overrides.select do |_key, value|
+        override = locations_overrides.find do |_key, value|
           value[:location_code] == location_code && call_numbers.any? { |num| num.match?(value[:call_num_pattern]) }
         end
 
-        return if override.blank?
-
-        override[override.keys.first][:specific_location]
+        override&.last&.dig(:specific_location)
       end
     end
   end
