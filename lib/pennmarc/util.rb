@@ -319,5 +319,11 @@ module PennMARC
 
       [joined_subfields, relator].compact_blank.join(join_separator).squish
     end
+
+    def relator(field:, relator_term_sf:, relator_map: Mappers.relator)
+      relator = subfield_values(field, '4').filter_map { |code| translate_relator(code, relator_map) }
+      relator = subfield_values(field, relator_term_sf) if relator.blank?
+      relator.join
+    end
   end
 end

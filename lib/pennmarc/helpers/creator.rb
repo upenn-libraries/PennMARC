@@ -64,6 +64,51 @@ module PennMARC
         }.uniq
       end
 
+      # Show only the primary and secondary authors without dates - to be used for MLA and APA citations
+      def authors_list(record, first_initial_only: false)
+        tags = %w[100 700].freeze
+        fields = record.fields(tags)
+        fields.filter_map { |field|
+          if first_initial_only
+            abbreviate_name(field['a']) if field['a']
+          else
+            field['a']
+          end
+        }.uniq
+      end
+
+      # Show the authors and contributors grouped together by roles with only names, and roles
+      def contributors_list(record, relator_map: Mappers.relator, include_authors: true, name_only: true)
+        indicator_2_options = ['', ' ', '0']
+
+        tags = CONTRIBUTOR_TAGS
+        tags += TAGS if include_authors
+        fields = record.fields(tags)
+        fields += record.fields('880').select { |field| subfield_value_in?(field, '6', CONTRIBUTOR_TAGS) }
+
+        contributors = {}
+        fields.each do |field|
+          next if indicator_2_options.exclude?(field.indicator2) && field.tag.in?(CONTRIBUTOR_TAGS)
+          next if subfield_defined? field, 'i'
+
+          name = if name_only
+                   field['a']
+                 else
+                   join_subfields(field, &subfield_in?(%w[a b c d j q u 3]))
+                 end
+
+          relator = relator(field: field, relator_term_sf: 'e', relator_map: relator_map)
+
+          if contributors.key?(relator)
+            contributors[relator].push(name)
+          else
+            contributors[relator] = [name]
+          end
+        end
+
+        contributors
+      end
+
       # All author/creator values for display (like #show, but multivalued?) - no 880 linkage
       # Performs additional normalization of author names
       # @note ported from get_author_creator_values (indexed as author_creator_a) - shown on results page
@@ -263,6 +308,17 @@ module PennMARC
         after_comma = join_and_squish([trim_trailing(:comma, substring_after(name, ', '))])
         before_comma = substring_before(name, ', ')
         "#{after_comma} #{before_comma}".squish
+      end
+
+      # Convert "Lastname, First" to "Lastname, F"
+      def abbreviate_name(name)
+        name_parts = name.split(", ")
+        return "" if name_parts.empty?
+        first_name_parts = name_parts.last.split(" ")
+        temp_name = name_parts.first + ", " + first_name_parts.first[0,1] + "."
+        first_name_parts.shift
+        temp_name += " " + first_name_parts.join(" ") unless first_name_parts.empty?
+        temp_name
       end
     end
   end

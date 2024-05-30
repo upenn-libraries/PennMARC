@@ -95,6 +95,67 @@ describe 'PennMARC::Creator' do
     end
   end
 
+  describe '.authors_list' do
+    let(:record) { marc_record fields: fields }
+
+    context 'with two author records' do
+      let(:fields) do
+        [marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345', d: '1900-2000',
+                                             e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
+         marc_field(tag: '700', subfields: { a: 'Surname, Alternative', '6': '100', d: '1970-' })]
+      end
+
+      it 'returns single author values with no URIs anywhere' do
+        values = helper.authors_list(record)
+        expect(values).to contain_exactly 'Surname, Name', 'Surname, Alternative'
+      end
+    end
+
+    context 'with three author records - abbreviated names' do
+      let(:fields) do
+        [marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345', d: '1900-2000',
+                                             e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
+         marc_field(tag: '100', subfields: { a: 'Second, NameX', '0': 'http://cool.uri/12345', d: '1901-2010',
+                                              e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
+         marc_field(tag: '700', subfields: { a: 'Surname, Alternative', '6': '100', d: '1970-' })]
+      end
+
+      it 'returns single author values with no URIs anywhere' do
+        values = helper.authors_list(record, first_initial_only: true)
+        expect(values).to contain_exactly 'Surname, A.', 'Surname, N.', 'Second, N.'
+      end
+    end
+  end
+
+  describe '.contributors_list' do
+    let(:record) { marc_record fields: fields }
+
+    context 'with two authors and four contributors records' do
+      let(:fields) do
+        [marc_field(tag: '100', subfields: { a: 'Hamilton, Alex', '0': 'http://cool.uri/12345', d: '1900-2000',
+                                             e: 'author.', '4': 'aut' }),
+         marc_field(tag: '700', subfields: { a: 'Lincoln, Abraham', b: 'I', c: 'laureate', d: '1968', e: 'author',
+                                             j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+                                             '4': 'aut' }),
+         marc_field(tag: '700', subfields: { a: 'Einstein, Albert', '6': '100', d: '1970-', '4': 'trl',
+                                             e: 'translator' }),
+         marc_field(tag: '700', subfields: { a: 'Franklin, Ben', '6': '100', d: '1970-', '4': 'edt' }),
+         marc_field(tag: '710', subfields: { a: 'Jefferson, Thomas', '6': '100', d: '1870-', '4': 'edt' }),
+         marc_field(tag: '700', subfields: { a: 'Dickens, Charles', '6': '100', d: '1970-', '4': 'com' })
+        ]
+      end
+
+      it 'returns single author values with no URIs anywhere' do
+        values = helper.contributors_list(record)
+        expect(values).to contain_exactly ['Author', ['Hamilton, Alex', 'Lincoln, Abraham']],
+                                          ['Compiler', ['Dickens, Charles']],
+                                          ['Editor', ['Franklin, Ben', 'Jefferson, Thomas']],
+                                          ['Translator', ['Einstein, Albert']]
+      end
+    end
+
+  end
+
   describe '.show_aux' do
     let(:record) { marc_record fields: fields }
 
