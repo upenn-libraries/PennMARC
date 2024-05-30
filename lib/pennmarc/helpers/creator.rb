@@ -78,26 +78,28 @@ module PennMARC
       end
 
       # Show the authors and contributors grouped together by roles with only names, and roles
-      def contributors_list(record, relator_map: Mappers.relator, include_authors: true, name_only: true)
+      def contributors_list(record, relator_map: Mappers.relator, include_authors: true, name_only: true, vernacular: false)
         indicator_2_options = ['', ' ', '0']
 
         tags = CONTRIBUTOR_TAGS
         tags += TAGS if include_authors
+
         fields = record.fields(tags)
-        fields += record.fields('880').select { |field| subfield_value_in?(field, '6', CONTRIBUTOR_TAGS) }
+        fields += record.fields('880').select { |field| subfield_value_in?(field, '6', CONTRIBUTOR_TAGS) } if vernacular
 
         contributors = {}
         fields.each do |field|
           next if indicator_2_options.exclude?(field.indicator2) && field.tag.in?(CONTRIBUTOR_TAGS)
           next if subfield_defined? field, 'i'
 
+          relator = relator(field: field, relator_term_sf: 'e', relator_map: relator_map)
+          relator = 'Contributor' if relator.blank?
+
           name = if name_only
                    field['a']
                  else
-                   join_subfields(field, &subfield_in?(%w[a b c d j q u 3]))
+                   join_subfields(field, &subfield_in?(%w[a b c d j q u 3])) + ", #{relator}"
                  end
-
-          relator = relator(field: field, relator_term_sf: 'e', relator_map: relator_map)
 
           if contributors.key?(relator)
             contributors[relator].push(name)
