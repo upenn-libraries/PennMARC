@@ -312,12 +312,13 @@ module PennMARC
 
       # Convert "Lastname, First" to "Lastname, F"
       def abbreviate_name(name)
-        name_parts = name.split(", ")
-        return "" if name_parts.empty?
-        first_name_parts = name_parts.last.split(" ")
-        temp_name = name_parts.first + ", " + first_name_parts.first[0,1] + "."
+        name_parts = name.split(', ')
+        return '' if name_parts.empty?
+
+        first_name_parts = name_parts.last.split
+        temp_name = "#{name_parts.first}, #{first_name_parts.first[0, 1]}."
         first_name_parts.shift
-        temp_name += " " + first_name_parts.join(" ") unless first_name_parts.empty?
+        temp_name += " #{first_name_parts.join(' ')}" unless first_name_parts.empty?
         temp_name
       end
     end

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 describe 'PennMARC::Creator' do
   include MarcSpecHelpers
 
@@ -5,7 +6,6 @@ describe 'PennMARC::Creator' do
   let(:mapping) { { aut: 'Author' } }
 
   describe '.mla_citation_text' do
-
     let(:record) { marc_record fields: fields }
 
     context 'with a single author record' do
@@ -25,11 +25,11 @@ describe 'PennMARC::Creator' do
          marc_field(tag: '250', subfields: { a: '5th Edition', b: 'Remastered' }),
          marc_control_field(tag: '008', value: '130827s2010 nyu o 000 1 eng d'),
          marc_field(tag: '245', subfields: { a: 'Title', b: 'Subtitle', c: 'Responsibility', h: 'Medium' }),
-         marc_field(tag: '264', subfields: { a: 'Leeds', b: 'Peepal Tree Productions', c: '2019' }, indicator2: '0'),
+         marc_field(tag: '264', subfields: { a: 'Leeds', b: 'Peach Tree Productions', c: '2019' }, indicator2: '0'),
          marc_field(tag: '264', subfields: { a: 'Nowhere', b: 'Wasteland Publishing', c: '1999' }, indicator2: '1')]
       end
 
-      it 'contains the expected search field values for a single author work' do
+      it 'contains the MLA citation text' do
         values = helper.mla_citation_text(record)
         expect(values).to include('Surname, Name, et al.',
                                   '<i>Title Subtitle</i>',
@@ -40,7 +40,6 @@ describe 'PennMARC::Creator' do
   end
 
   describe '.apa_citation_text' do
-
     let(:record) { marc_record fields: fields }
 
     context 'with multiple author record' do
@@ -60,23 +59,21 @@ describe 'PennMARC::Creator' do
          marc_field(tag: '250', subfields: { a: '5th Edition', b: 'Remastered' }),
          marc_control_field(tag: '008', value: '130827s2010 nyu o 000 1 eng d'),
          marc_field(tag: '245', subfields: { a: 'Title', b: 'Subtitle', c: 'Responsibility', h: 'Medium' }),
-         marc_field(tag: '264', subfields: { a: 'Leeds', b: 'Peepal Tree Productions', c: '2019' }, indicator2: '0'),
+         marc_field(tag: '264', subfields: { a: 'Leeds', b: 'Peach Tree Productions', c: '2019' }, indicator2: '0'),
          marc_field(tag: '264', subfields: { a: 'Nowhere', b: 'Wasteland Publishing', c: '1999' }, indicator2: '1')]
       end
 
-      it 'contains the expected search field values for a single author work' do
-        values = helper.apa_citation_text(record)
-        expect(values).to include('Surname, N., Hamilton, A., Lincoln, A., Einstein, A., Franklin, B., &amp; Dickens, C.',
-                                  '(2010).',
-                                  '<i>Title Subtitle</i>',
-                                  '5th Edition Remastered.',
-                                  'Nowhere Wasteland Publishing 1999')
+      it 'contains the APA citation text' do
+        expect(helper.apa_citation_text(record)).to include(
+          'Surname, N., Hamilton, A., Lincoln, A., Einstein, A., Franklin, B., &amp; Dickens, C.',
+          '(1999).', '<i>Title Subtitle</i>', '5th Edition Remastered.',
+          'Nowhere Wasteland Publishing'
+        )
       end
     end
   end
 
   describe '.chicago_citation_text' do
-
     let(:record) { marc_record fields: fields }
 
     context 'with multiple author records' do
@@ -95,21 +92,17 @@ describe 'PennMARC::Creator' do
          marc_field(tag: '250', subfields: { a: '5th Edition', b: 'Remastered' }),
          marc_control_field(tag: '008', value: '130827s2010 nyu o 000 1 eng d'),
          marc_field(tag: '245', subfields: { a: 'Title', b: 'Subtitle', c: 'Responsibility', h: 'Medium' }),
-         marc_field(tag: '264', subfields: { a: 'Leeds', b: 'Peepal Tree Productions', c: '2019' }, indicator2: '0'),
+         marc_field(tag: '264', subfields: { a: 'Leeds', b: 'Peach Tree Productions', c: '2019' }, indicator2: '0'),
          marc_field(tag: '264', subfields: { a: 'Nowhere', b: 'Wasteland Publishing', c: '1999' }, indicator2: '1')]
       end
 
-      it 'contains the expected search field values for a single author work' do
-        expect(helper.chicago_citation_text(record)).to include('Surname, Name, Alex Hamilton, and Abraham Lincoln.',
-                                                                '<i>Title Subtitle</i>',
-                                                                'Translated by Albert Einstein',
-                                                                'Edited by Ben Franklin',
-                                                                'Compiled by Charles Dickens.',
-                                                                '5th Edition Remastered.',
-                                                                'Nowhere Wasteland Publishing 1999')
+      it 'contains the Chicago citation text' do
+        expect(helper.chicago_citation_text(record)).to include(
+          'Surname, Name, Alex Hamilton, and Abraham Lincoln.', '<i>Title Subtitle</i>',
+          'Translated by Albert Einstein', 'Edited by Ben Franklin', 'Compiled by Charles Dickens.',
+          '5th Edition Remastered.', 'Nowhere Wasteland Publishing 1999'
+        )
       end
     end
   end
 end
-
-

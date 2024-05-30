@@ -1,48 +1,25 @@
 # frozen_string_literal: true
 
-# Export the record for citations: MLA, APA and Chicago
-
 module PennMARC
-
+  # Export the record for citations: MLA, APA and Chicago
   class Export < Helper
     class << self
-
       def mla_citation_text(record)
         text = ''
-        authors_final = []
 
         # Authors
-        authors = Creator.authors_list(record)
-        unless authors.blank?
-          if authors.length < 4
-            authors.each do |l|
-              if l == authors.first # first
-                authors_final.push(l)
-              elsif l == authors.last # last
-                authors_final.push(", and #{name_reverse(l)}.")
-              else # all others
-                authors_final.push(", #{name_reverse(l)}")
-              end
-            end
-            text += authors_final.join
-            unless text.blank?
-              text += text.last == '.' ? ' ' : '. '
-            end
-          else
-            text += "#{authors.first}, et al. "
-          end
-        end
+        text += format_authors(Creator.authors_list(record))
 
         # Title
         title = Title.show(record)
         text += "<i>#{title}</i> " unless title.nil?
 
         # Edition
-        edition = Edition.values(record)
+        edition = Edition.show(record).join
         text += "#{edition}. " unless edition.nil?
 
         # Publication
-        publication = Production.publication_values(record)[0]
+        publication = Production.publication_show(record).join
         text + publication.to_s unless publication.nil?
       end
 
@@ -53,41 +30,59 @@ module PennMARC
         # Authors with first name initial
         authors = Creator.authors_list(record, first_initial_only: true)
         authors.each do |l|
-          if l == authors.first # first
-            authors_list_final.push(l.strip)
-          elsif l == authors.last # last
-            authors_list_final.push(", &amp; #{l.strip}")
-          else # all others
-            authors_list_final.push(", #{l.strip}")
-          end
+          author_text = if l == authors.first # first
+                          l.strip
+                        elsif l == authors.last # last
+                          ", &amp; #{l.strip}"
+                        else # all others
+                          ", #{l.strip}"
+                        end
+          authors_list_final.push(author_text)
         end
         text += authors_list_final.join
         unless text.blank?
           text += text.last == '.' ? ' ' : '. '
         end
 
+        # Publisher info
+        publisher = Production.publication_show(record).join
+
+        # if it ends with a year, try to remove it, and use the year for publication year
+        publication_parts = publisher.split
+        pub_year = publication_parts.last
+
+        int_pub_year = nil
+        if !pub_year.nil? && pub_year.length == 4
+          int_pub_year = begin
+            Integer pub_year
+          rescue StandardError
+            nil
+          end
+        end
+
+        if int_pub_year.nil?
+          pub_year = Date.publication(record).year
+        else
+          publication_parts.pop
+          publisher = publication_parts.join(' ')
+        end
+
         # Pub Date
-        pub_date = Date.publication(record).year
-        text += "(#{pub_date}). " unless pub_date.nil?
+        text += "(#{pub_year}). " unless pub_year.nil?
 
         # Title
         title = Title.show(record)
         text += "<i>#{title}</i> " unless title.nil?
 
         # Edition
-        edition = Edition.values(record)
+        edition = Edition.show(record).join
         text += "#{edition}. " unless edition.nil?
 
-        # Publisher info
-        publisher = Production.publication_values(record)[0]
-        text += publisher.to_s unless publisher.nil?
-
-        text
+        text + publisher.to_s unless publisher.nil?
       end
 
       def chicago_citation_text(record)
         text = ''
-        authors_final = []
 
         contributors = Creator.contributors_list(record, include_authors: true)
 
@@ -96,25 +91,7 @@ module PennMARC
         editors = contributors['Editor']
         compilers = contributors['Compiler']
 
-        unless authors.blank?
-          if authors.length < 4
-            authors.each do |l|
-              if l == authors.first # first
-                authors_final.push(l)
-              elsif l == authors.last # last
-                authors_final.push(", and #{name_reverse(l)}.")
-              else # all others
-                authors_final.push(", #{name_reverse(l)}")
-              end
-            end
-            text += authors_final.join
-            unless text.blank?
-              text += text.last == '.' ? ' ' : '. '
-            end
-          else
-            text += "#{authors.first}, et al. "
-          end
-        end
+        text += format_authors(authors)
 
         # Title
         title = Title.show(record).to_s
@@ -122,27 +99,65 @@ module PennMARC
 
         additional_title = ''
         if !authors.blank? && (!translators.blank? || !editors.blank? || !compilers.blank?)
-          additional_title += "Translated by #{translators.collect { |name| name_reverse(name) }.join(' and ')}. " unless translators.blank?
-          additional_title += "Edited by #{editors.collect { |name| name_reverse(name) }.join(' and ')}. " unless editors.blank?
-          additional_title += "Compiled by #{compilers.collect { |name| name_reverse(name) }.join(' and ')}. " unless compilers.blank?
+          unless translators.blank?
+            additional_title += "Translated by #{translators.collect { |name|
+                                                   name_reverse(name)
+                                                 }.join(' and ')}. "
+          end
+          unless editors.blank?
+            additional_title += "Edited by #{editors.collect { |name|
+                                               name_reverse(name)
+                                             }.join(' and ')}. "
+          end
+          unless compilers.blank?
+            additional_title += "Compiled by #{compilers.collect { |name|
+                                                 name_reverse(name)
+                                               }.join(' and ')}. "
+          end
         end
 
         text += additional_title unless additional_title.blank?
 
         # Edition
-        edition = Edition.values(record)
+        edition = Edition.show(record).join
         text += "#{edition}. " unless edition.nil?
-        
+
         # Publication
-        publication = Production.publication_values(record)[0]
+        publication = Production.publication_show(record).join
         text + publication.to_s unless publication.nil?
       end
 
       private
 
+      def format_authors(authors)
+        text = ''
+        authors_final = []
+
+        if authors.length >= 4
+          text += "#{authors.first}, et al. "
+        else
+          authors.each do |aut|
+            author_text = if aut == authors.first # first
+                            aut
+                          elsif aut == authors.last # last
+                            ", and #{name_reverse(aut)}."
+                          else # all others
+                            ", #{name_reverse(aut)}"
+                          end
+            authors_final.push(author_text)
+          end
+          text += authors_final.join
+          unless text.blank?
+            text += text.last == '.' ? ' ' : '. '
+          end
+        end
+
+        text
+      end
+
       def name_reverse(name)
         name = clean_end_punctuation(name)
-        return name if name == ', ' || !(name =~ /,/)
+        return name if name == ', ' || !name.include?(',')
 
         temp_name = name.split(', ')
         "#{temp_name.last} #{temp_name.first}"

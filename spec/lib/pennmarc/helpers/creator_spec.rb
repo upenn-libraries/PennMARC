@@ -116,7 +116,7 @@ describe 'PennMARC::Creator' do
         [marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345', d: '1900-2000',
                                              e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
          marc_field(tag: '100', subfields: { a: 'Second, NameX', '0': 'http://cool.uri/12345', d: '1901-2010',
-                                              e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
+                                             e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
          marc_field(tag: '700', subfields: { a: 'Surname, Alternative', '6': '100', d: '1970-' })]
       end
 
@@ -141,8 +141,7 @@ describe 'PennMARC::Creator' do
                                              e: 'translator' }),
          marc_field(tag: '700', subfields: { a: 'Franklin, Ben', '6': '100', d: '1970-', '4': 'edt' }),
          marc_field(tag: '710', subfields: { a: 'Jefferson, Thomas', '6': '100', d: '1870-', '4': 'edt' }),
-         marc_field(tag: '700', subfields: { a: 'Dickens, Charles', '6': '100', d: '1970-', '4': 'com' })
-        ]
+         marc_field(tag: '700', subfields: { a: 'Dickens, Charles', '6': '100', d: '1970-', '4': 'com' })]
       end
 
       it 'returns single author values with no URIs anywhere' do
@@ -153,7 +152,6 @@ describe 'PennMARC::Creator' do
                                           ['Translator', ['Einstein, Albert']]
       end
     end
-
   end
 
   describe '.show_aux' do
