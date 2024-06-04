@@ -64,7 +64,9 @@ module PennMARC
         }.uniq
       end
 
-      # Show only the primary and secondary authors without dates - to be used for MLA and APA citations
+      # Returns the list of authors with name (subfield $a) only
+      # @param [MARC::Record] record
+      # @param [Boolean] first_initial_only: true to only use the first initial instead of first name
       def authors_list(record, first_initial_only: false)
         tags = %w[100 700].freeze
         fields = record.fields(tags)
@@ -77,7 +79,13 @@ module PennMARC
         }.uniq
       end
 
-      # Show the authors and contributors grouped together by roles with only names, and roles
+      # Show the authors and contributors grouped together by relators with only names
+      # @param [MARC::Record] record
+      # @param [Hash] relator_map
+      # @param [Boolean] include_authors: true to include author fields TAGS
+      # @param [Boolean] name_only: true to include only the name subfield $a
+      # @param [Boolean] vernacular: true to include field 880 with subfield $6
+      # @return [Hash]
       def contributors_list(record, relator_map: Mappers.relator, include_authors: true, name_only: true, vernacular: false)
         indicator_2_options = ['', ' ', '0']
 
@@ -313,6 +321,7 @@ module PennMARC
       end
 
       # Convert "Lastname, First" to "Lastname, F"
+      # @param [String] name
       def abbreviate_name(name)
         name_parts = name.split(', ')
         return '' if name_parts.empty?
