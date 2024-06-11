@@ -89,6 +89,30 @@ module PennMARC
         values.compact_blank.uniq
       end
 
+      # Retrieve publication values for citation
+      # {https://www.oclc.org/bibformats/en/2xx/245.html 245},
+      # {https://www.oclc.org/bibformats/en/2xx/260.html 260}-262 and their linked alternates,
+      # and {https://www.oclc.org/bibformats/en/2xx/264.html 264} and its linked alternate.
+      # @param [MARC::Record] record
+      # @return [Array<String>]
+      def publication_citation_show(record, with_year: true)
+        values = record.fields('245').first(1).flat_map { |field| subfield_values(field, 'f') }
+
+        values += record.fields(%w[260 261 262]).first(1).map do |field|
+          join_subfields(field, &subfield_not_in?(%w[6 8]))
+        end
+
+        subfields = %w[a b]
+        subfields = %w[a b c] if with_year
+        values += record.fields('264').filter_map do |field|
+          next unless field.indicator2 == '1'
+
+          join_subfields(field, &subfield_in?(subfields))
+        end
+
+        values.compact_blank.uniq
+      end
+
       # Retrieve place of publication for display from {https://www.oclc.org/bibformats/en/7xx/752.html 752 field} and
       # its linked alternate.
       # @note legacy version returns array of hash objects including data for display link

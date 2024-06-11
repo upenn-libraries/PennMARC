@@ -67,9 +67,9 @@ module PennMARC
       # Returns the list of authors with name (subfield $a) only
       # @param [MARC::Record] record
       # @param [Boolean] first_initial_only: true to only use the first initial instead of first name
+      # @return [Array<String>] names of the authors
       def authors_list(record, first_initial_only: false)
-        tags = %w[100 700].freeze
-        fields = record.fields(tags)
+        fields = record.fields(TAGS)
         fields.filter_map { |field|
           if first_initial_only
             abbreviate_name(field['a']) if field['a']
@@ -88,9 +88,7 @@ module PennMARC
       # @return [Hash]
       def contributors_list(record, relator_map: Mappers.relator, include_authors: true, name_only: true, vernacular: false)
         indicator_2_options = ['', ' ', '0']
-
         tags = CONTRIBUTOR_TAGS
-        tags += TAGS if include_authors
 
         fields = record.fields(tags)
         fields += record.fields('880').select { |field| subfield_value_in?(field, '6', CONTRIBUTOR_TAGS) } if vernacular
@@ -102,6 +100,7 @@ module PennMARC
 
           relator = relator(field: field, relator_term_sf: 'e', relator_map: relator_map)
           relator = 'Contributor' if relator.blank?
+          relator = trim_punctuation(relator).capitalize
 
           name = if name_only
                    field['a']
@@ -113,6 +112,16 @@ module PennMARC
             contributors[relator].push(name)
           else
             contributors[relator] = [name]
+          end
+        end
+
+        # add the authors
+        if include_authors
+          authors = authors_list(record)
+          if contributors.key?('Author')
+            contributors['Author'] += authors
+          else
+            contributors['Author'] = authors
           end
         end
 

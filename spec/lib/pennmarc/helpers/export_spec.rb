@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-describe 'PennMARC::Creator' do
+describe 'PennMARC::Export' do
   include MarcSpecHelpers
 
   let(:helper) { PennMARC::Export }
@@ -8,7 +8,7 @@ describe 'PennMARC::Creator' do
   describe '.mla_citation_text' do
     let(:record) { marc_record fields: fields }
 
-    context 'with a single author record' do
+    context 'with multiple author records' do
       let(:fields) do
         [marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345',
                                              e: 'author', d: '1900-2000', '4': 'aut' }),
@@ -31,8 +31,8 @@ describe 'PennMARC::Creator' do
 
       it 'contains the MLA citation text' do
         values = helper.mla_citation_text(record)
-        expect(values).to include('Surname, Name, et al.',
-                                  '<i>Title Subtitle</i>',
+        expect(values).to include('Surname, Name, and Alex Hamilton.',
+                                  '<i>Title Subtitle. </i>',
                                   '5th Edition Remastered.',
                                   'Nowhere Wasteland Publishing 1999')
       end
@@ -42,7 +42,7 @@ describe 'PennMARC::Creator' do
   describe '.apa_citation_text' do
     let(:record) { marc_record fields: fields }
 
-    context 'with multiple author record' do
+    context 'with multiple author records' do
       let(:fields) do
         [marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345',
                                              e: 'author', d: '1900-2000', '4': 'aut' }),
@@ -65,8 +65,8 @@ describe 'PennMARC::Creator' do
 
       it 'contains the APA citation text' do
         expect(helper.apa_citation_text(record)).to include(
-          'Surname, N., Hamilton, A., Lincoln, A., Einstein, A., Franklin, B., &amp; Dickens, C.',
-          '(1999).', '<i>Title Subtitle</i>', '5th Edition Remastered.',
+          'Surname, N., &amp; Hamilton, A.',
+          '<i>Title Subtitle. </i>', '5th Edition Remastered.', '(2010)',
           'Nowhere Wasteland Publishing'
         )
       end
@@ -98,7 +98,7 @@ describe 'PennMARC::Creator' do
 
       it 'contains the Chicago citation text' do
         expect(helper.chicago_citation_text(record)).to include(
-          'Surname, Name, Alex Hamilton, and Abraham Lincoln.', '<i>Title Subtitle</i>',
+          'Lincoln, Abraham, Name Surname, and Alex Hamilton', '<i>Title Subtitle. </i>',
           'Translated by Albert Einstein', 'Edited by Ben Franklin', 'Compiled by Charles Dickens.',
           '5th Edition Remastered.', 'Nowhere Wasteland Publishing 1999'
         )
