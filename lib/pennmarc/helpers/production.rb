@@ -98,8 +98,10 @@ module PennMARC
       def publication_citation_show(record, with_year: true)
         values = record.fields('245').first(1).flat_map { |field| subfield_values(field, 'f') }
 
+        subfields = %w[6 8]
+        subfields = %w[6 8 c] unless with_year
         values += record.fields(%w[260 261 262]).first(1).map do |field|
-          join_subfields(field, &subfield_not_in?(%w[6 8]))
+          join_subfields(field, &subfield_not_in?(subfields))
         end
 
         subfields = %w[a b]

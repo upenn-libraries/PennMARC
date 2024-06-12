@@ -69,7 +69,7 @@ module PennMARC
       # @param [Boolean] first_initial_only: true to only use the first initial instead of first name
       # @return [Array<String>] names of the authors
       def authors_list(record, first_initial_only: false)
-        fields = record.fields(TAGS)
+        fields = record.fields(TAGS + CONTRIBUTOR_TAGS)
         fields.filter_map { |field|
           if first_initial_only
             abbreviate_name(field['a']) if field['a']
