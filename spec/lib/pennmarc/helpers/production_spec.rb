@@ -195,6 +195,7 @@ describe 'PennMARC::Production' do
                                                 'Leeds Peepal Tree Press')
     end
   end
+
   describe 'place_of_publication_show' do
     let(:record) { marc_record fields: fields }
 

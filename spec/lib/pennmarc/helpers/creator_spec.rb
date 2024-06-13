@@ -107,7 +107,7 @@ describe 'PennMARC::Creator' do
 
       it 'returns single author values with no URIs anywhere' do
         values = helper.authors_list(record)
-        expect(values).to contain_exactly 'Surname, Name'
+        expect(values).to contain_exactly 'Surname, Name', 'Surname, Alternative'
       end
     end
 
@@ -122,7 +122,7 @@ describe 'PennMARC::Creator' do
 
       it 'returns single author values with no URIs anywhere' do
         values = helper.authors_list(record, first_initial_only: true)
-        expect(values).to contain_exactly 'Surname, A.', 'Second, N.'
+        expect(values).to contain_exactly 'Surname, A.', 'Second, N.', 'Alt, A.'
       end
     end
   end
@@ -173,12 +173,12 @@ describe 'PennMARC::Creator' do
         values = helper.contributors_list(record, include_authors: false, name_only: false, vernacular: true)
         expect(values).to contain_exactly ['Compiler', ['Dickens, Charles 1970-, Compiler', '狄更斯 1970-, Compiler']],
                                           ['Contributor', ['Twain, Mark 1870-, Contributor']],
-                                          ['Editor', ['Franklin, Ben 1970-, Editor', 'Jefferson, Thomas 1870-, Editor']],
+                                          ['Editor',
+                                           ['Franklin, Ben 1970-, Editor', 'Jefferson, Thomas 1870-, Editor']],
                                           ['Translator', ['Einstein, Albert 1970-, Translator']]
       end
     end
   end
-
 
   describe '.show_aux' do
     let(:record) { marc_record fields: fields }

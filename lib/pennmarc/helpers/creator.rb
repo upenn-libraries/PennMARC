@@ -66,10 +66,17 @@ module PennMARC
 
       # Returns the list of authors with name (subfield $a) only
       # @param [MARC::Record] record
+      # @param [Boolean] main_tags_only, if true, only use TAGS; otherwise use both TAGS and CONTRIBUTOR_TAGS
       # @param [Boolean] first_initial_only: true to only use the first initial instead of first name
       # @return [Array<String>] names of the authors
-      def authors_list(record, first_initial_only: false)
-        fields = record.fields(TAGS + CONTRIBUTOR_TAGS)
+      def authors_list(record, main_tags_only: false, first_initial_only: false)
+        tags = if main_tags_only
+                 TAGS
+               else
+                 TAGS + CONTRIBUTOR_TAGS
+               end
+
+        fields = record.fields(tags)
         fields.filter_map { |field|
           if first_initial_only
             abbreviate_name(field['a']) if field['a']
@@ -86,7 +93,8 @@ module PennMARC
       # @param [Boolean] name_only: true to include only the name subfield $a
       # @param [Boolean] vernacular: true to include field 880 with subfield $6
       # @return [Hash]
-      def contributors_list(record, relator_map: Mappers.relator, include_authors: true, name_only: true, vernacular: false)
+      def contributors_list(record, relator_map: Mappers.relator, include_authors: true, name_only: true,
+                            vernacular: false)
         indicator_2_options = ['', ' ', '0']
         tags = CONTRIBUTOR_TAGS
 
@@ -117,7 +125,7 @@ module PennMARC
 
         # add the authors
         if include_authors
-          authors = authors_list(record)
+          authors = authors_list(record, main_tags_only: true)
           if contributors.key?('Author')
             contributors['Author'] += authors
           else
