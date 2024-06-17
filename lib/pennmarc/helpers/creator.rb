@@ -21,6 +21,12 @@ module PennMARC
 
       CONTRIBUTOR_TAGS = %w[700 710].freeze
 
+      FACET_SOURCE_MAP = {
+        100 => 'abcdjq', 110 => 'abcdjq', 111 => 'abcen',
+        700 => 'abcdjq', 710 => 'abcdjq', 711 => 'abcen',
+        800 => 'abcdjq', 810 => 'abcdjq', 811 => 'abcen'
+      }.freeze
+
       # Author/Creator search field. Includes all subfield values (even ǂ0 URIs) from
       # {https://www.oclc.org/bibformats/en/1xx/100.html 100 Main Entry--Personal Name} and
       # {https://www.oclc.org/bibformats/en/1xx/110.html 110 Main Entry--Corporate Name}. Maps any relator codes found
@@ -64,6 +70,20 @@ module PennMARC
         }.uniq
       end
 
+      # Hash with main creator names as the fields and the corresponding facet as the values
+      # @param [MARC::Record] record
+      # @param [Hash] relator_map
+      # @return [Hash]
+      def show_facet_map(record, relator_map: Mappers.relator)
+        creators = record.fields(TAGS).filter_map do |field|
+          creator = join_subfields(field, &subfield_not_in?(%w[0 1 4 6 8 e w]))
+          show = append_relator(field: field, joined_subfields: creator, relator_term_sf: 'e', relator_map: relator_map)
+          facet = trim_punctuation(join_subfields(field, &subfield_in?(FACET_SOURCE_MAP[field.tag.to_i].chars)))
+          { show: show, facet: facet }
+        end
+        creators.to_h { |h| [h[:show], h[:facet]] }
+      end
+
       # All author/creator values for display (like #show, but multivalued?) - no 880 linkage
       # Performs additional normalization of author names
       # @note ported from get_author_creator_values (indexed as author_creator_a) - shown on results page
@@ -94,12 +114,7 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>] array of author/creator values for faceting
       def facet(record)
-        source_map = {
-          100 => 'abcdjq', 110 => 'abcdjq', 111 => 'abcen',
-          700 => 'abcdjq', 710 => 'abcdjq', 711 => 'abcen',
-          800 => 'abcdjq', 810 => 'abcdjq', 811 => 'abcen'
-        }
-        source_map.flat_map { |field_num, subfields|
+        FACET_SOURCE_MAP.flat_map { |field_num, subfields|
           record.fields(field_num.to_s).map do |field|
             trim_punctuation(join_subfields(field, &subfield_in?(subfields.chars)))
           end
@@ -126,15 +141,7 @@ module PennMARC
         conferences = record.fields(%w[111 711]).filter_map do |field|
           next unless field.indicator2.in? ['', ' ']
 
-          conf = if subfield_undefined? field, 'i'
-                   join_subfields field, &subfield_not_in?(%w[0 4 5 6 8 e j w])
-                 else
-                   ''
-                 end
-          sub_unit = join_subfields(field, &subfield_in?(%w[e w]))
-          conf = [conf, sub_unit].compact_blank.join(' ')
-
-          append_relator(field: field, joined_subfields: conf, relator_term_sf: 'j', relator_map: relator_map)
+          conference_detail_value(field, relator_map: relator_map)
         end
         conferences += record.fields('880').filter_map do |field|
           next unless subfield_value? field, '6', /^(111|711)/
@@ -148,6 +155,22 @@ module PennMARC
           append_relator(field: field, joined_subfields: conf, relator_term_sf: 'j', relator_map: relator_map)
         end
         conferences.uniq
+      end
+
+      # Hash with detailed conference names as the fields and the corresponding facets as the values.
+      # @param [MARC::Record] record
+      # @param [Hash] relator_map
+      # @return [Hash]
+      def conference_detail_show_facet_map(record, relator_map: Mappers.relator)
+        conferences = record.fields(%w[111 711]).filter_map do |field|
+          next unless field.indicator2.in? ['', ' ']
+
+          show = conference_detail_value(field, relator_map: relator_map)
+          facet = trim_punctuation(join_subfields(field, &subfield_in?(FACET_SOURCE_MAP[field.tag.to_i].chars)))
+          { show: show, facet: facet }
+        end
+
+        conferences.to_h { |conf| [conf[:show], conf[:facet]] }
       end
 
       # Conference name values for searching
@@ -263,6 +286,22 @@ module PennMARC
         after_comma = join_and_squish([trim_trailing(:comma, substring_after(name, ', '))])
         before_comma = substring_before(name, ', ')
         "#{after_comma} #{before_comma}".squish
+      end
+
+      # Retrieve conference values for record display from {https://www.loc.gov/marc/bibliographic/bd111.html 111}
+      # and {https://www.loc.gov/marc/bibliographic/bd711.html 711}. Does not include 880s.
+      # @param [MARC::Field] field
+      # @return [String]
+      def conference_detail_value(field, relator_map: Mappers.relator)
+        conf = if subfield_undefined? field, 'i'
+                 join_subfields field, &subfield_not_in?(%w[0 4 5 6 8 e j w])
+               else
+                 ''
+               end
+        sub_unit = join_subfields(field, &subfield_in?(%w[e w]))
+        conf = [conf, sub_unit].compact_blank.join(' ')
+
+        append_relator(field: field, joined_subfields: conf, relator_term_sf: 'j', relator_map: relator_map)
       end
     end
   end
