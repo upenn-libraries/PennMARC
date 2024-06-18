@@ -95,6 +95,23 @@ describe 'PennMARC::Creator' do
     end
   end
 
+  describe '.show_facet_map' do
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345', d: '1900-2000',
+                                            e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
+        marc_field(tag: '110', subfields: { a: 'Group of People', b: 'Annual Meeting', '4': 'aut' }),
+        marc_field(tag: '880', subfields: { a: 'Ignore', '6': '100' })
+      ]
+    end
+
+    it 'returns expected hash' do
+      values = helper.show_facet_map(record, relator_map: mapping)
+      expect(values).to eq({ 'Surname, Name 1900-2000, author.' => 'Surname, Name 1900-2000',
+                             'Group of People Annual Meeting, Author.' => 'Group of People Annual Meeting' })
+    end
+  end
+
   describe '.show_aux' do
     let(:record) { marc_record fields: fields }
 
@@ -254,6 +271,22 @@ describe 'PennMARC::Creator' do
         'MARC History Symposium Moscow Advisory Committee, Author.',
         'Russian Library Conference, author.', 'Proceedings', 'Opening Remarks, Author.'
       )
+    end
+  end
+
+  describe '.conference_detail_show_facet_map' do
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '111', subfields: { a: 'Council of Trent', d: '(1545-1563 :', c: 'Trento, Italy)' }),
+        marc_field(tag: '711', subfields: { a: 'Code4Lib', n: '(18th :', d: '2024 :', c: 'Ann Arbor, MI)' }),
+        marc_field(tag: '880', subfields: { a: 'Alt Ignore', '6': '111' })
+      ]
+    end
+
+    it 'returns the expected hash' do
+      value = helper.conference_detail_show_facet_map(record)
+      expect(value).to eq({ 'Council of Trent (1545-1563 : Trento, Italy)' => 'Council of Trent Trento, Italy)',
+                            'Code4Lib (18th : 2024 : Ann Arbor, MI)' => 'Code4Lib (18th : Ann Arbor, MI)' })
     end
   end
 
