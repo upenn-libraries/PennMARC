@@ -180,6 +180,23 @@ describe 'PennMARC::Creator' do
     end
   end
 
+  describe '.show_facet_map' do
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345', d: '1900-2000',
+                                            e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
+        marc_field(tag: '110', subfields: { a: 'Group of People', b: 'Annual Meeting', '4': 'aut' }),
+        marc_field(tag: '880', subfields: { a: 'Ignore', '6': '100' })
+      ]
+    end
+
+    it 'returns expected hash' do
+      values = helper.show_facet_map(record, relator_map: mapping)
+      expect(values).to eq({ 'Surname, Name 1900-2000, author.' => 'Surname, Name 1900-2000',
+                             'Group of People Annual Meeting, Author.' => 'Group of People Annual Meeting' })
+    end
+  end
+
   describe '.show_aux' do
     let(:record) { marc_record fields: fields }
 

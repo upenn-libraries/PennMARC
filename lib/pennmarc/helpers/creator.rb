@@ -64,6 +64,20 @@ module PennMARC
         }.uniq
       end
 
+      # Hash with main creator show values as the fields and the corresponding facet as the values.
+      # Does not include linked 880s.
+      # @param [MARC::Record] record
+      # @param [Hash] relator_map
+      # @return [Hash]
+      def show_facet_map(record, relator_map: Mappers.relator)
+        creators = record.fields(TAGS).filter_map do |field|
+          show = parse_show_value(field, relator_map: relator_map)
+          facet = parse_facet_value(field, FACET_SOURCE_MAP[field.tag.to_i].chars)
+          { show: show, facet: facet }
+        end
+        creators.to_h { |h| [h[:show], h[:facet]] }
+      end
+
       # Returns the list of authors with name (subfield $a) only
       # @param [MARC::Record] record
       # @param [Boolean] main_tags_only, if true, only use TAGS; otherwise use both TAGS and CONTRIBUTOR_TAGS
@@ -132,7 +146,6 @@ module PennMARC
             contributors['Author'] = authors
           end
         end
-
         contributors
       end
 
@@ -348,6 +361,40 @@ module PennMARC
         first_name_parts.shift
         temp_name += " #{first_name_parts.join(' ')}" unless first_name_parts.empty?
         temp_name
+      end
+
+      # Parse creator facet value from given creator field and desired subfields
+      # @param [MARC::Field] field
+      # @param [Array<String>] subfields
+      # @return [String]
+      def parse_facet_value(field, subfields)
+        trim_punctuation(join_subfields(field, &subfield_in?(subfields)))
+      end
+
+      # Parse creator show value from given main creator fields (100/110).
+      # @param [MARC::Field] field
+      # @param [Hash] relator_map
+      # @return [String]
+      def parse_show_value(field, relator_map: Mappers.relator)
+        creator = join_subfields(field, &subfield_not_in?(%w[0 1 4 6 8 e w]))
+        append_relator(field: field, joined_subfields: creator, relator_term_sf: 'e', relator_map: relator_map)
+      end
+
+      # Parse detailed conference show value from given conference field (111/711). If there is no $i, we join subfield
+      # values other than $0, $4, $5, $6, $8, $e, $j, and $w to create conference value. We join subfields $e and $w to
+      # determine the subunit value. We append any relators, preferring those defined in $4 and using $j as a fallback.
+      # @param [MARC::Field] field
+      # @return [String]
+      def parse_conference_detail_show_value(field, relator_map: Mappers.relator)
+        conf = if subfield_undefined? field, 'i'
+                 join_subfields field, &subfield_not_in?(%w[0 4 5 6 8 e j w])
+               else
+                 ''
+               end
+        sub_unit = join_subfields(field, &subfield_in?(%w[e w]))
+        conf = [conf, sub_unit].compact_blank.join(' ')
+
+        append_relator(field: field, joined_subfields: conf, relator_term_sf: 'j', relator_map: relator_map)
       end
     end
   end
