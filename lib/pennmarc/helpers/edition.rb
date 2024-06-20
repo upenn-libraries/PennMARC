@@ -46,7 +46,7 @@ module PennMARC
           other_edition_value(field, relator_map)
         end
         editions = values + record.fields('880').filter_map do |field|
-          next unless field.indicator2.blank? && subfield_value_in?(field, '6', %w[775]) &&
+          next unless field.indicator2.blank? && subfield_value?(field, '6', /^775/) &&
                       subfield_defined?(field, 'i')
 
           other_edition_value(field, relator_map)

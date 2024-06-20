@@ -203,7 +203,9 @@ describe 'PennMARC::Title' do
         marc_field(tag: '730', indicator2: '', subfields: { a: 'Yet Another Uniform Title' }),
         marc_field(tag: '730', indicator1: '0', indicator2: '2', subfields: { a: 'Not Printed Title' }),
         marc_field(tag: '730', indicator1: '', subfields: { i: 'Subfield i Title' }),
-        marc_field(tag: '880', subfields: { '6': '240', a: 'Translated Uniform Title' })
+        marc_field(tag: '880', subfields: { '6': '240', a: 'Translated Uniform Title' }),
+        marc_field(tag: '880', subfields: { '6': '730', a: 'Alt Ignore', i: 'Alt Subfield i' }),
+        marc_field(tag: '880', subfields: { '6': '100', a: 'Alt Ignore' })
       ]
     end
 
@@ -212,7 +214,7 @@ describe 'PennMARC::Title' do
       expect(values).to contain_exactly(
         'Another Uniform Title', 'Translated Uniform Title', 'Uniform Title 2000', 'Yet Another Uniform Title'
       )
-      expect(values).not_to include 'Not Printed Title', 'Subfield i Title'
+      expect(values).not_to include 'Not Printed Title', 'Subfield i Title', 'Alt Ignore'
     end
   end
 

@@ -46,6 +46,16 @@ module PennMARC
       field&.any? { |sf| sf.code == subfield.to_s && sf.value =~ regex }
     end
 
+    # returns true if field has no value that matches
+    # passed-in regex and passed in subfield
+    # @param [MARC::DataField] field
+    # @param [String|Integer|Symbol] subfield
+    # @param [Regexp] regex
+    # @return [TrueClass, FalseClass, nil]
+    def no_subfield_value_matches?(field, subfield, regex)
+      field&.none? { |sf| sf.code == subfield.to_s && sf.value =~ regex }
+    end
+
     # returns true if a given field has a given subfield value in a given array
     # TODO: example usage
     # @param [MARC:DataField] field
@@ -161,7 +171,7 @@ module PennMARC
     # @return [Array] array of linked alternates
     def linked_alternate(record, subfield6_value, &selector)
       record.fields('880').filter_map do |field|
-        next unless subfield_value?(field, '6', /^#{Array.wrap(subfield6_value).join('|')}/)
+        next unless subfield_value?(field, '6', /^(#{Array.wrap(subfield6_value).join('|')})/)
 
         field.select(&selector).map(&:value).join(' ')
       end
@@ -251,7 +261,7 @@ module PennMARC
       record.fields(%w[650 880]).filter_map { |field|
         next unless field.indicator2 == '4'
 
-        next if field.tag == '880' && subfield_values(field, '6').exclude?('650')
+        next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^650/)
 
         next unless field.any? { |sf| sf.code == 'a' && sf.value =~ /^(#{prefix}|%#{prefix})/ }
 
@@ -275,7 +285,7 @@ module PennMARC
     # @return [TrueClass, FalseClass]
     def field_or_its_linked_alternate?(field, tags)
       return true if field.tag.in? tags
-      return true if field.tag == '880' && subfield_value_in?(field, '6', tags)
+      return true if field.tag == '880' && subfield_value?(field, '6', /^(#{tags.join('|')})/)
 
       false
     end

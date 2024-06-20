@@ -17,7 +17,7 @@ module PennMARC
       def notes_show(record)
         notes_fields = %w[500 502 504 515 518 525 533 540 550 580 586 588]
         record.fields(notes_fields + ['880']).filter_map { |field|
-          next if field.tag == '880' && subfield_value_not_in?(field, '6', notes_fields)
+          next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^(#{notes_fields.join('|')})/)
 
           join_subfields(field, &subfield_not_in?(%w[5 6 8]))
         }.uniq
@@ -39,7 +39,7 @@ module PennMARC
         additional_fields = %w[562 563 585 590]
 
         notes = local_notes + record.fields(additional_fields + ['880']).filter_map do |field|
-          next if field.tag == '880' && subfield_value_not_in?(field, '6', additional_fields)
+          next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^(#{additional_fields.join('|')})/)
 
           join_subfields(field, &subfield_not_in?(%w[5 6 8]))
         end
@@ -58,7 +58,7 @@ module PennMARC
 
           next unless field.indicator2.in?([' ', ''])
 
-          next if field.tag == '880' && subfield_value_not_in?(field, '6', %w[561])
+          next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^561/)
 
           next if subfield_value?(field, 'a', /^Athenaeum copy: /)
 
@@ -74,7 +74,7 @@ module PennMARC
       # @return [Array<String>]
       def contents_show(record)
         record.fields(%w[505 880]).filter_map { |field|
-          next if field.tag == '880' && subfield_value_not_in?(field, '6', %w[505])
+          next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^505/)
 
           join_subfields(field, &subfield_not_in?(%w[6 8])).split('--')
         }.flatten.uniq
@@ -144,22 +144,22 @@ module PennMARC
       # @return [Array<String>]
       def system_details_show(record)
         system_details_notes = record.fields(%w[538 880]).filter_map do |field|
-          next if field.tag == '880' && subfield_value_not_in?(field, '6', ['538'])
+          next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^538/)
 
           sub3_and_other_subs(field, &subfield_in?(%w[a i u]))
         end
         system_details_notes += record.fields(%w[344 880]).filter_map do |field|
-          next if field.tag == '880' && subfield_value_not_in?(field, '6', ['344'])
+          next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^344/)
 
           sub3_and_other_subs(field, &subfield_in?(%w[a b c d e f g h]))
         end
         system_details_notes += record.fields(%w[345 346 880]).filter_map do |field|
-          next if field.tag == '880' && subfield_value_not_in?(field, '6', %w[345 346])
+          next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^(345|346)/)
 
           sub3_and_other_subs(field, &subfield_in?(%w[a b]))
         end
         system_details_notes += record.fields(%w[347 880]).filter_map do |field|
-          next if field.tag == '880' && subfield_value_not_in?(field, '6', ['347'])
+          next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^347/)
 
           sub3_and_other_subs(field, &subfield_in?(%w[a b c d e f]))
         end

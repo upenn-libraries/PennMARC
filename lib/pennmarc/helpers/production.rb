@@ -122,7 +122,7 @@ module PennMARC
       # @return [Array<String>]
       def place_of_publication_show(record)
         record.fields(%w[752 880]).filter_map { |field|
-          next if field.tag == '880' && subfield_values(field, '6').exclude?('752')
+          next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^752/)
 
           place = join_subfields(field, &subfield_not_in?(%w[6 8 e w]))
           place_extra = join_subfields(field, &subfield_in?(%w[e w]))

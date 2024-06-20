@@ -8,14 +8,14 @@ module PennMARC
       # Publication date is a four-digit year found in position 7-10 and may contain 'u' characters to represent
       # partially known dates. We replace any occurrences of 'u' with '0' before converting to DateTime object.
       # @param [MARC::Record] record
-      # @return [DateTime, nil] The publication date, or nil if date found in record is invalid
+      # @return [Time, nil] The publication date, or nil if date found in record is invalid
       def publication(record)
         record.fields('008').filter_map { |field|
           four_digit_year = sanitize_partially_known_date(field.value[7, 4], '0')
 
           next if four_digit_year.blank?
 
-          DateTime.new(four_digit_year.to_i)
+          Time.new(four_digit_year.to_i)
         }.first
       end
 
@@ -23,7 +23,7 @@ module PennMARC
       # {PennMARC::Enriched} maps enriched marc fields and subfields created during Alma publishing. The enriched
       # metadata provided by the Alma API does not include the date created value, so we can't work with that here.
       # @param [MARC::Record] record
-      # @return [DateTime, nil] The date added, or nil if date found in record is invalid
+      # @return [Time, nil] The date added, or nil if date found in record is invalid
       def added(record)
         record.fields(Enriched::Pub::ITEM_TAG).flat_map { |field|
           subfield_values(field, Enriched::Pub::ITEM_DATE_CREATED).filter_map do |date_added|
@@ -34,9 +34,10 @@ module PennMARC
 
             format = date_added.size == 10 ? '%Y-%m-%d' : '%Y-%m-%d %H:%M:%S'
 
-            DateTime.strptime(date_added, format)
+            Time.strptime(date_added, format)
           rescue StandardError => e
-            puts "Error parsing date in date added subfield: #{date_added} - #{e}"
+            puts 'Error parsing date in date added subfield. ' \
+                 "mmsid: #{Identifier.mmsid(record)}, value: #{date_added}, error: #{e}"
             nil
           end
         }.max
@@ -46,7 +47,7 @@ module PennMARC
       # Date last updated is a sixteen character String recorded in
       # {https://www.iso.org/iso-8601-date-and-time-format.html ISO 8601} format.
       # @param [MARC::Record] record
-      # @return [DateTime, nil] The date last updated, or nil if date found in record is invalid
+      # @return [Time, nil] The date last updated, or nil if date found in record is invalid
       def last_updated(record)
         record.fields('005').filter_map { |field|
           begin
@@ -56,9 +57,10 @@ module PennMARC
 
             next if date_time_string.start_with?('0000')
 
-            DateTime.iso8601(date_time_string).to_datetime
-          rescue ArgumentError => e
-            puts "Error parsing last updated date: #{date_time_string} - #{e}"
+            Time.strptime(date_time_string, '%Y%m%d%H%M%S.%N')
+          rescue StandardError => e
+            puts 'Error parsing last updated date. ' \
+                 "mmsid: #{Identifier.mmsid(record)}, value: #{date_time_string}, error: #{e}"
             nil
           end
         }.first

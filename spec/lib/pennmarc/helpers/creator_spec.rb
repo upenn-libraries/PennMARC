@@ -359,6 +359,22 @@ describe 'PennMARC::Creator' do
     end
   end
 
+  describe '.conference_detail_show_facet_map' do
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '111', subfields: { a: 'Council of Trent', d: '(1545-1563 :', c: 'Trento, Italy)' }),
+        marc_field(tag: '711', subfields: { a: 'Code4Lib', n: '(18th :', d: '2024 :', c: 'Ann Arbor, MI)' }),
+        marc_field(tag: '880', subfields: { a: 'Alt Ignore', '6': '111' })
+      ]
+    end
+
+    it 'returns the expected hash' do
+      value = helper.conference_detail_show_facet_map(record)
+      expect(value).to eq({ 'Council of Trent (1545-1563 : Trento, Italy)' => 'Council of Trent Trento, Italy)',
+                            'Code4Lib (18th : 2024 : Ann Arbor, MI)' => 'Code4Lib (18th : Ann Arbor, MI)' })
+    end
+  end
+
   describe '.conference_search' do
     let(:record) do
       marc_record fields: [
