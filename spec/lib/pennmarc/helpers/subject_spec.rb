@@ -288,6 +288,22 @@ describe 'PennMARC::Subject' do
                                    'Early works to 1950.')
       end
     end
+
+    context 'with a mix of allowed and disallowed heading sources' do
+      let(:fields) do
+        [marc_field(tag: '650', indicator2: '7', subfields: {
+                      '2': 'fast',
+                      a: 'Philosophy in motion pictures.',
+                      '0': 'http://id.loc.gov/authorities/subjects/sh92003501'
+                    }),
+         marc_field(tag: '650', indicator2: '7', subfields: { '2': 'gnd', a: 'Filmästhetik.' }),
+         marc_field(tag: '650', indicator2: '6', subfields: { a: 'Cinéma et arts.' })]
+      end
+
+      it 'includes only permitted headings from approved ontologies' do
+        expect(values).to contain_exactly 'Philosophy in motion pictures.'
+      end
+    end
   end
 
   describe '.childrens_show' do

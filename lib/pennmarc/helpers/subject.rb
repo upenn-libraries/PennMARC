@@ -18,7 +18,7 @@ module PennMARC
       # - 2: MeSH
       # - 4: Source not specified (local?)
       # - 7: Source specified in ǂ2
-      SEARCH_SOURCE_INDICATORS = %w[0 1 2 4 7].freeze
+      VALID_SOURCE_INDICATORS = %w[0 1 2 4 7].freeze
 
       # Tags that serve as sources for Subject facet values
       DISPLAY_TAGS = %w[600 610 611 630 650 651].freeze
@@ -27,7 +27,7 @@ module PennMARC
       LOCAL_TAGS = %w[690 691 697].freeze
 
       # All Subjects for searching. This includes most subfield content from any field contained in {SEARCH_TAGS} or
-      # 69X, including any linked 880 fields. Fields must have an indicator2 value in {SEARCH_SOURCE_INDICATORS}.
+      # 69X, including any linked 880 fields. Fields must have an indicator2 value in {VALID_SOURCE_INDICATORS}.
       # @todo this includes subfields that may not be desired like 1 (uri) and 2 (source code) but this might be OK for
       #       a search (non-display) field?
       # @param [Hash] relator_map
@@ -179,11 +179,17 @@ module PennMARC
         end
       end
 
-      # Is a field intended for display in a general subject field
+      # Is a field intended for display in a general subject field? To be included, the field tag is in either
+      # {DISPLAY_TAGS} or {LOCAL_TAGS}, and have a indicator 2 value that is in {VALID_SOURCE_INDICATORS}. If
+      # indicator 2 is '7' - indicating "source specified", the specified source must be in our approved source code
+      # list.
+      # @see Util.valid_subject_genre_source_code?
       # @param [MARC::DataField] field
       # @return [Boolean] whether a MARC field is intended for display under general "Subjects"
       def subject_general_display_field?(field)
         return false unless field.tag.in?(DISPLAY_TAGS + LOCAL_TAGS) && field.respond_to?(:indicator2)
+
+        return false if field.indicator2.present? && !field.indicator2.in?(VALID_SOURCE_INDICATORS)
 
         return false if field.indicator2 == '7' && !valid_subject_genre_source_code?(field)
 
@@ -278,7 +284,7 @@ module PennMARC
       # @param [MARC::DataField] field
       # @return [Boolean]
       def subject_search_field?(field)
-        return false unless field.respond_to?(:indicator2) && SEARCH_SOURCE_INDICATORS.include?(field.indicator2)
+        return false unless field.respond_to?(:indicator2) && VALID_SOURCE_INDICATORS.include?(field.indicator2)
 
         tag = if field.tag == '880'
                 subfield_values(field, '6').first
