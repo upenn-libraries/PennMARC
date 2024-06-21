@@ -180,7 +180,7 @@ module PennMARC
       end
 
       # Is a field intended for display in a general subject field? To be included, the field tag is in either
-      # {DISPLAY_TAGS} or {LOCAL_TAGS}, and have a indicator 2 value that is in {VALID_SOURCE_INDICATORS}. If
+      # {DISPLAY_TAGS} or {LOCAL_TAGS}, and has an indicator 2 value that is in {VALID_SOURCE_INDICATORS}. If
       # indicator 2 is '7' - indicating "source specified", the specified source must be in our approved source code
       # list.
       # @see Util.valid_subject_genre_source_code?
