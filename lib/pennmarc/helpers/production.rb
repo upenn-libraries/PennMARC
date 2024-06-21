@@ -115,6 +115,44 @@ module PennMARC
         values.compact_blank.uniq
       end
 
+      # Returns the place of publication for RIS
+      # @param [MARC::Record] record
+      # @return [Array<String>]
+      def publication_ris_place_of_pub(record)
+        values = record.fields('245').first(1).flat_map { |field| subfield_values(field, 'f') }
+
+        values += record.fields(%w[260 261 262]).first(1).map do |field|
+          join_subfields(field, &subfield_in?(['a']))
+        end
+
+        values += record.fields('264').filter_map do |field|
+          next unless field.indicator2 == '1'
+
+          join_subfields(field, &subfield_in?(['a']))
+        end
+
+        values.compact_blank.uniq
+      end
+
+      # Returns the publisher for RIS
+      # @param [MARC::Record] record
+      # @return [Array<String>]
+      def publication_ris_publisher(record)
+        values = record.fields('245').first(1).flat_map { |field| subfield_values(field, 'f') }
+
+        values += record.fields(%w[260 261 262]).first(1).map do |field|
+          join_subfields(field, &subfield_in?(['b']))
+        end
+
+        values += record.fields('264').filter_map do |field|
+          next unless field.indicator2 == '1'
+
+          join_subfields(field, &subfield_in?(['b']))
+        end
+
+        values.compact_blank.uniq
+      end
+
       # Retrieve place of publication for display from {https://www.oclc.org/bibformats/en/7xx/752.html 752 field} and
       # its linked alternate.
       # @note legacy version returns array of hash objects including data for display link
