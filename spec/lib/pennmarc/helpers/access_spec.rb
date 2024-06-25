@@ -69,6 +69,17 @@ describe 'PennMARC::Access' do
           { z: 'Finding aid', u: 'http://hdl.library.upenn.edu/1017/d/pacscl/UPENN_RBML_MsColl200' }
         end
 
+        it 'does not include online access' do
+          expect(helper.facet(record)).to contain_exactly(PennMARC::Access::AT_THE_LIBRARY)
+        end
+      end
+
+      context 'with an 865 describing a resource link' do
+        let(:indicators) { { indicator1: '4', indicator2: '1' } }
+        let(:location_and_access_subfields) do
+          { z: 'Connect to resource', u: 'http://hdl.library.upenn.edu/1234' }
+        end
+
         it 'includes online access' do
           expect(helper.facet(record)).to contain_exactly(PennMARC::Access::ONLINE, PennMARC::Access::AT_THE_LIBRARY)
         end

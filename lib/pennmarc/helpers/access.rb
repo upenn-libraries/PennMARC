@@ -11,8 +11,6 @@ module PennMARC
       # electronic access or has physical holdings, and is therefore "Online" or "At the library". If a record is "At
       # the library", but has a link to a finding aid in the 856 field (matching certain criteria), also add 'Online' as
       # an access method.
-      # @todo What if none of these criteria match? Should we include "At the library" by default? Records with no value
-      #       in this field would be lost if the user selects a facet value.
       # @param [MARC::Record] record
       # @return [Array]
       def facet(record)
@@ -24,7 +22,7 @@ module PennMARC
         return values if values.size == 2 # return early if all values are already present
 
         # only check if ONLINE isn't already there
-        values << ONLINE if values.exclude?(ONLINE) && finding_aid_linkage?(record)
+        values << ONLINE if values.exclude?(ONLINE) && resource_link?(record)
         values.uniq
       end
 
@@ -44,20 +42,21 @@ module PennMARC
         field.tag.in? [Enriched::Pub::PHYS_INVENTORY_TAG, Enriched::Api::PHYS_INVENTORY_TAG]
       end
 
-      # Check if a record contains an 856 entry for an online finding aid, meeting these criteria:
+      # Check if a record contains an 856 entry with a Penn Handle server link meeting these criteria:
       # 1. Indicator 1 is 4 (HTTP resource)
       # 2. Indicator 2 is NOT 2 (indicating the linkage is to a "related" thing)
       # 3. The URL specified in subfield u (URI) is a Penn Handle link
+      # 4. The subfield z does NOT include the string 'Finding aid'
       # See: https://www.loc.gov/marc/bibliographic/bd856.html
       # @param [MARC::Record] record
       # @return [Boolean]
-      def finding_aid_linkage?(record)
+      def resource_link?(record)
         record.fields('856').filter_map do |field|
           next if field.indicator2 == '2' || field.indicator1 != '4'
 
           subz = subfield_values(field, 'z')
           subfield_values(field, 'u').filter_map do |value|
-            return true if subz.include?('Finding aid') && value.include?('hdl.library.upenn.edu')
+            return true if !subz.include?('Finding aid') && value.include?('hdl.library.upenn.edu')
           end
         end
         false
