@@ -48,6 +48,8 @@ module PennMARC
       # 3. The URL specified in subfield u (URI) is a Penn Handle link
       # 4. The subfield z does NOT include the string 'Finding aid'
       # See: https://www.loc.gov/marc/bibliographic/bd856.html
+      # @note Some electronic records do not have Portfolios in Alma, so we rely upon the Resource Link in the 856 to
+      #       get these records included in the Online category.
       # @param [MARC::Record] record
       # @return [Boolean]
       def resource_link?(record)
