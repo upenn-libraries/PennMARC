@@ -164,11 +164,11 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Array<String>]
       def host_record_id(record)
-        record.fields(Enriched::Pub::RELATED_RECORD_TAG).filter_map do |field|
+        record.fields(Enriched::Pub::RELATED_RECORD_TAG).filter_map { |field|
           next unless subfield_value?(field, 'c', /contains/i)
 
           subfield_values field, :w
-        end.flatten.uniq
+        }.flatten.uniq
       end
 
       private

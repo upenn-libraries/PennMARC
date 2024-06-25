@@ -3,33 +3,36 @@
 module PennMARC
   # This helper contains logic for parsing out Title and Title-related fields.
   class Title < Helper
-    class << self
-      # We use these fields when retrieving auxiliary titles in the *search_aux methods:
-      # {https://www.loc.gov/marc/bibliographic/bd130.html 130},
-      # {https://www.loc.gov/marc/bibliographic/bd210.html 210},
-      # {https://www.loc.gov/marc/bibliographic/bd245.html 245},
-      # {https://www.loc.gov/marc/bibliographic/bd246.html 246},
-      # {https://www.loc.gov/marc/bibliographic/bd247.html 247},
-      # {https://www.loc.gov/marc/bibliographic/bd440.html 440},
-      # {https://www.loc.gov/marc/bibliographic/bd490.html 490},
-      # {https://www.loc.gov/marc/bibliographic/bd730.html 730},
-      # {https://www.loc.gov/marc/bibliographic/bd740.html 740},
-      # {https://www.loc.gov/marc/bibliographic/bd830.html 830},
-      # {https://www.loc.gov/marc/bibliographic/bd773.html 773},
-      # {https://www.loc.gov/marc/bibliographic/bd774.html 774},
-      # {https://www.loc.gov/marc/bibliographic/bd780.html 780},
-      # {https://www.loc.gov/marc/bibliographic/bd785.html 785},
-      # {https://www.loc.gov/marc/bibliographic/bd700.html 700},
-      # {https://www.loc.gov/marc/bibliographic/bd710.html 710},
-      # {https://www.loc.gov/marc/bibliographic/bd711.html 711},
-      # {https://www.loc.gov/marc/bibliographic/bd505.html 505}
-      AUX_TITLE_TAGS = {
-        main: %w[130 210 240 245 246 247 440 490 730 740 830],
-        related: %w[773 774 780 785],
-        entity: %w[700 710 711],
-        note: %w[505]
-      }.freeze
+    # We use these fields when retrieving auxiliary titles in the *search_aux methods:
+    # {https://www.loc.gov/marc/bibliographic/bd130.html 130},
+    # {https://www.loc.gov/marc/bibliographic/bd210.html 210},
+    # {https://www.loc.gov/marc/bibliographic/bd245.html 245},
+    # {https://www.loc.gov/marc/bibliographic/bd246.html 246},
+    # {https://www.loc.gov/marc/bibliographic/bd247.html 247},
+    # {https://www.loc.gov/marc/bibliographic/bd440.html 440},
+    # {https://www.loc.gov/marc/bibliographic/bd490.html 490},
+    # {https://www.loc.gov/marc/bibliographic/bd730.html 730},
+    # {https://www.loc.gov/marc/bibliographic/bd740.html 740},
+    # {https://www.loc.gov/marc/bibliographic/bd830.html 830},
+    # {https://www.loc.gov/marc/bibliographic/bd773.html 773},
+    # {https://www.loc.gov/marc/bibliographic/bd774.html 774},
+    # {https://www.loc.gov/marc/bibliographic/bd780.html 780},
+    # {https://www.loc.gov/marc/bibliographic/bd785.html 785},
+    # {https://www.loc.gov/marc/bibliographic/bd700.html 700},
+    # {https://www.loc.gov/marc/bibliographic/bd710.html 710},
+    # {https://www.loc.gov/marc/bibliographic/bd711.html 711},
+    # {https://www.loc.gov/marc/bibliographic/bd505.html 505}
+    AUX_TITLE_TAGS = {
+      main: %w[130 210 240 245 246 247 440 490 730 740 830],
+      related: %w[773 774 780 785],
+      entity: %w[700 710 711],
+      note: %w[505]
+    }.freeze
 
+    # This text is user in Alma to indicate a Bib record is a "Host" record for other bibs (bound-withs)
+    HOST_BIB_TITLE = 'Host bibliographic record for boundwith'
+
+    class << self
       # Main Title Search field. Takes from {https://www.loc.gov/marc/bibliographic/bd245.html 245} and linked 880.
       # @note Ported from get_title_1_search_values.
       # @param [MARC::Record] record
@@ -215,6 +218,16 @@ module PennMARC
           former_title_append = join_subfields field, &subfield_in?(%w[e w])
           "#{former_title} #{former_title_append}".strip
         }.uniq
+      end
+
+      #  D
+      # @param [MARC::Record] record
+      # @return [Boolean] whether the record is a "Host" bibliographic record
+      def host_bib_record?(record)
+        record.fields('245').any? do |f|
+          title = join_subfields(f, &subfield_in?(%w[a]))
+          title.include?(HOST_BIB_TITLE)
+        end
       end
 
       private
