@@ -5,6 +5,7 @@ module PennMARC
   class Access < Helper
     ONLINE = 'Online'
     AT_THE_LIBRARY = 'At the library'
+    RESOURCE_LINK_BASE_URL = 'hdl.library.upenn.edu'
 
     class << self
       # Based on enhanced metadata fields added by Alma publishing process or API, determine if the record has
@@ -58,7 +59,7 @@ module PennMARC
 
           subz = subfield_values(field, 'z')
           subfield_values(field, 'u').filter_map do |value|
-            return true if !subz.include?('Finding aid') && value.include?('hdl.library.upenn.edu')
+            return true if subz.exclude?('Finding aid') && value.include?(RESOURCE_LINK_BASE_URL)
           end
         end
         false
