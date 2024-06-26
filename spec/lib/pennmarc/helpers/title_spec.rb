@@ -249,4 +249,24 @@ describe 'PennMARC::Title' do
       expect(values).not_to include 'Linkage', '247'
     end
   end
+
+  describe '.host_bib_record?' do
+    let(:record) { marc_record fields: [marc_field(tag: '245', subfields: subfields)] }
+
+    context 'with a host record' do
+      let(:subfields) { { a: "#{PennMARC::Title::HOST_BIB_TITLE} for 123456789" } }
+
+      it 'returns true' do
+        expect(helper.host_bib_record?(record)).to be true
+      end
+    end
+
+    context 'with a non-host record' do
+      let(:subfields) { { a: 'Regular record' } }
+
+      it 'returns false' do
+        expect(helper.host_bib_record?(record)).to be false
+      end
+    end
+  end
 end
