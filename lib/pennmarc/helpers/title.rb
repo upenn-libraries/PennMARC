@@ -220,9 +220,9 @@ module PennMARC
         }.uniq
       end
 
-      #  D
+      # Determine if the record is a "Host" bibliographic record for other bib records ("bound-withs")
       # @param [MARC::Record] record
-      # @return [Boolean] whether the record is a "Host" bibliographic record
+      # @return [Boolean]
       def host_bib_record?(record)
         record.fields('245').any? do |f|
           title = join_subfields(f, &subfield_in?(%w[a]))
