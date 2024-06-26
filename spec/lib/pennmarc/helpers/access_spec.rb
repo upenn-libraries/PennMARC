@@ -74,7 +74,7 @@ describe 'PennMARC::Access' do
         end
       end
 
-      context 'with an 865 describing a resource link' do
+      context 'with an 856 describing a resource link' do
         let(:indicators) { { indicator1: '4', indicator2: '1' } }
         let(:location_and_access_subfields) do
           { z: 'Connect to resource', u: 'http://hdl.library.upenn.edu/1234' }
