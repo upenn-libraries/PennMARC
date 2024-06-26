@@ -29,7 +29,7 @@ module PennMARC
       note: %w[505]
     }.freeze
 
-    # This text is user in Alma to indicate a Bib record is a "Host" record for other bibs (bound-withs)
+    # This text is used in Alma to indicate a Bib record is a "Host" record for other bibs (bound-withs)
     HOST_BIB_TITLE = 'Host bibliographic record for boundwith'
 
     class << self
