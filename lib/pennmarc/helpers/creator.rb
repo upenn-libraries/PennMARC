@@ -15,6 +15,7 @@ module PennMARC
       AUX_TAGS = %w[100 110 111 400 410 411 700 710 711 800 810 811].freeze
 
       CONFERENCE_SEARCH_TAGS = %w[111 711 811].freeze
+      CORPORATE_SEARCH_TAGS = %w[110 710 810].freeze
 
       # subfields NOT to join when combining raw subfield values
       NAME_EXCLUDED_SUBFIELDS = %w[a 1 4 5 6 8 t].freeze
@@ -186,6 +187,15 @@ module PennMARC
         record.fields(CONFERENCE_SEARCH_TAGS).filter_map { |field|
           join_subfields(field, &subfield_in?(%w[a c d e]))
         }.uniq
+      end
+
+      # Corporate author search values for searching
+      # @param [MARC::Record] record
+      # @return [Array<String>]
+      def corporate_search(record)
+        record.fields(CORPORATE_SEARCH_TAGS).map do |field|
+          join_subfields(field, &subfield_in?(%w[a b c d]))
+        end
       end
 
       # Retrieve contributor values for display from fields {https://www.oclc.org/bibformats/en/7xx/700.html 700}
