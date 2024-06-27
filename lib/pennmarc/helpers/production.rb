@@ -11,6 +11,19 @@ module PennMARC
         get_264_or_880_fields(record, '0').uniq
       end
 
+      # @param [MARC::Record] record
+      # @return [Array<String>]
+      def search(record)
+        values = record.fields('260').filter_map do |field|
+          join_subfields(field, &subfield_in?(['b']))
+        end
+        values + record.fields('264').filter_map do |field|
+          next unless field.indicator2 == '1'
+
+          join_subfields(field, &subfield_in?(['b']))
+        end
+      end
+
       # Retrieve distribution values for display from {https://www.oclc.org/bibformats/en/2xx/264.html 264 field}.
       # @param [MARC::Record] record
       # @return [Array<String>]
