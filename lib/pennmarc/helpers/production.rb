@@ -117,6 +117,22 @@ module PennMARC
         }.uniq
       end
 
+      # @param [MARC::Record] record
+      # @return [Array<String>]
+      def place_of_publication_search(record)
+        values = record.fields('260').filter_map do |field|
+          join_subfields(field, &subfield_in?(['a']))
+        end
+        values += record.fields('264').filter_map do |field|
+          next unless field.indicator2 == '1'
+
+          join_subfields(field, &subfield_in?(['a']))
+        end
+        values + record.fields('752').filter_map do |field|
+          join_subfields(field, &subfield_in?(%w[a b c d f g h]))
+        end
+      end
+
       private
 
       # base method to retrieve production values from {https://www.oclc.org/bibformats/en/2xx/264.html 264 field} based

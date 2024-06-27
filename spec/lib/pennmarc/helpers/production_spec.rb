@@ -113,7 +113,7 @@ describe 'PennMARC::Production' do
     context 'with 260, 261, or 262 fields' do
       let(:fields) do
         [
-          marc_field(tag: '260', subfields: { a: ' Burnt Mill, Harlow, Essex, England', b: 'Longman',
+          marc_field(tag: '260', subfields: { a: 'Burnt Mill, Harlow, Essex, England', b: 'Longman',
                                               c: '1985, c1956.' }),
           marc_field(tag: '264', subfields: { a: 'Nowhere', b: 'Wasteland Publishers', c: '1999' }, indicator2: '1')
         ]
@@ -188,6 +188,37 @@ describe 'PennMARC::Production' do
         'United States California Los Angeles (County) Los Angeles Little Tokyo North America Earth publication place',
         'US Cali LA (County) LA Alt Tokyo NA Alt Earth Alt publication place'
       )
+    end
+  end
+
+  describe 'place_of_publication_search' do
+    let(:values) { helper.place_of_publication_search(record) }
+
+    context 'with publication info in the 26x fields' do
+      let(:fields) do
+        [marc_field(tag: '260', subfields: { a: 'Marabella, Trinidad, West Indies',
+                                             b: 'Ramjohn Publishing', c: '1999' }, indicator2: '0'),
+         marc_field(tag: '264', subfields: { a: 'Leeds', b: 'Peepal Tree Productions', c: '2019' }, indicator2: '0'),
+         marc_field(tag: '264', subfields: { a: 'Nowhere', b: 'Wasteland Publishing', c: '1983' }, indicator2: '1')]
+      end
+
+      it 'returns expected values' do
+        expect(values).to contain_exactly('Marabella, Trinidad, West Indies', 'Nowhere')
+      end
+    end
+
+    context 'with publication info in 752' do
+      let(:fields) do
+        [marc_field(tag: '752', subfields: { a: 'United States', b: 'California', c: 'Los Angeles (County)',
+                                             d: 'Los Angeles', e: 'publication place', f: 'Little Tokyo',
+                                             g: 'North America',  h: 'Earth' })]
+      end
+
+      it 'returns expected values' do
+        expect(values).to contain_exactly(
+          'United States California Los Angeles (County) Los Angeles Little Tokyo North America Earth'
+        )
+      end
     end
   end
 end
