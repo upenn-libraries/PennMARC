@@ -186,10 +186,13 @@ describe 'PennMARC::Production' do
     let(:values) { helper.publication_citation_show(record) }
     let(:values_no_year) { helper.publication_citation_show(record, with_year: false) }
 
-    it 'returns expected values' do
+    it 'returns publication citation values' do
       expect(values).to contain_exactly('between 1800-1850',
                                         'Burnt Mill, Harlow, Essex, England Longman 1985, c1956.',
                                         'Leeds Peepal Tree Press 2019')
+    end
+
+    it 'returns publication citation values without year' do
       expect(values_no_year).to contain_exactly('between 1800-1850',
                                                 'Burnt Mill, Harlow, Essex, England Longman',
                                                 'Leeds Peepal Tree Press')
@@ -217,6 +220,52 @@ describe 'PennMARC::Production' do
         'United States California Los Angeles (County) Los Angeles Little Tokyo North America Earth publication place',
         'US Cali LA (County) LA Alt Tokyo NA Alt Earth Alt publication place'
       )
+    end
+  end
+
+  describe 'publication_ris_place_of_pub' do
+    let(:record) { marc_record fields: fields }
+
+    let(:fields) do
+      [marc_field(tag: '245', subfields: { f: 'between 1800-1850' }),
+       marc_field(tag: '260', subfields: { a: ' Burnt Mill, Harlow, Essex, England', b: 'Longman',
+                                           c: '1985, c1956.' }),
+       marc_field(tag: '264', subfields: { a: 'Leeds', b: 'Peepal Tree Press', c: '2019' }, indicator2: '1'),
+       marc_field(tag: '880', subfields: { f: 'Alternate 1800-1850', '6': '245' }),
+       marc_field(tag: '880',
+                  subfields: { a: 'Alternate England', b: 'Alternate Longman', c: 'Alternate 1985, c1956.',
+                               '6': '260' }),
+       marc_field(tag: '880', subfields: { a: 'Linked', b: 'Alternate Publishers', c: '880', '6': '264' },
+                  indicator2: '1')]
+    end
+
+    let(:values) { helper.publication_ris_place_of_pub(record) }
+
+    it 'returns expected values' do
+      expect(values).to contain_exactly('between 1800-1850', 'Burnt Mill, Harlow, Essex, England', 'Leeds')
+    end
+  end
+
+  describe 'publication_ris_publisher' do
+    let(:record) { marc_record fields: fields }
+
+    let(:fields) do
+      [marc_field(tag: '245', subfields: { f: 'between 1800-1850' }),
+       marc_field(tag: '260', subfields: { a: ' Burnt Mill, Harlow, Essex, England', b: 'Longman',
+                                           c: '1985, c1956.' }),
+       marc_field(tag: '264', subfields: { a: 'Leeds', b: 'Peepal Tree Press', c: '2019' }, indicator2: '1'),
+       marc_field(tag: '880', subfields: { f: 'Alternate 1800-1850', '6': '245' }),
+       marc_field(tag: '880',
+                  subfields: { a: 'Alternate England', b: 'Alternate Longman', c: 'Alternate 1985, c1956.',
+                               '6': '260' }),
+       marc_field(tag: '880', subfields: { a: 'Linked', b: 'Alternate Publishers', c: '880', '6': '264' },
+                  indicator2: '1')]
+    end
+
+    let(:values) { helper.publication_ris_publisher(record) }
+
+    it 'returns expected values' do
+      expect(values).to contain_exactly('between 1800-1850', 'Longman', 'Peepal Tree Press')
     end
   end
 end

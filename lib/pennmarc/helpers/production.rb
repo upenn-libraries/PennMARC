@@ -94,6 +94,7 @@ module PennMARC
       # {https://www.oclc.org/bibformats/en/2xx/260.html 260}-262 and their linked alternates,
       # and {https://www.oclc.org/bibformats/en/2xx/264.html 264} and its linked alternate.
       # @param [MARC::Record] record
+      # @param [Boolean] with_year: return results with publication year if true
       # @return [Array<String>]
       def publication_citation_show(record, with_year: true)
         values = record.fields('245').first(1).flat_map { |field| subfield_values(field, 'f') }
