@@ -85,15 +85,6 @@ module PennMARC
         }.flatten.uniq
       end
 
-      # Get content note values for searching
-      # @param record [MARC::Record]
-      # @return [Array<String>]
-      def contents_search(record)
-        record.fields('505').map do |field|
-          join_subfields(field, &subfield_in?(%w[a g r t u]))
-        end
-      end
-
       # Retrieve access restricted notes for display from field {https://www.oclc.org/bibformats/en/5xx/506.html 506}.
       # @param record [MARC::Record]
       # @return [Array<String>]
