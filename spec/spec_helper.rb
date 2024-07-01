@@ -27,7 +27,7 @@ require 'pennmarc'
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
   # Include MarcHelpers by default
-  config.include(PennMARC::MarcHelpers)
+  config.include(PennMARC::Test::MarcHelpers)
 
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
