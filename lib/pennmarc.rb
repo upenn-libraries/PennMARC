@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(__dir__) unless $LOAD_PATH.include?(__dir__)
 module PennMARC
   # Autoload MARC helpers
   module Test
-    autoload :MarcHelpers, 'test/marc_helpers'
+    autoload :MarcHelpers, 'pennmarc/test/marc_helpers'
   end
 end
 
