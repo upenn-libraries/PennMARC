@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Relation' do
-  include MarcSpecHelpers
+  include PennMARC::MarcHelpers
 
   let(:helper) { PennMARC::Relation }
   let(:record) { marc_record fields: fields }

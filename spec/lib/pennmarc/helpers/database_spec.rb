@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Database' do
-  include MarcSpecHelpers
-
   let(:helper) { PennMARC::Database }
   let(:record) do
     marc_record(fields: [

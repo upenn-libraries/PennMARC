@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Format' do
-  include MarcSpecHelpers
-
   let(:helper) { PennMARC::Format }
 
   describe '.facet' do

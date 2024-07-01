@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Link' do
-  include MarcSpecHelpers
-
   let(:helper) { PennMARC::Link }
 
   describe '.full_text_link' do

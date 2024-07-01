@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Subject' do
-  include MarcSpecHelpers
+  include PennMARC::MarcHelpers
 
   let(:helper) { PennMARC::Subject }
   let(:relator_map) do
