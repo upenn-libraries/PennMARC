@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Relation' do
-  include PennMARC::MarcHelpers
-
   let(:helper) { PennMARC::Relation }
   let(:record) { marc_record fields: fields }
   let(:relator_map) { { aut: 'Author', trl: 'Translator' } }

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Series' do
-  include PennMARC::MarcHelpers
-
   let(:helper) { PennMARC::Series }
   let(:mapping) { { aut: 'Author' } }
   let(:record) do
