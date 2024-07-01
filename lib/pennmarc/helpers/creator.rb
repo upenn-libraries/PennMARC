@@ -84,6 +84,77 @@ module PennMARC
         creators.to_h { |h| [h[:show], h[:facet]] }
       end
 
+      # Returns the list of authors with name (subfield $a) only
+      # @param [MARC::Record] record
+      # @param [Boolean] main_tags_only, if true, only use TAGS; otherwise use both TAGS and CONTRIBUTOR_TAGS
+      # @param [Boolean] first_initial_only: true to only use the first initial instead of first name
+      # @return [Array<String>] names of the authors
+      def authors_list(record, main_tags_only: false, first_initial_only: false)
+        tags = if main_tags_only
+                 TAGS
+               else
+                 TAGS + CONTRIBUTOR_TAGS
+               end
+
+        fields = record.fields(tags)
+        fields.filter_map { |field|
+          if first_initial_only
+            abbreviate_name(field['a']) if field['a']
+          else
+            field['a']
+          end
+        }.uniq
+      end
+
+      # Show the authors and contributors grouped together by relators with only names
+      # @param [MARC::Record] record
+      # @param [Hash] relator_map
+      # @param [Boolean] include_authors: true to include author fields TAGS
+      # @param [Boolean] name_only: true to include only the name subfield $a
+      # @param [Boolean] vernacular: true to include field 880 with subfield $6
+      # @return [Hash]
+      def contributors_list(record, relator_map: Mappers.relator, include_authors: true, name_only: true,
+                            vernacular: false)
+        indicator_2_options = ['', ' ', '0']
+        tags = CONTRIBUTOR_TAGS
+
+        fields = record.fields(tags)
+        fields += record.fields('880').select { |field| subfield_value_in?(field, '6', CONTRIBUTOR_TAGS) } if vernacular
+
+        contributors = {}
+        fields.each do |field|
+          next if indicator_2_options.exclude?(field.indicator2) && field.tag.in?(CONTRIBUTOR_TAGS)
+          next if subfield_defined? field, 'i'
+
+          relator = relator(field: field, relator_term_sf: 'e', relator_map: relator_map)
+          relator = 'Contributor' if relator.blank?
+          relator = trim_punctuation(relator).capitalize
+
+          name = if name_only
+                   field['a']
+                 else
+                   join_subfields(field, &subfield_in?(%w[a b c d j q u 3])) + ", #{relator}"
+                 end
+
+          if contributors.key?(relator)
+            contributors[relator].push(name)
+          else
+            contributors[relator] = [name]
+          end
+        end
+
+        # add the authors
+        if include_authors
+          authors = authors_list(record, main_tags_only: true)
+          if contributors.key?('Author')
+            contributors['Author'] += authors
+          else
+            contributors['Author'] = authors
+          end
+        end
+        contributors
+      end
+
       # All author/creator values for display (like #show, but multivalued?) - no 880 linkage
       # Performs additional normalization of author names
       # @note ported from get_author_creator_values (indexed as author_creator_a) - shown on results page
@@ -292,6 +363,19 @@ module PennMARC
         after_comma = join_and_squish([trim_trailing(:comma, substring_after(name, ', '))])
         before_comma = substring_before(name, ', ')
         "#{after_comma} #{before_comma}".squish
+      end
+
+      # Convert "Lastname, First" to "Lastname, F"
+      # @param [String] name
+      def abbreviate_name(name)
+        name_parts = name.split(', ')
+        return '' if name_parts.empty?
+
+        first_name_parts = name_parts.last.split
+        temp_name = "#{name_parts.first}, #{first_name_parts.first[0, 1]}."
+        first_name_parts.shift
+        temp_name += " #{first_name_parts.join(' ')}" unless first_name_parts.empty?
+        temp_name
       end
 
       # Parse creator facet value from given creator field and desired subfields

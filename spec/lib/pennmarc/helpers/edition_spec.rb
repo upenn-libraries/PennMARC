@@ -18,6 +18,10 @@ describe 'PennMARC::Edition' do
     it 'returns the editions' do
       expect(helper.show(record)).to contain_exactly('5th Edition Remastered', 'رمستر')
     end
+
+    it 'returns the editions without alternate' do
+      expect(helper.show(record, with_alternate: false)).to contain_exactly('5th Edition Remastered')
+    end
   end
 
   describe '.values' do

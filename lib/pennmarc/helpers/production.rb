@@ -89,6 +89,45 @@ module PennMARC
         values.compact_blank.uniq
       end
 
+      # Retrieve publication values for citation
+      # {https://www.oclc.org/bibformats/en/2xx/245.html 245},
+      # {https://www.oclc.org/bibformats/en/2xx/260.html 260}-262 and their linked alternates,
+      # and {https://www.oclc.org/bibformats/en/2xx/264.html 264} and its linked alternate.
+      # @param [MARC::Record] record
+      # @param [Boolean] with_year: return results with publication year if true
+      # @return [Array<String>]
+      def publication_citation_show(record, with_year: true)
+        values = record.fields('245').first(1).flat_map { |field| subfield_values(field, 'f') }
+
+        subfields = with_year ? %w[6 8] : %w[6 8 c]
+        values += record.fields(%w[260 261 262]).first(1).map do |field|
+          join_subfields(field, &subfield_not_in?(subfields))
+        end
+
+        subfields = with_year ? %w[a b c] : %w[a b]
+        values += record.fields('264').filter_map do |field|
+          next unless field.indicator2 == '1'
+
+          join_subfields(field, &subfield_in?(subfields))
+        end
+
+        values.compact_blank.uniq
+      end
+
+      # Returns the place of publication for RIS
+      # @param [MARC::Record] record
+      # @return [Array<String>]
+      def publication_ris_place_of_pub(record)
+        get_publication_ris_values(record, 'a')
+      end
+
+      # Returns the publisher for RIS
+      # @param [MARC::Record] record
+      # @return [Array<String>]
+      def publication_ris_publisher(record)
+        get_publication_ris_values(record, 'b')
+      end
+
       # Retrieve place of publication for display from {https://www.oclc.org/bibformats/en/7xx/752.html 752 field} and
       # its linked alternate.
       # @note legacy version returns array of hash objects including data for display link
@@ -125,6 +164,25 @@ module PennMARC
 
           join_subfields(field, &subfield_in?(%w[a b c]))
         end
+      end
+
+      # Returns the publication value of the given subfield
+      # @param [MARC::Record] record
+      # @param [String] subfield
+      def get_publication_ris_values(record, subfield)
+        values = record.fields('245').first(1).flat_map { |field| subfield_values(field, 'f') }
+
+        values += record.fields(%w[260 261 262]).first(1).map do |field|
+          join_subfields(field, &subfield_in?([subfield]))
+        end
+
+        values += record.fields('264').filter_map do |field|
+          next unless field.indicator2 == '1'
+
+          join_subfields(field, &subfield_in?([subfield]))
+        end
+
+        values.compact_blank.uniq
       end
     end
   end
