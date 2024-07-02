@@ -105,7 +105,7 @@ describe 'PennMARC::Note' do
                                            r: 'Alt Responsible Agent', t: 'Alt Title', u: 'Alt URI', '6': '505' })]
     end
 
-    context 'with vernacular include' do
+    context 'with vernacular included' do
       let(:values) { helper.contents_values(record) }
 
       it 'returns expected values from 505 and its linked alternate' do
@@ -117,7 +117,7 @@ describe 'PennMARC::Note' do
     end
 
     context 'with vernacular excluded' do
-      let(:values) { helper.contents_values(record, include_vernacular: false) }
+      let(:values) { helper.contents_values(record, with_alternate: false) }
 
       it 'returns expected values from 505 but not its linked alternate' do
         expect(values).to contain_exactly('Formatted content notes Misc Info Responsible Agent A Title URI')

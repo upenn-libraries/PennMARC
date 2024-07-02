@@ -71,14 +71,14 @@ module PennMARC
       # Retrieve contents notes for display from fields {https://www.oclc.org/bibformats/en/5xx/505.html 505} and, if
       # include_vernacular param is true, its linked alternate. Used for display and searching.
       # @param record [MARC::Record]
-      # @param include_vernacular [Boolean]
+      # @param with_alternate [Boolean]
       # @return [Array<String>]
-      def contents_values(record, include_vernacular: true)
+      def contents_values(record, with_alternate: true)
         record.fields(%w[505 880]).filter_map { |field|
           if field.tag == '880'
-            next unless include_vernacular
+            next unless with_alternate
 
-            next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^505/)
+            next if no_subfield_value_matches?(field, '6', /^505/)
           end
 
           join_subfields(field, &subfield_not_in?(%w[6 8])).split('--')

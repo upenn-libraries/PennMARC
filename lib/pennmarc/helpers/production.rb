@@ -167,9 +167,9 @@ module PennMARC
 
           join_subfields(field, &subfield_in?(['a']))
         end
-        values + record.fields('752').filter_map do |field|
+        values + record.fields('752').filter_map { |field|
           join_subfields(field, &subfield_in?(%w[a b c d f g h]))
-        end
+        }.uniq
       end
 
       private
