@@ -4,10 +4,9 @@ describe 'PennMARC::Production' do
   include MarcSpecHelpers
 
   let(:helper) { PennMARC::Production }
+  let(:record) { marc_record fields: fields }
 
   describe '.show' do
-    let(:record) { marc_record fields: fields }
-
     let(:fields) do
       [
         marc_field(tag: '264', subfields: { a: 'Marabella, Trinidad, West Indies',
@@ -19,7 +18,6 @@ describe 'PennMARC::Production' do
                    indicator2: '0')
       ]
     end
-
     let(:values) { helper.show(record) }
 
     it 'returns expected values' do
@@ -28,6 +26,21 @@ describe 'PennMARC::Production' do
         'Leeds Peepal Tree Productions 2019',
         'Linked Alternate Productions 880'
       )
+    end
+  end
+
+  describe '.search' do
+    let(:fields) do
+      [
+        marc_field(tag: '260', subfields: { a: 'Marabella, Trinidad, West Indies',
+                                            b: 'Ramjohn Publishing', c: '1999' }, indicator2: '0'),
+        marc_field(tag: '264', subfields: { a: 'Leeds', b: 'Peepal Tree Productions', c: '2019' }, indicator2: '0'),
+        marc_field(tag: '264', subfields: { a: 'Nowhere', b: 'Wasteland Publishing', c: '1999' }, indicator2: '1')
+      ]
+    end
+
+    it 'returns expected values' do
+      expect(helper.search(record)).to contain_exactly('Wasteland Publishing', 'Ramjohn Publishing')
     end
   end
 
@@ -57,7 +70,6 @@ describe 'PennMARC::Production' do
 
   describe '.manufacture_show' do
     let(:record) { marc_record fields: fields }
-
     let(:fields) do
       [
         marc_field(tag: '264', subfields: { a: 'Marabella, Trinidad, West Indies',
@@ -69,7 +81,6 @@ describe 'PennMARC::Production' do
                    indicator2: '3')
       ]
     end
-
     let(:values) { helper.manufacture_show(record) }
 
     it 'returns expected values' do
@@ -83,8 +94,6 @@ describe 'PennMARC::Production' do
 
   describe '.publication_values' do
     context 'with date in 245 ǂf' do
-      let(:record) { marc_record fields: fields }
-
       let(:fields) do
         [
           marc_field(tag: '245', subfields: { f: '1869-1941' }),
@@ -93,7 +102,6 @@ describe 'PennMARC::Production' do
                                               c: '1920' }, indicator2: '1')
         ]
       end
-
       let(:values) { helper.publication_values(record) }
 
       it 'returns expected values' do
@@ -103,16 +111,13 @@ describe 'PennMARC::Production' do
     end
 
     context 'with 260, 261, or 262 fields' do
-      let(:record) { marc_record fields: fields }
-
       let(:fields) do
         [
-          marc_field(tag: '260', subfields: { a: ' Burnt Mill, Harlow, Essex, England', b: 'Longman',
+          marc_field(tag: '260', subfields: { a: 'Burnt Mill, Harlow, Essex, England', b: 'Longman',
                                               c: '1985, c1956.' }),
           marc_field(tag: '264', subfields: { a: 'Nowhere', b: 'Wasteland Publishers', c: '1999' }, indicator2: '1')
         ]
       end
-
       let(:values) { helper.publication_values(record) }
 
       it 'returns expected values' do
@@ -121,8 +126,6 @@ describe 'PennMARC::Production' do
     end
 
     context 'without 260, 261, or 262 fields' do
-      let(:record) { marc_record fields: fields }
-
       let(:fields) do
         [
           marc_field(tag: '264', subfields: { a: 'Nowhere', b: 'Wasteland Publishers', c: '1999' }, indicator2: '1'),
@@ -130,7 +133,6 @@ describe 'PennMARC::Production' do
           marc_field(tag: '264', subfields: { c: ' c2016' }, indicator2: '4')
         ]
       end
-
       let(:values) { helper.publication_values(record) }
 
       it 'returns publication values from field 264' do
@@ -140,8 +142,6 @@ describe 'PennMARC::Production' do
   end
 
   describe '.publication_show' do
-    let(:record) { marc_record fields: fields }
-
     let(:fields) do
       [marc_field(tag: '245', subfields: { f: 'between 1800-1850' }),
        marc_field(tag: '260', subfields: { a: ' Burnt Mill, Harlow, Essex, England', b: 'Longman',
@@ -154,7 +154,6 @@ describe 'PennMARC::Production' do
        marc_field(tag: '880', subfields: { a: 'Linked', b: 'Alternate Publishers', c: '880', '6': '264' },
                   indicator2: '1')]
     end
-
     let(:values) { helper.publication_show(record) }
 
     it 'returns expected values' do
@@ -182,7 +181,6 @@ describe 'PennMARC::Production' do
        marc_field(tag: '880', subfields: { a: 'Linked', b: 'Alternate Publishers', c: '880', '6': '264' },
                   indicator2: '1')]
     end
-
     let(:values) { helper.publication_citation_show(record) }
     let(:values_no_year) { helper.publication_citation_show(record, with_year: false) }
 
@@ -200,8 +198,6 @@ describe 'PennMARC::Production' do
   end
 
   describe 'place_of_publication_show' do
-    let(:record) { marc_record fields: fields }
-
     let(:fields) do
       [marc_field(tag: '752', subfields: { a: 'United States', b: 'California', c: 'Los Angeles (County)',
                                            d: 'Los Angeles', e: 'publication place', f: 'Little Tokyo',
@@ -212,7 +208,6 @@ describe 'PennMARC::Production' do
                                            f: 'Alt Tokyo', g: 'NA',
                                            h: 'Alt Earth', '6': '752' })]
     end
-
     let(:values) { helper.place_of_publication_show(record) }
 
     it 'returns expected values' do
@@ -223,9 +218,39 @@ describe 'PennMARC::Production' do
     end
   end
 
+  describe 'place_of_publication_search' do
+    let(:values) { helper.place_of_publication_search(record) }
+
+    context 'with publication info in the 26x fields' do
+      let(:fields) do
+        [marc_field(tag: '260', subfields: { a: 'Marabella, Trinidad, West Indies',
+                                             b: 'Ramjohn Publishing', c: '1999' }, indicator2: '0'),
+         marc_field(tag: '264', subfields: { a: 'Leeds', b: 'Peepal Tree Productions', c: '2019' }, indicator2: '0'),
+         marc_field(tag: '264', subfields: { a: 'Nowhere', b: 'Wasteland Publishing', c: '1983' }, indicator2: '1')]
+      end
+
+      it 'returns expected values' do
+        expect(values).to contain_exactly('Marabella, Trinidad, West Indies', 'Nowhere')
+      end
+    end
+
+    context 'with publication info in 752' do
+      let(:fields) do
+        [marc_field(tag: '752', subfields: { a: 'United States', b: 'California', c: 'Los Angeles (County)',
+                                             d: 'Los Angeles', e: 'publication place', f: 'Little Tokyo',
+                                             g: 'North America',  h: 'Earth' })]
+      end
+
+      it 'returns expected values' do
+        expect(values).to contain_exactly(
+          'United States California Los Angeles (County) Los Angeles Little Tokyo North America Earth'
+        )
+      end
+    end
+  end
+
   describe 'publication_ris_place_of_pub' do
     let(:record) { marc_record fields: fields }
-
     let(:fields) do
       [marc_field(tag: '245', subfields: { f: 'between 1800-1850' }),
        marc_field(tag: '260', subfields: { a: ' Burnt Mill, Harlow, Essex, England', b: 'Longman',
@@ -248,7 +273,6 @@ describe 'PennMARC::Production' do
 
   describe 'publication_ris_publisher' do
     let(:record) { marc_record fields: fields }
-
     let(:fields) do
       [marc_field(tag: '245', subfields: { f: 'between 1800-1850' }),
        marc_field(tag: '260', subfields: { a: ' Burnt Mill, Harlow, Essex, England', b: 'Longman',
@@ -261,7 +285,6 @@ describe 'PennMARC::Production' do
        marc_field(tag: '880', subfields: { a: 'Linked', b: 'Alternate Publishers', c: '880', '6': '264' },
                   indicator2: '1')]
     end
-
     let(:values) { helper.publication_ris_publisher(record) }
 
     it 'returns expected values' do

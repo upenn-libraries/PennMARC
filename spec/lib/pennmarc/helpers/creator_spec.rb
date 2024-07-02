@@ -387,6 +387,24 @@ describe 'PennMARC::Creator' do
     end
   end
 
+  describe '.corporate_search' do
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '110', subfields: { a: 'Penn Libraries', b: 'Digital Library Development' }),
+        marc_field(tag: '710', subfields: { a: 'Working Group on Digital Repository Infrastructure' }),
+        marc_field(tag: '810', subfields: { a: 'Constellation of Repositories Strategic Team' })
+      ]
+    end
+
+    it 'returns expected values' do
+      expect(helper.corporate_search(record)).to contain_exactly(
+        'Constellation of Repositories Strategic Team',
+        'Penn Libraries Digital Library Development',
+        'Working Group on Digital Repository Infrastructure'
+      )
+    end
+  end
+
   describe '.contributor_show' do
     let(:record) { marc_record fields: fields }
 
