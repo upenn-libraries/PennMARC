@@ -18,7 +18,6 @@ describe 'PennMARC::Production' do
                    indicator2: '0')
       ]
     end
-
     let(:values) { helper.show(record) }
 
     it 'returns expected values' do
@@ -71,7 +70,6 @@ describe 'PennMARC::Production' do
 
   describe '.manufacture_show' do
     let(:record) { marc_record fields: fields }
-
     let(:fields) do
       [
         marc_field(tag: '264', subfields: { a: 'Marabella, Trinidad, West Indies',
@@ -83,7 +81,6 @@ describe 'PennMARC::Production' do
                    indicator2: '3')
       ]
     end
-
     let(:values) { helper.manufacture_show(record) }
 
     it 'returns expected values' do
@@ -105,7 +102,6 @@ describe 'PennMARC::Production' do
                                               c: '1920' }, indicator2: '1')
         ]
       end
-
       let(:values) { helper.publication_values(record) }
 
       it 'returns expected values' do
@@ -122,7 +118,6 @@ describe 'PennMARC::Production' do
           marc_field(tag: '264', subfields: { a: 'Nowhere', b: 'Wasteland Publishers', c: '1999' }, indicator2: '1')
         ]
       end
-
       let(:values) { helper.publication_values(record) }
 
       it 'returns expected values' do
@@ -138,7 +133,6 @@ describe 'PennMARC::Production' do
           marc_field(tag: '264', subfields: { c: ' c2016' }, indicator2: '4')
         ]
       end
-
       let(:values) { helper.publication_values(record) }
 
       it 'returns publication values from field 264' do
@@ -160,7 +154,6 @@ describe 'PennMARC::Production' do
        marc_field(tag: '880', subfields: { a: 'Linked', b: 'Alternate Publishers', c: '880', '6': '264' },
                   indicator2: '1')]
     end
-
     let(:values) { helper.publication_show(record) }
 
     it 'returns expected values' do
@@ -188,7 +181,6 @@ describe 'PennMARC::Production' do
        marc_field(tag: '880', subfields: { a: 'Linked', b: 'Alternate Publishers', c: '880', '6': '264' },
                   indicator2: '1')]
     end
-
     let(:values) { helper.publication_citation_show(record) }
     let(:values_no_year) { helper.publication_citation_show(record, with_year: false) }
 
@@ -216,7 +208,6 @@ describe 'PennMARC::Production' do
                                            f: 'Alt Tokyo', g: 'NA',
                                            h: 'Alt Earth', '6': '752' })]
     end
-
     let(:values) { helper.place_of_publication_show(record) }
 
     it 'returns expected values' do
@@ -260,7 +251,6 @@ describe 'PennMARC::Production' do
 
   describe 'publication_ris_place_of_pub' do
     let(:record) { marc_record fields: fields }
-
     let(:fields) do
       [marc_field(tag: '245', subfields: { f: 'between 1800-1850' }),
        marc_field(tag: '260', subfields: { a: ' Burnt Mill, Harlow, Essex, England', b: 'Longman',
@@ -283,7 +273,6 @@ describe 'PennMARC::Production' do
 
   describe 'publication_ris_publisher' do
     let(:record) { marc_record fields: fields }
-
     let(:fields) do
       [marc_field(tag: '245', subfields: { f: 'between 1800-1850' }),
        marc_field(tag: '260', subfields: { a: ' Burnt Mill, Harlow, Essex, England', b: 'Longman',
@@ -296,7 +285,6 @@ describe 'PennMARC::Production' do
        marc_field(tag: '880', subfields: { a: 'Linked', b: 'Alternate Publishers', c: '880', '6': '264' },
                   indicator2: '1')]
     end
-
     let(:values) { helper.publication_ris_publisher(record) }
 
     it 'returns expected values' do

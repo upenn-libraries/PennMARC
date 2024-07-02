@@ -17,11 +17,11 @@ module PennMARC
         values = record.fields('260').filter_map do |field|
           join_subfields(field, &subfield_in?(['b']))
         end
-        values + record.fields('264').filter_map do |field|
+        values + record.fields('264').filter_map { |field|
           next unless field.indicator2 == '1'
 
           join_subfields(field, &subfield_in?(['b']))
-        end
+        }.uniq
       end
 
       # Retrieve distribution values for display from {https://www.oclc.org/bibformats/en/2xx/264.html 264 field}.
