@@ -346,5 +346,17 @@ module PennMARC
 
       [joined_subfields, relator].compact_blank.join(join_separator).squish
     end
+
+    # Returns a relator value of the given field. Like append_relator, it prioritizes relator codes found in subfileld
+    # $4 and falls back to the specified relator term subfield relator_term_sf if no valid codes are found in $4
+    # @param [MARC::Field] field where relator values are stored
+    # @param [String] relator_term_sf MARC subfield that stores relator term
+    # @param [Hash] relator_map
+    # @return [String]
+    def relator(field:, relator_term_sf:, relator_map: Mappers.relator)
+      relator = subfield_values(field, '4').filter_map { |code| translate_relator(code, relator_map) }
+      relator = subfield_values(field, relator_term_sf) if relator.blank?
+      relator.join
+    end
   end
 end

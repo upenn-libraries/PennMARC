@@ -13,10 +13,12 @@ module PennMARC
       # https://www.loc.gov/marc/bibliographic/bd250.html
       # @param [MARC::Record] record
       # @return [Array<String>] array of editions and their alternates
-      def show(record)
-        editions = record.fields('250').map { |field|
+      def show(record, with_alternate: true)
+        editions = record.fields('250').map do |field|
           join_subfields(field, &subfield_not_in?(%w[6 8]))
-        } + linked_alternate_not_6_or_8(record, '250')
+        end
+        editions += linked_alternate_not_6_or_8(record, '250') if with_alternate
+
         editions.uniq
       end
 
