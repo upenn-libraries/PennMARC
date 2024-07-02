@@ -2,7 +2,7 @@
 
 $LOAD_PATH.unshift(__dir__) unless $LOAD_PATH.include?(__dir__)
 
-# Require spec-specific helpers dir (currently non-existent)
+# Require spec-specific helpers dir
 Dir[File.join(__dir__, 'support', '**', '*.rb')].each { |f| require f }
 
 # Require test helpers from gem lib
