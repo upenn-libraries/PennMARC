@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Identifier' do
-  include MarcSpecHelpers
-
   let(:helper) { PennMARC::Identifier }
 
   describe '.mmsid' do

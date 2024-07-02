@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Location' do
-  include MarcSpecHelpers
-
   let(:helper) { PennMARC::Location }
   let(:enriched_marc) { PennMARC::Enriched }
   let(:mapping) { location_map }

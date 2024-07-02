@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Note' do
-  include MarcSpecHelpers
-
   let(:helper) { PennMARC::Note }
   let(:record) { marc_record(fields: fields) }
 

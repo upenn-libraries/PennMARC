@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Util' do
-  include MarcSpecHelpers
-
   subject(:util) do
     Class.new { extend PennMARC::Util }
   end

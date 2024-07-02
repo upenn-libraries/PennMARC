@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Citation' do
-  include MarcSpecHelpers
-
   let(:helper) { PennMARC::Citation }
 
   describe '.cited_in_show' do

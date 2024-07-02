@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Language' do
-  include MarcSpecHelpers
-
   let(:helper) { PennMARC::Language }
   let(:iso_639_2_mapping) do
     { eng: 'English', und: 'Undetermined', fre: 'French', ger: 'German', ulw: 'Ulwa' }

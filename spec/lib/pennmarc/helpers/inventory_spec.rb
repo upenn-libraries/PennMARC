@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Inventory' do
-  include MarcSpecHelpers
-
   let(:helper) { PennMARC::Inventory }
   let(:record) do
     marc_record fields: fields

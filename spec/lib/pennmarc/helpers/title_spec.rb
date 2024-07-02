@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Title' do
-  include MarcSpecHelpers
-
   let(:helper) { PennMARC::Title }
 
   describe '.search' do

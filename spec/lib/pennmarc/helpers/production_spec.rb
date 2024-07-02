@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Production' do
-  include MarcSpecHelpers
-
   let(:helper) { PennMARC::Production }
   let(:record) { marc_record fields: fields }
 

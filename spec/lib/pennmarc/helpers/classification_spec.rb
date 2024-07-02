@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Classification' do
-  include MarcSpecHelpers
-
   let(:helper) { PennMARC::Classification }
   let(:record) do
     marc_record fields: [marc_field(tag: tag,

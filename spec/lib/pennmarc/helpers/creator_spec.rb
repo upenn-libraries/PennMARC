@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Creator' do
-  include MarcSpecHelpers
-
   let(:helper) { PennMARC::Creator }
   let(:mapping) { { aut: 'Author' } }
 
