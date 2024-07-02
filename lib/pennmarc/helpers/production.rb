@@ -4,13 +4,16 @@ module PennMARC
   # Extracts data related to a resource's production, distribution, manufacture, and publication.
   class Production < Helper
     class << self
-      # Retrieve production values for display from {https://www.oclc.org/bibformats/en/2xx/264.html 264 field}.
+      # Retrieve production values for display from {https://www.loc.gov/marc/bibliographic/bd264.html 264 field}.
       # @param record [MARC::Record]
       # @return [Array<String>]
       def show(record)
         get_264_or_880_fields(record, '0').uniq
       end
 
+      # Retrieve production values for searching. Includes only
+      # {https://www.loc.gov/marc/bibliographic/bd260.html 260} and
+      # {https://www.loc.gov/marc/bibliographic/bd264.html 264}.
       # @param record [MARC::Record]
       # @return [Array<String>]
       def search(record)
@@ -24,14 +27,14 @@ module PennMARC
         }.uniq
       end
 
-      # Retrieve distribution values for display from {https://www.oclc.org/bibformats/en/2xx/264.html 264 field}.
+      # Retrieve distribution values for display from {https://www.loc.gov/marc/bibliographic/bd264.html 264 field}.
       # @param record [MARC::Record]
       # @return [Array<String>]
       def distribution_show(record)
         get_264_or_880_fields(record, '2').uniq
       end
 
-      # Retrieve manufacture values for display from {https://www.oclc.org/bibformats/en/2xx/264.html 264 field}.
+      # Retrieve manufacture values for display from {https://www.loc.gov/marc/bibliographic/bd264.html 264 field}.
       # @param record [MARC::Record]
       # @return [Array<String>]
       def manufacture_show(record)
@@ -39,8 +42,8 @@ module PennMARC
       end
 
       # Retrieve publication values. Return publication values from
-      # {https://www.oclc.org/bibformats/en/2xx/264.html 264 field} only if none found
-      # {https://www.oclc.org/bibformats/en/2xx/260.html 260}-262 fields.
+      # {https://www.loc.gov/marc/bibliographic/bd264.html 264 field} only if none found
+      # {https://www.loc.gov/marc/bibliographic/bd260.html 260}-262 fields.
       # @param record [MARC::Record]
       # @return [Array<String>]
       def publication_values(record)
@@ -77,9 +80,9 @@ module PennMARC
       end
 
       # Retrieve publication values for display from fields
-      # {https://www.oclc.org/bibformats/en/2xx/245.html 245},
-      # {https://www.oclc.org/bibformats/en/2xx/260.html 260}-262 and their linked alternates,
-      # and {https://www.oclc.org/bibformats/en/2xx/264.html 264} and its linked alternate.
+      # {https://www.loc.gov/marc/bibliographic/bd245.html 245},
+      # {https://www.loc.gov/marc/bibliographic/bd260.html 260}-262 and their linked alternates,
+      # and {https://www.loc.gov/marc/bibliographic/bd264.html 264} and its linked alternate.
       # @param record [MARC::Record]
       # @return [Array<String>]
       def publication_show(record)
@@ -103,9 +106,9 @@ module PennMARC
       end
 
       # Retrieve publication values for citation
-      # {https://www.oclc.org/bibformats/en/2xx/245.html 245},
-      # {https://www.oclc.org/bibformats/en/2xx/260.html 260}-262 and their linked alternates,
-      # and {https://www.oclc.org/bibformats/en/2xx/264.html 264} and its linked alternate.
+      # {https://www.loc.gov/marc/bibliographic/bd245.html 245},
+      # {https://www.loc.gov/marc/bibliographic/bd260.html 260}-262 and their linked alternates,
+      # and {https://www.loc.gov/marc/bibliographic/bd264.html 264} and its linked alternate.
       # @param [MARC::Record] record
       # @param [Boolean] with_year: return results with publication year if true
       # @return [Array<String>]
@@ -141,7 +144,7 @@ module PennMARC
         get_publication_ris_values(record, 'b')
       end
 
-      # Retrieve place of publication for display from {https://www.oclc.org/bibformats/en/7xx/752.html 752 field} and
+      # Retrieve place of publication for display from {https://www.loc.gov/marc/bibliographic/bd752.html 752 field} and
       # its linked alternate.
       # @note legacy version returns array of hash objects including data for display link
       # @param record [MARC::Record]
@@ -156,6 +159,10 @@ module PennMARC
         }.uniq
       end
 
+      # Retrieves place of publication values for searching. Includes
+      # {https://www.loc.gov/marc/bibliographic/bd752.html 752} as well as sf a from
+      # {https://www.loc.gov/marc/bibliographic/bd260.html 260} and
+      # {https://www.loc.gov/marc/bibliographic/bd264.html 264} with an indicator2 of 1.
       # @param record [MARC::Record]
       # @return [Array<String>]
       def place_of_publication_search(record)
@@ -174,9 +181,8 @@ module PennMARC
 
       private
 
-      # base method to retrieve production values from {https://www.oclc.org/bibformats/en/2xx/264.html 264 field} based
-      # on indicator2.
-      # distribution and manufacture share the same logic except for indicator2
+      # base method to retrieve production values from {https://www.loc.gov/marc/bibliographic/bd264.html 264 field}
+      # based on indicator2. "Distribution" and "manufacture" share the same logic except for indicator2.
       # @param record [MARC::Record]
       # @param indicator2 [String]
       # @return [Array<String>]
