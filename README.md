@@ -14,6 +14,18 @@ puts parser.title_show(marc_record) # Title intended for display
 All methods will require a `MARC::Record` object. For more about these, see the 
 [ruby-marc](https://github.com/ruby-marc/ruby-marc) gem documentation
 
+## Term Overriding
+
+This gem provides configuration as well as a method for overriding and removing terms that are undesirable. In your app,
+you can remove or replace the configured terms like so:
+
+```ruby
+improved_values = PennMARC::HeadingControl.term_override(values)
+```
+
+This will remove any elements of the `values` array that include any terms defined in `mappers/headings_remove.yml` and
+replace any terms defined in the `headings_override.yml` file.
+
 ## Development
 
 ### Requirements
