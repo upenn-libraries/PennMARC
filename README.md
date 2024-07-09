@@ -7,7 +7,7 @@ the "Nouveau Franklin" project aka [discovery_app](https://gitlab.library.upenn.
 When included in a project, it should be utilized like this:
 
 ```ruby
-parser = PennMARC::Parser.new # eventually we will pass in some mappings...
+parser = PennMARC::Parser.new
 puts parser.title_show(marc_record) # Title intended for display
 ```
 
