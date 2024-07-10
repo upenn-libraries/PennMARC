@@ -62,6 +62,7 @@ module PennMARC
       #
       # @note this is ported mostly form MG's new-style Subject parsing
       # @param [MARC::Record] record
+      # @param [Boolean] override to remove undesirable terms or not
       # @return [Array<String>] array of all subject values for faceting
       def facet(record, override: true)
         values = subject_fields(record, type: :facet).filter_map { |field|
@@ -77,6 +78,7 @@ module PennMARC
       # only those with an allowed source code (see ALLOWED_SOURCE_CODES) are included.
       #
       # @param [MARC::Record] record
+      # @param [Boolean] override to remove undesirable terms or not
       # @return [Array] array of all subject values for display
       def show(record, override: true)
         values = subject_fields(record, type: :all).filter_map { |field|
@@ -91,6 +93,7 @@ module PennMARC
       # Get Subjects from "Children" ontology
       #
       # @param [MARC::Record] record
+      # @param [Boolean] override to remove undesirable terms or not
       # @return [Array] array of children's subject values for display
       def childrens_show(record, override: true)
         values = subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '1' })
@@ -106,6 +109,7 @@ module PennMARC
       # Get Subjects from "MeSH" ontology
       #
       # @param [MARC::Record] record
+      # @param [Boolean] override to remove undesirable terms or not
       # @return [Array] array of MeSH subject values for display
       def medical_show(record, override: true)
         values = subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '2' })
