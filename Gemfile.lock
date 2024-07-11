@@ -19,6 +19,7 @@ GEM
       scrub_rb (>= 1.0.1, < 2)
       unf
     minitest (5.18.0)
+    multi_string_replace (2.0.2)
     nokogiri (1.15.2-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.15.2-x64-mingw-ucrt)
@@ -113,6 +114,7 @@ DEPENDENCIES
   activesupport (~> 7)
   library_stdnums (~> 1.6)
   marc (~> 1.2)
+  multi_string_replace (~> 2.0)
   nokogiri (~> 1.15)
   rake (~> 13.0)
   rspec (~> 3.12)
