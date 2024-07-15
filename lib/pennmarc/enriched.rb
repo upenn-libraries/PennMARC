@@ -12,7 +12,7 @@ module PennMARC
       PHYS_INVENTORY_TAG = 'hld'
       ELEC_INVENTORY_TAG = 'prt'
       ITEM_TAG = 'itm'
-      RELATED_RECORD_TAG = 'REL'
+      RELATED_RECORD_TAGS = %w[REL rel]
 
       # Subfields for HLD tags
       # Follow MARC 852 spec: https://www.loc.gov/marc/holdings/hd852.html, but names are translated into Alma parlance
