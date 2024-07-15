@@ -176,6 +176,7 @@ describe 'PennMARC::Identifier' do
         expect(helper.host_record_id(record)).to contain_exactly '123456789'
       end
     end
+
     context 'with an upper case tag' do
       let(:record) do
         marc_record fields: [
