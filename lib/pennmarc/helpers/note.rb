@@ -68,13 +68,18 @@ module PennMARC
         notes.uniq
       end
 
-      # Retrieve contents notes for display from fields {https://www.oclc.org/bibformats/en/5xx/505.html 505} and
-      # its linked alternate.
+      # Retrieve contents notes for display from fields {https://www.oclc.org/bibformats/en/5xx/505.html 505} and, if
+      # include_vernacular param is true, its linked alternate. Used for display and searching.
       # @param record [MARC::Record]
+      # @param with_alternate [Boolean]
       # @return [Array<String>]
-      def contents_show(record)
+      def contents_values(record, with_alternate: true)
         record.fields(%w[505 880]).filter_map { |field|
-          next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^505/)
+          if field.tag == '880'
+            next unless with_alternate
+
+            next if no_subfield_value_matches?(field, '6', /^505/)
+          end
 
           join_subfields(field, &subfield_not_in?(%w[6 8])).split('--')
         }.flatten.uniq
@@ -177,7 +182,7 @@ module PennMARC
 
       # For system details: extract subfield ǂ3 plus other subfields as specified by passed-in block. Pays special
       # attention to punctuation, joining subfield ǂ3 values with a colon-space (': ').
-      # @param field[MARC::DataField]
+      # @param field [MARC::DataField]
       # @param & [Proc]
       # @return [String]
       def sub3_and_other_subs(field, &)

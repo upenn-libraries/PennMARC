@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Note' do
-  include MarcSpecHelpers
-
   let(:helper) { PennMARC::Note }
+  let(:record) { marc_record(fields: fields) }
 
   describe '.notes_show' do
-    let(:record) { marc_record(fields: fields) }
     let(:fields) do
       [
         marc_field(tag: '500',
@@ -39,7 +37,6 @@ describe 'PennMARC::Note' do
   end
 
   describe '.local_notes_show' do
-    let(:record) { marc_record(fields: fields) }
     let(:fields) do
       [
         marc_field(tag: '561', subfields: { a: 'Athenaeum copy: ', u: 'No URI' }),
@@ -76,7 +73,6 @@ describe 'PennMARC::Note' do
   end
 
   describe '.provenance_show' do
-    let(:record) { marc_record(fields: fields) }
     let(:fields) do
       [
         marc_field(tag: '561', subfields: { a: 'Not Athenaeum copy: ', u: 'No URI' }, indicator1: '1', indicator2: ' '),
@@ -99,29 +95,35 @@ describe 'PennMARC::Note' do
     end
   end
 
-  describe '.contents_show' do
-    let(:record) { marc_record(fields: fields) }
+  describe '.contents_values' do
     let(:fields) do
-      [
-        marc_field(tag: '505', subfields: { a: 'Formatted content notes', g: 'Misc Info', r: 'Responsible Agent',
-                                            t: 'A Title', u: 'URI' }),
-        marc_field(tag: '880', subfields: { a: 'Alt Formatted content notes', g: ' Alt Misc Info',
-                                            r: 'Alt Responsible Agent', t: 'Alt Title', u: 'Alt URI', '6': '505' })
-      ]
+      [marc_field(tag: '505', subfields: { a: 'Formatted content notes', g: 'Misc Info', r: 'Responsible Agent',
+                                           t: 'A Title', u: 'URI' }),
+       marc_field(tag: '880', subfields: { a: 'Alt Formatted content notes', g: ' Alt Misc Info',
+                                           r: 'Alt Responsible Agent', t: 'Alt Title', u: 'Alt URI', '6': '505' })]
     end
 
-    let(:values) { helper.contents_show(record) }
+    context 'with vernacular included' do
+      let(:values) { helper.contents_values(record) }
 
-    it 'returns expected values from 505 and its linked alternate' do
-      expect(values).to contain_exactly(
-        'Formatted content notes Misc Info Responsible Agent A Title URI',
-        'Alt Formatted content notes Alt Misc Info Alt Responsible Agent Alt Title Alt URI'
-      )
+      it 'returns expected values from 505 and its linked alternate' do
+        expect(values).to contain_exactly(
+          'Formatted content notes Misc Info Responsible Agent A Title URI',
+          'Alt Formatted content notes Alt Misc Info Alt Responsible Agent Alt Title Alt URI'
+        )
+      end
+    end
+
+    context 'with vernacular excluded' do
+      let(:values) { helper.contents_values(record, with_alternate: false) }
+
+      it 'returns expected values from 505 but not its linked alternate' do
+        expect(values).to contain_exactly('Formatted content notes Misc Info Responsible Agent A Title URI')
+      end
     end
   end
 
   describe '.access_restriction_show' do
-    let(:record) { marc_record(fields: fields) }
     let(:fields) do
       [
         marc_field(tag: '506', subfields: { a: 'Open to users with valid PennKey', b: 'Donor', c: 'Appointment Only',
@@ -129,7 +131,6 @@ describe 'PennMARC::Note' do
                                             g: '20300101', q: 'Van Pelt', u: 'URI', '2': 'star' })
       ]
     end
-
     let(:values) { helper.access_restriction_show(record) }
 
     it 'returns expected values from 506' do
@@ -141,8 +142,6 @@ describe 'PennMARC::Note' do
   end
 
   describe '.finding_aid_show' do
-    let(:record) { marc_record(fields: fields) }
-
     let(:fields) do
       [
         marc_field(tag: '555', subfields: { a: 'Finding aid', b: 'Source', c: 'Item level control',
@@ -151,7 +150,6 @@ describe 'PennMARC::Note' do
                                             d: 'Alt citation', u: 'Alt URI', '3': 'Alt Materials', '6': '555' })
       ]
     end
-
     let(:values) { helper.finding_aid_show(record) }
 
     it 'returns expected values from 555 and its linked alternate' do
@@ -163,15 +161,12 @@ describe 'PennMARC::Note' do
   end
 
   describe '.participant_show' do
-    let(:record) { marc_record(fields: fields) }
-
     let(:fields) do
       [
         marc_field(tag: '511', subfields: { a: 'Narrator: Some Dev' }),
         marc_field(tag: '880', subfields: { a: 'Alt Participant', '6': '511' })
       ]
     end
-
     let(:values) { helper.participant_show(record) }
 
     it 'returns expected values from 511 and its linked alternate' do
@@ -180,8 +175,6 @@ describe 'PennMARC::Note' do
   end
 
   describe '.credits_show' do
-    let(:record) { marc_record(fields: fields) }
-
     let(:fields) do
       [
         marc_field(tag: '508', subfields: { a: 'Music: Some Dev' }),

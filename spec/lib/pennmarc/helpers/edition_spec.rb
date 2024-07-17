@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Edition' do
-  include MarcSpecHelpers
-
   let(:helper) { PennMARC::Edition }
   let(:mapping) { { aut: 'Author' } }
   let(:record) do

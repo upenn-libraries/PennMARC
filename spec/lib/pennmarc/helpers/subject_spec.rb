@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Subject' do
-  include MarcSpecHelpers
-
   let(:helper) { PennMARC::Subject }
   let(:relator_map) do
     { dpc: 'Depicted' }
@@ -302,6 +300,25 @@ describe 'PennMARC::Subject' do
 
       it 'includes only permitted headings from approved ontologies' do
         expect(values).to contain_exactly 'Philosophy in motion pictures.'
+      end
+    end
+
+    context 'with headings that contain terms for removal and replacement' do
+      let(:fields) do
+        [marc_field(tag: '650', subfields: { a: 'History.' }),
+         marc_field(tag: '650', subfields: { a: PennMARC::Mappers.headings_to_remove.first }),
+         marc_field(tag: '650', subfields: { a: PennMARC::Mappers.heading_overrides.first[0] })]
+      end
+
+      it 'removes and replaces terms as expected' do
+        expect(values).to contain_exactly 'History.', "#{PennMARC::Mappers.heading_overrides.first[1]}."
+      end
+
+      it 'does not remove or replace terms if override param is false' do
+        expect(helper.show(record, override: false)).to contain_exactly(
+          'History.', "#{PennMARC::Mappers.headings_to_remove.first}.",
+          "#{PennMARC::Mappers.heading_overrides.first[0]}."
+        )
       end
     end
   end

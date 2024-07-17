@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Genre' do
-  include MarcSpecHelpers
-
   let(:helper) { PennMARC::Genre }
   let(:record) { marc_record fields: fields }
 

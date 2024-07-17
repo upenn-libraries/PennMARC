@@ -2,7 +2,11 @@
 
 $LOAD_PATH.unshift(__dir__) unless $LOAD_PATH.include?(__dir__)
 
+# Require spec-specific helpers dir
 Dir[File.join(__dir__, 'support', '**', '*.rb')].each { |f| require f }
+
+# Require test helpers from gem lib
+Dir[File.join(__dir__, '../lib/pennmarc/test', '*.rb')].each { |f| require f }
 
 require 'pennmarc'
 
@@ -22,6 +26,9 @@ require 'pennmarc'
 #
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
+  # Include MarcHelpers by default
+  config.include(PennMARC::Test::MarcHelpers)
+
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Creator' do
-  include MarcSpecHelpers
-
   let(:helper) { PennMARC::Creator }
   let(:mapping) { { aut: 'Author' } }
 
@@ -384,6 +382,24 @@ describe 'PennMARC::Creator' do
 
     it 'returns conference name information for searching without relator value' do
       expect(helper.conference_search(record)).to eq ['MARC History Symposium Moscow']
+    end
+  end
+
+  describe '.corporate_search' do
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '110', subfields: { a: 'Penn Libraries', b: 'Digital Library Development' }),
+        marc_field(tag: '710', subfields: { a: 'Working Group on Digital Repository Infrastructure' }),
+        marc_field(tag: '810', subfields: { a: 'Constellation of Repositories Strategic Team' })
+      ]
+    end
+
+    it 'returns expected values' do
+      expect(helper.corporate_search(record)).to contain_exactly(
+        'Constellation of Repositories Strategic Team',
+        'Penn Libraries Digital Library Development',
+        'Working Group on Digital Repository Infrastructure'
+      )
     end
   end
 

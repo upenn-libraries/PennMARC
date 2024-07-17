@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::Identifier' do
-  include MarcSpecHelpers
-
   let(:helper) { PennMARC::Identifier }
 
   describe '.mmsid' do
@@ -163,16 +161,36 @@ describe 'PennMARC::Identifier' do
   end
 
   describe '.host_record_id' do
-    let(:record) do
-      marc_record fields: [
-        marc_field(tag: PennMARC::Enriched::Pub::RELATED_RECORD_TAG, subfields: { w: '123456789', c: 'Contains',
-                                                                                  a: 'Title' }),
-        marc_field(tag: PennMARC::Enriched::Pub::RELATED_RECORD_TAG, subfields: { w: '666666666', c: 'Contained In' })
-      ]
+    context 'with a lower case tag' do
+      let(:record) do
+        marc_record fields: [
+          marc_field(tag: PennMARC::Enriched::Pub::RELATED_RECORD_TAGS.second, subfields: { w: '123456789',
+                                                                                            c: 'Contains',
+                                                                                            a: 'Title' }),
+          marc_field(tag: PennMARC::Enriched::Pub::RELATED_RECORD_TAGS.second, subfields: { w: '666666666',
+                                                                                            c: 'Contained In' })
+        ]
+      end
+
+      it 'returns only the desired host record MMS ID values' do
+        expect(helper.host_record_id(record)).to contain_exactly '123456789'
+      end
     end
 
-    it 'returns only the desired host record MMS ID values' do
-      expect(helper.host_record_id(record)).to contain_exactly '123456789'
+    context 'with an upper case tag' do
+      let(:record) do
+        marc_record fields: [
+          marc_field(tag: PennMARC::Enriched::Pub::RELATED_RECORD_TAGS.first, subfields: { w: '123456789',
+                                                                                           c: 'Contains',
+                                                                                           a: 'Title' }),
+          marc_field(tag: PennMARC::Enriched::Pub::RELATED_RECORD_TAGS.first, subfields: { w: '666666666',
+                                                                                           c: 'Contained In' })
+        ]
+      end
+
+      it 'returns only the desired host record MMS ID values' do
+        expect(helper.host_record_id(record)).to contain_exactly '123456789'
+      end
     end
   end
 end

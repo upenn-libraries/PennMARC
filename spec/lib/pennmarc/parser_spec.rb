@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe PennMARC::Parser do
-  include MarcSpecHelpers
+  include FixtureHelpers
 
   subject(:parser) { described_class.new }
 

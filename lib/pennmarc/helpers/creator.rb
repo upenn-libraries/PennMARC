@@ -7,26 +7,27 @@ module PennMARC
   # @todo can there ever be multiple 100 fields?
   #       can ǂe and ǂ4 both be used at the same time? seems to result in duplicate values
   class Creator < Helper
+    # Main tags for Author/Creator information
+    TAGS = %w[100 110].freeze
+
+    # Aux tags for Author/Creator information, for use in search_aux method
+    AUX_TAGS = %w[100 110 111 400 410 411 700 710 711 800 810 811].freeze
+
+    CONFERENCE_SEARCH_TAGS = %w[111 711 811].freeze
+    CORPORATE_SEARCH_TAGS = %w[110 710 810].freeze
+
+    # subfields NOT to join when combining raw subfield values
+    NAME_EXCLUDED_SUBFIELDS = %w[a 1 4 5 6 8 t].freeze
+
+    CONTRIBUTOR_TAGS = %w[700 710].freeze
+
+    FACET_SOURCE_MAP = {
+      100 => 'abcdjq', 110 => 'abcdjq', 111 => 'abcen',
+      700 => 'abcdjq', 710 => 'abcdjq', 711 => 'abcen',
+      800 => 'abcdjq', 810 => 'abcdjq', 811 => 'abcen'
+    }.freeze
+
     class << self
-      # Main tags for Author/Creator information
-      TAGS = %w[100 110].freeze
-
-      # Aux tags for Author/Creator information, for use in search_aux method
-      AUX_TAGS = %w[100 110 111 400 410 411 700 710 711 800 810 811].freeze
-
-      CONFERENCE_SEARCH_TAGS = %w[111 711 811].freeze
-
-      # subfields NOT to join when combining raw subfield values
-      NAME_EXCLUDED_SUBFIELDS = %w[a 1 4 5 6 8 t].freeze
-
-      CONTRIBUTOR_TAGS = %w[700 710].freeze
-
-      FACET_SOURCE_MAP = {
-        100 => 'abcdjq', 110 => 'abcdjq', 111 => 'abcen',
-        700 => 'abcdjq', 710 => 'abcdjq', 711 => 'abcen',
-        800 => 'abcdjq', 810 => 'abcdjq', 811 => 'abcen'
-      }.freeze
-
       # Author/Creator search field. Includes all subfield values (even ǂ0 URIs) from
       # {https://www.oclc.org/bibformats/en/1xx/100.html 100 Main Entry--Personal Name} and
       # {https://www.oclc.org/bibformats/en/1xx/110.html 110 Main Entry--Corporate Name}. Maps any relator codes found
@@ -178,7 +179,7 @@ module PennMARC
       end
 
       # Author/Creator for faceting. Grabs values from a plethora of fields, joins defined subfields, then trims some
-      # punctuation (@see trim_punctuation)
+      # punctuation (@see Util.trim_punctuation)
       # @todo should trim_punctuation apply to each subfield value, or the joined values? i think the joined values
       # @note ported from author_creator_xfacet2_input - is this the best choice? check the copyField declarations -
       #       franklin uses author_creator_f
@@ -257,6 +258,15 @@ module PennMARC
         record.fields(CONFERENCE_SEARCH_TAGS).filter_map { |field|
           join_subfields(field, &subfield_in?(%w[a c d e]))
         }.uniq
+      end
+
+      # Corporate author search values for searching
+      # @param record [MARC::Record]
+      # @return [Array<String>]
+      def corporate_search(record)
+        record.fields(CORPORATE_SEARCH_TAGS).filter_map do |field|
+          join_subfields(field, &subfield_in?(%w[a b c d]))
+        end
       end
 
       # Retrieve contributor values for display from fields {https://www.oclc.org/bibformats/en/7xx/700.html 700}

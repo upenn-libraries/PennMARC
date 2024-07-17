@@ -62,67 +62,76 @@ module PennMARC
       #
       # @note this is ported mostly form MG's new-style Subject parsing
       # @param record [MARC::Record]
+      # @param [Boolean] override to remove undesirable terms or not
       # @return [Array<String>] array of all subject values for faceting
-      def facet(record)
-        subject_fields(record, type: :facet).filter_map { |field|
+      def facet(record, override: true)
+        values = subject_fields(record, type: :facet).filter_map { |field|
           term_hash = build_subject_hash(field)
           next if term_hash.blank? || term_hash[:count]&.zero?
 
           format_term type: :facet, term: term_hash
         }.uniq
+        override ? HeadingControl.term_override(values) : values
       end
 
       # All Subjects for display. This includes all {DISPLAY_TAGS} and {LOCAL_TAGS}. For tags that specify a source,
       # only those with an allowed source code (see ALLOWED_SOURCE_CODES) are included.
       #
       # @param record [MARC::Record]
+      # @param override [Boolean] to remove undesirable terms or not
       # @return [Array] array of all subject values for display
-      def show(record)
-        subject_fields(record, type: :all).filter_map { |field|
+      def show(record, override: true)
+        values = subject_fields(record, type: :all).filter_map { |field|
           term_hash = build_subject_hash(field)
           next if term_hash.blank? || term_hash[:count]&.zero?
 
           format_term type: :display, term: term_hash
         }.uniq
+        override ? HeadingControl.term_override(values) : values
       end
 
       # Get Subjects from "Children" ontology
       #
       # @param record [MARC::Record]
+      # @param override [Boolean] remove undesirable terms or not
       # @return [Array] array of children's subject values for display
-      def childrens_show(record)
-        subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '1' })
-          .filter_map { |field|
-            term_hash = build_subject_hash(field)
-            next if term_hash.blank? || term_hash[:count]&.zero?
+      def childrens_show(record, override: true)
+        values = subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '1' })
+                 .filter_map { |field|
+          term_hash = build_subject_hash(field)
+          next if term_hash.blank? || term_hash[:count]&.zero?
 
-            format_term type: :display, term: term_hash
-          }.uniq
+          format_term type: :display, term: term_hash
+        }.uniq
+        override ? HeadingControl.term_override(values) : values
       end
 
       # Get Subjects from "MeSH" ontology
       #
       # @param record [MARC::Record]
+      # @param override [Boolean] remove undesirable terms or not
       # @return [Array] array of MeSH subject values for display
-      def medical_show(record)
-        subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '2' })
-          .filter_map { |field|
-            term_hash = build_subject_hash(field)
-            next if term_hash.blank? || term_hash[:count]&.zero?
+      def medical_show(record, override: true)
+        values = subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '2' })
+                 .filter_map { |field|
+          term_hash = build_subject_hash(field)
+          next if term_hash.blank? || term_hash[:count]&.zero?
 
-            format_term type: :display, term: term_hash
-          }.uniq
+          format_term type: :display, term: term_hash
+        }.uniq
+        override ? HeadingControl.term_override(values) : values
       end
 
       # Get Subject values from {DISPLAY_TAGS} where indicator2 is 4 and {LOCAL_TAGS}. Do not include any values where
       # sf2 includes "penncoi" (Community of Interest).
       #
       # @param record [MARC::Record]
+      # @param override [Boolean] to remove undesirable terms
       # @return [Array] array of local subject values for display
-      def local_show(record)
+      def local_show(record, override: true)
         local_fields = subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '4' }) +
                        subject_fields(record, type: :local)
-        local_fields.filter_map { |field|
+        values = local_fields.filter_map { |field|
           next if subfield_value?(field, '2', /penncoi/)
 
           term_hash = build_subject_hash(field)
@@ -130,6 +139,7 @@ module PennMARC
 
           format_term type: :display, term: term_hash
         }.uniq
+        override ? HeadingControl.term_override(values) : values
       end
 
       private

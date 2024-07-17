@@ -37,7 +37,6 @@ module PennMARC
 
     # returns true if field has a value that matches
     # passed-in regex and passed in subfield
-    # @todo example usage
     # @param field [MARC::DataField]
     # @param subfield [String|Integer|Symbol]
     # @param regex [Regexp]
@@ -57,7 +56,6 @@ module PennMARC
     end
 
     # returns true if a given field has a given subfield value in a given array
-    # TODO: example usage
     # @param field [MARC::DataField]
     # @param subfield [String|Integer|Symbol]
     # @param array [Array]
@@ -107,7 +105,7 @@ module PennMARC
 
     # Gets all subfield values for a subfield in a given field
     # @param field [MARC::DataField]
-    # @param subfield [String|Symbol] subfield as a string or symbol
+    # @param subfield [String|Symbol] as a string or symbol
     # @return [Array] subfield values for given subfield code
     def subfield_values(field, subfield)
       field.filter_map do |sf|
@@ -130,8 +128,27 @@ module PennMARC
       end
     end
 
-    # @param trailer [Symbol,String] trailer to target for removal
-    # @param string [String] string to modify
+    # Trim punctuation method extracted from Traject macro, to ensure consistent output
+    # @param string [String]
+    # @return [String] string with relevant punctuation removed
+    def trim_punctuation(string)
+      return string unless string
+
+      string = string.sub(%r{ *[ ,/;:] *\Z}, '')
+
+      # trailing period if it is preceded by at least three letters (possibly preceded and followed by whitespace)
+      string = string.sub(/( *[[:word:]]{3,})\. *\Z/, '\1')
+
+      # single square bracket characters if they are the start and/or end chars and there are no internal square
+      # brackets.
+      string = string.sub(/\A\[?([^\[\]]+)\]?\Z/, '\1')
+
+      # trim any leading or trailing whitespace
+      string.strip
+    end
+
+    # @param trailer [Symbol|String] to target for removal
+    # @param string [String] to modify
     # @return [String]
     def trim_trailing(trailer, string)
       string.sub TRAILING_PUNCTUATIONS_PATTERNS[trailer.to_sym], ''
@@ -140,7 +157,7 @@ module PennMARC
     # trim trailing punctuation, manipulating string in place
     # @param trailer [Symbol,String] trailer to target for removal
     # @param string [String] string to modify
-    # @return [String, nil] string to modify
+    # @return [String, Nil] string to modify
     def trim_trailing!(trailer, string)
       string.sub! TRAILING_PUNCTUATIONS_PATTERNS[trailer.to_sym], ''
     end
@@ -249,7 +266,7 @@ module PennMARC
     def translate_relator(relator_code, mapping)
       return if relator_code.blank?
 
-      mapping[relator_code.to_sym]
+      mapping[relator_code&.to_sym]
     end
 
     # Get 650 & 880 for Provenance and Chronology: prefix should be 'PRO' or 'CHR' and may be preceded by a '%'
@@ -311,7 +328,7 @@ module PennMARC
     # Appends a relator value to the given string. It prioritizes relator codes found in subfield $4
     # and falls back to the specified relator term subfield (defaulting to 'e') if no valid codes are found in $4.
     # Use with 1xx/7xx fields.
-    # @param field [MARC::Field] field where relator values are stored
+    # @param field [MARC::Field] where relator values are stored
     # @param joined_subfields [String] the string to which the relator is appended
     # @param relator_term_sf [String] MARC subfield that stores relator term
     # @param relator_map [Hash]
