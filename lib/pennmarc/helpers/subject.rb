@@ -30,8 +30,8 @@ module PennMARC
       # 69X, including any linked 880 fields. Fields must have an indicator2 value in {VALID_SOURCE_INDICATORS}.
       # @todo this includes subfields that may not be desired like 1 (uri) and 2 (source code) but this might be OK for
       #       a search (non-display) field?
-      # @param [Hash] relator_map
-      # @param [MARC::Record] record
+      # @param relator_map [Hash]
+      # @param record [MARC::Record]
       # @return [Array<String>] array of all subject values for search
       def search(record, relator_map: Mappers.relator)
         subject_fields(record, type: :search).filter_map { |field|
@@ -61,7 +61,7 @@ module PennMARC
       # All Subjects for faceting
       #
       # @note this is ported mostly form MG's new-style Subject parsing
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] array of all subject values for faceting
       def facet(record)
         subject_fields(record, type: :facet).filter_map { |field|
@@ -75,7 +75,7 @@ module PennMARC
       # All Subjects for display. This includes all {DISPLAY_TAGS} and {LOCAL_TAGS}. For tags that specify a source,
       # only those with an allowed source code (see ALLOWED_SOURCE_CODES) are included.
       #
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array] array of all subject values for display
       def show(record)
         subject_fields(record, type: :all).filter_map { |field|
@@ -88,7 +88,7 @@ module PennMARC
 
       # Get Subjects from "Children" ontology
       #
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array] array of children's subject values for display
       def childrens_show(record)
         subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '1' })
@@ -102,7 +102,7 @@ module PennMARC
 
       # Get Subjects from "MeSH" ontology
       #
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array] array of MeSH subject values for display
       def medical_show(record)
         subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '2' })
@@ -117,7 +117,7 @@ module PennMARC
       # Get Subject values from {DISPLAY_TAGS} where indicator2 is 4 and {LOCAL_TAGS}. Do not include any values where
       # sf2 includes "penncoi" (Community of Interest).
       #
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array] array of local subject values for display
       def local_show(record)
         local_fields = subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '4' }) +
@@ -139,9 +139,9 @@ module PennMARC
       # - facet
       # - display
       # - local
-      # @param [MARC::Record] record
-      # @param [String, Symbol] type of fields desired
-      # @param [Hash] options to be passed to the selector method
+      # @param record [MARC::Record]
+      # @param type [String, Symbol] type of fields desired
+      # @param options [Hash] options to be passed to the selector method
       # @return [Array<MARC::DataField>] selected fields
       def subject_fields(record, type:, options: {})
         selector_method = case type.to_sym
@@ -161,8 +161,8 @@ module PennMARC
       # Format a term hash as a string for display
       #
       # @todo support search field formatting?
-      # @param [Symbol] type
-      # @param [Hash] term components and information as a hash
+      # @param type [Symbol]
+      # @param term [Hash] components and information as a hash
       # @return [String]
       def format_term(type:, term:)
         return unless type.in? %i[facet display]
@@ -184,7 +184,7 @@ module PennMARC
       # indicator 2 is '7' - indicating "source specified", the specified source must be in our approved source code
       # list.
       # @see Util.valid_subject_genre_source_code?
-      # @param [MARC::DataField] field
+      # @param field [MARC::DataField]
       # @return [Boolean] whether a MARC field is intended for display under general "Subjects"
       def subject_general_display_field?(field)
         return false unless field.tag.in?(DISPLAY_TAGS + LOCAL_TAGS) && field.respond_to?(:indicator2)
@@ -196,14 +196,14 @@ module PennMARC
         true
       end
 
-      # @param [MARC::DataField] field
+      # @param field [MARC::DataField]
       # @return [Boolean] whether a MARC field is a local subject field (69X)
       def subject_local_field?(field)
         field.tag.in? LOCAL_TAGS
       end
 
-      # @param [MARC::DataField] field
-      # @param [Hash] options include :tags and :indicator2 values
+      # @param field [MARC::DataField]
+      # @param options [Hash] include :tags and :indicator2 values
       # @return [Boolean] whether a MARC field should be considered for display
       def subject_display_field?(field, options)
         return false unless field.respond_to?(:indicator2)
@@ -213,7 +213,7 @@ module PennMARC
         false
       end
 
-      # @param [MARC::DataField] field
+      # @param field [MARC::DataField]
       # @return [Boolean]
       def subject_facet_field?(field)
         return false unless field.respond_to?(:indicator2)
@@ -231,7 +231,7 @@ module PennMARC
       #       because we're using (where? - MK) "subdivision count" as a heuristic for the quality level of the
       #       heading. - MG
       # @todo do i need all this?
-      # @param [MARC::DataField] field
+      # @param field [MARC::DataField]
       # @return [Hash{Symbol => Integer, Array, Boolean}, Nil]
       def build_subject_hash(field)
         term_info = { count: 0, parts: [], append: [], uri: nil,
@@ -281,7 +281,7 @@ module PennMARC
 
       # Determine if a field should be considered for Subject search inclusion. It must be either contained in
       # {SEARCH_TAGS}, be an 880 field otherwise linked to a valid Search tag, or be in {LOCAL_TAGS}.
-      # @param [MARC::DataField] field
+      # @param field [MARC::DataField]
       # @return [Boolean]
       def subject_search_field?(field)
         return false unless field.respond_to?(:indicator2) && VALID_SOURCE_INDICATORS.include?(field.indicator2)
@@ -295,7 +295,7 @@ module PennMARC
       end
 
       # Is a given tag a subject search field? Yes if it is contained in {SEARCH_TAGS} or starts with 69.
-      # @param [String, NilClass] tag
+      # @param tag [String, nil]
       # @return [Boolean]
       def subject_search_tag?(tag)
         return false if tag.blank?
@@ -307,7 +307,7 @@ module PennMARC
       # when we've only encountered one subfield, assume that it might be a poorly-coded record
       # with a bunch of subdivisions mashed together, and attempt to convert it to a consistent
       # form.
-      # @param [String] first_part
+      # @param first_part [String]
       # @return [String, nil] normalized string
       def normalize_single_subfield(first_part)
         first_part.gsub!(/([[[:alnum:]])])(\s+--\s*|\s*--\s+)([[[:upper:]][[:digit:]]])/, '\1--\3')
@@ -316,8 +316,8 @@ module PennMARC
       end
 
       # removes trailing comma or period, manipulating the string in place
-      # @param [String, NilClass] subject_part
-      # @return [String, NilClass]
+      # @param subject_part [String, nil]
+      # @return [String, nil]
       def trim_trailing_commas_or_periods!(subject_part)
         return if subject_part.blank?
 

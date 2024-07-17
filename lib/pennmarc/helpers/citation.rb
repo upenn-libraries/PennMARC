@@ -10,7 +10,7 @@ module PennMARC
       # abbreviations, etc.). The actual text of a published description is not recorded in field 510 but rather in
       # field 520 (Summary, Etc. Note).
       # https://www.loc.gov/marc/bibliographic/bd510.html
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] array of citations and any linked alternates
       def cited_in_show(record)
         datafield_and_linked_alternate(record, '510').uniq
@@ -21,7 +21,7 @@ module PennMARC
       # each is recorded in a separate occurrence of field 524. The note is sometimes displayed and/or printed with an
       # introductory phrase that is generated as a display constant based on the first indicator value.
       # https://www.loc.gov/marc/bibliographic/bd524.html
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] array of citation of described materials note and any linked alternates
       def cite_as_show(record)
         datafield_and_linked_alternate(record, '524').uniq

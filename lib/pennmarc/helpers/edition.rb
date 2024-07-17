@@ -11,7 +11,7 @@ module PennMARC
       # sequential edition statements such as 1st- ed. This type of information is contained in field 362 (Dates of
       # Publication and/or Volume Designation).
       # https://www.loc.gov/marc/bibliographic/bd250.html
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] array of editions and their alternates
       def show(record, with_alternate: true)
         editions = record.fields('250').map do |field|
@@ -23,8 +23,8 @@ module PennMARC
       end
 
       # Edition values for display in search results. Just grab the first 250 field.
-      # @param [MARC::Record] record
-      # @return [String, NilClass] string of all first 250 subfields, excluding 6 and 8
+      # @param record [MARC::Record]
+      # @return [String, nil] string of all first 250 subfields, excluding 6 and 8
       def values(record)
         edition = record.fields('250').first
         return if edition.blank?
@@ -36,8 +36,8 @@ module PennMARC
       # from this field, the introductory phrase Other editions available: may be generated based on the field tag for
       # display.
       # https://www.loc.gov/marc/bibliographic/bd775.html
-      # @param [MARC::Record] record
-      # @param [Hash] relator_map
+      # @param record [MARC::Record]
+      # @param relator_map [Hash]
       # @return [Array<String>] array of other edition strings
       def other_show(record, relator_map: Mappers.relator)
         values = record.fields('775').filter_map do |field|
@@ -57,8 +57,8 @@ module PennMARC
       private
 
       # Assemble a string of relevant edition information.
-      # @param [MARC::DataField] field
-      # @param [Hash] relator_map
+      # @param field [MARC::DataField]
+      # @param relator_map [Hash]
       # @return [String (frozen)] assembled other version string
       def other_edition_value(field, relator_map)
         subi = remove_paren_value_from_subfield_i(field) || ''

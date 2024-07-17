@@ -8,7 +8,7 @@ module PennMARC
       # Genre values for searching. We're less picky about what is included here to enable discovery via any included
       # 655 data.
       #
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] array of genre values for search
       def search(record)
         record.fields('655').map { |field|
@@ -26,7 +26,7 @@ module PennMARC
       # @todo subfields e and w do not appear in the documentation for 655, but we give them special consideration here,
       #       what gives?
       # @note legacy method returns a link object
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] array of genre values for display
       def show(record)
         record.fields(%w[655 880]).filter_map { |field|
@@ -46,7 +46,7 @@ module PennMARC
       # Genre values for faceting. We only set Genre facet values for movies (videos) and manuscripts(?)
       # @todo the Genre facet in Franklin is pretty ugly. It could be cleaned up by limiting the subfields included
       #       here and cleaning up punctuation.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def facet(record)
         format_code = record.leader[6] || ' '
@@ -61,8 +61,8 @@ module PennMARC
 
       private
 
-      # @param [MARC::DataField] field
-      # @return [TrueClass, FalseClass]
+      # @param field [MARC::DataField]
+      # @return [Boolean]
       def allowed_genre_field?(field)
         field.indicator2.in?(%w[0 4]) || subfield_value_in?(field, '2', PennMARC::HeadingControl::ALLOWED_SOURCE_CODES)
       end

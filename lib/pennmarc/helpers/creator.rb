@@ -35,8 +35,8 @@ module PennMARC
       # @todo are we including too many details here and gumming up our index? consider UIRs, relator labels, dates...
       # @todo shouldn't indicator1 tell us the order of the name? do we not trust the indicator?
       # @note ported from get_author_creator_1_search_values
-      # @param [MARC::Record] record
-      # @param [Hash] relator_map
+      # @param record [MARC::Record]
+      # @param relator_map [Hash]
       # @return [Array<String>] array of author/creator values for indexing
       def search(record, relator_map: Mappers.relator)
         name_search_values record: record, tags: TAGS, relator_map: relator_map
@@ -50,7 +50,7 @@ module PennMARC
       # and {https://www.loc.gov/marc/bibliographic/bd711.html MARC 711}. The 800, 810 and 8111 tags are similar in
       # theme to the 7xx fields but apply to serial records.
       # @note ported from get_author_creator_2_search_values
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] array of extended author/creator values for indexing
       def search_aux(record, relator_map: Mappers.relator)
         name_search_values record: record, tags: AUX_TAGS, relator_map: relator_map
@@ -60,7 +60,7 @@ module PennMARC
       # and {https://www.loc.gov/marc/bibliographic/bd110.html 110} and their linked alternates. First, joins subfields
       # other than $0, $1, $4, $6, $8, $e, and w. Then, appends any encoded relators found in $4.
       # If there are no valid encoded relators, uses the value found in $e.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] array of author/creator values for display
       def show(record, relator_map: Mappers.relator)
         fields = record.fields(TAGS)
@@ -72,8 +72,8 @@ module PennMARC
 
       # Hash with main creator show values as the fields and the corresponding facet as the values.
       # Does not include linked 880s.
-      # @param [MARC::Record] record
-      # @param [Hash] relator_map
+      # @param record [MARC::Record]
+      # @param relator_map [Hash]
       # @return [Hash]
       def show_facet_map(record, relator_map: Mappers.relator)
         creators = record.fields(TAGS).filter_map do |field|
@@ -85,9 +85,9 @@ module PennMARC
       end
 
       # Returns the list of authors with name (subfield $a) only
-      # @param [MARC::Record] record
-      # @param [Boolean] main_tags_only, if true, only use TAGS; otherwise use both TAGS and CONTRIBUTOR_TAGS
-      # @param [Boolean] first_initial_only: true to only use the first initial instead of first name
+      # @param record [MARC::Record]
+      # @param main_tags_only [Boolean] only use TAGS; otherwise use both TAGS and CONTRIBUTOR_TAGS
+      # @param first_initial_only [Boolean] only use the first initial instead of first name
       # @return [Array<String>] names of the authors
       def authors_list(record, main_tags_only: false, first_initial_only: false)
         tags = if main_tags_only
@@ -107,11 +107,11 @@ module PennMARC
       end
 
       # Show the authors and contributors grouped together by relators with only names
-      # @param [MARC::Record] record
-      # @param [Hash] relator_map
-      # @param [Boolean] include_authors: true to include author fields TAGS
-      # @param [Boolean] name_only: true to include only the name subfield $a
-      # @param [Boolean] vernacular: true to include field 880 with subfield $6
+      # @param record [MARC::Record]
+      # @param relator_map [Hash]
+      # @param include_authors [Boolean] include author fields TAGS
+      # @param name_only [Boolean] include only the name subfield $a
+      # @param vernacular [Boolean] include field 880 with subfield $6
       # @return [Hash]
       def contributors_list(record, relator_map: Mappers.relator, include_authors: true, name_only: true,
                             vernacular: false)
@@ -158,8 +158,8 @@ module PennMARC
       # All author/creator values for display (like #show, but multivalued?) - no 880 linkage
       # Performs additional normalization of author names
       # @note ported from get_author_creator_values (indexed as author_creator_a) - shown on results page
-      # @param [MARC::Record] record
-      # @param [Hash] relator_map
+      # @param record [MARC::Record]
+      # @param relator_map [Hash]
       # @return [Array<String>] array of author/creator values for display
       def show_aux(record, relator_map: Mappers.relator)
         record.fields(TAGS).map { |field|
@@ -170,7 +170,7 @@ module PennMARC
       # Author/Creator sort. Does not map and include any relator codes.
       # @todo This includes any URI from ǂ0 which could help to disambiguate in sorts, but ǂ1 is excluded...
       # @note ported from get_author_creator_sort_values
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [String] string with author/creator value for sorting
       def sort(record)
         field = record.fields(TAGS).first
@@ -182,7 +182,7 @@ module PennMARC
       # @todo should trim_punctuation apply to each subfield value, or the joined values? i think the joined values
       # @note ported from author_creator_xfacet2_input - is this the best choice? check the copyField declarations -
       #       franklin uses author_creator_f
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] array of author/creator values for faceting
       def facet(record)
         FACET_SOURCE_MAP.flat_map { |field_num, subfields|
@@ -194,8 +194,8 @@ module PennMARC
 
       # Conference for display, intended for results display
       # @note ported from get_conference_values
-      # @param [MARC::Record] record
-      # @param [Hash] relator_map
+      # @param record [MARC::Record]
+      # @param relator_map [Hash]
       # @return [Array<String>] array of conference values
       def conference_show(record, relator_map: Mappers.relator)
         record.fields('111').filter_map { |field|
@@ -210,7 +210,7 @@ module PennMARC
       # using subfields $e and $w. We append any relators, preferring those defined in $4 and using $j as a fallback.
       # @note ported from get_conference_values
       # @todo what is ǂi for?
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] array of conference values
       def conference_detail_show(record, relator_map: Mappers.relator)
         conferences = record.fields(%w[111 711]).filter_map do |field|
@@ -235,8 +235,8 @@ module PennMARC
       # Return hash of detailed conference values mapped to their corresponding facets from fields
       # {https://www.loc.gov/marc/bibliographic/bd111.html 111} and
       # {https://www.loc.gov/marc/bibliographic/bd711.html 711}. Does not include linked 880s.
-      # @param [MARC::Record] record
-      # @param [Hash] relator_map
+      # @param record [MARC::Record]
+      # @param relator_map [Hash]
       # @return [Hash]
       def conference_detail_show_facet_map(record, relator_map: Mappers.relator)
         conferences = record.fields(%w[111 711]).filter_map do |field|
@@ -251,7 +251,7 @@ module PennMARC
       end
 
       # Conference name values for searching
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def conference_search(record)
         record.fields(CONFERENCE_SEARCH_TAGS).filter_map { |field|
@@ -265,8 +265,8 @@ module PennMARC
       # found in $4. If there are no valid encoded relationships, uses the value found in $e.
       # @note legacy version returns array of hash objects including data for display link
       # @todo is it okay to include 880 $4 here? Legacy includes $4 in main author display 880 but not here.
-      # @param [MARC::Record] record
-      # @ param [Hash] relator_map
+      # @param record [MARC::Record]
+      # @param relator_map [Hash]
       # @return [Array<String>]
       def contributor_show(record, relator_map: Mappers.relator)
         indicator_2_options = ['', ' ', '0']
@@ -283,9 +283,9 @@ module PennMARC
 
       private
 
-      # @param [MARC::Record] record
-      # @param [Array] tags to consider
-      # @param [Hash] relator_map
+      # @param record [MARC::Record]
+      # @param tags [Array] tags to consider
+      # @param relator_map [Hash]
       # @return [Array<String>] name values from given tags
       def name_search_values(record:, tags:, relator_map:)
         acc = record.fields(tags).filter_map do |field|
@@ -311,7 +311,7 @@ module PennMARC
 
       # Trim punctuation method extracted from Traject macro, to ensure consistent output
       # @todo move to Util?
-      # @param [String] string
+      # @param string [String]
       # @return [String] string with relevant punctuation removed
       def trim_punctuation(string)
         return string unless string
@@ -330,9 +330,9 @@ module PennMARC
       end
 
       # Extract the information we care about from 1xx fields, map relator codes, and use appropriate punctuation
-      # @param [MARC::Field] field
-      # @param [Hash] mapping
-      # @param [Boolean] should_convert_name_order
+      # @param field [MARC::Field]
+      # @param mapping [Hash]
+      # @param should_convert_name_order [Boolean]
       # @return [String] joined subfield values for value from field
       def name_from_main_entry(field, mapping, should_convert_name_order: false)
         relator_term_sf = relator_term_subfield(field)
@@ -355,7 +355,7 @@ module PennMARC
       end
 
       # Convert "Lastname, First" to "First Lastname"
-      # @param [String] name value for processing
+      # @param name [String] value for processing
       # @return [String]
       def convert_name_order(name)
         return name unless name.include? ','
@@ -366,7 +366,8 @@ module PennMARC
       end
 
       # Convert "Lastname, First" to "Lastname, F"
-      # @param [String] name
+      # @param name [String]
+      # @return [String]
       def abbreviate_name(name)
         name_parts = name.split(', ')
         return '' if name_parts.empty?
@@ -379,16 +380,16 @@ module PennMARC
       end
 
       # Parse creator facet value from given creator field and desired subfields
-      # @param [MARC::Field] field
-      # @param [Array<String>] subfields
+      # @param field [MARC::Field]
+      # @param subfields [Array<String>]
       # @return [String]
       def parse_facet_value(field, subfields)
         trim_punctuation(join_subfields(field, &subfield_in?(subfields)))
       end
 
       # Parse creator show value from given main creator fields (100/110).
-      # @param [MARC::Field] field
-      # @param [Hash] relator_map
+      # @param field [MARC::Field]
+      # @param relator_map [Hash]
       # @return [String]
       def parse_show_value(field, relator_map: Mappers.relator)
         creator = join_subfields(field, &subfield_not_in?(%w[0 1 4 6 8 e w]))
@@ -398,7 +399,7 @@ module PennMARC
       # Parse detailed conference show value from given conference field (111/711). If there is no $i, we join subfield
       # values other than $0, $4, $5, $6, $8, $e, $j, and $w to create conference value. We join subfields $e and $w to
       # determine the subunit value. We append any relators, preferring those defined in $4 and using $j as a fallback.
-      # @param [MARC::Field] field
+      # @param field [MARC::Field]
       # @return [String]
       def parse_conference_detail_show_value(field, relator_map: Mappers.relator)
         conf = if subfield_undefined? field, 'i'

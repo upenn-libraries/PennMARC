@@ -6,7 +6,7 @@ module PennMARC
     class << self
       # Get Alma MMS ID value
       #
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [String]
       def mmsid(record)
         record.fields('001').first.value
@@ -16,7 +16,7 @@ module PennMARC
       # {https://www.oclc.org/bibformats/en/0xx/020.html 020 field}, and subfield 'a', 'l', and 'z' of the
       # the {https://www.oclc.org/bibformats/en/0xx/020.html 022 field}.
       #
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def isxn_search(record)
         record.fields(%w[020 022]).filter_map { |field|
@@ -31,7 +31,7 @@ module PennMARC
       # Get ISBN values for display from the {https://www.oclc.org/bibformats/en/0xx/020.html 020 field}
       # and related {https://www.oclc.org/bibformats/en/8xx/880.html 880 field}.
       #
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def isbn_show(record)
         values = record.fields('020').filter_map do |field|
@@ -45,7 +45,7 @@ module PennMARC
       # Get ISSN values for display from the {https://www.oclc.org/bibformats/en/0xx/022.html 022 field} and related
       # {https://www.oclc.org/bibformats/en/8xx/880.html 880 field}.
       #
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def issn_show(record)
         values = record.fields('022').filter_map do |field|
@@ -58,7 +58,7 @@ module PennMARC
 
       # Get numeric OCLC ID of first {https://www.oclc.org/bibformats/en/0xx/035.html 035 field}
       # with an OCLC ID defined in subfield 'a'.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [String, nil]
       def oclc_id_show(record)
         ids = Array.wrap(record.fields('035')
@@ -81,7 +81,7 @@ module PennMARC
 
       # Retrieve valid and invalid numeric OCLC IDs from {https://www.oclc.org/bibformats/en/0xx/035.html 035 field}
       # for search.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def oclc_id_search(record)
         record.fields('035').flat_map { |field|
@@ -108,7 +108,7 @@ module PennMARC
       # {https://www.oclc.org/bibformats/en/8xx/880.html 880 field}. We do not return DOI values stored in 024 ǂ2,
       # see {PennMARC::Identifier.doi_show} for parsing DOI values.
       #
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<string>]
       def publisher_number_show(record)
         record.fields(%w[024 028 880]).filter_map { |field|
@@ -126,7 +126,7 @@ module PennMARC
       # Get publisher issued identifiers for searching of a record. Values extracted from fields
       # {https://www.oclc.org/bibformats/en/0xx/024.html 024} and {https://www.oclc.org/bibformats/en/0xx/028.html 028}.
       #
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def publisher_number_search(record)
         record.fields(%w[024 028]).filter_map { |field|
@@ -136,7 +136,7 @@ module PennMARC
       end
 
       # Retrieve fingerprint for display from the {https://www.oclc.org/bibformats/en/0xx/026.html 026} field
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def fingerprint_show(record)
         record.fields('026').map { |field|
@@ -146,7 +146,7 @@ module PennMARC
 
       # Retrieve DOI values stored in {https://www.oclc.org/bibformats/en/0xx/024.html 024}.
       # Penn MARC records give the first indicator a value of '7' and ǂ2 a value of 'doi' to denote that ǂa is a doi.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def doi_show(record)
         record.fields('024').filter_map { |field|
@@ -161,7 +161,7 @@ module PennMARC
 
       # Gets any Host record MMS ID values from an Enriched::Pub::RELATED_RECORD_TAG field added during Alma enrichment.
       # This aids in our handling of "bound with" records.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def host_record_id(record)
         record.fields(Enriched::Pub::RELATED_RECORD_TAG).filter_map { |field|
@@ -175,19 +175,19 @@ module PennMARC
 
       # Determine if subfield 'a' is an OCLC id.
       #
-      # @param [MARC::Subfield]
-      # @return [TrueClass, FalseClass]
+      # @param subfield [MARC::Subfield]
+      # @return [Boolean]
       def subfield_a_is_oclc?(subfield)
         subfield.code == 'a' && subfield_is_oclc?(subfield)
       end
 
-      # @param [MARC::Subfield]
-      # @return [TrueClass, FalseClass]
+      # @param subfield [MARC::Subfield]
+      # @return [Boolean]
       def subfield_is_oclc?(subfield)
         (subfield.value =~ /^\(OCoLC\).*/).present?
       end
 
-      # @param [MARC::Subfield]
+      # @param subfield [MARC::Subfield]
       # @return [MatchData, nil]
       def match_oclc_number(subfield)
         /^\s*\(OCoLC\)[^1-9]*([1-9][0-9]*).*$/.match(subfield.value)
@@ -197,8 +197,8 @@ module PennMARC
       # Converts ISBN10 (ten-digit) to validated ISBN13 (thirteen-digit) and returns both values. If passed
       # ISBN13 parameter, only returns validated ISBN13 value.
       #
-      #  @param [String] isbn
-      #  @return [Array<String, String>, nil]
+      # @param isbn [String]
+      # @return [Array<String, String>, nil]
       def normalize_isbn(isbn)
         StdNum::ISBN.allNormalizedValues(isbn)
       end

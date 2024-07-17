@@ -12,7 +12,7 @@ module PennMARC
       # electronic access or has physical holdings, and is therefore "Online" or "At the library". If a record is "At
       # the library", but has a link to a finding aid in the 856 field (matching certain criteria), also add 'Online' as
       # an access method.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array]
       def facet(record)
         values = record.filter_map do |field|
@@ -30,14 +30,14 @@ module PennMARC
       private
 
       # Does the record have added electronic holding info?
-      # @param [MARC::Field] field
+      # @param field [MARC::Field]
       # @return [Boolean]
       def electronic_holding_tag?(field)
         field.tag.in? [Enriched::Pub::ELEC_INVENTORY_TAG, Enriched::Api::ELEC_INVENTORY_TAG]
       end
 
       # Does the record have added physical holding info?
-      # @param [MARC::Field] field
+      # @param field [MARC::Field]
       # @return [Boolean]
       def physical_holding_tag?(field)
         field.tag.in? [Enriched::Pub::PHYS_INVENTORY_TAG, Enriched::Api::PHYS_INVENTORY_TAG]
@@ -51,7 +51,7 @@ module PennMARC
       # See: https://www.loc.gov/marc/bibliographic/bd856.html
       # @note Some electronic records do not have Portfolios in Alma, so we rely upon the Resource Link in the 856 to
       #       get these records included in the Online category.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Boolean]
       def resource_link?(record)
         record.fields('856').filter_map do |field|

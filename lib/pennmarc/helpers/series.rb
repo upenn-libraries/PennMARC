@@ -18,8 +18,8 @@ module PennMARC
       DISPLAY_TAGS = %w[800 810 811 830 400 410 411 440 490].freeze
 
       # Fields for display that pertain to series information.
-      # @param [MARC::Record] record
-      # @param [Hash] relator_map
+      # @param record [MARC::Record]
+      # @param relator_map [Hash]
       # @return [Array<String>] array of series information
       def show(record, relator_map: Mappers.relator)
         tags_present = DISPLAY_TAGS.select { |tag| record[tag].present? }
@@ -36,8 +36,8 @@ module PennMARC
       end
 
       # Values from series fields for display.
-      # @param [MARC::Record] record
-      # @param [Hash] relator_map
+      # @param record [MARC::Record]
+      # @param relator_map [Hash]
       # @return [Array<String>] array of series values
       def values(record, relator_map: Mappers.relator)
         series_8x = record.fields(%w[800 810 811 830]).first
@@ -48,7 +48,7 @@ module PennMARC
       end
 
       # Series fields for search.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] array of series values
       def search(record)
         values = record.fields(%w[400 410 411]).filter_map do |field|
@@ -83,7 +83,7 @@ module PennMARC
       # is generated from this field, the introductory term or phrase may be generated based on the value in the second
       # indicator position for display.
       # https://www.loc.gov/marc/bibliographic/bd780.html
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] continues fields string
       def get_continues_show(record)
         continues(record, '780').uniq
@@ -93,7 +93,7 @@ module PennMARC
       # generated from this field, the introductory phrase may be generated based on the value in the second indicator
       # position for display.
       # https://www.loc.gov/marc/bibliographic/bd785.html
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] continued by fields string
       def get_continued_by_show(record)
         continues(record, '785').uniq
@@ -104,9 +104,9 @@ module PennMARC
       # If any of these values: 800 810 811 400 410 411 are present, return a string with series information and
       # appended values.
       # @note added 2017/04/10: filter out 0 (authority record numbers) added by Alma
-      # @param [MARC::Record] record
-      # @param [String] first_tag
-      # @param [Hash] relator_mapping
+      # @param record [MARC::Record]
+      # @param first_tag [String]
+      # @param relator_mapping [Hash]
       # @return [Array<Hash>] array of author show entry hashes
       def author_show_entries(record, first_tag, relator_mapping)
         record.fields(first_tag).map do |field|
@@ -126,8 +126,8 @@ module PennMARC
 
       # If any of these values: 830 440 490 are present, return a string with series information and appended values.
       # @note added 2017/04/10: filter out 0 (authority record numbers) added by Alma
-      # @param [MARC::Record] record
-      # @param [String] first_tag
+      # @param record [MARC::Record]
+      # @param first_tag [String]
       # @return [Array<String>] array of author show entry strings
       def title_show_entries(record, first_tag)
         record.fields(first_tag).map do |field|
@@ -139,8 +139,8 @@ module PennMARC
 
       # Assemble an array of hashes that includes the remaining show entries.
       # @note added 2017/04/10: filter out 0 (authority record numbers) added by Alma
-      # @param [MARC::Record] record
-      # @param [Array<String>] tags_present
+      # @param record [MARC::Record]
+      # @param tags_present [Array<String>]
       # @return [Array<Hash>] array of remaining show entry hashes
       def remaining_show_entries(record, tags_present)
         record.fields(tags_present.drop(1)).map do |field|
@@ -156,7 +156,7 @@ module PennMARC
       # is linked to the associated regular field by subfield $6 (Linkage). A subfield $6 in the associated field also
       # links that field to the 880 field. The data in field 880 may be in more than one script. This function exists
       # because it differs than the tradition use of linked_alternate.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def series_880_fields(record)
         record.fields('880').filter_map do |field|
@@ -168,8 +168,8 @@ module PennMARC
 
       # Assemble a formatted string of a given field.
       # @note added 2017/04/10: filter out 0 (authority record numbers) added by Alma
-      # @param [MARC::Field] field
-      # @param [Hash] relator_mapping
+      # @param field [MARC::Field]
+      # @param relator_mapping [Hash]
       # @return [String] series 4xx field
       def series_field(field, relator_mapping)
         subfields = if field.tag.start_with? '4'
@@ -189,8 +189,8 @@ module PennMARC
       end
 
       # Get subfields from a given field (continues or continued_by).
-      # @param [MARC::Record] record
-      # @param [String] tag
+      # @param record [MARC::Record]
+      # @param tag [String]
       # @return [Array<String>] joined subfields
       def continues(record, tag)
         record.fields.filter_map do |field|

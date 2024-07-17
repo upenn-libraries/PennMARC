@@ -33,7 +33,7 @@ module PennMARC
       # 254, 255, 310, 342, 352, 362 or {https://www.oclc.org/bibformats/en/3xx/340.html 340} field. based on the source
       # field, different subfields are used.
       # @note ported from get_format_display
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] format values for display
       def show(record)
         results = record.fields('300').map { |f| join_subfields(f, &subfield_not_in?(%w[3 6 8])) }
@@ -70,13 +70,9 @@ module PennMARC
       # 5. Media Type values from {https://www.oclc.org/bibformats/en/3xx/337.html#subfielda 337 ǂa}
       # Additional fields are considered for many of the formats. Much of this logic has been moved to private methods
       # to keep this method from becoming too unwieldy.
-      # @todo is the conditional structure here still best practice? see the "Thesis on Microfilm" case in the specs
-      #       for this helper method
       # @note ported from get_format
-      # @param [MARC::Record] record
-      # @param [Hash] location_map
+      # @param record [MARC::Record]
       # @return [Array<String>] format values for faceting
-
       def facet(record)
         formats = []
         format_code = leader_format(record.leader)
@@ -113,7 +109,7 @@ module PennMARC
 
       # Show "Other Format" values from {https://www.oclc.org/bibformats/en/7xx/776.html 776} and any 880 linkage.
       # @todo is 774 an error in the linked field in legacy? i changed to 776 here
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] other format values for display
       def other_show(record)
         values = record.fields('776').filter_map do |field|
@@ -130,7 +126,7 @@ module PennMARC
 
       # Retrieve cartographic reference data for map/atlas formats for display from
       # {https://www.oclc.org/bibformats/en/2xx/255.html 255} and {https://www.oclc.org/bibformats/en/3xx/342.html 342}
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def cartographic_show(record)
         record.fields(%w[255 342]).map { |field|
@@ -139,7 +135,7 @@ module PennMARC
       end
 
       # Check if leader format code is either 't', 'f', or 'd'
-      # @param [String] format_code
+      # @param format_code [String]
       # @return [Boolean]
       def include_manuscripts?(format_code)
         format_code.first.in? %w[t f d]
@@ -149,7 +145,7 @@ module PennMARC
 
       # Get Call Numbers for holdings using the 'Classification part' which can contain strings like
       # 'Microfilm'. Look in enriched tags used by both Alma Publishing and API.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array]
       def call_nums(record)
         if field_defined?(record, Enriched::Pub::PHYS_INVENTORY_TAG)
@@ -169,7 +165,7 @@ module PennMARC
       # Get 'Curated' format from.
       # {https://upennlibrary.atlassian.net/wiki/spaces/ALMA/pages/323912493/Local+9XX+Field+Use+in+Alma local field
       # 944} ǂa, as long as it is not a numerical value.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array]
       def curated_format(record)
         record.fields('944').filter_map { |field|
@@ -180,57 +176,57 @@ module PennMARC
         }.uniq
       end
 
-      # @param [String] format_code
+      # @param format_code [String]
       # @return [Boolean]
       def image?(format_code)
         format_code.in?(%w[km kd])
       end
 
-      # @param [String] format_code
+      # @param format_code [String]
       # @return [Boolean]
       def datafile?(format_code)
         format_code == 'mm'
       end
 
-      # @param [String] format_code
+      # @param format_code [String]
       # @return [Boolean]
       def journal_periodical?(format_code)
         format_code.in?(%w[as gs])
       end
 
-      # @param [String] format_code
+      # @param format_code [String]
       # @return [Boolean]
       def three_d_object?(format_code)
         format_code.start_with?('r')
       end
 
-      # @param [String] format_code
+      # @param format_code [String]
       # @return [Boolean]
       def sound_recording?(format_code)
         format_code.in?(%w[im jm jc jd js])
       end
 
-      # @param [String] format_code
+      # @param format_code [String]
       # @return [Boolean]
       def graphical_media?(format_code)
         format_code == 'gm'
       end
 
-      # @param [String] format_code
+      # @param format_code [String]
       # @return [Boolean]
       def map_atlas?(format_code)
         format_code&.start_with?('e') || format_code == 'fm'
       end
 
-      # @param [String] format_code
+      # @param format_code [String]
       # @return [Boolean]
       def musical_score?(format_code)
         format_code.in?(%w[ca cb cc cd cm cs dc dm])
       end
 
-      # @param [String] format_code
-      # @param [Array<String>] media_type
-      # @param [MARC::Record] record
+      # @param format_code [String]
+      # @param media_type [Array<String>]
+      # @param record [MARC::Record]
       # @return [Boolean]
       def book?(format_code, media_type, record)
         title_forms = subfield_values_for tag: '245', subfield: :k, record: record
@@ -239,17 +235,17 @@ module PennMARC
           media_type.none? { |val| val =~ /micro/i }
       end
 
-      # @param [Array<String>] f006_forms
-      # @param [String] format_code
+      # @param f006_forms [Array<String>]
+      # @param format_code [String]
       # @return [Boolean]
       def website_database?(f006_forms, format_code)
         format_code&.end_with?('i') ||
           (format_code == 'am' && f006_forms.include?('m') && f006_forms.include?('s'))
       end
 
-      # @param [String] f008
-      # @param [MARC::Record] record
-      # @param [String] format_code
+      # @param f008 [String]
+      # @param record [MARC::Record]
+      # @param format_code [String]
       # @return [Boolean]
       def government_document?(f008, record, format_code)
         # is a 260 entry present, and does it have a b that matches 'press'
@@ -259,31 +255,31 @@ module PennMARC
         %w[c d i j].exclude?(format_code[0]) && f008[28].in?(%w[f i o]) && !f260press
       end
 
-      # @param [String] f008
-      # @param [String] format_code
+      # @param f008 [String]
+      # @param format_code [String]
       # @return [Boolean]
       def newspaper?(f008, format_code)
         format_code == 'as' && (f008[21] == 'n' || f008[22] == 'e')
       end
 
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Boolean]
       def conference_event?(record)
         record.fields('111').any? || record.fields('711').any? # TODO: use field_present helper here and below?
       end
 
-      # @param [MARC::Record] record
-      # @param [String] format_code
+      # @param record [MARC::Record]
+      # @param format_code [String]
       # @return [Boolean]
       def thesis_or_dissertation?(format_code, record)
         record.fields('502').any? && format_code.in?(%w[am tm dm])
       end
 
-      # @param [Array<String>] call_nums
-      # @param [Array<String>] f007
-      # @param [String] f008
-      # @param [Array<String>] title_medium
-      # @param [Array<String>] media_type
+      # @param call_nums [Array<String>]
+      # @param f007 [Array<String>]
+      # @param f008 [String]
+      # @param title_medium [Array<String>]
+      # @param media_type [Array<String>]
       # @return [Boolean]
       def micro_or_microform?(call_nums, f007, f008, media_type, title_medium)
         [f008[23], f008[29]].any? { |v| v.in?(%w[a b c]) } ||
@@ -296,7 +292,7 @@ module PennMARC
       # Determine archive format by checking if {https://www.loc.gov/marc/bibliographic/hd852.html 852} and
       # {PennMARC::Enriched} Publishing Tag 'ITM' have values that match any of the following archive locations:
       # archarch, musearch, scfreed, univarch, archivcoll
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Boolean]
       def archive?(record)
         enriched_tag = Enriched::Pub::ITEM_TAG
@@ -311,7 +307,7 @@ module PennMARC
       end
 
       # Consider {https://www.loc.gov/marc/bibliographic/bd007g.html 007} to determine graphical media format
-      # @param [Array<String>] f007
+      # @param f007 [Array<String>]
       # @return [String (frozen)]
       def graphical_media_type(f007)
         if f007.any? { |v| v.start_with?('g') }
@@ -321,7 +317,7 @@ module PennMARC
         end
       end
 
-      # @param [String] leader
+      # @param leader [String]
       # @return [String]
       def leader_format(leader)
         leader[6..7] || '  '

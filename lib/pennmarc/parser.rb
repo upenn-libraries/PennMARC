@@ -12,7 +12,7 @@ module PennMARC
   # Access point for magic calls to helper methods
   class Parser
     # Allow calls to `respond_to?` on parser instances to respond accurately by checking helper classes
-    # @param [String, Symbol] name
+    # @param name [String, Symbol]
     # @return [Boolean]
     def respond_to_missing?(name, include_private = false)
       helper, method_name = parse_call(name)
@@ -26,9 +26,9 @@ module PennMARC
     # Call helper class methods, passing along additional arguments as needed, e.g.:
     # #title_show -> PennMARC::Title.show
     # #subject_facet -> PennMARC::Subject.facet
-    # @param [Symbol] name
-    # @param [MARC::Record] record
-    # @param [Array] opts
+    # @param name [Symbol]
+    # @param record [MARC::Record]
+    # @param opts [Array]
     def method_missing(name, record, *opts)
       helper, method_name = parse_call(name)
       raise NoMethodError unless helper && method_name
@@ -44,7 +44,7 @@ module PennMARC
     private
 
     # Parse out a method call name in the way method_missing is configured to handle
-    # @param [String, Symbol] name
+    # @param name [String, Symbol]
     # @return [Array]
     def parse_call(name)
       call = name.to_s.split('_')

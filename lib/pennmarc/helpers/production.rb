@@ -5,21 +5,21 @@ module PennMARC
   class Production < Helper
     class << self
       # Retrieve production values for display from {https://www.oclc.org/bibformats/en/2xx/264.html 264 field}.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def show(record)
         get_264_or_880_fields(record, '0').uniq
       end
 
       # Retrieve distribution values for display from {https://www.oclc.org/bibformats/en/2xx/264.html 264 field}.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def distribution_show(record)
         get_264_or_880_fields(record, '2').uniq
       end
 
       # Retrieve manufacture values for display from {https://www.oclc.org/bibformats/en/2xx/264.html 264 field}.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def manufacture_show(record)
         get_264_or_880_fields(record, '3').uniq
@@ -28,7 +28,7 @@ module PennMARC
       # Retrieve publication values. Return publication values from
       # {https://www.oclc.org/bibformats/en/2xx/264.html 264 field} only if none found
       # {https://www.oclc.org/bibformats/en/2xx/260.html 260}-262 fields.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def publication_values(record)
         # first get inclusive dates
@@ -67,7 +67,7 @@ module PennMARC
       # {https://www.oclc.org/bibformats/en/2xx/245.html 245},
       # {https://www.oclc.org/bibformats/en/2xx/260.html 260}-262 and their linked alternates,
       # and {https://www.oclc.org/bibformats/en/2xx/264.html 264} and its linked alternate.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def publication_show(record)
         values = record.fields('245').first(1).flat_map { |field| subfield_values(field, 'f') }
@@ -93,8 +93,8 @@ module PennMARC
       # {https://www.oclc.org/bibformats/en/2xx/245.html 245},
       # {https://www.oclc.org/bibformats/en/2xx/260.html 260}-262 and their linked alternates,
       # and {https://www.oclc.org/bibformats/en/2xx/264.html 264} and its linked alternate.
-      # @param [MARC::Record] record
-      # @param [Boolean] with_year: return results with publication year if true
+      # @param record [MARC::Record]
+      # @param with_year [Boolean] return results with publication year if true
       # @return [Array<String>]
       def publication_citation_show(record, with_year: true)
         values = record.fields('245').first(1).flat_map { |field| subfield_values(field, 'f') }
@@ -115,14 +115,14 @@ module PennMARC
       end
 
       # Returns the place of publication for RIS
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def publication_ris_place_of_pub(record)
         get_publication_ris_values(record, 'a')
       end
 
       # Returns the publisher for RIS
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def publication_ris_publisher(record)
         get_publication_ris_values(record, 'b')
@@ -131,7 +131,7 @@ module PennMARC
       # Retrieve place of publication for display from {https://www.oclc.org/bibformats/en/7xx/752.html 752 field} and
       # its linked alternate.
       # @note legacy version returns array of hash objects including data for display link
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def place_of_publication_show(record)
         record.fields(%w[752 880]).filter_map { |field|
@@ -148,8 +148,8 @@ module PennMARC
       # base method to retrieve production values from {https://www.oclc.org/bibformats/en/2xx/264.html 264 field} based
       # on indicator2.
       # distribution and manufacture share the same logic except for indicator2
-      # @param [MARC::Record] record
-      # @param [String] indicator2
+      # @param record [MARC::Record]
+      # @param indicator2 [String]
       # @return [Array<String>]
       def get_264_or_880_fields(record, indicator2)
         values = record.fields('264').filter_map do |field|
@@ -167,8 +167,9 @@ module PennMARC
       end
 
       # Returns the publication value of the given subfield
-      # @param [MARC::Record] record
-      # @param [String] subfield
+      # @param record [MARC::Record]
+      # @param subfield [String]
+      # @return [Array<String>]
       def get_publication_ris_values(record, subfield)
         values = record.fields('245').first(1).flat_map { |field| subfield_values(field, 'f') }
 

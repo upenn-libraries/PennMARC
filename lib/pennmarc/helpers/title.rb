@@ -35,7 +35,7 @@ module PennMARC
     class << self
       # Main Title Search field. Takes from {https://www.loc.gov/marc/bibliographic/bd245.html 245} and linked 880.
       # @note Ported from get_title_1_search_values.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] array of title values for search
       def search(record)
         record.fields(%w[245 880]).filter_map { |field|
@@ -47,7 +47,7 @@ module PennMARC
 
       # Auxiliary Title Search field. Takes from many fields defined in {AUX_TITLE_TAGS} that contain title-like
       # information.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] array of auxiliary title values for search
       def search_aux(record)
         values = search_aux_values(record: record, title_type: :main, &subfield_not_in?(%w[c 6 8])) +
@@ -60,7 +60,7 @@ module PennMARC
       # Journal Title Search field. Takes from {https://www.loc.gov/marc/bibliographic/bd245.html 245} and linked 880.
       # We do not return any values if the {https://www.loc.gov/marc/bibliographic/bdleader.html MARC leader}
       # indicates that the record is not a serial.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] journal title information for search
       def journal_search(record)
         return [] if not_a_serial?(record)
@@ -75,7 +75,7 @@ module PennMARC
       # Auxiliary Journal Title Search field. Takes from many fields defined in {AUX_TITLE_TAGS} that contain title-like
       # information. Does not return any titles if the {https://www.loc.gov/marc/bibliographic/bdleader.html MARC leader}
       # indicates that the record is not a serial.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] auxiliary journal title information for search
       def journal_search_aux(record)
         values = search_aux_values(record: record, title_type: :main, journal: true, &subfield_not_in?(%w[c 6 8])) +
@@ -90,7 +90,7 @@ module PennMARC
       # {https://www.oclc.org/bibformats/en/2xx/245.html#punctuation punctuation practices}.
       # @todo still consider ǂh? medium, which OCLC doc says DO NOT USE...but that is OCLC...
       # @todo is punctuation handling still as desired? treatment here is described in spreadsheet from 2011
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [String] single title for display
       def show(record)
         field = record.fields('245').first
@@ -117,7 +117,7 @@ module PennMARC
       #       title_sort_tl (text left justified). It is not yet clear why this distinction is useful. For now, use a
       #       properly normalized (leading articles and punctuation removed) single title value here.
       # @todo refactor to reduce complexity
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [String] title value for sorting
       def sort(record)
         title_field = record.fields('245').first
@@ -152,7 +152,7 @@ module PennMARC
 
       # @note this is simplified from legacy practice as a linking hash is not returned. I believe this only supported
       #       title browse and we will not be supporting that at this time
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] Array of standardized titles as strings
       def standardized_show(record)
         standardized_titles = record.fields(%w[130 240]).map do |field|
@@ -181,7 +181,7 @@ module PennMARC
       # Data comes from 246 ({https://www.oclc.org/bibformats/en/2xx/246.htm OCLC docs}) and 740
       # ({https://www.oclc.org/bibformats/en/7xx/740.html OCLC docs)}
       #
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] Array of other titles as strings
       def other_show(record)
         other_titles = record.fields('246').map do |field|
@@ -207,7 +207,7 @@ module PennMARC
       # @note Ported from get_former_title_display. That method returns a hash for constructing a search link.
       #       We may need to do something like that eventually.
       # @todo what are e and w subfields?
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] array of former titles
       def former_show(record)
         record.fields
@@ -221,7 +221,7 @@ module PennMARC
       end
 
       # Determine if the record is a "Host" bibliographic record for other bib records ("bound-withs")
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Boolean]
       def host_bib_record?(record)
         record.fields('245').any? do |f|
@@ -246,14 +246,14 @@ module PennMARC
       end
 
       # Evaluate {https://www.loc.gov/marc/bibliographic/bdleader.html MARC leader} to determine if record is a serial.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Boolean]
       def not_a_serial?(record)
         !record.leader[6..7].ends_with?('s')
       end
 
-      # @param [MARC::DataField] field
-      # @param [String] value
+      # @param field [MARC::DataField]
+      # @param value [String]
       # @return [Boolean]
       def indicators_are_not_value?(field, value)
         field.indicator1 != value && field.indicator2 != value
@@ -263,10 +263,10 @@ module PennMARC
       # {https://www.loc.gov/marc/bibliographic/bdleader.html MARC leader} indicates that the record is not a serial.
       # We take special consideration for the {https://www.loc.gov/marc/bibliographic/bd505.html 505 field}, extracting
       # values only when indicator1 and indicator2 are both '0'.
-      # @param [MARC::Record] record
-      # @param [Symbol] title_type
-      # @param [Boolean] journal
-      # @bloc [Proc] join_selector
+      # @param record [MARC::Record]
+      # @param title_type [Symbol]
+      # @param journal [Boolean]
+      # @param join_selector [Proc]
       # @return [Array<String>]
       def search_aux_values(record:, title_type:, journal: false, &join_selector)
         return [] if journal && not_a_serial?(record)
