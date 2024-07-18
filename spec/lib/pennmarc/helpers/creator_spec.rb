@@ -109,18 +109,21 @@ describe 'PennMARC::Creator' do
       end
     end
 
-    context 'with three author records - abbreviated names' do
+    context 'with five author records - abbreviated names' do
       let(:fields) do
         [marc_field(tag: '100', subfields: { a: 'Surname, Alex', '0': 'http://cool.uri/12345', d: '1900-2000',
                                              e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
          marc_field(tag: '110', subfields: { a: 'Second, NameX', '0': 'http://cool.uri/12345', d: '1901-2010',
                                              e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
-         marc_field(tag: '700', subfields: { a: 'Alt, Alternative', '6': '100', d: '1970-' })]
+         marc_field(tag: '700', subfields: { a: 'Alt, Alternative', '6': '100', d: '1970-' }),
+         marc_field(tag: '100', subfields: { a: 'Name with no comma', e: 'author' }),
+         marc_field(tag: '100', subfields: { a: 'Name ends with comma,', e: 'author' })]
       end
 
       it 'returns single author values with no URIs anywhere' do
         values = helper.authors_list(record, first_initial_only: true)
-        expect(values).to contain_exactly 'Surname, A.', 'Second, N.', 'Alt, A.'
+        expect(values).to contain_exactly 'Surname, A.', 'Second, N.', 'Alt, A.',
+                                          'Name ends with comma,', 'Name with no comma'
       end
     end
   end

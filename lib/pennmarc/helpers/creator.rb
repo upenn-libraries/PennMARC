@@ -357,15 +357,15 @@ module PennMARC
 
       # Convert "Lastname, First" to "Lastname, F"
       # @param [String] name
+      # @return [String]
       def abbreviate_name(name)
-        name_parts = name.split(', ')
-        return '' if name_parts.empty?
+        return name unless name.include? ','
 
-        first_name_parts = name_parts.last.split
-        temp_name = "#{name_parts.first}, #{first_name_parts.first[0, 1]}."
-        first_name_parts.shift
-        temp_name += " #{first_name_parts.join(' ')}" unless first_name_parts.empty?
-        temp_name
+        after_comma = join_and_squish([trim_trailing(:comma, substring_after(name, ','))])
+        before_comma = substring_before(name, ',')
+        abbrv = "#{before_comma},"
+        abbrv += " #{after_comma.first.upcase}." if after_comma.present?
+        abbrv
       end
 
       # Parse creator facet value from given creator field and desired subfields
