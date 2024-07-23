@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'multi_string_replace'
-
 module PennMARC
   # Shared tools and values for controlling handling of subject or genre headings
   class HeadingControl
