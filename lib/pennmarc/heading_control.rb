@@ -10,6 +10,9 @@ module PennMARC
     ALLOWED_SOURCE_CODES = %w[aat cct fast ftamc gmgpc gsafd homoit jlabsh lcgft lcsh lcstt lctgm
                               local/osu mesh ndlsh nli nlksh rbbin rbgenr rbmscv rbpap rbpri rbprov rbpub rbtyp].freeze
 
+    REMOVE_TERM_REGEX = /#{Mappers.headings_to_remove&.join('|')}/i
+    REPLACE_TERM_REGEX = /#{Mappers.heading_overrides.keys.join('|')}/i
+
     class << self
       # Replace or remove any terms in provided values pursuant to the configuration in remove and override mappers.
       # Used to remove or replace offensive or otherwise undesirable subject headings.
@@ -18,10 +21,17 @@ module PennMARC
       def term_override(values)
         values.filter_map do |value|
           # Remove values if they contain a remove term
-          next nil if value.match?(/#{Mappers.headings_to_remove&.join('|')}/i)
+          next nil if value.match?(REMOVE_TERM_REGEX)
 
-          # Replace values using multi_string_replace gem
-          MultiStringReplace.replace value, Mappers.heading_overrides
+          # return early if theres no terms to replace
+          next value unless value.match?(REPLACE_TERM_REGEX)
+
+          # Case-insensitive replace using regex
+          Mappers.heading_overrides.each do |term, replacement|
+            next unless value =~ /#{term}/i # advance to next term
+
+            break value.sub(::Regexp.last_match(0), replacement) # return block with override value after replacement
+          end
         end
       end
     end
