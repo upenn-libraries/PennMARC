@@ -9,9 +9,9 @@ describe 'PennMARC::Creator' do
 
     context 'with a single author record' do
       let(:fields) do
-        [marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345',
+        [marc_field(tag: '100', subfields: { a: 'Surname, Name,', '0': 'http://cool.uri/12345',
                                              e: 'author', d: '1900-2000' }),
-         marc_field(tag: '880', subfields: { a: 'Surname, Alternative', '6': '100' })]
+         marc_field(tag: '880', subfields: { a: 'Surname, Alternative,', '6': '100' })]
       end
 
       it 'contains the expected search field values for a single author work' do
@@ -111,9 +111,9 @@ describe 'PennMARC::Creator' do
 
     context 'with five author records - abbreviated names' do
       let(:fields) do
-        [marc_field(tag: '100', subfields: { a: 'Surname, Alex', '0': 'http://cool.uri/12345', d: '1900-2000',
+        [marc_field(tag: '100', subfields: { a: 'Surname, Alex, ', '0': 'http://cool.uri/12345', d: '1900-2000',
                                              e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
-         marc_field(tag: '110', subfields: { a: 'Second, NameX', '0': 'http://cool.uri/12345', d: '1901-2010',
+         marc_field(tag: '110', subfields: { a: 'Second, NameX,  ', '0': 'http://cool.uri/12345', d: '1901-2010',
                                              e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
          marc_field(tag: '700', subfields: { a: 'Alt, Alternative', '6': '100', d: '1970-' }),
          marc_field(tag: '100', subfields: { a: 'Name with no comma', e: 'author' }),
@@ -123,7 +123,7 @@ describe 'PennMARC::Creator' do
       it 'returns single author values with no URIs anywhere' do
         values = helper.authors_list(record, first_initial_only: true)
         expect(values).to contain_exactly 'Surname, A.', 'Second, N.', 'Alt, A.',
-                                          'Name ends with comma,', 'Name with no comma'
+                                          'Name ends with comma', 'Name with no comma'
       end
     end
   end
@@ -135,14 +135,14 @@ describe 'PennMARC::Creator' do
       let(:fields) do
         [marc_field(tag: '100', subfields: { a: 'Hamilton, Alex', '0': 'http://cool.uri/12345', d: '1900-2000',
                                              e: 'author.' }),
-         marc_field(tag: '100', subfields: { a: 'Lincoln, Abraham', b: 'I', c: 'laureate', d: '1968', e: 'author',
-                                             j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+         marc_field(tag: '100', subfields: { a: 'Lincoln, Abraham,   ', b: 'I', c: 'laureate', d: '1968', e: 'author',
+                                             j: 'pseud', q: 'Fuller Name,  ', u: 'affiliation', '3': 'materials',
                                              '4': 'aut' }),
          marc_field(tag: '700', subfields: { a: 'Einstein, Albert', '6': '100', d: '1970-', '4': 'trl',
                                              e: 'translator' }),
          marc_field(tag: '700', subfields: { a: 'Franklin, Ben', '6': '100', d: '1970-', '4': 'edt' }),
          marc_field(tag: '710', subfields: { a: 'Jefferson, Thomas', '6': '100', d: '1870-', '4': 'edt' }),
-         marc_field(tag: '700', subfields: { a: 'Dickens, Charles', '6': '100', d: '1970-', '4': 'com' })]
+         marc_field(tag: '700', subfields: { a: 'Dickens, Charles, ', '6': '100', d: '1970-', '4': 'com' })]
       end
 
       it 'returns two authors and four contributors' do
@@ -156,7 +156,7 @@ describe 'PennMARC::Creator' do
 
     context 'with two authors and four contributors records, with full information and relator' do
       let(:fields) do
-        [marc_field(tag: '100', subfields: { a: 'Hamilton, Alex', '0': 'http://cool.uri/12345', d: '1900-2000',
+        [marc_field(tag: '100', subfields: { a: 'Hamilton, Alex,  ', '0': 'http://cool.uri/12345', d: '1900-2000',
                                              e: 'author.', '4': 'aut' }),
          marc_field(tag: '100', subfields: { a: 'Lincoln, Abraham', b: 'I', c: 'laureate', d: '1968', e: 'author',
                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
@@ -167,7 +167,7 @@ describe 'PennMARC::Creator' do
          marc_field(tag: '710', subfields: { a: 'Jefferson, Thomas', '6': '100', d: '1870-', '4': 'edt' }),
          marc_field(tag: '700', subfields: { a: 'Dickens, Charles', '6': '100', d: '1970-', '4': 'com' }),
          marc_field(tag: '880', subfields: { a: '狄更斯', '6': '700', d: '1970-', '4': 'com' }),
-         marc_field(tag: '700', subfields: { a: 'Twain, Mark', '6': '100', d: '1870-' })]
+         marc_field(tag: '700', subfields: { a: 'Twain, Mark,', '6': '100', d: '1870-' })]
       end
 
       it 'returns four contributors' do
