@@ -100,7 +100,7 @@ module PennMARC
         fields = record.fields(tags)
         fields.filter_map { |field|
           if field['a'].present?
-            name = remove_last_comma(field['a'])
+            name = trim_trailing(:comma, field['a'])
             first_initial_only ? abbreviate_name(name) : name
           end
         }.uniq
@@ -130,7 +130,7 @@ module PennMARC
           relator = 'Contributor' if relator.blank?
           relator = trim_punctuation(relator).capitalize
 
-          name = remove_last_comma(field['a'])
+          name = trim_trailing(:comma, field['a'])
           name = if name_only
                    name
                  else
@@ -328,7 +328,7 @@ module PennMARC
         relator_term_sf = relator_term_subfield(field)
         name = field.filter_map { |sf|
           if sf.code == 'a'
-            should_convert_name_order ? convert_name_order(sf.value) : remove_last_comma(sf.value)
+            should_convert_name_order ? convert_name_order(sf.value) : trim_trailing(:comma, sf.value)
           elsif sf.code == relator_term_sf
             next
           elsif NAME_EXCLUDED_SUBFIELDS.exclude?(sf.code)
@@ -348,7 +348,7 @@ module PennMARC
       # @param name [String] value for processing
       # @return [String]
       def convert_name_order(name)
-        name = remove_last_comma(name)
+        name = trim_trailing(:comma, name)
         return name unless name.include? ','
 
         after_comma = join_and_squish([trim_trailing(:comma, substring_after(name, ', '))])
@@ -360,7 +360,7 @@ module PennMARC
       # @param [String] name
       # @return [String]
       def abbreviate_name(name)
-        name = remove_last_comma(name)
+        name = trim_trailing(:comma, name)
         return name unless name.include? ','
 
         after_comma = join_and_squish([trim_trailing(:comma, substring_after(name, ','))])
@@ -402,16 +402,6 @@ module PennMARC
         conf = [conf, sub_unit].compact_blank.join(' ')
 
         append_relator(field: field, joined_subfields: conf, relator_term_sf: 'j', relator_map: relator_map)
-      end
-
-      # If a name ends with comma, remove it
-      # @param [String] name
-      # @return [String]
-      def remove_last_comma(name)
-        return name unless name.include? ','
-
-        name = name.squish
-        name.last == ',' ? name.chop : name
       end
     end
   end
