@@ -21,7 +21,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'activesupport', '~> 7'
   s.add_dependency 'library_stdnums', '~> 1.6'
   s.add_dependency 'marc', '~> 1.2'
-  s.add_dependency 'multi_string_replace', '~> 2.0'
   s.add_dependency 'nokogiri', '~> 1.15'
 
   s.metadata['rubygems_mfa_required'] = 'false'
