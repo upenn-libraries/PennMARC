@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 describe 'PennMARC::HeadingControl' do
-  let(:replace_term) { PennMARC::Mappers.heading_overrides.first[0] }
-  let(:replaced_term) { PennMARC::Mappers.heading_overrides.first[1] }
+  let(:replace_term) { PennMARC::Mappers.heading_overrides.keys[2] }
+  let(:replaced_term) { PennMARC::Mappers.heading_overrides.values[2] }
   let(:remove_term) { PennMARC::Mappers.headings_to_remove.first }
 
   describe '.process' do
@@ -23,20 +23,22 @@ describe 'PennMARC::HeadingControl' do
       end
     end
 
-    context 'with a term for replacement' do
-      it 'replaces the term in isolation' do
-        values = [replace_term]
-        expect(PennMARC::HeadingControl.term_override(values)).to eq [replaced_term]
-      end
+    PennMARC::Mappers.heading_overrides.each do |target, replacement|
+      context "with the \"#{target}\" term" do
+        it 'replaces the term in isolation' do
+          values = [target]
+          expect(PennMARC::HeadingControl.term_override(values)).to eq [replacement]
+        end
 
-      it 'replaces the term when used with other headings' do
-        values = ["#{replace_term}--History"]
-        expect(PennMARC::HeadingControl.term_override(values)).to eq ["#{replaced_term}--History"]
-      end
+        it 'replaces the term when used with other headings' do
+          values = ["#{target}--History"]
+          expect(PennMARC::HeadingControl.term_override(values)).to eq ["#{replacement}--History"]
+        end
 
-      it 'replaces the term regardless of case' do
-        values = ["#{replace_term.downcase}--History"]
-        expect(PennMARC::HeadingControl.term_override(values)).to eq ["#{replaced_term}--History"]
+        it 'replaces the term regardless of case' do
+          values = ["#{target.downcase}--History"]
+          expect(PennMARC::HeadingControl.term_override(values)).to eq ["#{replacement}--History"]
+        end
       end
     end
 

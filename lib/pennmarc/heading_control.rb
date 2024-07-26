@@ -9,7 +9,7 @@ module PennMARC
                               local/osu mesh ndlsh nli nlksh rbbin rbgenr rbmscv rbpap rbpri rbprov rbpub rbtyp].freeze
 
     REMOVE_TERM_REGEX = /#{Mappers.headings_to_remove&.join('|')}/i
-    REPLACE_TERM_REGEX = /#{Mappers.heading_overrides.keys.join('|')}/i
+    REPLACE_TERM_REGEX = /(#{Mappers.heading_overrides.keys.join('|')})/i
 
     class << self
       # Replace or remove any terms in provided values pursuant to the configuration in remove and override mappers.
@@ -22,14 +22,10 @@ module PennMARC
           next nil if value.match?(REMOVE_TERM_REGEX)
 
           # return early if theres no terms to replace
-          next value unless value.match?(REPLACE_TERM_REGEX)
+          next value if value.match(REPLACE_TERM_REGEX).nil?
 
-          # Case-insensitive replace using regex
-          Mappers.heading_overrides.each do |term, replacement|
-            next unless value =~ /#{term}/i # advance to next term
-
-            break value.sub(::Regexp.last_match(0), replacement) # return block with override value after replacement
-          end
+          # lookup and perform replacement
+          value.sub(::Regexp.last_match.to_s, Mappers.heading_overrides[::Regexp.last_match.to_s.downcase])
         end
       end
     end
