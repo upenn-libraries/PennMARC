@@ -5,7 +5,6 @@ source 'https://rubygems.org'
 gem 'activesupport', '~> 7'
 gem 'library_stdnums', '~> 1.6'
 gem 'marc', '~> 1.2'
-gem 'multi_string_replace', '~> 2.0'
 gem 'nokogiri', '~> 1.15'
 gem 'rake', '~> 13.0'
 gem 'upennlib-rubocop', require: false

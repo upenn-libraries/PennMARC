@@ -1,8 +1,12 @@
-Aliens: Noncitizens
-"Alien criminals": Noncitizen criminals
-"Alien detention centers": Immigrant detention centers
-"Alien labor": Foreign workers
-"Alien property": Foreign-owned property
-Gypsies: Romanies
-"Illegal Alien Children": Undocumented immigrant children
-"Illegal Aliens": Undocumented immigrants
+# Important!: These terms should be listed in an order of decreasing complexity so that terms that may be contained in
+# other terms are not replaced first, e.g., if "Aliens" is listed first, "Illegal Aliens" will get overrode to
+# read "Illegal Noncitizens".
+# Also, use lower case only in the key to support efficient case-insensitive matching.
+"illegal alien children": Undocumented immigrant children
+"alien detention centers": Immigrant detention centers
+"alien criminals": Noncitizen criminals
+"alien property": Foreign-owned property
+"illegal aliens": Undocumented immigrants
+"alien labor": Foreign workers
+gypsies: Romanies
+aliens: Noncitizens
