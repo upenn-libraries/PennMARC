@@ -99,10 +99,9 @@ module PennMARC
 
         fields = record.fields(tags)
         fields.filter_map { |field|
-          if first_initial_only
-            abbreviate_name(field['a']) if field['a']
-          else
-            field['a']
+          if field['a'].present?
+            name = trim_trailing(:comma, field['a'])
+            first_initial_only ? abbreviate_name(name) : name
           end
         }.uniq
       end
@@ -131,10 +130,11 @@ module PennMARC
           relator = 'Contributor' if relator.blank?
           relator = trim_punctuation(relator).capitalize
 
+          name = trim_trailing(:comma, field['a'])
           name = if name_only
-                   field['a']
+                   name
                  else
-                   join_subfields(field, &subfield_in?(%w[a b c d j q u 3])) + ", #{relator}"
+                   "#{name} #{join_subfields(field, &subfield_in?(%w[b c d j q u 3]))}, #{relator}"
                  end
 
           if contributors.key?(relator)
@@ -319,26 +319,6 @@ module PennMARC
         acc.uniq
       end
 
-      # Trim punctuation method extracted from Traject macro, to ensure consistent output
-      # @todo move to Util?
-      # @param string [String]
-      # @return [String] string with relevant punctuation removed
-      def trim_punctuation(string)
-        return string unless string
-
-        string = string.sub(%r{ *[ ,/;:] *\Z}, '')
-
-        # trailing period if it is preceded by at least three letters (possibly preceded and followed by whitespace)
-        string = string.sub(/( *[[:word:]]{3,})\. *\Z/, '\1')
-
-        # single square bracket characters if they are the start and/or end chars and there are no internal square
-        # brackets.
-        string = string.sub(/\A\[?([^\[\]]+)\]?\Z/, '\1')
-
-        # trim any leading or trailing whitespace
-        string.strip
-      end
-
       # Extract the information we care about from 1xx fields, map relator codes, and use appropriate punctuation
       # @param field [MARC::Field]
       # @param mapping [Hash]
@@ -348,7 +328,7 @@ module PennMARC
         relator_term_sf = relator_term_subfield(field)
         name = field.filter_map { |sf|
           if sf.code == 'a'
-            should_convert_name_order ? convert_name_order(sf.value) : sf.value
+            should_convert_name_order ? convert_name_order(sf.value) : trim_trailing(:comma, sf.value)
           elsif sf.code == relator_term_sf
             next
           elsif NAME_EXCLUDED_SUBFIELDS.exclude?(sf.code)
@@ -368,6 +348,7 @@ module PennMARC
       # @param name [String] value for processing
       # @return [String]
       def convert_name_order(name)
+        name = trim_trailing(:comma, name)
         return name unless name.include? ','
 
         after_comma = join_and_squish([trim_trailing(:comma, substring_after(name, ', '))])
@@ -379,14 +360,14 @@ module PennMARC
       # @param name [String]
       # @return [String]
       def abbreviate_name(name)
-        name_parts = name.split(', ')
-        return '' if name_parts.empty?
+        name = trim_trailing(:comma, name)
+        return name unless name.include? ','
 
-        first_name_parts = name_parts.last.split
-        temp_name = "#{name_parts.first}, #{first_name_parts.first[0, 1]}."
-        first_name_parts.shift
-        temp_name += " #{first_name_parts.join(' ')}" unless first_name_parts.empty?
-        temp_name
+        after_comma = join_and_squish([trim_trailing(:comma, substring_after(name, ','))])
+        before_comma = substring_before(name, ',')
+        abbrv = "#{before_comma},"
+        abbrv += " #{after_comma.first.upcase}." if after_comma.present?
+        abbrv
       end
 
       # Parse creator facet value from given creator field and desired subfields
