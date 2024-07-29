@@ -77,9 +77,9 @@ module PennMARC
       # format classification facet by joining single character classification code with its corresponding title.
       # Our Dewey mapping codes are single digit, so we must concatenate '00' to the class code to accurately reflect
       # Dewey class codes.
-      # @param [String] class_code
-      # @param [String] call_number_type
-      # @param [String] title
+      # @param class_code [String]
+      # @param call_number_type [String]
+      # @param title [String]
       # @return [String]
       def format_facet(class_code, call_number_type, title)
         return [class_code, title].join(' - ') if loc_call_number_type?(call_number_type)
