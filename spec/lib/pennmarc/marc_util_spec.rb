@@ -323,6 +323,18 @@ describe 'PennMARC::Util' do
       end
     end
 
+    context 'when relator term has trailing comma' do
+      let(:field) do
+        marc_field(tag: '100', subfields: {
+                     a: 'Capus, Alex,', e: ['author,', 'illustrator,', 'translator']
+                   })
+      end
+
+      it 'punctuates the value as expected' do
+        expect(result).to eq 'Capus, Alex, author, illustrator, translator.'
+      end
+    end
+
     context 'when joined subfield values ends with an open date' do
       let(:joined_subfields) { [field.subfields.first.value, field.subfields.second.value].join(' ') }
       let(:field) { marc_field(tag: '100', subfields: { a: 'Capus, Alex,', d: '1808-', '4': %w[aut ill] }) }
