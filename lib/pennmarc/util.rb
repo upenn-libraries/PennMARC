@@ -340,7 +340,7 @@ module PennMARC
 
       relator = subfield_values(field, '4').filter_map { |code| translate_relator(code, relator_map) }
 
-      relator = subfield_values(field, relator_term_sf) if relator.blank?
+      relator = subfield_values(field, relator_term_sf).map { |term| trim_trailing(:comma, term) } if relator.blank?
 
       relator = append_trailing(:period, relator.join(', ')) if relator.present?
 
