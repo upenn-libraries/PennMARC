@@ -36,7 +36,7 @@ describe 'PennMARC::HeadingControl' do
         end
 
         it 'replaces the term regardless of case' do
-          values = ["#{target.downcase}--History"]
+          values = ["#{target.titleize}--History"]
           expect(PennMARC::HeadingControl.term_override(values)).to eq ["#{replacement}--History"]
         end
       end
