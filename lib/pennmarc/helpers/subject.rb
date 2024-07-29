@@ -62,7 +62,7 @@ module PennMARC
       #
       # @note this is ported mostly form MG's new-style Subject parsing
       # @param record [MARC::Record]
-      # @param [Boolean] override to remove undesirable terms or not
+      # @param override [Boolean] remove undesirable terms or not
       # @return [Array<String>] array of all subject values for faceting
       def facet(record, override: true)
         values = subject_fields(record, type: :facet).filter_map { |field|
