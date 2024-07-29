@@ -235,7 +235,7 @@ module PennMARC
       # Create prefix/filing hash for representing a title value with filing characters removed, with special
       # consideration for bracketed titles
       # @todo Is this still useful?
-      # @param [String] title
+      # @param title [String]
       # @return [Hash]
       def handle_bracket_prefix(title)
         if title.starts_with? '['
