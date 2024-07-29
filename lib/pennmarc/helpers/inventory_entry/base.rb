@@ -6,8 +6,8 @@ module PennMARC
     class Base
       attr_reader :source, :field, :mapper
 
-      # @param [MARC::DataField] inventory_field
-      # @param [Symbol] source
+      # @param inventory_field [MARC::DataField]
+      # @param source [Symbol]
       def initialize(inventory_field, source)
         @source = source
         @field = inventory_field
