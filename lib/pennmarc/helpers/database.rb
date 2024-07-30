@@ -16,8 +16,8 @@ module PennMARC
       # Retrieves database subtype (subfield 'b') from
       # {https://upennlibrary.atlassian.net/wiki/spaces/ALMA/pages/323912493/Local+9XX+Field+Use+in+Almalocal
       # local field 944}. Only returns database subtype if Penn's Database facet value is present in subfield 'a'.
-      # @param [Marc::Record]
-      # @return [Array<string>] Array of types
+      # @param record [MARC::Record]
+      # @return [Array<String>] Array of types
       def type_facet(record)
         record.fields('944').filter_map { |field|
           # skip unless specified database format type present
@@ -32,8 +32,8 @@ module PennMARC
       # {https://upennlibrary.atlassian.net/wiki/spaces/ALMA/pages/323912493/Local+9XX+Field+Use+in+Almalocal
       # local field 943}. Only returns database subject category if Penn's Community of Interest code is present in
       # subfield '2'.
-      # @param [Marc::Record]
-      # @return [Array<string>] Array of categories
+      # @param record [MARC::Record]
+      # @return [Array<String>] Array of categories
       def category_facet(record)
         return [] unless curated_db?(record)
 
@@ -53,8 +53,8 @@ module PennMARC
       # local field 943}. Only returns subcategory if Penn's Community of Interest code is present in subfield '2'.
       # @note return value differs from legacy implementation. This version only returns ["category--subcategory"] or
       #   an empty array.
-      # @param [Marc::Record]
-      # @return [Array<string>] Array of "category--subcategory"
+      # @param record [MARC::Record]
+      # @return [Array<String>] Array of "category--subcategory"
       def subcategory_facet(record)
         return [] unless curated_db?(record)
 
@@ -79,8 +79,8 @@ module PennMARC
       private
 
       # Determines if Database format type is format type used to facet databases
-      # @param [Marc::Record]
-      # @return [TrueClass, FalseClass]
+      # @param record [MARC::Record]
+      # @return [Boolean]
       def curated_db?(record)
         record.fields('944').any? { |field| subfield_value?(field, 'a', /#{DATABASES_FACET_VALUE}/o) }
       end

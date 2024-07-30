@@ -8,23 +8,23 @@ module PennMARC
     # Helper methods for use in constructing MARC objects for testing
     module MarcHelpers
       # Return a MARC::XMLReader that will parse a given file and return MARC::Record objects
-      # @param [String] filename of MARCXML fixture
+      # @param filename [String] filename of MARCXML fixture
       # @return [MARC::Record, NilClass]
       def record_from(filename)
         MARC::XMLReader.new(marc_xml_path(filename)).first
       end
 
       # Create an isolated MARC::Subfield object for use in specs or as part of a MARC::Field
-      # @param [String] code
-      # @param [String] value
+      # @param code [String]
+      # @param value [String]
       # @return [MARC::Subfield]
       def marc_subfield(code, value)
         MARC::Subfield.new code.to_s, value
       end
 
       # Return a new ControlField (000-009)
-      # @param [String] tag
-      # @param [String] value
+      # @param tag [String]
+      # @param value [String]
       # @return [MARC::ControlField]
       def marc_control_field(tag:, value:)
         MARC::ControlField.new tag, value
@@ -38,10 +38,10 @@ module PennMARC
       #                         z: 'United States.',
       #                         '0': http://id.loc.gov/authorities/subjects/sh2008112546 }
       #            )
-      # @param [String (frozen)] tag MARC tag, e.g., 001, 665
-      # @param [String (frozen)] indicator1 MARC indicator, e.g., 0
-      # @param [String (frozen)] indicator2
-      # @param [Hash] subfields hash of subfield values as code => value or code => [value, value]
+      # @param tag [String (frozen)] MARC tag, e.g., 001, 665
+      # @param indicator1 [String (frozen)]  MARC indicator 1, e.g., 0
+      # @param indicator2 [String (frozen)]
+      # @param subfields [Hash] hash of subfield values as code => value or code => [value, value]
       # @return [MARC::DataField]
       def marc_field(tag: 'TST', indicator1: ' ', indicator2: ' ', subfields: {})
         subfield_objects = subfields.each_with_object([]) do |(code, value), array|
@@ -51,8 +51,8 @@ module PennMARC
       end
 
       # Return a MARC::Record containing passed in DataFields
-      # @param [Array<MARC::DataField>] fields
-      # @param [String, nil] leader
+      # @param fields [Array<MARC::DataField>]
+      # @param leader [String, nil]
       # @return [MARC::Record]
       def marc_record(fields: [], leader: nil)
         record = MARC::Record.new

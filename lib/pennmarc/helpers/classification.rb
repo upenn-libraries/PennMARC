@@ -25,7 +25,7 @@ module PennMARC
       # its title in a single string. See {PennMARC::Enriched} and {PennMARC::Enriched::Api} for more
       # information on the enriched MARC fields.
       # @see https://developers.exlibrisgroup.com/alma/apis/docs/bibs/R0VUIC9hbG1hd3MvdjEvYmlicy97bW1zX2lkfQ==/ AVA docs
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] array of classifications
       def facet(record)
         record.fields(TAGS).flat_map { |field|
@@ -45,7 +45,7 @@ module PennMARC
       private
 
       # Retrieve subfield code that stores the call number on enriched marc field
-      # @param [MARC::DataField] field
+      # @param field [MARC::DataField]
       # @return [String]
       def call_number_sf(field)
         return Enriched::Pub::ITEM_CALL_NUMBER if field.tag == Enriched::Pub::ITEM_TAG
@@ -54,7 +54,7 @@ module PennMARC
       end
 
       # Retrieve subfield code that stores call number type on enriched marc field
-      # @param [MARC::DataField] field
+      # @param field [MARC::DataField]
       # @return [String]
       def call_number_type_sf(field)
         return Enriched::Pub::ITEM_CALL_NUMBER_TYPE if field.tag == Enriched::Pub::ITEM_TAG
@@ -63,9 +63,9 @@ module PennMARC
       end
 
       # retrieve title of classification based on single char classification code and call number type
-      # @param[String] class_code classification code
-      # @param[String] call_number_type value from call number type subfield
-      # @return [String, NilClass]
+      # @param class_code [String] classification code
+      # @param call_number_type [String] value from call number type subfield
+      # @return [String, nil]
       def translate_classification(class_code, call_number_type)
         map = CLASSIFICATION_MAPS[call_number_type]
 
@@ -77,6 +77,9 @@ module PennMARC
       # format classification facet by joining single character classification code with its corresponding title.
       # Our Dewey mapping codes are single digit, so we must concatenate '00' to the class code to accurately reflect
       # Dewey class codes.
+      # @param class_code [String]
+      # @param call_number_type [String]
+      # @param title [String]
       # @return [String]
       def format_facet(class_code, call_number_type, title)
         return [class_code, title].join(' - ') if loc_call_number_type?(call_number_type)
@@ -85,7 +88,7 @@ module PennMARC
       end
 
       # Determine whether call number type is library of congress
-      # @param [String] call_number_type value from call number type subfield
+      # @param call_number_type [String] value from call number type subfield
       # @return [Boolean]
       def loc_call_number_type?(call_number_type)
         call_number_type == '0'

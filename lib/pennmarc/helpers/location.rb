@@ -12,8 +12,8 @@ module PennMARC
       # {PennMARC::Enriched} maps enriched marc fields and subfields created during Alma publishing.
       # @see https://developers.exlibrisgroup.com/alma/apis/docs/bibs/R0VUIC9hbG1hd3MvdjEvYmlicy97bW1zX2lkfQ==/
       #   Alma documentation for these added fields
-      # @param [MARC::Record] record
-      # @param [Hash] location_map hash with location_code as key and location hash as value
+      # @param record [MARC::Record]
+      # @param location_map [Hash] hash with location_code as key and location hash as value
       # @return [Array<String>] Array of library locations retrieved from location_map
       def library(record, location_map: Mappers.location)
         location(record: record, location_map: location_map, display_value: 'library')
@@ -25,8 +25,8 @@ module PennMARC
       # {PennMARC::Enriched} maps enriched marc fields and subfields created during Alma publishing.
       # @see https://developers.exlibrisgroup.com/alma/apis/docs/bibs/R0VUIC9hbG1hd3MvdjEvYmlicy97bW1zX2lkfQ==/
       #   Alma documentation for these added fields
-      # @param [MARC::Record] record
-      # @param [Hash] location_map hash with location_code as key and location hash as value
+      # @param record [MARC::Record]
+      # @param location_map [Hash] hash with location_code as key and location hash as value
       # @return [Array<String>] Array of specific locations retrieved from location_map
       def specific_location(record, location_map: Mappers.location)
         location(record: record, location_map: location_map, display_value: 'specific_location')
@@ -37,9 +37,9 @@ module PennMARC
       # {PennMARC::Enriched} maps enriched marc fields and subfields created during Alma publishing.
       # @see https://developers.exlibrisgroup.com/alma/apis/docs/bibs/R0VUIC9hbG1hd3MvdjEvYmlicy97bW1zX2lkfQ==/
       #   Alma documentation for these added fields
-      # @param [MARC::Record] record
-      # @param [Symbol | String] display_value field in location hash to retrieve
-      # @param [Hash] location_map hash with location_code as key and location hash as value
+      # @param record [MARC::Record]
+      # @param display_value [Symbol | String] field in location hash to retrieve
+      # @param location_map [Hash] hash with location_code as key and location hash as value
       # @return [Array<String>]
       def location(record:, display_value:, location_map:)
         # get enriched marc location tag and relevant subfields
@@ -71,7 +71,7 @@ module PennMARC
 
       # Determine enriched marc location tag, location code subfield, and call number subfield,
       # giving priority to using 'itm', 'AVA', or 'AVE' fields.
-      # @param [MARC::Record]
+      # @param record [MARC::Record]
       # @return [Hash<String, String>] containing location tag and subfield code
       # - `:tag` (String): The enriched marc location tag
       # - `:location_code_sf` (String): The subfield code where location code is stored
@@ -111,8 +111,8 @@ module PennMARC
       # map, we ignore it, for faceting purposes. We also ignore the location code 'web'. We don't facet for 'web'
       # which is the 'Penn Library Web' location used in Voyager. This location should eventually go away completely
       # with data cleanup in Alma.
-      # @param [location_map] location_map hash with location_code as key and location hash as value
-      # @param [location_code] location_code retrieved from record
+      # @param location_map [location_map] hash with location_code as key and location hash as value
+      # @param location_code [location_code] retrieved from record
       # @return [Boolean]
       def location_code_to_ignore?(location_map, location_code)
         location_map.key?(location_code.to_sym) == false || location_code == WEB_LOCATION_CODE
@@ -120,10 +120,10 @@ module PennMARC
 
       # Retrieves a specific location override based on location code and call number. Specific location overrides are
       # located in `location_overrides.yml`.
-      # @param [String | Symbol] display_value
-      # @param [String] location_code
-      # @param [MARC::Field] field
-      # @param [String] call_num_sf
+      # @param display_value [String | Symbol]
+      # @param location_code [String]
+      # @param field [MARC::Field]
+      # @param call_num_sf [String]
       # @return [String, Nil]
       def specific_location_override(display_value:, location_code:, field:, call_num_sf:)
         return unless display_value.to_sym == :specific_location

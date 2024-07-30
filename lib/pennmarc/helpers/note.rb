@@ -172,7 +172,7 @@ module PennMARC
       end
 
       # Retrieve "With" notes for display from field {https://www.loc.gov/marc/bibliographic/bd501.html 501}
-      # @param record [Marc::Record]
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def bound_with_show(record)
         record.fields('501').filter_map { |field| join_subfields(field, &subfield_in?(['a'])).presence }.uniq
@@ -183,7 +183,7 @@ module PennMARC
       # For system details: extract subfield ǂ3 plus other subfields as specified by passed-in block. Pays special
       # attention to punctuation, joining subfield ǂ3 values with a colon-space (': ').
       # @param field [MARC::DataField]
-      # @param & [Proc]
+      # @yieldparam & [Proc]
       # @return [String]
       def sub3_and_other_subs(field, &)
         sub3 = field.filter_map { |sf| trim_trailing('period', sf.value) if sf.code == '3' }.join(': ')

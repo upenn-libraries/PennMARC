@@ -12,7 +12,7 @@ module PennMARC
     class << self
       # Get language values for display from the {https://www.oclc.org/bibformats/en/5xx/546.html 546 field} and
       # related 880.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] language values and notes
       def show(record)
         values = record.fields('546').map do |field|
@@ -31,9 +31,9 @@ module PennMARC
       #   multilingual items, items that involve translation, and items where the medium of communication is a sign
       #   language. https://www.loc.gov/marc/bibliographic/bd041.html
       #
-      # @param [MARC::Record] record
-      # @param [Hash] iso_639_2_mapping iso-639-2 spec hash for language code translation
-      # @param [Hash] iso_639_3_mapping iso-639-3 spec hash for language code translation
+      # @param record [MARC::Record]
+      # @param iso_639_2_mapping [Hash] iso-639-2 spec hash for language code translation
+      # @param iso_639_3_mapping [Hash] iso-639-3 spec hash for language code translation
       # @return [Array<String>] array of language values
       def values(record, iso_639_2_mapping: Mappers.iso_639_2_language, iso_639_3_mapping: Mappers.iso_639_3_language)
         values = record.fields('041').filter_map { |field|

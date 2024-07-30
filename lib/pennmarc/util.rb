@@ -56,7 +56,7 @@ module PennMARC
     end
 
     # returns true if a given field has a given subfield value in a given array
-    # @param field [MARC:DataField]
+    # @param field [MARC::DataField]
     # @param subfield [String|Integer|Symbol]
     # @param array [Array]
     # @return [Boolean]
@@ -118,9 +118,9 @@ module PennMARC
     end
 
     # Get all subfield values for a provided subfield from any occurrence of a provided tag/tags
-    # @param tag [String|Array] tags to consider
-    # @param subfield [String|Symbol] to take the values from
-    # @param record [MARC::Record]
+    # @param tag [String,Array] tags to consider
+    # @param subfield [String,Symbol] subfield to take the values from
+    # @param record [MARC::Record] source
     # @return [Array] array of subfield values
     def subfield_values_for(tag:, subfield:, record:)
       record.fields(tag).flat_map do |field|
@@ -155,8 +155,8 @@ module PennMARC
     end
 
     # trim trailing punctuation, manipulating string in place
-    # @param trailer [Symbol|String] to target for removal
-    # @param string [String] to modify
+    # @param trailer [Symbol,String] trailer to target for removal
+    # @param string [String] string to modify
     # @return [String, Nil] string to modify
     def trim_trailing!(trailer, string)
       string.sub! TRAILING_PUNCTUATIONS_PATTERNS[trailer.to_sym], ''
@@ -218,17 +218,17 @@ module PennMARC
     end
 
     # Get the substring of a string up to a given target character
-    # @param string [Object] to split
-    # @param target [Object] character to split upon
-    # @return [String (frozen)]
+    # @param string [String] string to split
+    # @param target [String] character to split upon
+    # @return [String (frozen), nil]
     def substring_before(string, target)
       string.scan(target).present? ? string.split(target, 2).first : ''
     end
 
     # Get the substring of a string after the first occurrence of a target character
-    # @param string [Object] to split
-    # @param target [Object] character to split upon
-    # @return [String (frozen)]
+    # @param string [String] string to split
+    # @param target [String] character to split upon
+    # @return [String (frozen), nil]
     def substring_after(string, target)
       string.scan(target).present? ? string.split(target, 2).second : ''
     end
@@ -262,7 +262,7 @@ module PennMARC
     # @todo handle case of receiving a URI? E.g., http://loc.gov/relator/aut
     # @param relator_code [String, NilClass]
     # @param mapping [Hash]
-    # @return [String, NilClass] full relator string
+    # @return [String, nil] full relator string
     def translate_relator(relator_code, mapping)
       return if relator_code.blank?
 
@@ -272,7 +272,7 @@ module PennMARC
     # Get 650 & 880 for Provenance and Chronology: prefix should be 'PRO' or 'CHR' and may be preceded by a '%'
     # @note 11/2018: do not display $5 in PRO or CHR subjs
     # @param record [MARC::Record]
-    # @param prefix [String] to select from subject field
+    # @param prefix [String] prefix to select from subject field
     # @return [Array] array of values
     def prefixed_subject_and_alternate(record, prefix)
       record.fields(%w[650 880]).filter_map { |field|
@@ -349,9 +349,9 @@ module PennMARC
 
     # Returns a relator value of the given field. Like append_relator, it prioritizes relator codes found in subfileld
     # $4 and falls back to the specified relator term subfield relator_term_sf if no valid codes are found in $4
-    # @param [MARC::Field] field where relator values are stored
-    # @param [String] relator_term_sf MARC subfield that stores relator term
-    # @param [Hash] relator_map
+    # @param field [MARC::Field] where relator values are stored
+    # @param relator_term_sf [String] MARC subfield that stores relator term
+    # @param relator_map [Hash]
     # @return [String]
     def relator(field:, relator_term_sf:, relator_map: Mappers.relator)
       relator = subfield_values(field, '4').filter_map { |code| translate_relator(code, relator_map) }

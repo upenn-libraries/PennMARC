@@ -18,7 +18,7 @@ module PennMARC
 
     class << self
       # Hash of Physical holdings information
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array, nil]
       def physical(record)
         source = enrichment_source(record)
@@ -30,7 +30,7 @@ module PennMARC
       end
 
       # Hash of Electronic inventory information
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array, nil]
       def electronic(record)
         source = enrichment_source(record)
@@ -42,14 +42,14 @@ module PennMARC
       end
 
       # Count of all electronic portfolios
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Integer]
       def electronic_portfolio_count(record)
         record.count { |field| field.tag.in? %w[AVE prt] }
       end
 
       # Count of all physical holdings
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Integer]
       def physical_holding_count(record)
         record.count { |field| field.tag.in? %w[AVA hld] }
@@ -58,7 +58,7 @@ module PennMARC
       private
 
       # Determine the source of the MARC inventory enrichment
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Symbol, nil]
       def enrichment_source(record)
         if pub_enrichment_tags?(record)
@@ -70,7 +70,7 @@ module PennMARC
 
       # Does the record include tags from Publishing inventory enrichment?
       # @todo move to Util?
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Boolean]
       def pub_enrichment_tags?(record)
         record.tags.intersect?(
@@ -80,7 +80,7 @@ module PennMARC
 
       # Does the record include tags from API inventory enrichment?
       # @todo move to Util?
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Boolean]
       def api_enrichment_tags?(record)
         record.tags.intersect?(

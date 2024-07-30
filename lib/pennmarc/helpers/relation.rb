@@ -13,7 +13,7 @@ module PennMARC
       # Get values for "{https://www.oclc.org/bibformats/en/7xx/773.html Host Item}" for this record. Values contained
       # in this field should be sufficient to locate host item record.
       #
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>] contained in values for display
       def contained_in_show(record)
         record.fields('773').map { |field|
@@ -23,21 +23,21 @@ module PennMARC
 
       # Get "chronology" information from specially-prefixed 650 (subject) fields
       # @todo why do we stuff chronology data in a 650 field?
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array] array of chronology values
       def chronology_show(record)
         prefixed_subject_and_alternate(record, CHRONOLOGY_PREFIX)
       end
 
       # Get notes for Related Collections from {https://www.oclc.org/bibformats/en/5xx/544.html MARC 544}.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array]
       def related_collections_show(record)
         datafield_and_linked_alternate(record, '544')
       end
 
       # Get notes for "Publication About" from {https://www.oclc.org/bibformats/en/5xx/581.html MARC 581}.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array]
       def publications_about_show(record)
         datafield_and_linked_alternate(record, '581')
@@ -45,8 +45,8 @@ module PennMARC
 
       # Get related work from {RELATED_WORK_FIELDS} in the 7XX range. Require presence of sf t (title) and absence of
       # an indicator2 value. Prefix returned values with sf i value. Also map relator codes found in sf 4. Ignore sf 0.
-      # @param [MARC::Record] record
-      # @param [Hash] relator_map
+      # @param record [MARC::Record]
+      # @param relator_map [Hash]
       # @return [Array]
       def related_work_show(record, relator_map: Mappers.relator)
         fields = record.fields(RELATED_WORK_FIELDS)
@@ -71,8 +71,8 @@ module PennMARC
       # "Analytical Entry" meaning that the record is contained by the matching field. Map relator codes in sf 4. Ignore
       # values in sf 0, 5, 6, and 8.
       # @todo is it okay to include 880 $4 here? Legacy includes untranslated $4, why?
-      # @param [MARC::Record] record
-      # @param [Hash] relator_map
+      # @param record [MARC::Record]
+      # @param relator_map [Hash]
       # @return [Array<String>]
       def contains_show(record, relator_map: Mappers.relator)
         fields = record.fields(CONTAINS_FIELDS)
@@ -93,7 +93,7 @@ module PennMARC
 
       # Get "Constituent Unit" values from {https://www.oclc.org/bibformats/en/7xx/774.html MARC 774}. Include
       # subfield values in i, a, s and t.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array]
       def constituent_unit_show(record)
         values = record.fields('774').filter_map do |field|
@@ -105,7 +105,7 @@ module PennMARC
 
       # Get "Has Supplement" values from {https://www.oclc.org/bibformats/en/7xx/770.html MARC 770}. Ignore
       # subfield values in 6 and 8.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array]
       def has_supplement_show(record)
         datafield_and_linked_alternate(record, '770')
@@ -114,10 +114,10 @@ module PennMARC
       private
 
       # Handle common behavior when a relator field references a title in subfield i
-      # @param [MARC::DataField] field
-      # @param [String, nil] relator_term_sf subfield that holds relator term
-      # @param [Hash, nil] relator_map map relator in sf4 using this map, optional
-      # @param [Proc] join_selector
+      # @param field [MARC::DataField]
+      # @param relator_term_sf [String, nil] subfield that holds relator term
+      # @param relator_map [Hash, nil] map relator in sf4 using this map, optional
+      # @param join_selector [Proc]
       # @return [String] extracted and processed values from field
       def values_with_title_prefix(field, relator_term_sf: nil, relator_map: nil, &join_selector)
         subi = remove_paren_value_from_subfield_i(field) || ''

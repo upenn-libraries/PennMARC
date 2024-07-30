@@ -86,9 +86,9 @@ module PennMARC
       end
 
       # Returns the list of authors with name (subfield $a) only
-      # @param [MARC::Record] record
-      # @param [Boolean] main_tags_only, if true, only use TAGS; otherwise use both TAGS and CONTRIBUTOR_TAGS
-      # @param [Boolean] first_initial_only: true to only use the first initial instead of first name
+      # @param record [MARC::Record]
+      # @param main_tags_only [Boolean] only use TAGS; otherwise use both TAGS and CONTRIBUTOR_TAGS
+      # @param first_initial_only [Boolean] only use the first initial instead of first name
       # @return [Array<String>] names of the authors
       def authors_list(record, main_tags_only: false, first_initial_only: false)
         tags = if main_tags_only
@@ -107,11 +107,11 @@ module PennMARC
       end
 
       # Show the authors and contributors grouped together by relators with only names
-      # @param [MARC::Record] record
-      # @param [Hash] relator_map
-      # @param [Boolean] include_authors: true to include author fields TAGS
-      # @param [Boolean] name_only: true to include only the name subfield $a
-      # @param [Boolean] vernacular: true to include field 880 with subfield $6
+      # @param record [MARC::Record]
+      # @param relator_map [Hash]
+      # @param include_authors [Boolean] include author fields TAGS
+      # @param name_only [Boolean] include only the name subfield $a
+      # @param vernacular [Boolean] include field 880 with subfield $6
       # @return [Hash]
       def contributors_list(record, relator_map: Mappers.relator, include_authors: true, name_only: true,
                             vernacular: false)
@@ -294,7 +294,7 @@ module PennMARC
       private
 
       # @param record [MARC::Record]
-      # @param tags [Array] to consider
+      # @param tags [Array] tags to consider
       # @param relator_map [Hash]
       # @return [Array<String>] name values from given tags
       def name_search_values(record:, tags:, relator_map:)
@@ -357,7 +357,7 @@ module PennMARC
       end
 
       # Convert "Lastname, First" to "Lastname, F"
-      # @param [String] name
+      # @param name [String]
       # @return [String]
       def abbreviate_name(name)
         name = trim_trailing(:comma, name)

@@ -7,7 +7,7 @@ module PennMARC
       # Retrieve publication date (Date 1) from {https://www.loc.gov/marc/bibliographic/bd008a.html 008 field}.
       # Publication date is a four-digit year found in position 7-10 and may contain 'u' characters to represent
       # partially known dates. We replace any occurrences of 'u' with '0' before converting to DateTime object.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Time, nil] The publication date, or nil if date found in record is invalid
       def publication(record)
         record.fields('008').filter_map { |field|
@@ -22,7 +22,7 @@ module PennMARC
       # Retrieve date added (subfield 'q') from enriched marc 'itm' field.
       # {PennMARC::Enriched} maps enriched marc fields and subfields created during Alma publishing. The enriched
       # metadata provided by the Alma API does not include the date created value, so we can't work with that here.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Time, nil] The date added, or nil if date found in record is invalid
       def added(record)
         record.fields(Enriched::Pub::ITEM_TAG).flat_map { |field|
@@ -46,7 +46,7 @@ module PennMARC
       # Retrieve date last updated from {https://www.loc.gov/marc/bibliographic/bd005.html 005 field}.
       # Date last updated is a sixteen character String recorded in
       # {https://www.iso.org/iso-8601-date-and-time-format.html ISO 8601} format.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Time, nil] The date last updated, or nil if date found in record is invalid
       def last_updated(record)
         record.fields('005').filter_map { |field|
@@ -69,8 +69,8 @@ module PennMARC
       private
 
       # Sanitizes a partially known date string by replacing any 'u' occurrences with a specified replacement value.
-      # @param [String] date The date string in '%Y' format, potentially containing 'u' characters.
-      # @param [String] replacement The value with which to replace 'u' occurrences in the date string.
+      # @param date [String] The date string in '%Y' format, potentially containing 'u' characters.
+      # @param replacement [String] The value with which to replace 'u' occurrences in the date string.
       # @return [String, nil] The sanitized date string with 'u' characters replaced by the replacement value,
       #   or nil if the date string does not match the expected format.
       def sanitize_partially_known_date(date, replacement)

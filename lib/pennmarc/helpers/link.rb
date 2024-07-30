@@ -6,12 +6,12 @@ module PennMARC
     class << self
       # @todo the legacy code here is a hot mess for a number of reasons, what do we need this field to do?
       # @note port the needed parts from get_offsite_display, don't return HTML
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Object]
       def offsite(record); end
 
       # Full text links from MARC 856 fields.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array] array of hashes
       def full_text_links(record)
         indicator2_options = %w[0 1]
@@ -19,7 +19,7 @@ module PennMARC
       end
 
       # Web text links from MARC 856 fields.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array] array of hashes
       def web_links(record)
         indicator2_options = ['2', ' ', '']
@@ -30,7 +30,7 @@ module PennMARC
 
       # Extract subfield 3 and z/y depending on the presence of either. Extract link url and assemble array
       # with text and link.
-      # @param [MARC::Field] field
+      # @param field [MARC::Field]
       # @return [Array]
       def link_text_and_url(field)
         subfield3 = subfield_values(field, 3)
@@ -42,8 +42,8 @@ module PennMARC
 
       # Assemble array of link text, link URL values from 856 fields. Ensure indicator1 (access method)
       # is always 4 (HTTP) and indicator2 (relationship) can be specified by caller method.
-      # @param [MARC::Record] record
-      # @param [Array] indicator2_options
+      # @param record [MARC::Record]
+      # @param indicator2_options [Array]
       # @return [Array]
       def links_from_record(record, indicator2_options)
         record.fields('856').filter_map do |field|

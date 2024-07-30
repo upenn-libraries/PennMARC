@@ -109,8 +109,8 @@ module PennMARC
       # {https://www.loc.gov/marc/bibliographic/bd245.html 245},
       # {https://www.loc.gov/marc/bibliographic/bd260.html 260}-262 and their linked alternates,
       # and {https://www.loc.gov/marc/bibliographic/bd264.html 264} and its linked alternate.
-      # @param [MARC::Record] record
-      # @param [Boolean] with_year: return results with publication year if true
+      # @param record [MARC::Record]
+      # @param with_year [Boolean] return results with publication year if true
       # @return [Array<String>]
       def publication_citation_show(record, with_year: true)
         values = record.fields('245').first(1).flat_map { |field| subfield_values(field, 'f') }
@@ -131,14 +131,14 @@ module PennMARC
       end
 
       # Returns the place of publication for RIS
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def publication_ris_place_of_pub(record)
         get_publication_ris_values(record, 'a')
       end
 
       # Returns the publisher for RIS
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array<String>]
       def publication_ris_publisher(record)
         get_publication_ris_values(record, 'b')
@@ -202,8 +202,9 @@ module PennMARC
       end
 
       # Returns the publication value of the given subfield
-      # @param [MARC::Record] record
-      # @param [String] subfield
+      # @param record [MARC::Record]
+      # @param subfield [String]
+      # @return [Array<String>]
       def get_publication_ris_values(record, subfield)
         values = record.fields('245').first(1).flat_map { |field| subfield_values(field, 'f') }
 
