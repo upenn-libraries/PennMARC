@@ -183,7 +183,7 @@ module PennMARC
       # For system details: extract subfield ǂ3 plus other subfields as specified by passed-in block. Pays special
       # attention to punctuation, joining subfield ǂ3 values with a colon-space (': ').
       # @param field [MARC::DataField]
-      # @param & [Proc]
+      # @yieldparam & [Proc]
       # @return [String]
       def sub3_and_other_subs(field, &)
         sub3 = field.filter_map { |sf| trim_trailing('period', sf.value) if sf.code == '3' }.join(': ')
