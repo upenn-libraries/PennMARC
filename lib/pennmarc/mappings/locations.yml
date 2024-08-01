@@ -547,6 +547,12 @@ dent:
     - Health Sciences Libraries
     - Levy Dental Medicine Library
   display: Levy Dental Medicine Library - Stacks
+dent390:
+  specific_location: Levy Dental Medicine Library - Lounge
+  library:
+    - Health Sciences Libraries
+    - Levy Dental Medicine Library
+  display: Levy Dental Medicine Library - Lounge
 dentpcare:
   specific_location: Levy Dental Medicine Library - PCare
   library:
