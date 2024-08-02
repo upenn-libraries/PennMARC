@@ -65,6 +65,7 @@ carpco:
   specific_location: Athenaeum of Philadelphia - Carpenters' Company
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Carpenters' Company
+  aeon: true
 catoffice:
   specific_location: Athenaeum of Philadelphia - Cataloging Office
   library: Athenaeum of Philadelphia
@@ -104,6 +105,7 @@ microfilm:
   specific_location: Athenaeum of Philadelphia - Microfilm
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Microfilm
+  aeon: true
 newacqu:
   specific_location: Athenaeum of Philadelphia - New Acquisitions
   library: Athenaeum of Philadelphia
@@ -155,6 +157,7 @@ vismatl:
   specific_location: Athenaeum of Philadelphia - Visual Materials
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Visual Materials
+  aeon: true
 athstor:
   specific_location: LIBRA - Athenaeum of Philadelphia
   library: LIBRA
