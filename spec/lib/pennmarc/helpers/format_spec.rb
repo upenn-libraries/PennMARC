@@ -419,7 +419,8 @@ describe 'PennMARC::Format' do
         marc_record leader: '      tm',
                     fields: [
                       marc_field(tag: '245', subfields: { h: '[microfilm]' }),
-                      marc_field(tag: '502', subfields: { a: 'Ed.D. Thesis' })]
+                      marc_field(tag: '502', subfields: { a: 'Ed.D. Thesis' })
+                    ]
       end
 
       it 'returns BOOK' do

@@ -148,11 +148,11 @@ module PennMARC
         formats = facet(record)
 
         if formats.include? BOOK
-          "BOOK"
-        elsif  formats.include? JOURNAL_PERIODICAL
-          "JOUR"
+          'BOOK'
+        elsif formats.include? JOURNAL_PERIODICAL
+          'JOUR'
         else
-          "GEN"
+          'GEN'
         end
       end
 
