@@ -378,4 +378,63 @@ describe 'PennMARC::Format' do
       end
     end
   end
+
+  describe '.ris' do
+    let(:format) { helper.ris(record) }
+
+    context 'with an archive' do
+      let(:record) do
+        marc_record fields: [marc_field(tag: '852', subfields: { c: 'archarch' })]
+      end
+
+      it 'return GEN' do
+        expect(format).to eq 'GEN'
+      end
+    end
+
+    context 'with a book' do
+      let(:record) do
+        marc_record leader: '      aa',
+                    fields: [marc_field(tag: '245', subfields: { k: 'blah' })]
+      end
+
+      it 'returns BOOK' do
+        expect(format).to eq 'BOOK'
+      end
+    end
+
+    context 'with a "Newspaper"' do
+      let(:record) do
+        marc_record leader: '      as',
+                    fields: [marc_control_field(tag: '008', value: '                     n')]
+      end
+
+      it 'returns JOUR' do
+        expect(format).to eq 'JOUR'
+      end
+    end
+
+    context 'with a "Thesis" on "Microfilm"' do
+      let(:record) do
+        marc_record leader: '      tm',
+                    fields: [
+                      marc_field(tag: '245', subfields: { h: '[microfilm]' }),
+                      marc_field(tag: '502', subfields: { a: 'Ed.D. Thesis' })]
+      end
+
+      it 'returns BOOK' do
+        expect(format).to eq 'BOOK'
+      end
+    end
+
+    context 'with "Manuscript"' do
+      let(:record) do
+        marc_record(leader: '      t')
+      end
+
+      it 'returns GEN' do
+        expect(format).to eq 'GEN'
+      end
+    end
+  end
 end

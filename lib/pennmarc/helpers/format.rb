@@ -141,6 +141,21 @@ module PennMARC
         format_code.first.in? %w[t f d]
       end
 
+      # Return RIS format in one of these three values: "BOOK", "JOUR", "GEN"
+      # @param record [MARC::Record]
+      # @return [String]
+      def ris(record)
+        formats = facet(record)
+
+        if formats.include? BOOK
+          "BOOK"
+        elsif  formats.include? JOURNAL_PERIODICAL
+          "JOUR"
+        else
+          "GEN"
+        end
+      end
+
       private
 
       # Get Call Numbers for holdings using the 'Classification part' which can contain strings like
