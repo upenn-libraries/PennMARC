@@ -4,31 +4,31 @@ module PennMARC
   # Handle parsing out "Format" and "Other Format" values. Special care goes into controlling the format values for
   # faceting.
   class Format < Helper
+    # These constants represent the set of desired Format values for faceting.
+    ARCHIVE = 'Archive'
+    BOOK = 'Book'
+    CONFERENCE_EVENT = 'Conference/Event'
+    DATAFILE = 'Datafile'
+    GOVDOC = 'Government document'
+    IMAGE = 'Image'
+    JOURNAL_PERIODICAL = 'Journal/Periodical'
+    MANUSCRIPT = 'Manuscript'
+    MAP_ATLAS = 'Map/Atlas'
+    MICROFORMAT = 'Microformat'
+    MUSICAL_SCORE = 'Musical score'
+    NEWSPAPER = 'Newspaper'
+    OTHER = 'Other'
+    PROJECTED_GRAPHIC = 'Projected graphic'
+    SOUND_RECORDING = 'Sound recording'
+    THESIS_DISSERTATION = 'Thesis/Dissertation'
+    THREE_D_OBJECT = '3D object'
+    VIDEO = 'Video'
+    WEBSITE_DATABASE = 'Website/Database'
+
+    # Values encoded in MARC that we use to determine "Archive" format
+    ARCHIVE_LOCATIONS = %w[archarch musearch scfreed univarch archivcoll].freeze
+
     class << self
-      # These constants represent the set of desired Format values for faceting.
-      ARCHIVE = 'Archive'
-      BOOK = 'Book'
-      CONFERENCE_EVENT = 'Conference/Event'
-      DATAFILE = 'Datafile'
-      GOVDOC = 'Government document'
-      IMAGE = 'Image'
-      JOURNAL_PERIODICAL = 'Journal/Periodical'
-      MANUSCRIPT = 'Manuscript'
-      MAP_ATLAS = 'Map/Atlas'
-      MICROFORMAT = 'Microformat'
-      MUSICAL_SCORE = 'Musical score'
-      NEWSPAPER = 'Newspaper'
-      OTHER = 'Other'
-      PROJECTED_GRAPHIC = 'Projected graphic'
-      SOUND_RECORDING = 'Sound recording'
-      THESIS_DISSERTATION = 'Thesis/Dissertation'
-      THREE_D_OBJECT = '3D object'
-      VIDEO = 'Video'
-      WEBSITE_DATABASE = 'Website/Database'
-
-      # Values encoded in MARC that we use to determine "Archive" format
-      ARCHIVE_LOCATIONS = %w[archarch musearch scfreed univarch archivcoll].freeze
-
       # Get any Format values from {https://www.oclc.org/bibformats/en/3xx/300.html 300},
       # 254, 255, 310, 342, 352, 362 or {https://www.oclc.org/bibformats/en/3xx/340.html 340} field. based on the source
       # field, different subfields are used.
