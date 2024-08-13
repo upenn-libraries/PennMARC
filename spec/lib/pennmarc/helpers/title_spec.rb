@@ -138,6 +138,26 @@ describe 'PennMARC::Title' do
     end
   end
 
+  describe '.statement_of_responsibility_show' do
+    let(:record) do
+      marc_record fields: [marc_field(tag: '245', subfields: { c: 'statement of responsibility' }),
+                           marc_field(tag: '880', subfields: { '6': '245', a: 'alternate title',
+                                                               c: 'déclaration de responsabilité' })]
+    end
+
+    context 'with ǂc defined' do
+      it 'returns statement of responsibility' do
+        expect(helper.statement_of_responsibility_show(record)).to include 'statement of responsibility'
+      end
+    end
+
+    context 'with linked alternate of 245 ǂc defined' do
+      it 'returns alternate statement of responsibility' do
+        expect(helper.statement_of_responsibility_show(record)).to include 'déclaration de responsabilité'
+      end
+    end
+  end
+
   describe '.sort' do
     context 'with a record with a valid indicator2 value' do
       let(:record) do

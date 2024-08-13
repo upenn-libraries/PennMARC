@@ -111,6 +111,17 @@ module PennMARC
          other_info].compact_blank.join(' ')
       end
 
+      # Title statement of responsibility (field 245, subfield c) and linked alternate for display.
+      # @param [MARC::Record] record
+      # @return [Array<String>] statement of responsibility and linked alternate
+      # See https://www.oclc.org/bibformats/en/2xx/245.html#subfieldc for examples
+      def statement_of_responsibility_show(record)
+        field = record.fields('245').first
+        statement = field.find { |sf| sf.code == 'c' }&.value
+        alternate_statement = linked_alternate(record, '245', &subfield_in?(%w[c]))&.first
+        [statement, alternate_statement].compact_blank
+      end
+
       # Canonical title with non-filing characters relocated to the end.
       #
       # @note Currently we index two "title sort" fields: title_nssort (ssort type - regex token filter applied) and
