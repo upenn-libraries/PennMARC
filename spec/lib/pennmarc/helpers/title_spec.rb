@@ -141,8 +141,7 @@ describe 'PennMARC::Title' do
   describe '.statement_of_responsibility_show' do
     let(:record) do
       marc_record fields: [marc_field(tag: '245', subfields: { c: 'statement of responsibility' }),
-                           marc_field(tag: '880', subfields: { '6': '245', a: 'alternate title',
-                                                               c: 'déclaration de responsabilité' })]
+                           marc_field(tag: '880', subfields: { '6': '245', c: 'déclaration de responsabilité' })]
     end
 
     context 'with ǂc defined' do
