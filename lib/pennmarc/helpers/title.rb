@@ -32,9 +32,6 @@ module PennMARC
     # This text is used in Alma to indicate a Bib record is a "Host" record for other bibs (bound-withs)
     HOST_BIB_TITLE = 'Host bibliographic record for boundwith'
 
-    # Punctuation to remove from title values
-    PUNCTUATION_TO_REMOVE = %w[. , = : ; /].freeze
-
     class << self
       # Main Title Search field. Takes from {https://www.loc.gov/marc/bibliographic/bd245.html 245} and linked 880.
       # @note Ported from get_title_1_search_values.
@@ -54,9 +51,9 @@ module PennMARC
       # @return [Array<String>] array of auxiliary title values for search
       def search_aux(record)
         values = search_aux_values(record: record, title_type: :main, &subfield_not_in?(%w[c 6 8])) +
-                 search_aux_values(record: record, title_type: :related, &subfield_not_in?(%w[s t])) +
-                 search_aux_values(record: record, title_type: :entity, &subfield_in?(%w[t])) +
-                 search_aux_values(record: record, title_type: :note, &subfield_in?(%w[t]))
+          search_aux_values(record: record, title_type: :related, &subfield_not_in?(%w[s t])) +
+          search_aux_values(record: record, title_type: :entity, &subfield_in?(%w[t])) +
+          search_aux_values(record: record, title_type: :note, &subfield_in?(%w[t]))
         values.uniq
       end
 
@@ -82,9 +79,9 @@ module PennMARC
       # @return [Array<String>] auxiliary journal title information for search
       def journal_search_aux(record)
         values = search_aux_values(record: record, title_type: :main, journal: true, &subfield_not_in?(%w[c 6 8])) +
-                 search_aux_values(record: record, title_type: :related, journal: true, &subfield_not_in?(%w[s t])) +
-                 search_aux_values(record: record, title_type: :entity, journal: true, &subfield_in?(%w[t])) +
-                 search_aux_values(record: record, title_type: :note, journal: true, &subfield_in?(%w[t]))
+          search_aux_values(record: record, title_type: :related, journal: true, &subfield_not_in?(%w[s t])) +
+          search_aux_values(record: record, title_type: :entity, journal: true, &subfield_in?(%w[t])) +
+          search_aux_values(record: record, title_type: :note, journal: true, &subfield_in?(%w[t]))
         values.uniq
       end
 
@@ -97,34 +94,21 @@ module PennMARC
       # @return [String] single title for display
       def show(record)
         field = record.fields('245').first
-        values = title_values(field)
-        [trim_trailing(:colon, trim_trailing(:equal, values[:title_or_form])).strip,
-         values[:punctuation], values[:other_info]].compact_blank.join(' ')
-      end
-
-      # Same as show, but with inclusive dates appended. For use on show page.
-      # @param record [MARC::Record]
-      # @return [String] detailed title for display
-      def detailed_show(record)
-        field = record.fields('245').first
-        values = title_values(field)
-        title = [trim_trailing(:colon, trim_trailing(:equal, values[:title_or_form])).strip,
-                 values[:punctuation], trim_trailing(:period, values[:other_info])].compact_blank.join(' ')
-        values[:inclusive_dates].present? ? "#{title}, #{values[:inclusive_dates]}" : title
-      end
-
-      # Same structure as show, but linked alternate title.
-      # @param record [MARC::Record]
-      # @return [String] alternate title for display
-      def alternate_show(record)
-        field = record.fields('880').filter_map { |alternate_field|
-          next unless subfield_value?(alternate_field, '6', /^245/)
-
-          alternate_field
-        }.first
-        values = title_values(field)
-        [trim_trailing(:colon, trim_trailing(:equal, values[:title_or_form])).strip,
-         values[:punctuation], values[:other_info]].compact_blank.join(' ')
+        title_or_form = field.find_all(&subfield_in?(%w[a k]))
+                             .map { |sf| trim_trailing(:comma, trim_trailing(:slash, sf.value).rstrip) }
+                             .first || ''
+        other_info = field.find_all(&subfield_in?(%w[b n p]))
+                          .map { |sf| trim_trailing(:slash, sf.value) }
+                          .join(' ')
+        hpunct = field.find_all { |sf| sf.code == 'h' }.map { |sf| sf.value.last }.first
+        punctuation = if [title_or_form.last, hpunct].include?('=')
+                        '='
+                      else
+                        [title_or_form.last, hpunct].include?(':') ? ':' : nil
+                      end
+        [trim_trailing(:colon, trim_trailing(:equal, title_or_form)).strip,
+         punctuation,
+         other_info].compact_blank.join(' ')
       end
 
       # Canonical title with non-filing characters relocated to the end.
@@ -185,7 +169,7 @@ module PennMARC
         end
         titles = standardized_titles + record.fields('880').filter_map do |field|
           next unless subfield_undefined?(field, 'i') &&
-                      subfield_value?(field, '6', /^(130|240|730)/)
+            subfield_value?(field, '6', /^(130|240|730)/)
 
           join_subfields field, &subfield_not_in?(%w[5 6 8 e w])
         end
@@ -230,8 +214,7 @@ module PennMARC
               .filter_map { |field|
                 next unless field.tag == '247' || (field.tag == '880' && subfield_value?(field, '6', /^247/))
 
-                # 6 and 8 are not meaningful for display
-                former_title = join_subfields field, &subfield_not_in?(%w[6 8 e w])
+                former_title = join_subfields field, &subfield_not_in?(%w[6 8 e w]) # 6 and 8 are not meaningful for display
                 former_title_append = join_subfields field, &subfield_in?(%w[e w])
                 "#{former_title} #{former_title_append}".strip
               }.uniq
@@ -248,45 +231,6 @@ module PennMARC
       end
 
       private
-
-      # Extract title values from provided 245 subfields. Main title components are the following:
-      # - title_or_form: subfields a and k
-      # - inclusive_dates: subfield c
-      # - other_info: subfields b, n, and p
-      # https://www.oclc.org/bibformats/en/2xx/245.html
-      #
-      # @param [MARC::Field] field
-      # @return [Hash] title values
-      def title_values(field)
-        title_or_form = field.find_all(&subfield_in?(%w[a k]))
-                             .map { |sf| trim_trailing(:comma, trim_trailing(:slash, sf.value).rstrip) }
-                             .first || ''
-        inclusive_dates = field.find { |sf| sf.code == 'f' }&.value
-        other_info = field.find_all(&subfield_in?(%w[b n p]))
-                          .map { |sf| trim_trailing(:slash, sf.value) }
-                          .join(' ')
-        punctuation = if title_or_form.last == '='
-                        '='
-                      else
-                        title_or_form.last == ':' ? ':' : nil
-                      end
-        { title_or_form: title_or_form,
-          inclusive_dates: inclusive_dates,
-          other_info: other_info,
-          punctuation: punctuation }
-      end
-
-      # Trim trailing and preceding characters from a string.
-      # @param value [String]
-      # @return [String]
-      def clean_value(value)
-        return unless value.present?
-
-        value.strip
-             .sub(/^[#{PUNCTUATION_TO_REMOVE.join}]+/, '')
-             .sub(/[#{PUNCTUATION_TO_REMOVE.join}]+$/, '')
-             .strip
-      end
 
       # Create prefix/filing hash for representing a title value with filing characters removed, with special
       # consideration for bracketed titles
