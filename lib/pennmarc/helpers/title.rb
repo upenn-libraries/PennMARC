@@ -51,9 +51,9 @@ module PennMARC
       # @return [Array<String>] array of auxiliary title values for search
       def search_aux(record)
         values = search_aux_values(record: record, title_type: :main, &subfield_not_in?(%w[c 6 8])) +
-          search_aux_values(record: record, title_type: :related, &subfield_not_in?(%w[s t])) +
-          search_aux_values(record: record, title_type: :entity, &subfield_in?(%w[t])) +
-          search_aux_values(record: record, title_type: :note, &subfield_in?(%w[t]))
+                 search_aux_values(record: record, title_type: :related, &subfield_not_in?(%w[s t])) +
+                 search_aux_values(record: record, title_type: :entity, &subfield_in?(%w[t])) +
+                 search_aux_values(record: record, title_type: :note, &subfield_in?(%w[t]))
         values.uniq
       end
 
@@ -79,9 +79,9 @@ module PennMARC
       # @return [Array<String>] auxiliary journal title information for search
       def journal_search_aux(record)
         values = search_aux_values(record: record, title_type: :main, journal: true, &subfield_not_in?(%w[c 6 8])) +
-          search_aux_values(record: record, title_type: :related, journal: true, &subfield_not_in?(%w[s t])) +
-          search_aux_values(record: record, title_type: :entity, journal: true, &subfield_in?(%w[t])) +
-          search_aux_values(record: record, title_type: :note, journal: true, &subfield_in?(%w[t]))
+                 search_aux_values(record: record, title_type: :related, journal: true, &subfield_not_in?(%w[s t])) +
+                 search_aux_values(record: record, title_type: :entity, journal: true, &subfield_in?(%w[t])) +
+                 search_aux_values(record: record, title_type: :note, journal: true, &subfield_in?(%w[t]))
         values.uniq
       end
 
@@ -169,7 +169,7 @@ module PennMARC
         end
         titles = standardized_titles + record.fields('880').filter_map do |field|
           next unless subfield_undefined?(field, 'i') &&
-            subfield_value?(field, '6', /^(130|240|730)/)
+                      subfield_value?(field, '6', /^(130|240|730)/)
 
           join_subfields field, &subfield_not_in?(%w[5 6 8 e w])
         end
@@ -214,7 +214,8 @@ module PennMARC
               .filter_map { |field|
                 next unless field.tag == '247' || (field.tag == '880' && subfield_value?(field, '6', /^247/))
 
-                former_title = join_subfields field, &subfield_not_in?(%w[6 8 e w]) # 6 and 8 are not meaningful for display
+                # 6 and 8 are not meaningful for display
+                former_title = join_subfields field, &subfield_not_in?(%w[6 8 e w])
                 former_title_append = join_subfields field, &subfield_in?(%w[e w])
                 "#{former_title} #{former_title_append}".strip
               }.uniq
