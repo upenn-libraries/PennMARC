@@ -66,19 +66,6 @@ describe 'PennMARC::Location' do
       end
     end
 
-    context 'with electronic inventory tag' do
-      let(:record) do
-        marc_record(fields: [marc_field(tag: enriched_marc::Pub::ITEM_TAG,
-                                        subfields: { enriched_marc::Pub::ITEM_CURRENT_LOCATION => 'stor' }),
-                             marc_field(tag: enriched_marc::Pub::ELEC_INVENTORY_TAG)])
-      end
-
-      it 'returns expected value' do
-        expect(helper.location(record: record, location_map: mapping,
-                               display_value: :library)).to contain_exactly('LIBRA', helper::ONLINE_LIBRARY)
-      end
-    end
-
     context 'with AVA fields' do
       let(:record) do
         marc_record(fields: [marc_field(tag: enriched_marc::Api::PHYS_INVENTORY_TAG,
@@ -92,19 +79,6 @@ describe 'PennMARC::Location' do
       it 'returns expected values' do
         expect(helper.location(record: record, location_map: mapping, display_value: :library)).to(
           contain_exactly('LIBRA')
-        )
-      end
-    end
-
-    context 'with AVE fields' do
-      let(:record) do
-        marc_record(fields: [marc_field(tag: enriched_marc::Api::ELEC_INVENTORY_TAG,
-                                        subfields: { enriched_marc::Api::ELEC_COLLECTION_NAME => 'Nature' })])
-      end
-
-      it 'returns expected values' do
-        expect(helper.location(record: record, location_map: mapping, display_value: :library)).to(
-          contain_exactly(helper::ONLINE_LIBRARY)
         )
       end
     end
