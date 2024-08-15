@@ -64,7 +64,7 @@ module PennMARC
       private
 
       # Determine enriched marc location tag, location code subfield, and call number subfield,
-      # giving priority to using 'itm', 'AVA', or 'AVE' fields.
+      # giving priority to using 'itm', 'AVA', or 'hld' fields.
       # @param record [MARC::Record]
       # @return [Hash<String, String>] containing location tag and subfield code
       # - `:tag` (String): The enriched marc location tag
