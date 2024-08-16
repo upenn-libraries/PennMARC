@@ -112,9 +112,9 @@ module PennMARC
       end
 
       # Title statement of responsibility (field 245, subfield c) and linked alternate for display.
+      # See https://www.oclc.org/bibformats/en/2xx/245.html#subfieldc for examples
       # @param [MARC::Record] record
       # @return [Array<String>] statement of responsibility and linked alternate
-      # See https://www.oclc.org/bibformats/en/2xx/245.html#subfieldc for examples
       def statement_of_responsibility_show(record)
         field = record.fields('245').first
         statement = field.find { |sf| sf.code == 'c' }&.value
