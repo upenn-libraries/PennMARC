@@ -3,7 +3,6 @@
 module PennMARC
   # Methods that return Library and Location values from Alma enhanced MARC fields
   class Location < Helper
-    ONLINE_LIBRARY = 'Online library'
     WEB_LOCATION_CODE = 'web'
 
     class << self
@@ -45,7 +44,7 @@ module PennMARC
         # get enriched marc location tag and relevant subfields
         enriched_location_tag_and_subfields(record) => {tag:, location_code_sf:, call_num_sf:}
 
-        locations = record.fields(tag).flat_map { |field|
+        record.fields(tag).flat_map { |field|
           field.filter_map { |subfield|
             # skip unless subfield matches enriched marc tag subfield code
             next unless subfield.code == location_code_sf
@@ -60,17 +59,12 @@ module PennMARC
             override || location_map[location_code.to_sym][display_value.to_sym]
           }.flatten.compact_blank
         }.uniq
-        if record.tags.intersect?([Enriched::Pub::ELEC_INVENTORY_TAG, Enriched::Api::ELEC_INVENTORY_TAG])
-          locations << ONLINE_LIBRARY
-        end
-
-        locations
       end
 
       private
 
       # Determine enriched marc location tag, location code subfield, and call number subfield,
-      # giving priority to using 'itm', 'AVA', or 'AVE' fields.
+      # giving priority to using 'itm', 'AVA', or 'hld' fields.
       # @param record [MARC::Record]
       # @return [Hash<String, String>] containing location tag and subfield code
       # - `:tag` (String): The enriched marc location tag
