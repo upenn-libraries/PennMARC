@@ -42,6 +42,24 @@ module PennMARC
         }.uniq
       end
 
+      # Parse call number values from inventory fields, including both hld and itm fields from publishing enrichment.
+      # Return only unique values.
+      # @param record [MARC::Record]
+      # @return [Array<String>] array of call numbers from inventory fields
+      def call_number_search(record)
+        call_nums = record.fields(TAGS).filter_map do |field|
+          subfield_values(field, call_number_sf(field))
+        end
+
+        # Ensure we get call numbers for records with no `itm` tags by also checking `hld` and de-duping
+        call_nums += record.fields([Enriched::Pub::PHYS_INVENTORY_TAG]).filter_map do |field|
+          first = subfield_values(field, Enriched::Pub::HOLDING_CLASSIFICATION_PART)&.first
+          last = subfield_values(field, Enriched::Pub::HOLDING_ITEM_PART)&.first
+          "#{first} #{last}".squish.presence
+        end
+        call_nums.flatten.uniq
+      end
+
       private
 
       # Retrieve subfield code that stores the call number on enriched marc field
