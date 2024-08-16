@@ -117,7 +117,7 @@ module PennMARC
       # @return [Array<String>] statement of responsibility and linked alternate
       def statement_of_responsibility_show(record)
         field = record.fields('245').first
-        statement = field.find { |sf| sf.code == 'c' }&.value
+        statement = field&.find { |sf| sf.code == 'c' }&.value
         alternate_statement = linked_alternate(record, '245', &subfield_in?(%w[c]))&.first
         [statement, alternate_statement].compact_blank
       end
