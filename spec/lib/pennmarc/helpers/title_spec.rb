@@ -165,6 +165,18 @@ describe 'PennMARC::Title' do
         expect(helper.alternate_show(record)).to eq 'Lettres à Lewis Mumford.'
       end
     end
+
+    context 'when 880 field is not present' do
+      let(:record) do
+        marc_record fields: [
+          marc_field(tag: '245', subfields: { k: 'Letters', b: 'to Lewis Mumford. ' })
+        ]
+      end
+
+      it 'returns nil' do
+        expect(helper.alternate_show(record)).to be_nil
+      end
+    end
   end
 
   describe '.statement_of_responsibility_show' do
