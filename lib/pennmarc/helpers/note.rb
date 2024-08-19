@@ -90,7 +90,7 @@ module PennMARC
       # @return [Array<String>]
       def access_restriction_show(record)
         record.fields('506').filter_map { |field|
-          join_subfields(field, &subfield_not_in?(%w[5 6]))
+          join_subfields(field, &subfield_not_in?(%w[2 5 6]))
         }.uniq
       end
 

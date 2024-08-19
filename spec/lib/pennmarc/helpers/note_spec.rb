@@ -136,7 +136,7 @@ describe 'PennMARC::Note' do
     it 'returns expected values from 506' do
       expect(values).to contain_exactly(
         'Open to users with valid PennKey Donor Appointment Only estate executors Some Policy No online access
-20300101 Van Pelt URI star'.squish
+20300101 Van Pelt URI'.squish
       )
     end
   end
