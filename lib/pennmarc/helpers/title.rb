@@ -93,22 +93,35 @@ module PennMARC
       # @param record [MARC::Record]
       # @return [String] single title for display
       def show(record)
-        field = record.fields('245').first
-        title_or_form = field.find_all(&subfield_in?(%w[a k]))
-                             .map { |sf| trim_trailing(:comma, trim_trailing(:slash, sf.value).rstrip) }
-                             .first || ''
-        other_info = field.find_all(&subfield_in?(%w[b n p]))
-                          .map { |sf| trim_trailing(:slash, sf.value) }
-                          .join(' ')
-        hpunct = field.find_all { |sf| sf.code == 'h' }.map { |sf| sf.value.last }.first
-        punctuation = if [title_or_form.last, hpunct].include?('=')
-                        '='
-                      else
-                        [title_or_form.last, hpunct].include?(':') ? ':' : nil
-                      end
-        [trim_trailing(:colon, trim_trailing(:equal, title_or_form)).strip,
-         punctuation,
-         other_info].compact_blank.join(' ')
+        field = record.fields('245')&.first
+        values = title_values(field)
+        [format_title(values[:title_or_form]), values[:punctuation], values[:other_info]].compact_blank.join(' ')
+      end
+
+      # Same as show, but with inclusive dates appended. For use on show page.
+      # @param record [MARC::Record]
+      # @return [String] detailed title for display
+      def detailed_show(record)
+        field = record.fields('245')&.first
+        values = title_values(field)
+        title = [format_title(values[:title_or_form]), values[:punctuation],
+                 trim_trailing(:period, values[:other_info])].compact_blank.join(' ')
+        values[:inclusive_dates].present? ? [title, values[:inclusive_dates]].compact_blank.join(', ') : title
+      end
+
+      # Same structure as show, but linked alternate title.
+      # @param record [MARC::Record]
+      # @return [String, nil] alternate title for display
+      def alternate_show(record)
+        field = record.fields('880').filter_map { |alternate_field|
+          next unless subfield_value?(alternate_field, '6', /^245/)
+
+          alternate_field
+        }.first
+        return unless field
+
+        values = title_values(field)
+        [format_title(values[:title_or_form]), values[:punctuation], values[:other_info]].compact_blank.join(' ')
       end
 
       # Title statement of responsibility (field 245, subfield c) and linked alternate for display.
@@ -243,6 +256,44 @@ module PennMARC
       end
 
       private
+
+      # Extract title values from provided 245 subfields. Main title components are the following:
+      # - title_or_form: subfields a and k
+      # - inclusive_dates: subfield c
+      # - other_info: subfields b, n, and p
+      # https://www.oclc.org/bibformats/en/2xx/245.html
+      #
+      # @param field [MARC::Field]
+      # @return [Hash] title values
+      def title_values(field)
+        title_or_form = field.find_all(&subfield_in?(%w[a k]))
+                             .map { |sf| trim_trailing(:comma, trim_trailing(:slash, sf.value).rstrip) }
+                             .first || ''
+        inclusive_dates = field.find { |sf| sf.code == 'f' }&.value
+        other_info = field.find_all(&subfield_in?(%w[b n p]))
+                          .map { |sf| trim_trailing(:slash, sf.value) }
+                          .join(' ')
+        title_punctuation = title_or_form.last
+        medium_punctuation = field.find_all { |sf| sf.code == 'h' }
+                                  .map { |sf| sf.value.last }
+                                  .first
+        punctuation = if [title_punctuation, medium_punctuation].include?('=')
+                        '='
+                      else
+                        [title_punctuation, medium_punctuation].include?(':') ? ':' : nil
+                      end
+        { title_or_form: title_or_form,
+          inclusive_dates: inclusive_dates,
+          other_info: other_info,
+          punctuation: punctuation }
+      end
+
+      # Remove trailing equal from title, then remove trailing colon.
+      # @param title [String]
+      # @return [String]
+      def format_title(title)
+        trim_trailing(:colon, trim_trailing(:equal, title)).strip
+      end
 
       # Create prefix/filing hash for representing a title value with filing characters removed, with special
       # consideration for bracketed titles

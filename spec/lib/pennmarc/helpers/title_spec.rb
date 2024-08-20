@@ -138,6 +138,47 @@ describe 'PennMARC::Title' do
     end
   end
 
+  describe '.detailed_show' do
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '245', subfields: { k: 'Letters', f: '1972-1982', b: 'to Lewis Mumford.' })
+      ]
+    end
+
+    context 'with subfields ǂk, ǂf and ǂc' do
+      it 'returns detailed title values' do
+        expect(helper.detailed_show(record)).to eq 'Letters to Lewis Mumford, 1972-1982'
+      end
+    end
+  end
+
+  describe '.alternate_show' do
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '245', subfields: { k: 'Letters', b: 'to Lewis Mumford. ' }),
+        marc_field(tag: '880', subfields: { '6': '245', k: 'Lettres', b: 'à Lewis Mumford.' })
+      ]
+    end
+
+    context 'with subfields ǂk and ǂb' do
+      it 'returns alternate title values' do
+        expect(helper.alternate_show(record)).to eq 'Lettres à Lewis Mumford.'
+      end
+    end
+
+    context 'when 880 field is not present' do
+      let(:record) do
+        marc_record fields: [
+          marc_field(tag: '245', subfields: { k: 'Letters', b: 'to Lewis Mumford. ' })
+        ]
+      end
+
+      it 'returns nil' do
+        expect(helper.alternate_show(record)).to be_nil
+      end
+    end
+  end
+
   describe '.statement_of_responsibility_show' do
     let(:record) do
       marc_record fields: [marc_field(tag: '245', subfields: { c: 'statement of responsibility' }),
