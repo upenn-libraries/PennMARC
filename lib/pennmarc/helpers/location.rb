@@ -4,6 +4,7 @@ module PennMARC
   # Methods that return Library and Location values from Alma enhanced MARC fields
   class Location < Helper
     WEB_LOCATION_CODE = 'web'
+    LC_CALLNUM_TYPE = '0'
 
     class << self
       # Retrieves library location from enriched marc 'itm' or 'hld' fields, giving priority to the item location over
@@ -37,12 +38,12 @@ module PennMARC
       # @see https://developers.exlibrisgroup.com/alma/apis/docs/bibs/R0VUIC9hbG1hd3MvdjEvYmlicy97bW1zX2lkfQ==/
       #   Alma documentation for these added fields
       # @param record [MARC::Record]
-      # @param display_value [Symbol | String] field in location hash to retrieve
+      # @param display_value [Symbol,String] field in location hash to retrieve
       # @param location_map [Hash] hash with location_code as key and location hash as value
       # @return [Array<String>]
       def location(record:, display_value:, location_map:)
         # get enriched marc location tag and relevant subfields
-        enriched_location_tag_and_subfields(record) => {tag:, location_code_sf:, call_num_sf:}
+        enriched_location_tag_and_subfields(record) => {tag:, location_code_sf:, call_num_sf:, call_num_type_sf:}
 
         record.fields(tag).flat_map { |field|
           field.filter_map { |subfield|
@@ -53,8 +54,10 @@ module PennMARC
 
             next if location_code_to_ignore?(location_map, location_code)
 
-            override = specific_location_override(display_value: display_value, location_code: location_code,
-                                                  field: field, call_num_sf: call_num_sf)
+            override = if display_value.to_sym == :specific_location
+                         specific_location_override(location_code: location_code, field: field,
+                                                    call_num_sf: call_num_sf, call_num_type_sf: call_num_type_sf)
+                       end
 
             override || location_map[location_code.to_sym][display_value.to_sym]
           }.flatten.compact_blank
@@ -70,6 +73,8 @@ module PennMARC
       # - `:tag` (String): The enriched marc location tag
       # - `:location_code_sf` (String): The subfield code where location code is stored
       # - `:call_num_sf` (String): The subfield code where call number is stored
+      # - `:call_num_type_sf` (String, nil): The subfield code where call number type is stored. nil if unavailable in a
+      #                                   MARC field and we need to look for an indicator.
       def enriched_location_tag_and_subfields(record)
         # in holdings records, the shelving location is always the permanent location.
         # in item records, the current location takes into account
@@ -84,19 +89,22 @@ module PennMARC
           tag = Enriched::Pub::ITEM_TAG
           location_code_sf = Enriched::Pub::ITEM_CURRENT_LOCATION
           call_num_sf = Enriched::Pub::ITEM_CALL_NUMBER
+          call_num_type_sf = Enriched::Pub::ITEM_CALL_NUMBER_TYPE
           # if the record has API inventory tags, use them
         elsif field_defined?(record, Enriched::Api::PHYS_INVENTORY_TAG)
           tag = Enriched::Api::PHYS_INVENTORY_TAG
           location_code_sf = Enriched::Api::PHYS_LOCATION_CODE
           call_num_sf = Enriched::Api::PHYS_CALL_NUMBER
+          call_num_type_sf = Enriched::Api::PHYS_CALL_NUMBER_TYPE
           # otherwise use Pub holding tags
         else
           tag = Enriched::Pub::PHYS_INVENTORY_TAG
           location_code_sf = Enriched::Pub::PHYS_LOCATION_CODE
           call_num_sf = Enriched::Pub::HOLDING_CLASSIFICATION_PART
+          call_num_type_sf = nil # for hld tags, the call num type is indicator0
         end
 
-        { tag: tag, location_code_sf: location_code_sf, call_num_sf: call_num_sf }
+        { tag: tag, location_code_sf: location_code_sf, call_num_sf: call_num_sf, call_num_type_sf: call_num_type_sf }
       end
 
       # Determines whether to ignore a location code.
@@ -105,32 +113,41 @@ module PennMARC
       # map, we ignore it, for faceting purposes. We also ignore the location code 'web'. We don't facet for 'web'
       # which is the 'Penn Library Web' location used in Voyager. This location should eventually go away completely
       # with data cleanup in Alma.
-      # @param location_map [location_map] hash with location_code as key and location hash as value
-      # @param location_code [location_code] retrieved from record
+      # @param location_map [Hash] hash with location_code as key and location hash as value
+      # @param location_code [String] retrieved from record
       # @return [Boolean]
       def location_code_to_ignore?(location_map, location_code)
-        location_map.key?(location_code.to_sym) == false || location_code == WEB_LOCATION_CODE
+        !location_map.key?(location_code.to_sym) || location_code == WEB_LOCATION_CODE
       end
 
       # Retrieves a specific location override based on location code and call number. Specific location overrides are
       # located in `location_overrides.yml`.
-      # @param display_value [String | Symbol]
       # @param location_code [String]
       # @param field [MARC::Field]
       # @param call_num_sf [String]
+      # @param call_num_type_sf [String, nil]
       # @return [String, Nil]
-      def specific_location_override(display_value:, location_code:, field:, call_num_sf:)
-        return unless display_value.to_sym == :specific_location
-
-        locations_overrides = Mappers.location_overrides
+      def specific_location_override(location_code:, field:, call_num_sf:, call_num_type_sf:)
+        return unless lc_callnum?(field: field, call_num_type_sf: call_num_type_sf)
 
         call_numbers = subfield_values(field, call_num_sf)
-
-        override = locations_overrides.find do |_key, value|
+        override = Mappers.location_overrides.find do |_key, value|
           value[:location_code] == location_code && call_numbers.any? { |num| num.match?(value[:call_num_pattern]) }
         end
-
         override&.last&.dig(:specific_location)
+      end
+
+      # checks the call_num_type subfield for confirmation that the field contains an LC formatted call number. If no
+      # call number subfield is expected (holding inventory case), the first indicator is checked.
+      # @param field [MARC::Field]
+      # @param call_num_type_sf [String]
+      # @return [Boolean]
+      def lc_callnum?(field:, call_num_type_sf:)
+        return true if call_num_type_sf.nil? && field.indicator1 == LC_CALLNUM_TYPE
+
+        return true if call_num_type_sf.present? && subfield_value_in?(field, call_num_type_sf, [LC_CALLNUM_TYPE])
+
+        false
       end
     end
   end
