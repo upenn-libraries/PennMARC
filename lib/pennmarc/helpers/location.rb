@@ -4,7 +4,6 @@ module PennMARC
   # Methods that return Library and Location values from Alma enhanced MARC fields
   class Location < Helper
     WEB_LOCATION_CODE = 'web'
-    LC_CALLNUM_TYPE = '0'
 
     class << self
       # Retrieves library location from enriched marc 'itm' or 'hld' fields, giving priority to the item location over
@@ -128,26 +127,37 @@ module PennMARC
       # @param call_num_type_sf [String, nil]
       # @return [String, Nil]
       def specific_location_override(location_code:, field:, call_num_sf:, call_num_type_sf:)
-        return unless lc_callnum?(field: field, call_num_type_sf: call_num_type_sf)
+        call_number = subfield_values(field, call_num_sf)&.first
+        callnum_type = callnum_type(field: field, call_num_type_sf: call_num_type_sf)
+        return unless call_number && callnum_type
 
-        call_numbers = subfield_values(field, call_num_sf)
         override = Mappers.location_overrides.find do |_key, value|
-          value[:location_code] == location_code && call_numbers.any? { |num| num.match?(value[:call_num_pattern]) }
+          override_matching?(value, location_code, call_number, callnum_type)
         end
         override&.last&.dig(:specific_location)
       end
 
-      # checks the call_num_type subfield for confirmation that the field contains an LC formatted call number. If no
-      # call number subfield is expected (holding inventory case), the first indicator is checked.
-      # @param field [MARC::Field]
-      # @param call_num_type_sf [String]
+      # Check value hash for a matching location name override
+      # @param [Hash] value
+      # @param location_code [String]
+      # @param call_number [String]
+      # @param callnum_type [String]
       # @return [Boolean]
-      def lc_callnum?(field:, call_num_type_sf:)
-        return true if call_num_type_sf.nil? && field.indicator1 == LC_CALLNUM_TYPE
+      def override_matching?(value, location_code, call_number, callnum_type)
+        value[:location_code] == location_code &&
+          value[:call_num_type] == callnum_type &&
+          call_number.match?(value[:call_num_pattern])
+      end
 
-        return true if call_num_type_sf.present? && subfield_value_in?(field, call_num_type_sf, [LC_CALLNUM_TYPE])
+      # Return call num type value for a given field. If no call number subfield is expected (publishing holding
+      # inventory case), the first indicator is checked.
+      # @param field [MARC::Field]
+      # @param call_num_type_sf [String, nil]
+      # @return [String, nil]
+      def callnum_type(field:, call_num_type_sf:)
+        return field.indicator1 if call_num_type_sf.nil?
 
-        false
+        subfield_values(field, call_num_type_sf)&.first
       end
     end
   end

@@ -87,7 +87,8 @@ describe 'PennMARC::Location' do
         let(:fields) do
           [marc_field(tag: enriched_marc::Pub::ITEM_TAG,
                       subfields: { enriched_marc::Pub::ITEM_CURRENT_LOCATION => 'vanp',
-                                   enriched_marc::Pub::ITEM_CALL_NUMBER_TYPE => helper::LC_CALLNUM_TYPE,
+                                   enriched_marc::Pub::ITEM_CALL_NUMBER_TYPE =>
+                                     PennMARC::Classification::LOC_CALL_NUMBER_TYPE,
                                    enriched_marc::Pub::ITEM_CALL_NUMBER => 'ML3534 .D85 1984' }),
            marc_field(tag: enriched_marc::Pub::ITEM_TAG,
                       subfields: { enriched_marc::Pub::ITEM_CURRENT_LOCATION => 'stor',
@@ -106,7 +107,7 @@ describe 'PennMARC::Location' do
         end
       end
 
-      context 'with item fields and manuscript call nums' do
+      context 'with item fields and microfilm call nums' do
         let(:fields) do
           [marc_field(tag: enriched_marc::Pub::ITEM_TAG, indicator1: ' ',
                       subfields: { enriched_marc::Pub::ITEM_CURRENT_LOCATION => 'vanp',
@@ -129,6 +130,33 @@ describe 'PennMARC::Location' do
         it 'returns expected values' do
           expect(helper.location(record: record, display_value: :specific_location, location_map: mapping))
             .to(contain_exactly(PennMARC::Mappers.location[:vanp][:specific_location]))
+        end
+      end
+
+      context 'with a variety of holding fields from the Alma API enrichment' do
+        let(:fields) do
+          [marc_field(tag: enriched_marc::Api::PHYS_INVENTORY_TAG,
+                      subfields: { enriched_marc::Api::PHYS_CALL_NUMBER => 'Locked Closet Floor',
+                                   enriched_marc::Api::PHYS_CALL_NUMBER_TYPE => '8' }),
+           marc_field(tag: enriched_marc::Api::PHYS_INVENTORY_TAG,
+                      subfields: { enriched_marc::Api::PHYS_LOCATION_CODE => 'vanp',
+                                   enriched_marc::Api::PHYS_CALL_NUMBER => 'ML123 .P567 1875',
+                                   enriched_marc::Api::PHYS_CALL_NUMBER_TYPE =>
+                                     PennMARC::Classification::LOC_CALL_NUMBER_TYPE }),
+           marc_field(tag: enriched_marc::Api::PHYS_INVENTORY_TAG,
+                      subfields: { enriched_marc::Api::PHYS_LOCATION_CODE => 'vanp',
+                                   enriched_marc::Api::PHYS_CALL_NUMBER => 'P789 .D123 2012',
+                                   enriched_marc::Api::PHYS_CALL_NUMBER_TYPE =>
+                                     PennMARC::Classification::LOC_CALL_NUMBER_TYPE })
+          ]
+        end
+
+        it 'returns expected values' do
+          expect(helper.location(record: record, display_value: :specific_location, location_map: mapping))
+            .to(contain_exactly(
+                  PennMARC::Mappers.location[:vanp][:specific_location],
+                  PennMARC::Mappers.location_overrides[:albrecht][:specific_location],
+                ))
         end
       end
     end
