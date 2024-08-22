@@ -130,8 +130,8 @@ module PennMARC
         callnum_type = callnum_type(field: field, call_num_type_sf: call_num_type_sf)
         return unless callnum_type
 
-        override = Mappers.location_overrides.find do |_key, value|
-          override_matching?(value: value, location_code: location_code, callnum_type: callnum_type,
+        override = Mappers.location_overrides.find do |_key, override_data|
+          override_matching?(override_data: override_data, location_code: location_code, callnum_type: callnum_type,
                              call_numbers: subfield_values(field, call_num_sf))
         end
 
@@ -139,16 +139,16 @@ module PennMARC
       end
 
       # Check value hash for a matching location name override
-      # @param [Hash] value
+      # @param override_data [Hash]
       # @param location_code [String]
       # @param call_numbers [Array]
       # @param callnum_type [String]
       # @return [Boolean]
-      def override_matching?(value:, location_code:, call_numbers:, callnum_type:)
+      def override_matching?(override_data:, location_code:, call_numbers:, callnum_type:)
         call_numbers.any? do |call_number|
-          value[:location_code] == location_code &&
-            value[:call_num_type] == callnum_type &&
-            call_number.match?(value[:call_num_pattern])
+          override_data[:location_code] == location_code &&
+            override_data[:call_num_type] == callnum_type &&
+            call_number.match?(override_data[:call_num_pattern])
         end
       end
 
