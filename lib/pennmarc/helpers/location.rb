@@ -150,7 +150,6 @@ module PennMARC
             value[:call_num_type] == callnum_type &&
             call_number.match?(value[:call_num_pattern])
         end
-
       end
 
       # Return call num type value for a given field. If no call number subfield is expected (publishing holding
