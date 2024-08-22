@@ -138,7 +138,7 @@ module PennMARC
         override&.last&.dig(:specific_location)
       end
 
-      # Check value hash for a matching location name override
+      # Check override_data hash for a matching location name override
       # @param override_data [Hash]
       # @param location_code [String]
       # @param call_numbers [Array]
