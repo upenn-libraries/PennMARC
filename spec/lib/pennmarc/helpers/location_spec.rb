@@ -121,15 +121,19 @@ describe 'PennMARC::Location' do
         end
       end
 
-      context 'with holding fields and non-LC call num type' do
+      context 'with holding fields and both LC and non-LC call num type' do
         let(:fields) do
           [marc_field(indicator1: '8', tag: enriched_marc::Pub::PHYS_INVENTORY_TAG,
-                      subfields: { enriched_marc::Pub::PHYS_LOCATION_CODE => 'vanp' })]
+                      subfields: { enriched_marc::Pub::PHYS_LOCATION_CODE => 'vanp' }),
+           marc_field(indicator1: '0', tag: enriched_marc::Pub::PHYS_INVENTORY_TAG,
+                      subfields: { enriched_marc::Pub::PHYS_LOCATION_CODE => 'vanp',
+                                   enriched_marc::Pub::HOLDING_CLASSIFICATION_PART => 'ML3534' })]
         end
 
         it 'returns expected values' do
           expect(helper.location(record: record, display_value: :specific_location, location_map: mapping))
-            .to(contain_exactly(PennMARC::Mappers.location[:vanp][:specific_location]))
+            .to(contain_exactly(PennMARC::Mappers.location[:vanp][:specific_location],
+                                PennMARC::Mappers.location_overrides[:albrecht][:specific_location]))
         end
       end
 
@@ -140,7 +144,7 @@ describe 'PennMARC::Location' do
                                    enriched_marc::Api::PHYS_CALL_NUMBER_TYPE => '8' }),
            marc_field(tag: enriched_marc::Api::PHYS_INVENTORY_TAG,
                       subfields: { enriched_marc::Api::PHYS_LOCATION_CODE => 'vanp',
-                                   enriched_marc::Api::PHYS_CALL_NUMBER => 'ML123 .P567 1875',
+                                   enriched_marc::Api::PHYS_CALL_NUMBER => ['ML123 .P567 1875', 'ML123'],
                                    enriched_marc::Api::PHYS_CALL_NUMBER_TYPE =>
                                      PennMARC::Classification::LOC_CALL_NUMBER_TYPE }),
            marc_field(tag: enriched_marc::Api::PHYS_INVENTORY_TAG,
@@ -152,10 +156,8 @@ describe 'PennMARC::Location' do
 
         it 'returns expected values' do
           expect(helper.location(record: record, display_value: :specific_location, location_map: mapping))
-            .to(contain_exactly(
-                  PennMARC::Mappers.location[:vanp][:specific_location],
-                  PennMARC::Mappers.location_overrides[:albrecht][:specific_location]
-                ))
+            .to(contain_exactly(PennMARC::Mappers.location[:vanp][:specific_location],
+                                PennMARC::Mappers.location_overrides[:albrecht][:specific_location]))
         end
       end
     end

@@ -127,26 +127,30 @@ module PennMARC
       # @param call_num_type_sf [String, nil]
       # @return [String, Nil]
       def specific_location_override(location_code:, field:, call_num_sf:, call_num_type_sf:)
-        call_number = subfield_values(field, call_num_sf)&.first
         callnum_type = callnum_type(field: field, call_num_type_sf: call_num_type_sf)
-        return unless call_number && callnum_type
+        return unless callnum_type
 
         override = Mappers.location_overrides.find do |_key, value|
-          override_matching?(value, location_code, call_number, callnum_type)
+          override_matching?(value: value, location_code: location_code, callnum_type: callnum_type,
+                             call_numbers: subfield_values(field, call_num_sf))
         end
+
         override&.last&.dig(:specific_location)
       end
 
       # Check value hash for a matching location name override
       # @param [Hash] value
       # @param location_code [String]
-      # @param call_number [String]
+      # @param call_numbers [Array]
       # @param callnum_type [String]
       # @return [Boolean]
-      def override_matching?(value, location_code, call_number, callnum_type)
-        value[:location_code] == location_code &&
-          value[:call_num_type] == callnum_type &&
-          call_number.match?(value[:call_num_pattern])
+      def override_matching?(value:, location_code:, call_numbers:, callnum_type:)
+        call_numbers.any? do |call_number|
+          value[:location_code] == location_code &&
+            value[:call_num_type] == callnum_type &&
+            call_number.match?(value[:call_num_pattern])
+        end
+
       end
 
       # Return call num type value for a given field. If no call number subfield is expected (publishing holding
@@ -157,7 +161,7 @@ module PennMARC
       def callnum_type(field:, call_num_type_sf:)
         return field.indicator1 if call_num_type_sf.nil?
 
-        subfield_values(field, call_num_type_sf)&.first
+        subfield_values(field, call_num_type_sf).first
       end
     end
   end
