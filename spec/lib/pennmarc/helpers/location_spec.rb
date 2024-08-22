@@ -91,7 +91,6 @@ describe 'PennMARC::Location' do
                                    enriched_marc::Pub::ITEM_CALL_NUMBER => 'ML3534 .D85 1984' }),
            marc_field(tag: enriched_marc::Pub::ITEM_TAG,
                       subfields: { enriched_marc::Pub::ITEM_CURRENT_LOCATION => 'stor',
-                                   enriched_marc::Pub::ITEM_CALL_NUMBER_TYPE => helper::LC_CALLNUM_TYPE,
                                    enriched_marc::Pub::ITEM_CALL_NUMBER_TYPE => '8',
                                    enriched_marc::Pub::ITEM_CALL_NUMBER => 'L3534 .D85 1984' })]
         end
