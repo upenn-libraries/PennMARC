@@ -147,15 +147,14 @@ describe 'PennMARC::Location' do
                       subfields: { enriched_marc::Api::PHYS_LOCATION_CODE => 'vanp',
                                    enriched_marc::Api::PHYS_CALL_NUMBER => 'P789 .D123 2012',
                                    enriched_marc::Api::PHYS_CALL_NUMBER_TYPE =>
-                                     PennMARC::Classification::LOC_CALL_NUMBER_TYPE })
-          ]
+                                     PennMARC::Classification::LOC_CALL_NUMBER_TYPE })]
         end
 
         it 'returns expected values' do
           expect(helper.location(record: record, display_value: :specific_location, location_map: mapping))
             .to(contain_exactly(
                   PennMARC::Mappers.location[:vanp][:specific_location],
-                  PennMARC::Mappers.location_overrides[:albrecht][:specific_location],
+                  PennMARC::Mappers.location_overrides[:albrecht][:specific_location]
                 ))
         end
       end
