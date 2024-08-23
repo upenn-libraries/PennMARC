@@ -1,5 +1,6 @@
 albrecht:
   location_code: 'vanp'
   call_num_pattern: '^M.*'
+  call_num_type: '0'
   specific_location: 'Van Pelt - Albrecht Music Library'
 
