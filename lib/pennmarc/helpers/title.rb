@@ -106,7 +106,10 @@ module PennMARC
         values = title_values(field)
         title = [format_title(values[:title_or_form]), values[:punctuation],
                  trim_trailing(:period, values[:other_info])].compact_blank.join(' ')
-        values[:inclusive_dates].present? ? [title, values[:inclusive_dates]].compact_blank.join(', ') : title
+        return title if values[:inclusive_dates].blank?
+
+        [format_title(values[:title_or_form]), values[:inclusive_dates],
+         trim_trailing(:period, values[:other_info])].compact_blank.join(', ')
       end
 
       # Same structure as show, but linked alternate title.
@@ -269,7 +272,9 @@ module PennMARC
         title_or_form = field.find_all(&subfield_in?(%w[a k]))
                              .map { |sf| trim_trailing(:comma, trim_trailing(:slash, sf.value).rstrip) }
                              .first || ''
-        inclusive_dates = field.find { |sf| sf.code == 'f' }&.value
+        inclusive_dates = field.find_all(&subfield_in?(%w[f]))
+                               .map { |sf| trim_trailing(:comma, sf.value) }
+                               .first || ''
         other_info = field.find_all(&subfield_in?(%w[b n p]))
                           .map { |sf| trim_trailing(:slash, sf.value) }
                           .join(' ')

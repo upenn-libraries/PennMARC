@@ -139,15 +139,27 @@ describe 'PennMARC::Title' do
   end
 
   describe '.detailed_show' do
-    let(:record) do
-      marc_record fields: [
-        marc_field(tag: '245', subfields: { k: 'Letters', f: '1972-1982', b: 'to Lewis Mumford.' })
-      ]
+    context 'with subfields ǂk, ǂf and ǂc' do
+      let(:record) do
+        marc_record fields: [
+          marc_field(tag: '245', subfields: { k: 'Letters', f: '1972-1982,', b: 'to Lewis Mumford.' })
+        ]
+      end
+
+      it 'returns detailed title values' do
+        expect(helper.detailed_show(record)).to eq 'Letters, 1972-1982, to Lewis Mumford'
+      end
     end
 
-    context 'with subfields ǂk, ǂf and ǂc' do
-      it 'returns detailed title values' do
-        expect(helper.detailed_show(record)).to eq 'Letters to Lewis Mumford, 1972-1982'
+    context 'with subfields ǂk and ǂb' do
+      let(:record) do
+        marc_record fields: [
+          marc_field(tag: '245', subfields: { k: 'Letters', b: 'to Lewis Mumford.' })
+        ]
+      end
+
+      it 'returns title value without dates' do
+        expect(helper.detailed_show(record)).to eq 'Letters to Lewis Mumford'
       end
     end
   end
