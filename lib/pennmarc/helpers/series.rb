@@ -35,6 +35,23 @@ module PennMARC
         series_values.uniq
       end
 
+      # Hash that associates {https://www.loc.gov/marc/bibliographic/bd830.html 830} and
+      # {https://www.loc.gov/marc/bibliographic/bd440.html 440} show values to query values to make building fielded
+      # search links easier in the downstream app.
+      # @param record [MARC::Record]
+      # @return [Hash]
+      def show_query_map(record)
+        record.fields(%w[830 440]).each_with_object({}) do |field, hash|
+          show_values = title_show_entries(record, field.tag) + [remaining_show_value(field)]
+
+          query_value = trim_punctuation(join_subfields(field, &subfield_in?(%w[a n p])))
+
+          show_values.each do |show_value|
+            hash[show_value] = query_value
+          end
+        end
+      end
+
       # Values from series fields for display.
       # @param record [MARC::Record]
       # @param relator_map [Hash]
@@ -141,10 +158,10 @@ module PennMARC
       # @note added 2017/04/10: filter out 0 (authority record numbers) added by Alma
       # @param record [MARC::Record]
       # @param tags_present [Array<String>]
-      # @return [Array<Hash>] array of remaining show entry hashes
+      # @return [Array<String>] array of remaining show entry hashes
       def remaining_show_entries(record, tags_present)
         record.fields(tags_present.drop(1)).map do |field|
-          join_subfields(field, &subfield_not_in?(%w[0 5 6 8]))
+          remaining_show_value(field)
         end || []
       end
 
@@ -199,6 +216,13 @@ module PennMARC
 
           join_subfields(field, &subfield_in?(%w[i a s t n d]))
         end
+      end
+
+      # Parse the value for a given remaining show field
+      # @param field [MARC::Field]
+      # @return [String]
+      def remaining_show_value(field)
+        join_subfields(field, &subfield_not_in?(%w[0 5 6 8]))
       end
     end
   end
