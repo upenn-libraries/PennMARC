@@ -142,12 +142,12 @@ describe 'PennMARC::Title' do
     context 'with subfields ǂk, ǂf and ǂc' do
       let(:record) do
         marc_record fields: [
-          marc_field(tag: '245', subfields: { k: 'Letters', f: '1972-1982,', b: 'to Lewis Mumford.' })
+          marc_field(tag: '245', subfields: { k: 'Letters,', f: '1972-1982,', b: 'to Lewis Mumford.' })
         ]
       end
 
       it 'returns detailed title values' do
-        expect(helper.detailed_show(record)).to eq 'Letters, 1972-1982, to Lewis Mumford'
+        expect(helper.detailed_show(record)).to eq 'Letters, 1972-1982, to Lewis Mumford.'
       end
     end
 
@@ -159,7 +159,24 @@ describe 'PennMARC::Title' do
       end
 
       it 'returns title value without dates' do
-        expect(helper.detailed_show(record)).to eq 'Letters to Lewis Mumford'
+        expect(helper.detailed_show(record)).to eq 'Letters to Lewis Mumford.'
+      end
+    end
+
+    # e.g., 9977704838303681
+    context 'with ǂa containing an " : " as well as inclusive dates' do
+      let(:record) do
+        marc_record fields: [
+          marc_field(tag: '245', subfields: { a: 'The frugal housewife : ',
+                                              b: 'dedicated to those who are not ashamed of economy, ',
+                                              f: '1830 / ', c: 'by the author of Hobomok.' })
+        ]
+      end
+
+      it 'returns single title value with text from ǂa and ǂn' do
+        expect(helper.detailed_show(record)).to eq(
+          'The frugal housewife : dedicated to those who are not ashamed of economy, 1830 / by the author of Hobomok.'
+        )
       end
     end
   end
@@ -187,25 +204,6 @@ describe 'PennMARC::Title' do
 
       it 'returns nil' do
         expect(helper.alternate_show(record)).to be_nil
-      end
-    end
-  end
-
-  describe '.statement_of_responsibility_show' do
-    let(:record) do
-      marc_record fields: [marc_field(tag: '245', subfields: { c: 'statement of responsibility' }),
-                           marc_field(tag: '880', subfields: { '6': '245', c: 'déclaration de responsabilité' })]
-    end
-
-    context 'with ǂc defined' do
-      it 'returns statement of responsibility' do
-        expect(helper.statement_of_responsibility_show(record)).to include 'statement of responsibility'
-      end
-    end
-
-    context 'with linked alternate of 245 ǂc defined' do
-      it 'returns alternate statement of responsibility' do
-        expect(helper.statement_of_responsibility_show(record)).to include 'déclaration de responsabilité'
       end
     end
   end

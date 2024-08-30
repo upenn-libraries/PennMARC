@@ -88,7 +88,6 @@ module PennMARC
       # Single-valued Title, for use in headings. Takes the first {https://www.oclc.org/bibformats/en/2xx/245.html 245}
       # value. Special consideration for
       # {https://www.oclc.org/bibformats/en/2xx/245.html#punctuation punctuation practices}.
-      # @todo still consider ǂh? medium, which OCLC doc says DO NOT USE...but that is OCLC...
       # @todo is punctuation handling still as desired? treatment here is described in spreadsheet from 2011
       # @param record [MARC::Record]
       # @return [String] single title for display
@@ -98,18 +97,14 @@ module PennMARC
         [format_title(values[:title_or_form]), values[:punctuation], values[:other_info]].compact_blank.join(' ')
       end
 
-      # Same as show, but with inclusive dates appended. For use on show page.
+      # Same as show, but with all subfields included as found - except for subfield c.
       # @param record [MARC::Record]
       # @return [String] detailed title for display
       def detailed_show(record)
         field = record.fields('245')&.first
-        values = title_values(field)
-        title = [format_title(values[:title_or_form]), values[:punctuation],
-                 trim_trailing(:period, values[:other_info])].compact_blank.join(' ')
-        return title if values[:inclusive_dates].blank?
+        return unless field
 
-        [format_title(values[:title_or_form]), values[:inclusive_dates],
-         trim_trailing(:period, values[:other_info])].compact_blank.join(', ')
+        join_subfields(field, &subfield_not_in?(%w[6 8]))
       end
 
       # Same structure as show, but linked alternate title.
@@ -125,17 +120,6 @@ module PennMARC
 
         values = title_values(field)
         [format_title(values[:title_or_form]), values[:punctuation], values[:other_info]].compact_blank.join(' ')
-      end
-
-      # Title statement of responsibility (field 245, subfield c) and linked alternate for display.
-      # See https://www.oclc.org/bibformats/en/2xx/245.html#subfieldc for examples
-      # @param [MARC::Record] record
-      # @return [Array<String>] statement of responsibility and linked alternate
-      def statement_of_responsibility_show(record)
-        field = record.fields('245').first
-        statement = field&.find { |sf| sf.code == 'c' }&.value
-        alternate_statement = linked_alternate(record, '245', &subfield_in?(%w[c]))&.first
-        [statement, alternate_statement].compact_blank
       end
 
       # Canonical title with non-filing characters relocated to the end.
@@ -275,7 +259,7 @@ module PennMARC
         inclusive_dates = field.find_all(&subfield_in?(%w[f]))
                                .map { |sf| trim_trailing(:comma, sf.value) }
                                .first || ''
-        other_info = field.find_all(&subfield_in?(%w[b n p]))
+        other_info = field.find_all(&subfield_in?(%w[b n p c]))
                           .map { |sf| trim_trailing(:slash, sf.value) }
                           .join(' ')
         title_punctuation = title_or_form.last
