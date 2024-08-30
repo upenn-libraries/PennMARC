@@ -256,10 +256,7 @@ module PennMARC
         title_or_form = field.find_all(&subfield_in?(%w[a k]))
                              .map { |sf| trim_trailing(:comma, trim_trailing(:slash, sf.value).rstrip) }
                              .first || ''
-        inclusive_dates = field.find_all(&subfield_in?(%w[f]))
-                               .map { |sf| trim_trailing(:comma, sf.value) }
-                               .first || ''
-        other_info = field.find_all(&subfield_in?(%w[b n p c]))
+        other_info = field.find_all(&subfield_in?(%w[b n p]))
                           .map { |sf| trim_trailing(:slash, sf.value) }
                           .join(' ')
         title_punctuation = title_or_form.last
@@ -272,7 +269,6 @@ module PennMARC
                         [title_punctuation, medium_punctuation].include?(':') ? ':' : nil
                       end
         { title_or_form: title_or_form,
-          inclusive_dates: inclusive_dates,
           other_info: other_info,
           punctuation: punctuation }
       end
