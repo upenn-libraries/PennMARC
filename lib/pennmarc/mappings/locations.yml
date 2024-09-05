@@ -594,10 +594,6 @@ dncirc:
     - Health Sciences Libraries
     - Levy Dental Medicine Library
   display: Levy Dental Medicine Library - Circulation
-easiacmx:
-  specific_location: Van Pelt - East Asia Comics
-  library: Van Pelt-Dietrich Library Center
-  display: Van Pelt - East Asia Comics
 easiaover:
   specific_location: Van Pelt - East Asia Oversize
   library: Van Pelt-Dietrich Library Center
