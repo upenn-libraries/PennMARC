@@ -62,9 +62,9 @@ britimp:
   display: Athenaeum of Philadelphia - British Imprints
   aeon: true
 carpco:
-  specific_location: Athenaeum of Philadelphia - Carpenters' Company
-  library: Athenaeum of Philadelphia
-  display: Athenaeum of Philadelphia - Carpenters' Company
+  specific_location: Carpenters' Company of the City and County of Philadelphia
+  library: Special Collections
+  display: Carpenters' Company of the City and County of Philadelphia
   aeon: true
 catoffice:
   specific_location: Athenaeum of Philadelphia - Cataloging Office
@@ -160,12 +160,16 @@ vismatl:
   aeon: true
 athstor:
   specific_location: LIBRA - Athenaeum of Philadelphia
-  library: LIBRA
+  library: 
+    - LIBRA
+    - Athenaeum of Philadelphia
   display: LIBRA - Athenaeum of Philadelphia
   aeon: true
 athstorcir:
   specific_location: LIBRA - Athenaeum of Philadelphia Circulating
-  library: LIBRA
+  library: 
+    - LIBRA
+    - Athenaeum of Philadelphia
   display: LIBRA - Athenaeum of Philadelphia Circulating
 biom:
   specific_location: Holman Biotech Commons
