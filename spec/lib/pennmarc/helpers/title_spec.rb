@@ -211,6 +211,7 @@ describe 'PennMARC::Title' do
   describe '.sort' do
     context 'with no 245' do
       let(:record) do
+        # Simulate a miscoded record
         marc_record fields: [marc_field(tag: '246', indicator1: '1', indicator2: '4',
                                         subfields: { a: 'The horn concertos', c: 'Mozart' })]
       end
