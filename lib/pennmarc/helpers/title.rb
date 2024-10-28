@@ -132,6 +132,8 @@ module PennMARC
       # @return [String] title value for sorting
       def sort(record)
         title_field = record.fields('245').first
+        return unless title_field.present?
+
         # attempt to get number of non-filing characters present, default to 0
         offset = if /^[0-9]$/.match?(title_field.indicator2)
                    title_field.indicator2.to_i
