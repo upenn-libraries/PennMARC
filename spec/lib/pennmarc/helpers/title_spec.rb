@@ -209,6 +209,17 @@ describe 'PennMARC::Title' do
   end
 
   describe '.sort' do
+    context 'with no 245' do
+      let(:record) do
+        marc_record fields: [marc_field(tag: '246', indicator1: '1', indicator2: '4',
+                                        subfields: { a: 'The horn concertos', c: 'Mozart' })]
+      end
+
+      it 'returns nil' do
+        expect(helper.sort(record)).to be_nil
+      end
+    end
+
     context 'with a record with a valid indicator2 value' do
       let(:record) do
         marc_record fields: [
