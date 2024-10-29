@@ -39,7 +39,7 @@ module PennMARC
             # TODO: use term hash here? pro/chr would be rejected...
             # TODO: should we care about punctuation in a search field? relator mapping?
             case subfield.code
-            when '5', '6', '8' then next
+            when '5', '6', '8', '7' then next
             when 'a'
               # remove %PRO or PRO or %CHR or CHR
               # remove any ? at the end
@@ -249,7 +249,7 @@ module PennMARC
                       vernacular: field.tag == '880' }
         field.each do |subfield|
           case subfield.code
-          when '0', '6', '8', '5'
+          when '0', '6', '8', '5', '7'
             # explicitly ignore these subfields
             next
           when '1'

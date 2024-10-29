@@ -14,7 +14,8 @@ describe 'PennMARC::Subject' do
       let(:fields) do
         [marc_field(tag: '600', indicator2: '5', subfields: { a: 'Excluded Canadian' }),
          marc_field(tag: '610', indicator2: '0', subfields: { a: 'University of Pennsylvania', b: 'Libraries' }),
-         marc_field(tag: '691', indicator2: '7', subfields: { a: 'Van Pelt Library', '2': 'local' }),
+         marc_field(tag: '691', indicator2: '7', subfields: { a: 'Van Pelt Library', '2': 'local',
+                                                              '7': 'Heading derived magically.' }),
          marc_field(tag: '696', indicator2: '4', subfields: { a: 'A Developer' }),
          marc_field(tag: '880', indicator2: '0', subfields: { a: 'Alt. Name', '6': '610' })]
       end
@@ -100,7 +101,7 @@ describe 'PennMARC::Subject' do
         [marc_field(tag: '650', indicator2: '7',
                     subfields: {
                       a: 'Libraries,', d: '22nd Century,', x: 'History.', e: 'relator',
-                      '2': 'fast', '0': 'http://fast.org/libraries'
+                      '2': 'fast', '0': 'http://fast.org/libraries', '7': 'Heading derived magically.'
                     })]
       end
 
@@ -115,6 +116,10 @@ describe 'PennMARC::Subject' do
 
       it 'excludes raw relator term values from ǂe' do
         expect(values.first).not_to include 'relator'
+      end
+
+      it 'excludes any values from ǂ7' do
+        expect(values.first).not_to include 'magically'
       end
 
       it 'includes active dates from ǂd' do
