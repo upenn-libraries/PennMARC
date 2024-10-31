@@ -1250,6 +1250,14 @@ scinc:
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Incunables
   aeon: true
+sckatzstor:
+  specific_location: LIBRA Rare Library at the Katz Center
+  library:
+    - Special Collections
+    - LIBRA
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: LIBRA Rare Library at the Katz Center
+  aeon: true
 sclea:
   specific_location: Kislak Center for Special Collections - Lea Collection
   library:
