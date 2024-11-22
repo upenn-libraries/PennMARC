@@ -592,6 +592,12 @@ dentshils:
     - Health Sciences Libraries
     - Levy Dental Medicine Library
   display: Levy Dental Medicine Library - Shils Boardroom
+dentwellrm:
+  specific_location: Levy Dental Medicine Library - Wellness Room
+  library:
+    - Health Sciences Libraries
+    - Levy Dental Medicine Library
+  display: Levy Dental Medicine Library - Wellness Room
 dncirc:
   specific_location: Levy Dental Medicine Library - Circulation
   library:
