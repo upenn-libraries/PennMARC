@@ -43,7 +43,8 @@ module PennMARC
         }.uniq
       end
 
-      # Genre values for faceting. We only set Genre facet values for movies (videos) and manuscripts(?)
+      # Genre values for faceting. We only set Genre facet values for movies (videos) and manuscripts(?), and ensure
+      # that the headings come from our set of approved ontologies.
       # @todo the Genre facet in Franklin is pretty ugly. It could be cleaned up by limiting the subfields included
       #       here and cleaning up punctuation.
       # @param record [MARC::Record]
@@ -55,6 +56,8 @@ module PennMARC
         return [] unless manuscript || video
 
         record.fields('655').filter_map { |field|
+          next unless allowed_genre_field?(field)
+
           join_subfields field, &subfield_not_in?(%w[0 2 5 c])
         }.uniq
       end
