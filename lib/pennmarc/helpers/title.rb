@@ -32,6 +32,9 @@ module PennMARC
     # This text is used in Alma to indicate a Bib record is a "Host" record for other bibs (bound-withs)
     HOST_BIB_TITLE = 'Host bibliographic record for boundwith'
 
+    # Title to use when no 245 field is present. This "shouldn't" occur, but it does.
+    NO_TITLE_PROVIDED = '[No title provided]'
+
     class << self
       # Main Title Search field. Takes from {https://www.loc.gov/marc/bibliographic/bd245.html 245} and linked 880.
       # @note Ported from get_title_1_search_values.
@@ -93,6 +96,8 @@ module PennMARC
       # @return [String] single title for display
       def show(record)
         field = record.fields('245')&.first
+        return Array.wrap(NO_TITLE_PROVIDED) unless field.present?
+
         values = title_values(field)
         [format_title(values[:title_or_form]), values[:punctuation], values[:other_info]].compact_blank.join(' ')
       end
