@@ -840,6 +840,10 @@ mideastres:
     - Van Pelt-Dietrich Library Center
     - Reserve
   display: Van Pelt - Middle East Seminar Reserve
+mscirc:
+  specific_location: Penn Museum Library - Circulation
+  library: Penn Museum Library
+  display: Penn Museum Library - Circulation
 muse:
   specific_location: Penn Museum Library
   library: Penn Museum Library
@@ -867,6 +871,14 @@ museegypov:
   specific_location: Penn Museum Library - Egyptian Oversize
   library: Penn Museum Library
   display: Penn Museum Library - Egyptian Oversize
+museexhi:
+  specific_location: Penn Museum Library - Exhibition
+  library: Penn Museum Library
+  display: Penn Museum Library - Exhibition
+musefolio:
+  specific_location: Penn Museum Library - Folio
+  library: Penn Museum Library
+  display: Penn Museum Library - Folio
 musekolb:
   specific_location: Penn Museum Library - Kolb
   library: Penn Museum Library
@@ -882,10 +894,14 @@ musemedia:
   specific_location: Penn Museum Library - Media
   library: Penn Museum Library
   display: Penn Museum Library - Media
-musenewbk:
+musenewbks:
   specific_location: Penn Museum Library - New Books Display
   library: Penn Museum Library
   display: Penn Museum Library - New Books Display
+museover:
+  specific_location: Penn Museum Library - Oversize
+  library: Penn Museum Library
+  display: Penn Museum Library - Oversize
 muserefe:
   specific_location: Penn Museum Library - Reference
   library: Penn Museum Library
