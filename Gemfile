@@ -3,6 +3,7 @@
 source 'https://rubygems.org'
 
 gem 'activesupport', '~> 7'
+gem 'lcsort'
 gem 'library_stdnums', '~> 1.6'
 gem 'marc', '~> 1.2'
 gem 'nokogiri', '~> 1.15'

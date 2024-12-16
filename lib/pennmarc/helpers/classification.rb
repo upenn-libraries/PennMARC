@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'lcsort'
+
 module PennMARC
   # Generates library of congress and dewey classifications using call number data.
   class Classification < Helper
@@ -40,6 +42,20 @@ module PennMARC
             format_facet(class_code, call_number_type, title)
           end
         }.uniq
+      end
+
+      # Return a normalized Call Number value for sorting purposes. This uses the Lcsort gem normalization logic, which
+      # returns nil for non-LC call numbers. For now, this returns a multivalued field, and only the call number values
+      # from the 050 field, subfields a, b and d.
+      # @see https://www.loc.gov/marc/authority/ad050.html
+      # @todo 090 holds "local call numbers" - should we include? https://www.loc.gov/marc/authority/ad09x.html
+      # @todo enriched MARC fields AVA hold call numbers, AVE may also have call numbers - should we include?
+      # @param record [MARC::Record]
+      # @return [Array<String>] array of normalized call numbers
+      def sort(record)
+        record.fields('050').filter_map do |call_number|
+          Lcsort.normalize(join_subfields(call_number, &subfield_in?(%w[a b d])))
+        end
       end
 
       # Parse call number values from inventory fields, including both hld and itm fields from publishing enrichment.

@@ -43,6 +43,51 @@ describe 'PennMARC::Classification' do
     end
   end
 
+  describe '.sort' do
+    let(:fields) { [marc_field(tag: tag, subfields: subfields)] }
+
+    context 'with a straightforward LC call number' do
+      let(:tag) { '050' }
+      let(:subfields) { { a: 'Q175', b: ' .K95' } }
+
+      it 'produces a normalized call number' do
+        expect(helper.sort(record)).to eq ['Q..0175.K95']
+      end
+    end
+
+    context 'with a slightly less straightforward call number' do
+      let(:tag) { '050' }
+      let(:subfields) { { a: 'SB320.8.N45', b: ' L43 1984', '1': 'http://URI' } }
+
+      it 'produces a normalized call number' do
+        expect(helper.sort(record)).to eq ['SB.03208.N45.L43--1984']
+      end
+
+      it 'does not include values form undesirable subfields' do
+        expect(helper.sort(record).first).not_to include 'URI'
+      end
+    end
+
+    # TODO: would we ever find a Dewey number in 050? probably not
+    context 'with a Dewey call number' do
+      let(:tag) { '050' }
+      let(:subfields) { { a: '629.41 T939' } }
+
+      it 'produces a normalized call number' do
+        expect(helper.sort(record)).to eq []
+      end
+    end
+
+    context 'with nonsense in the 050 field' do
+      let(:tag) { '050' }
+      let(:subfields) { { a: '123 foo bar baz', b: 'quux 1792' } }
+
+      it 'produces a normalized call number' do
+        expect(helper.sort(record)).to eq []
+      end
+    end
+  end
+
   describe '.call_number_search' do
     let(:fields) do
       [marc_field(tag: config[:tag],
