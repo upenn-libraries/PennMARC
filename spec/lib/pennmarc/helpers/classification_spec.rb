@@ -44,32 +44,56 @@ describe 'PennMARC::Classification' do
   end
 
   describe '.sort' do
-    context 'with enrichment via the Alma publishing process and itm fields' do
+    context 'with enrichment via the Alma publishing process and no valid call number' do
       let(:fields) do
         [marc_field(tag: PennMARC::Enriched::Pub::ITEM_TAG, subfields: {
-                      PennMARC::Enriched::Pub::ITEM_CALL_NUMBER_TYPE => '0',
-                      PennMARC::Enriched::Pub::ITEM_CALL_NUMBER => 'QL756 .S643'
-                    }),
-         marc_field(tag: PennMARC::Enriched::Pub::ITEM_TAG, subfields: {
-                      PennMARC::Enriched::Pub::ITEM_CALL_NUMBER_TYPE => '0',
+                      PennMARC::Enriched::Pub::ITEM_CALL_NUMBER_TYPE => helper::LOC_CALL_NUMBER_TYPE,
                       PennMARC::Enriched::Pub::ITEM_CALL_NUMBER => 'Secret Drawer Copy'
                     }),
          marc_field(tag: PennMARC::Enriched::Pub::ITEM_TAG, subfields: {
-                      PennMARC::Enriched::Pub::ITEM_CALL_NUMBER_TYPE => '1',
+                      PennMARC::Enriched::Pub::ITEM_CALL_NUMBER_TYPE => helper::DEWEY_CALL_NUMBER_TYPE,
                       PennMARC::Enriched::Pub::ITEM_CALL_NUMBER => '691.3 B2141'
                     })]
       end
 
-      it 'excludes call numbers not designated as LC call numbers' do
-        expect(helper.sort(record)).not_to include '2141'
+      it 'returns nil' do
+        expect(helper.sort(record)).to be_nil
+      end
+    end
+
+    context 'with enrichment via the Alma publishing process and itm fields' do
+      let(:fields) do
+        [marc_field(tag: PennMARC::Enriched::Pub::ITEM_TAG, subfields: {
+                      PennMARC::Enriched::Pub::ITEM_CALL_NUMBER_TYPE => helper::LOC_CALL_NUMBER_TYPE,
+                      PennMARC::Enriched::Pub::ITEM_CALL_NUMBER => 'QL756 .S643'
+                    }),
+         marc_field(tag: PennMARC::Enriched::Pub::ITEM_TAG, subfields: {
+                      PennMARC::Enriched::Pub::ITEM_CALL_NUMBER_TYPE => helper::LOC_CALL_NUMBER_TYPE,
+                      PennMARC::Enriched::Pub::ITEM_CALL_NUMBER => 'Secret Drawer Copy'
+                    }),
+         marc_field(tag: PennMARC::Enriched::Pub::ITEM_TAG, subfields: {
+                      PennMARC::Enriched::Pub::ITEM_CALL_NUMBER_TYPE => helper::DEWEY_CALL_NUMBER_TYPE,
+                      PennMARC::Enriched::Pub::ITEM_CALL_NUMBER => '691.3 B2141'
+                    })]
       end
 
-      it 'returns expected normalized values' do
-        expect(helper.sort(record)).to match_array 'QL.0756.S643'
+      it 'returns a normalized version of the first valid call number' do
+        expect(helper.sort(record)).to eq 'QL.0756.S643'
+      end
+    end
+
+    context 'with enrichment via the Alma publishing process including both hld and itm fields' do
+      let(:fields) do
+        [marc_field(tag: PennMARC::Enriched::Pub::ITEM_TAG,
+                    subfields: { PennMARC::Enriched::Pub::ITEM_CALL_NUMBER_TYPE => helper::LOC_CALL_NUMBER_TYPE,
+                                 PennMARC::Enriched::Pub::ITEM_CALL_NUMBER => 'QL756 .S643 1989' }),
+         marc_field(tag: PennMARC::Enriched::Pub::PHYS_INVENTORY_TAG,
+                    subfields: { PennMARC::Enriched::Pub::HOLDING_CLASSIFICATION_PART => 'QL756',
+                                 PennMARC::Enriched::Pub::HOLDING_ITEM_PART => '.S643' })]
       end
 
-      it 'excludes call numbers that are improper LC call numbers' do
-        expect(helper.sort(record)).not_to include 'Secret'
+      it 'returns a normalized version of the first valid call number' do
+        expect(helper.sort(record)).to eq 'QL.0756.S643.1989'
       end
     end
 
@@ -80,21 +104,21 @@ describe 'PennMARC::Classification' do
                                  PennMARC::Enriched::Pub::HOLDING_ITEM_PART => '.C59 1989' })]
       end
 
-      it 'returns expected normalized values' do
-        expect(helper.sort(record)).to match_array 'KF.6450.C59.1989'
+      it 'returns expected normalized value' do
+        expect(helper.sort(record)).to eq 'KF.6450.C59.1989'
       end
     end
 
     context 'with enrichment with availability info via Alma Api' do
       let(:fields) do
         [marc_field(tag: PennMARC::Enriched::Api::PHYS_INVENTORY_TAG, subfields: {
-                      PennMARC::Enriched::Api::PHYS_CALL_NUMBER_TYPE => '0',
+                      PennMARC::Enriched::Api::PHYS_CALL_NUMBER_TYPE => helper::LOC_CALL_NUMBER_TYPE,
                       PennMARC::Enriched::Api::PHYS_CALL_NUMBER => 'QL756 .S643'
                     })]
       end
 
-      it 'returns expected normalized values' do
-        expect(helper.sort(record)).to match_array 'QL.0756.S643'
+      it 'returns expected normalized value' do
+        expect(helper.sort(record)).to eq 'QL.0756.S643'
       end
     end
   end

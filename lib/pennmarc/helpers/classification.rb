@@ -45,12 +45,14 @@ module PennMARC
       end
 
       # Return a normalized Call Number value for sorting purposes. This uses the Lcsort gem normalization logic, which
-      # returns nil for non-LC call numbers. For now, this returns a multivalued field, and only the call number values
-      # from the enrichment inventory fields.
+      # returns nil for non-LC call numbers. For now, this returns only the call number values from the enrichment
+      # inventory fields.
+      # @note this could be made more efficient by just returning the first value, but in the future we may want to be
+      #       more discerning about which call number we return (longest?)
       # @param record [MARC::Record]
-      # @return [Array<String>] array of normalized call numbers
+      # @return [String, nil] a normalized call number
       def sort(record)
-        values(record, loc_only: true).filter_map { |val| Lcsort.normalize(val) }
+        values(record, loc_only: true).filter_map { |val| Lcsort.normalize(val) }.first
       end
 
       # Parse call number values from inventory fields, including both hld and itm fields from publishing enrichment.
@@ -61,6 +63,10 @@ module PennMARC
         values(record, loc_only: false)
       end
 
+      # Return raw call number values from inventory fields
+      # @param record [MARC::Record]
+      # @param loc_only [Boolean] whether or not to explicitly return only LOC call numbers from ITM & AVA inventory
+      # @return [Array]
       def values(record, loc_only:)
         call_nums = record.fields(TAGS).filter_map do |field|
           next if loc_only && !loc_call_number_type?(subfield_values(field, call_number_type_sf(field))&.first)
@@ -75,7 +81,7 @@ module PennMARC
       private
 
       # Get call nums from `hld` tags. Useful if no call nums are available from `itm` tags
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Array]
       def hld_field_call_nums(record)
         record.fields([Enriched::Pub::PHYS_INVENTORY_TAG]).filter_map do |field|
