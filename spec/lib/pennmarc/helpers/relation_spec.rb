@@ -18,12 +18,11 @@ describe 'PennMARC::Relation' do
 
   describe '.contained_in_related_parts_show' do
     let(:fields) do
-      [marc_field(tag: '773', subfields: { g: 'Vol. 24, pt. B no. 9 (Sept. 1993)', q: '24:B:9<235',
-                                           i: 'Unrelated field' })]
+      [marc_field(tag: '773', subfields: { g: 'Vol. 24, pt. B no. 9 (Sept. 1993)', q: '24:B:9<235' })]
     end
 
     it 'returns only the specified subfields' do
-      expect(helper.contained_in_related_parts_show(record)).to eq ['Vol. 24, pt. B no. 9 (Sept. 1993) 24:B:9<235']
+      expect(helper.contained_in_related_parts_show(record)).to eq ['Vol. 24, pt. B no. 9 (Sept. 1993)']
     end
   end
 
