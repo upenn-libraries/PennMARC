@@ -26,7 +26,7 @@ module PennMARC
       # @return [Array<String>] related parts values for display
       def contained_in_related_parts_show(record)
         record.fields('773').map { |field|
-          join_subfields(field, &subfield_in?(%w[g q]))
+          join_subfields(field, &subfield_in?(%w[g]))
         }.uniq
       end
 
