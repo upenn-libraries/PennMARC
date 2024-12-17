@@ -21,7 +21,7 @@ module PennMARC
         }.uniq
       end
 
-      # Get "Contained in" values from {https://www.oclc.org/bibformats/en/7xx/773.html MARC 773} for related parts.
+      # Get "Contained in" values from {https://www.oclc.org/bibformats/en/7xx/773.html MARC 773} subfield g for related parts.
       # @param record [MARC::Record]
       # @return [Array<String>] related parts values for display
       def contained_in_related_parts_show(record)
