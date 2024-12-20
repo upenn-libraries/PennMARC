@@ -66,7 +66,7 @@ module PennMARC
       # Return raw call number values from inventory fields
       # @param record [MARC::Record]
       # @param loc_only [Boolean] whether or not to explicitly return only LOC call numbers from ITM & AVA inventory
-      # @return [Array]
+      # @return [Array<String>]
       def values(record, loc_only:)
         call_nums = record.fields(TAGS).filter_map do |field|
           next if loc_only && !loc_call_number_type?(subfield_values(field, call_number_type_sf(field))&.first)
@@ -82,7 +82,7 @@ module PennMARC
 
       # Get call nums from `hld` tags. Useful if no call nums are available from `itm` tags
       # @param record [MARC::Record]
-      # @return [Array]
+      # @return [Array<String>]
       def hld_field_call_nums(record)
         record.fields([Enriched::Pub::PHYS_INVENTORY_TAG]).filter_map do |field|
           first = subfield_values(field, Enriched::Pub::HOLDING_CLASSIFICATION_PART)&.first
