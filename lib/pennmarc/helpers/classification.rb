@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'lcsort'
+
 module PennMARC
   # Generates library of congress and dewey classifications using call number data.
   class Classification < Helper
@@ -42,25 +44,52 @@ module PennMARC
         }.uniq
       end
 
+      # Return a normalized Call Number value for sorting purposes. This uses the Lcsort gem normalization logic, which
+      # returns nil for non-LC call numbers. For now, this returns only the call number values from the enrichment
+      # inventory fields.
+      # @note this could be made more efficient by just returning the first value, but in the future we may want to be
+      #       more discerning about which call number we return (longest?)
+      # @param record [MARC::Record]
+      # @return [String, nil] a normalized call number
+      def sort(record)
+        values(record, loc_only: true).filter_map { |val| Lcsort.normalize(val) }.first
+      end
+
       # Parse call number values from inventory fields, including both hld and itm fields from publishing enrichment.
       # Return only unique values.
       # @param record [MARC::Record]
       # @return [Array<String>] array of call numbers from inventory fields
       def call_number_search(record)
+        values(record, loc_only: false)
+      end
+
+      # Return raw call number values from inventory fields
+      # @param record [MARC::Record]
+      # @param loc_only [Boolean] whether or not to explicitly return only LOC call numbers from ITM & AVA inventory
+      # @return [Array<String>]
+      def values(record, loc_only:)
         call_nums = record.fields(TAGS).filter_map do |field|
+          next if loc_only && !loc_call_number_type?(subfield_values(field, call_number_type_sf(field))&.first)
+
           subfield_values(field, call_number_sf(field))
         end
 
-        # Ensure we get call numbers for records with no `itm` tags by also checking `hld` and de-duping
-        call_nums += record.fields([Enriched::Pub::PHYS_INVENTORY_TAG]).filter_map do |field|
-          first = subfield_values(field, Enriched::Pub::HOLDING_CLASSIFICATION_PART)&.first
-          last = subfield_values(field, Enriched::Pub::HOLDING_ITEM_PART)&.first
-          "#{first} #{last}".squish.presence
-        end
+        call_nums += hld_field_call_nums(record)
         call_nums.flatten.uniq
       end
 
       private
+
+      # Get call nums from `hld` tags. Useful if no call nums are available from `itm` tags
+      # @param record [MARC::Record]
+      # @return [Array<String>]
+      def hld_field_call_nums(record)
+        record.fields([Enriched::Pub::PHYS_INVENTORY_TAG]).filter_map do |field|
+          first = subfield_values(field, Enriched::Pub::HOLDING_CLASSIFICATION_PART)&.first
+          last = subfield_values(field, Enriched::Pub::HOLDING_ITEM_PART)&.first
+          "#{first} #{last}".squish.presence
+        end
+      end
 
       # Retrieve subfield code that stores the call number on enriched marc field
       # @param field [MARC::DataField]
@@ -106,10 +135,10 @@ module PennMARC
       end
 
       # Determine whether call number type is library of congress
-      # @param call_number_type [String] value from call number type subfield
+      # @param call_number_type [String, nil] value from call number type subfield
       # @return [Boolean]
       def loc_call_number_type?(call_number_type)
-        call_number_type == '0'
+        call_number_type == LOC_CALL_NUMBER_TYPE
       end
     end
   end
