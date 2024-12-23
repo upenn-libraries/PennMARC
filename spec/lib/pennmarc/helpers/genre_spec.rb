@@ -47,7 +47,7 @@ describe 'PennMARC::Genre' do
       let(:fields) do
         [marc_control_field(tag: '007', value: 'x'),
          marc_field(tag: 'hld', subfields: { c: 'vanp' }),
-         marc_field(tag: '655', indicator2: '7', subfields: { a: 'Genre.' })]
+         marc_field(tag: '655', indicator2: '0', subfields: { a: 'Genre.' })]
       end
 
       it 'returns no genre values for faceting' do
@@ -59,11 +59,13 @@ describe 'PennMARC::Genre' do
       let(:fields) do
         [marc_control_field(tag: '007', value: 'v'),
          marc_field(tag: 'hld', subfields: { c: 'vanp' }),
-         marc_field(tag: '655', indicator2: '7', subfields: { a: 'Documentary films' }),
-         marc_field(tag: '655', indicator2: '7', subfields: { a: 'Sports' })]
+         marc_field(tag: '655', indicator2: '0', subfields: { a: 'Documentary films' }),
+         marc_field(tag: '655', indicator2: '7', subfields: { a: 'Sports', '2': 'fast' }),
+         marc_field(tag: '655', indicator2: '7', subfields: { a: 'Le cyclisme', '2': 'qlsp' }), # excluded due to sf2
+         marc_field(tag: '655', indicator2: '1', subfields: { a: 'Shredding' })] # excluded, invalid indicator value
       end
 
-      it 'contains the expected genre facet values' do
+      it 'contains only the desired genre facet values' do
         expect(values).to contain_exactly 'Documentary films', 'Sports'
       end
     end
@@ -72,7 +74,7 @@ describe 'PennMARC::Genre' do
       let(:record) { marc_record fields: fields, leader: '      t' }
       let(:fields) do
         [marc_control_field(tag: '007', value: 'x'),
-         marc_field(tag: '655', indicator2: '7', subfields: { a: 'Astronomy', '2': 'zzzz' })]
+         marc_field(tag: '655', indicator2: '7', subfields: { a: 'Astronomy', '2': 'fast' })]
       end
 
       it 'returns the expected genre values' do
