@@ -160,14 +160,14 @@ vismatl:
   aeon: true
 athstor:
   specific_location: LIBRA - Athenaeum of Philadelphia
-  library: 
+  library:
     - LIBRA
     - Athenaeum of Philadelphia
   display: LIBRA - Athenaeum of Philadelphia
   aeon: true
 athstorcir:
   specific_location: LIBRA - Athenaeum of Philadelphia Circulating
-  library: 
+  library:
     - LIBRA
     - Athenaeum of Philadelphia
   display: LIBRA - Athenaeum of Philadelphia Circulating
@@ -1271,6 +1271,14 @@ scinc:
     - Kislak Center for Special Collections
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Incunables
+  aeon: true
+sckatzstor:
+  specific_location: LIBRA Rare Library at the Katz Center
+  library:
+    - Special Collections
+    - LIBRA
+    - Library at the Katz Center for Advanced Judaic Studies
+  display: LIBRA Rare Library at the Katz Center
   aeon: true
 sclea:
   specific_location: Kislak Center for Special Collections - Lea Collection
