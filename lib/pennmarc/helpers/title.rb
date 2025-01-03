@@ -263,7 +263,7 @@ module PennMARC
         title_or_form = field.find_all(&subfield_in?(%w[a k]))
                              .map { |sf| trim_trailing(:comma, trim_trailing(:slash, sf.value).rstrip) }
                              .first || ''
-        other_info = field.find_all(&subfield_in?(%w[b n p]))
+        other_info = field.find_all(&subfield_in?(%w[b c n p]))
                           .map { |sf| trim_trailing(:slash, sf.value) }
                           .join(' ')
         title_punctuation = title_or_form.last
