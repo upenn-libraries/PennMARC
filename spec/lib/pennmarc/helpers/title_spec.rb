@@ -117,6 +117,15 @@ describe 'PennMARC::Title' do
       end
     end
 
+    context 'with ǂa, ǂc and ǂn defined' do
+      let(:fields) { [marc_field(tag: '245', subfields: subfields)] }
+      let(:subfields) { { a: 'Five Decades of MARC usage', c: 'Should not be shown', n: 'Part One' } }
+
+      it 'returns single title value with text from ǂa and ǂn but not #c' do
+        expect(helper.show(record)).to eq 'Five Decades of MARC usage Part One'
+      end
+    end
+
     context 'with no ǂa but a ǂk and ǂn defined' do
       let(:fields) { [marc_field(tag: '245', subfields: subfields)] }
       let(:subfields) { { k: 'journals', n: 'Part One' } }
@@ -182,14 +191,26 @@ describe 'PennMARC::Title' do
   end
 
   describe '.alternate_show' do
-    let(:fields) do
-      [marc_field(tag: '245', subfields: { k: 'Letters', b: 'to Lewis Mumford. ' }),
-       marc_field(tag: '880', subfields: { '6': '245', k: 'Lettres', b: 'à Lewis Mumford.' })]
-    end
-
     context 'with subfields ǂk and ǂb' do
+      let(:fields) do
+        [marc_field(tag: '245', subfields: { k: 'Letters', b: 'to Lewis Mumford. ' }),
+         marc_field(tag: '880', subfields: { '6': '245', k: 'Lettres', b: 'à Lewis Mumford.' })]
+      end
+
       it 'returns alternate title values' do
         expect(helper.alternate_show(record)).to eq 'Lettres à Lewis Mumford.'
+      end
+    end
+
+    context 'with subfields ǂk, ǂb and ǂc' do
+      let(:fields) do
+        [marc_field(tag: '245', subfields: { k: 'Letters', b: 'to Lewis Mumford. ' }),
+         marc_field(tag: '880', subfields: { '6': '245', k: 'Lettres',
+                                             b: 'à Lewis Mumford.', c: 'Additional copy' })]
+      end
+
+      it 'returns alternate title values' do
+        expect(helper.alternate_show(record)).to eq 'Lettres à Lewis Mumford. Additional copy'
       end
     end
 
