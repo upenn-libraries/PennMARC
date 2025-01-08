@@ -253,7 +253,6 @@ module PennMARC
 
       # Extract title values from provided 245 subfields. Main title components are the following:
       # - title_or_form: subfields a and k
-      # - inclusive_dates: subfield f
       # - other_info: subfields b, n, and p (for alternate title, include subfield c)
       # https://www.oclc.org/bibformats/en/2xx/245.html
       #
