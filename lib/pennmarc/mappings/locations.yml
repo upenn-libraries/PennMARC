@@ -1628,6 +1628,10 @@ vpfolio:
   specific_location: Van Pelt - Folios
   library: Van Pelt-Dietrich Library Center
   display: Van Pelt - Folios
+vpglobalin:
+  specific_location: Van Pelt - Global Indigeneity Display
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Global Indigeneity Display -- First Floor, Near New Books
 vpjuv:
   specific_location: Van Pelt - Notable Juvenile Books
   library: Van Pelt-Dietrich Library Center
