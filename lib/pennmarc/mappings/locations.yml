@@ -667,6 +667,10 @@ finemaps:
     - Fisher Fine Arts Library
   display: Fine Arts Library - Map Collection
   aeon: true
+finematl:
+  specific_location: Fisher Fine Arts Library - Materials Library
+  library: Fisher Fine Arts Library
+  display: Fisher Fine Arts Library - Materials Library
 finerare:
   specific_location: Fisher Fine Arts Library - Rare Book
   library:
