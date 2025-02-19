@@ -1522,6 +1522,13 @@ scrunning:
     - LIBRA
   display: LIBRA Running Press Collection
   aeon: true
+storvilain:
+  specific_location: LIBRA Vilain-Wieck Collection
+  library: 
+    - Special Collections
+    - LIBRA
+  display: LIBRA Vilain-Wieck Collection
+  aeon: true
 univarch:
   specific_location: University Archives
   library: University Archives
