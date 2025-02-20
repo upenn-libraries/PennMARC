@@ -1422,6 +1422,13 @@ scstor:
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Rare Book Collection Storage
   aeon: true
+scstorvil:
+  specific_location: LIBRA Vilain-Wieck Collection
+  library: 
+    - Special Collections
+    - LIBRA
+  display: LIBRA Vilain-Wieck Collection
+  aeon: true
 scteer:
   specific_location: Kislak Center for Special Collections - Teerink Collection
   library:
