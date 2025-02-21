@@ -131,11 +131,7 @@ module PennMARC
           relator = trim_punctuation(relator).capitalize
 
           name = trim_trailing(:comma, field['a'])
-          name = if name_only
-                   name
-                 else
-                   "#{name} #{join_subfields(field, &subfield_in?(%w[b c d j q u 3]))}, #{relator}"
-                 end
+          name = "#{name} #{join_subfields(field, &subfield_in?(%w[b c d j q u 3]))}, #{relator}" unless name_only
 
           if contributors.key?(relator)
             contributors[relator].push(name)
@@ -277,16 +273,21 @@ module PennMARC
       # @todo is it okay to include 880 $4 here? Legacy includes $4 in main author display 880 but not here.
       # @param record [MARC::Record]
       # @param relator_map [Hash]
+      # @param name_only [Boolean]
+      # @param vernacular [Boolean]
       # @return [Array<String>]
-      def contributor_show(record, relator_map: Mappers.relator)
+      def contributor_show(record, relator_map: Mappers.relator, name_only: false, vernacular: true)
         indicator_2_options = ['', ' ', '0']
         fields = record.fields(CONTRIBUTOR_TAGS)
-        fields += record.fields('880').select { |f| subfield_value?(f, '6', /^(#{CONTRIBUTOR_TAGS.join('|')})/) }
+        if vernacular
+          fields += record.fields('880').select { |f| subfield_value?(f, '6', /^(#{CONTRIBUTOR_TAGS.join('|')})/) }
+        end
+        sf = name_only ? %w[a] : %w[a b c d j q u 3]
         fields.filter_map { |field|
           next if indicator_2_options.exclude?(field.indicator2) && field.tag.in?(CONTRIBUTOR_TAGS)
           next if subfield_defined? field, 'i'
 
-          contributor = join_subfields(field, &subfield_in?(%w[a b c d j q u 3]))
+          contributor = join_subfields(field, &subfield_in?(sf))
           append_relator(field: field, joined_subfields: contributor, relator_term_sf: 'e', relator_map: relator_map)
         }.uniq
       end
