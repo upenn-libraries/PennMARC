@@ -453,6 +453,16 @@ describe 'PennMARC::Creator' do
           'Alt Name Alt num Alt title Alt date Alt qualifier Alt Fuller Name Alt affiliation Alt material, Alt relator.'
         )
       end
+
+      it 'returns contributor name only when called with name_only as true' do
+        values = helper.contributor_show(record, relator_map: mapping, name_only: true)
+        expect(values).to contain_exactly('Name, Author.', 'Alt Name, Alt relator.')
+      end
+
+      it 'returns contributor values without alternatives when called with vernacular as false' do
+        values = helper.contributor_show(record, relator_map: mapping, vernacular: false)
+        expect(values).to contain_exactly('Name I laureate 1968 pseud Fuller Name affiliation materials, Author.')
+      end
     end
 
     context 'with a corporate contributor and linked alternate' do
