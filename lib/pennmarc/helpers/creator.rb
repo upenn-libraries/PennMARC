@@ -270,7 +270,6 @@ module PennMARC
       # 'a', 'b', 'c', 'd', 'j', and 'q', 'u', and '3'. Then appends resulting string with any encoded relationships
       # found in $4. If there are no valid encoded relationships, uses the value found in $e.
       # @note legacy version returns array of hash objects including data for display link
-      # @todo is it okay to include 880 $4 here? Legacy includes $4 in main author display 880 but not here.
       # @param record [MARC::Record]
       # @param relator_map [Hash]
       # @param name_only [Boolean]
