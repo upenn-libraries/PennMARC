@@ -209,13 +209,13 @@ module PennMARC
         values = record.fields('245').first(1).flat_map { |field| subfield_values(field, 'f') }
 
         values += record.fields(%w[260 261 262]).first(1).map do |field|
-          join_subfields(field, &subfield_in?([subfield]))
+          trim_punctuation(join_subfields(field, &subfield_in?([subfield])))
         end
 
         values += record.fields('264').filter_map do |field|
           next unless field.indicator2 == '1'
 
-          join_subfields(field, &subfield_in?([subfield]))
+          trim_punctuation(join_subfields(field, &subfield_in?([subfield])))
         end
 
         values.compact_blank.uniq

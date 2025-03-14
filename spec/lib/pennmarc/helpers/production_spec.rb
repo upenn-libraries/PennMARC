@@ -251,9 +251,9 @@ describe 'PennMARC::Production' do
     let(:record) { marc_record fields: fields }
     let(:fields) do
       [marc_field(tag: '245', subfields: { f: 'between 1800-1850' }),
-       marc_field(tag: '260', subfields: { a: ' Burnt Mill, Harlow, Essex, England', b: 'Longman',
+       marc_field(tag: '260', subfields: { a: ' Burnt Mill, Harlow, Essex, England : ', b: 'Longman',
                                            c: '1985, c1956.' }),
-       marc_field(tag: '264', subfields: { a: 'Leeds', b: 'Peepal Tree Press', c: '2019' }, indicator2: '1'),
+       marc_field(tag: '264', subfields: { a: 'Leeds,', b: 'Peepal Tree Press', c: '2019' }, indicator2: '1'),
        marc_field(tag: '880', subfields: { f: 'Alternate 1800-1850', '6': '245' }),
        marc_field(tag: '880',
                   subfields: { a: 'Alternate England', b: 'Alternate Longman', c: 'Alternate 1985, c1956.',
@@ -273,7 +273,7 @@ describe 'PennMARC::Production' do
     let(:record) { marc_record fields: fields }
     let(:fields) do
       [marc_field(tag: '245', subfields: { f: 'between 1800-1850' }),
-       marc_field(tag: '260', subfields: { a: ' Burnt Mill, Harlow, Essex, England', b: 'Longman',
+       marc_field(tag: '260', subfields: { a: ' Burnt Mill, Harlow, Essex, England,', b: 'Longman',
                                            c: '1985, c1956.' }),
        marc_field(tag: '264', subfields: { a: 'Leeds', b: 'Peepal Tree Press', c: '2019' }, indicator2: '1'),
        marc_field(tag: '880', subfields: { f: 'Alternate 1800-1850', '6': '245' }),
