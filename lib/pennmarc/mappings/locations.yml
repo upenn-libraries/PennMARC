@@ -1601,6 +1601,13 @@ vetelibr:
     - Veterinary
     - 'Veterinary: Atwood Library (Campus)'
   display: 'Veterinary: Atwood Library (Campus) - Librarian''s Office'
+vetenewbk:
+  specific_location: 'Veterinary: Atwood Library (Campus) - New Books'
+  library:
+    - Health Sciences Libraries
+    - Veterinary
+    - 'Veterinary: Atwood Library (Campus)'
+  display: 'Veterinary: Atwood Library (Campus) - New Books'
 veteover:
   specific_location: 'Veterinary: Atwood Library (Campus) - Oversize'
   library:
