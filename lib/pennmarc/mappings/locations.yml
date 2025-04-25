@@ -1645,6 +1645,10 @@ veteresov:
     - 'Veterinary: Atwood Library (Campus)'
     - Reserve
   display: 'Veterinary: Atwood Library (Campus) - Reserve Oversize'
+vpexhibit:
+  specific location: Van Pelt - Exhibits and Events
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Exhibits and Events -- First Floor, Circulation Desk
 vpfeatdvd:
   specific_location: Van Pelt - Featured DVD Display - First Floor
   library: Van Pelt-Dietrich Library Center
