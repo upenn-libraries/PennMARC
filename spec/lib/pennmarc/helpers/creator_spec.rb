@@ -52,8 +52,8 @@ describe 'PennMARC::Creator' do
       it 'contains the expected search_aux field values for a single author work' do
         expect(helper.search_aux(record, relator_map: mapping)).to contain_exactly(
           'Author Fancy active 24th century AD, Author.',
-          'Author, Added.',
-          'Added Author.',
+          'Author, Added',
+          'Added Author',
           'Alt Author Alt Fanciness',
           'Alt Added Author'
         )
@@ -328,7 +328,7 @@ describe 'PennMARC::Creator' do
   describe '.conference_show' do
     let(:record) do
       marc_record fields: [
-        marc_field(tag: '111', subfields: { a: 'MARC History Symposium', '4': 'aut' }),
+        marc_field(tag: '111', subfields: { a: 'MARC History Symposium', '0': 'http://cool.uri/12345', '4': 'aut' }),
         marc_field(tag: '880', subfields: { a: 'Alt. MARC History Symposium', '6': '111' })
       ]
     end

@@ -16,9 +16,6 @@ module PennMARC
     CONFERENCE_SEARCH_TAGS = %w[111 711 811].freeze
     CORPORATE_SEARCH_TAGS = %w[110 710 810].freeze
 
-    # subfields NOT to join when combining raw subfield values
-    NAME_EXCLUDED_SUBFIELDS = %w[a 1 4 5 6 8 t].freeze
-
     CONTRIBUTOR_TAGS = %w[700 710].freeze
 
     FACET_SOURCE_MAP = {
@@ -299,11 +296,11 @@ module PennMARC
       # @return [Array<String>] name values from given tags
       def name_search_values(record:, tags:, relator_map:)
         acc = record.fields(tags).filter_map do |field|
-          name_from_main_entry field, relator_map, should_convert_name_order: false
+          name_from_main_entry field, relator_map, should_convert_name_order: false, for_display: false
         end
 
         acc += record.fields(tags).filter_map do |field|
-          name_from_main_entry field, relator_map, should_convert_name_order: true
+          name_from_main_entry field, relator_map, should_convert_name_order: true, for_display: false
         end
 
         acc += record.fields(['880']).filter_map do |field|
@@ -323,15 +320,17 @@ module PennMARC
       # @param field [MARC::Field]
       # @param mapping [Hash]
       # @param should_convert_name_order [Boolean]
+      # @param for_display [Boolean]
       # @return [String] joined subfield values for value from field
-      def name_from_main_entry(field, mapping, should_convert_name_order: false)
+      def name_from_main_entry(field, mapping, should_convert_name_order: false, for_display: true)
+        subfield_exclude_spec = for_display ? %w[a 0 1 4 5 6 8 t] : %w[a 1 4 5 6 8 t]
         relator_term_sf = relator_term_subfield(field)
         name = field.filter_map { |sf|
           if sf.code == 'a'
             should_convert_name_order ? convert_name_order(sf.value) : trim_trailing(:comma, sf.value)
           elsif sf.code == relator_term_sf
             next
-          elsif NAME_EXCLUDED_SUBFIELDS.exclude?(sf.code)
+          elsif subfield_exclude_spec.exclude?(sf.code)
             sf.value
           end
         }.join(' ')
@@ -340,6 +339,8 @@ module PennMARC
                                           joined_subfields: name,
                                           relator_term_sf: relator_term_sf,
                                           relator_map: mapping)
+
+        return name_and_relator unless for_display
 
         name_and_relator + (%w[. -].member?(name_and_relator.last) ? '' : '.')
       end
