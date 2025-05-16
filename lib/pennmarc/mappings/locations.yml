@@ -1478,6 +1478,10 @@ scyarn:
     - Yarnall Collection
   display: Kislak Center for Special Collections - Yarnall Collection
   aeon: true
+slavic:
+  specific location: Van Pelt - Slavic and East European Seminar Room
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Slavic and East European Seminar Room
 stor:
   specific_location: LIBRA
   library: LIBRA
@@ -1529,10 +1533,6 @@ scrunning:
     - LIBRA
   display: LIBRA Running Press Collection
   aeon: true
-slavic:
-  specific location: Van Pelt - Slavic and East European Seminar Room
-  library: Van Pelt-Dietrich Library Center
-  display: Van Pelt - Slavic and East European Seminar Room
 storvilain:
   specific_location: LIBRA Vilain-Wieck Collection
   library: 
