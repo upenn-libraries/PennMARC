@@ -1,8 +1,8 @@
 ---
 afro:
-  specific_location: Van Pelt - Africana Studies Resource Room
+  specific_location: Van Pelt - Class of 1979 Seminar Room
   library: Van Pelt-Dietrich Library Center
-  display: Van Pelt - Africana Studies Resource Room (305)
+  display: Van Pelt - Class of 1979 Seminar Room (305)
 annbcirc:
   specific_location: Annenberg Library - Circulation Desk
   library: Annenberg Library
@@ -609,9 +609,9 @@ easiaover:
   library: Van Pelt-Dietrich Library Center
   display: Van Pelt - East Asia Oversize
 easiasem:
-  specific_location: Van Pelt - East Asia Seminar Room
+  specific_location: Van Pelt - Candice and Robert Willoughby East Asian Studies Seminar Room
   library: Van Pelt-Dietrich Library Center
-  display: Van Pelt - East Asia Seminar Room (526)
+  display: Van Pelt - Candice and Robert Willoughby East Asian Studies Seminar Room (526)
 eastasia:
   specific_location: Van Pelt - East Asia Collection
   library: Van Pelt-Dietrich Library Center
@@ -835,9 +835,9 @@ medieval:
   library: Van Pelt-Dietrich Library Center
   display: Van Pelt - Medieval Studies Resource Room (405)
 mideast:
-  specific_location: Van Pelt - Middle East Seminar Room
+  specific_location: Van Pelt - Stapleton Seminar Room
   library: Van Pelt-Dietrich Library Center
-  display: Van Pelt - Middle East Seminar Room (523)
+  display: Van Pelt - Stapleton Seminar Room (523)
 mideastres:
   specific_location: Van Pelt - Middle East Seminar Reserve
   library:
@@ -1067,9 +1067,9 @@ rotc:
   library:
   display: ROTC Library,  J.P.W.  Library, 3205 Lancaster Ave. 590-8808
 sasiarefe:
-  specific_location: Van Pelt - South Asia Studies Reading Room
+  specific_location: Van Pelt - Govindaraju/Chandrasekhara South Asia Studies Seminar Room
   library: Van Pelt-Dietrich Library Center
-  display: Van Pelt - South Asia Studies Reading Room (551)
+  display: Van Pelt - Govindaraju/Chandrasekhara South Asia Studies Seminar Room (551)
 sasiarese:
   specific_location: Van Pelt - South Asian Reserve
   library:
@@ -1529,6 +1529,10 @@ scrunning:
     - LIBRA
   display: LIBRA Running Press Collection
   aeon: true
+slavic:
+  specific location: Van Pelt - Slavic and East European Seminar Room
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Slavic and East European Seminar Room
 storvilain:
   specific_location: LIBRA Vilain-Wieck Collection
   library: 
@@ -1557,9 +1561,9 @@ vanpchil:
   library: Van Pelt-Dietrich Library Center
   display: Van Pelt - Illman Carter Children's Collection
 vanpcgc:
-  specific_location: Van Pelt - Center for Global Collections
+  specific_location: Van Pelt - Zilberman Family Center for Global Collections
   library: Van Pelt-Dietrich Library Center
-  display: Van Pelt - Center for Global Collections
+  display: Van Pelt - Zilberman Family Center for Global Collections
 vanpcgccm:
   specific_location: Van Pelt - Global Comics Collection
   library: Van Pelt-Dietrich Library Center
@@ -1665,6 +1669,10 @@ vpjuv:
   specific_location: Van Pelt - Notable Juvenile Books
   library: Van Pelt-Dietrich Library Center
   display: Van Pelt - Notable Juvenile Books
+vplatinam:
+  specific location: Van Pelt - Paul C. Smith Latin American Studies Seminar Room
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Paul C. Smith Latin American Studies Seminar Room
 vpnewbook:
   specific_location: Van Pelt - New Book Display
   library: Van Pelt-Dietrich Library Center
