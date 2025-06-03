@@ -1,8 +1,10 @@
 include:
-  - project: "devops/gitlab/ci-templates/general"
-    file:
-      - ".install_hashicorp_vault.yml"
-      - ".vault_jwt_auth.yml"
+  - component: gitlab.library.upenn.edu/devops/gitlab/components/general/vault_jwt_auth@~latest
+    inputs:
+        vault_addr: ${VAULT_ADDR}
+        vault_auth_path: ${VAULT_AUTH_PATH}
+        vault_auth_role: ${VAULT_AUTH_ROLE}
+
   - project: "devops/gitlab/ci-templates/ruby"
     ref: "sans-dind"
     file:
@@ -38,18 +40,17 @@ rubocop_app_test:
 gem_publication:
   stage: deploy
   image: ruby:3.2.2
+  extends:
+    - .vault_jwt_auth
   variables:
     GEMSPEC_FILE: "${CI_PROJECT_NAME}.gemspec"
-  before_script:
-    - !reference [.install_hashicorp_vault, before_script]
-    - !reference [.vault_jwt_auth, before_script]
+  script:
     - export GEM_HOST_API_KEY="$(vault kv get -field=rubygems_api_key ${VAULT_KV_ENDPOINT}${ENVIRONMENT})"
     - |
       gem -v
       rm -f ./*.gem
       [ -f "${GEMSPEC_FILE}" ] || (echo "No ${GEMSPEC_FILE} file found!" && exit 1)
     - '[ -n "${GEM_HOST_API_KEY}" ] || (echo "GEM_HOST_API_KEY is not set!" && exit 1)'
-  script:
     - GEM_FILE=$(echo "${CI_PROJECT_NAME}-${CI_COMMIT_TAG:1}.gem")
     - |
       gem build "${GEMSPEC_FILE}"
