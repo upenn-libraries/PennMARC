@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative '../encoding_level'
 require_relative '../enriched'
 require_relative '../mappers'
 require_relative '../util'
