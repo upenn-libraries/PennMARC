@@ -16,7 +16,7 @@ module PennMARC
     UNKNOWN = 'u'
     NOT_APPLICABLE = 'z'
 
-    # OCLC extension codes (https://www.oclc.org/bibformats/en/fixedfield/elvl.html). These are deprecated but still
+    # {https://www.oclc.org/bibformats/en/fixedfield/elvl.html OCLC extension codes}. These are deprecated but still
     # found in our records.
     OCLC_FULL = 'I'
     OCLC_MINIMAL = 'K'
