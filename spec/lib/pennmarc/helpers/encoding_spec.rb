@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-describe 'PennMARC::EncodingRank' do
-  let(:helper) { PennMARC::EncodingRank }
+describe 'PennMARC::Encoding' do
+  let(:helper) { PennMARC::Encoding }
 
   describe '.sort' do
     let(:record) { marc_record leader: leader }
-    let(:result) { helper.sort record: record }
+    let(:result) { helper.level_sort record: record }
     let(:leader) { "                 #{level}     " }
 
     context 'with an empty value' do
