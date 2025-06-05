@@ -12,7 +12,7 @@ module PennMARC
       # no longer recommended for use by OCLC. If an invalid value is found, nil is returned.
       # @param [MARC::Record] record
       # @return [Integer, nil]
-      def level_sort(record:)
+      def level_sort(record)
         EncodingLevel::RANK[
           record.leader[LEADER_POSITION]
         ]
