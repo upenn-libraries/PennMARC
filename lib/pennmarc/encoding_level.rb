@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
-# MARC encoding level
-# See: https://www.oclc.org/bibformats/en/fixedfield/elvl.html
-# Not sure how this is used
+# MARC {https://www.oclc.org/bibformats/en/fixedfield/elvl.html encoding level values} and a means of ranking them.
+# See the `EncodingRank` helper for usage.
 module PennMARC
   module EncodingLevel
-    # Official MARC codes (https://www.loc.gov/marc/bibliographic/bdleader.html)
+    # {https://www.loc.gov/marc/bibliographic/bdleader.html Official MARC codes}
     FULL = ' '
     FULL_NOT_EXAMINED = '1'
     UNFULL_NOT_EXAMINED = '2'
@@ -17,7 +16,8 @@ module PennMARC
     UNKNOWN = 'u'
     NOT_APPLICABLE = 'z'
 
-    # OCLC extension codes (https://www.oclc.org/bibformats/en/fixedfield/elvl.html)
+    # OCLC extension codes (https://www.oclc.org/bibformats/en/fixedfield/elvl.html). These are deprecated but still
+    # found in our records.
     OCLC_FULL = 'I'
     OCLC_MINIMAL = 'K'
     OCLC_BATCH_LEGACY = 'L'
@@ -27,9 +27,9 @@ module PennMARC
     RANK = {
       # top 4 (per nelsonrr), do not differentiate among "good" records
       FULL => 0,
-      FULL_NOT_EXAMINED => 0, # 1
-      OCLC_FULL => 0, # 2
-      CORE => 0, # 3
+      FULL_NOT_EXAMINED => 0,
+      OCLC_FULL => 0,
+      CORE => 0,
       UNFULL_NOT_EXAMINED => 4,
       ABBREVIATED => 5,
       PRELIMINARY => 6,
