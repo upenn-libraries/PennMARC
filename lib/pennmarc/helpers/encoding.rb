@@ -2,7 +2,7 @@
 
 module PennMARC
   # Extract encoding level and provide an opinionated rating of the encoding level
-  class EncodingRank < Helper
+  class Encoding < Helper
     class << self
       LEADER_POSITION = 17
 
@@ -12,7 +12,7 @@ module PennMARC
       # no longer recommended for use by OCLC. If an invalid value is found, nil is returned.
       # @param [MARC::Record] record
       # @return [Integer, nil]
-      def sort(record:)
+      def level_sort(record:)
         EncodingLevel::RANK[
           record.leader[LEADER_POSITION]
         ]
