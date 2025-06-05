@@ -5,7 +5,7 @@ describe 'PennMARC::Encoding' do
 
   describe '.sort' do
     let(:record) { marc_record leader: leader }
-    let(:result) { helper.level_sort record: record }
+    let(:result) { helper.level_sort record }
     let(:leader) { "                 #{level}     " }
 
     context 'with an empty value' do
