@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module PennMARC
-  # Store a rating of the encoding level for massaging sorts
+  # Extract encoding level and provide an opinionated rating of the encoding level
   class EncodingRank < Helper
     class << self
       LEADER_POSITION = 17
