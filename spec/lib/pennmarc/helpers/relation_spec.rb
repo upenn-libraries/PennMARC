@@ -16,20 +16,6 @@ describe 'PennMARC::Relation' do
     end
   end
 
-  describe '.chronology_show' do
-    let(:fields) do
-      [marc_field(tag: '650', indicator2: '4', subfields: { a: 'CHR Heading' }),
-       marc_field(tag: '650', indicator2: '4', subfields: { a: 'Regular Local Heading' }),
-       marc_field(tag: '650', indicator2: '1', subfields: { a: 'LoC Heading' }),
-       marc_field(tag: '880', indicator2: '4', subfields: { '6': '650', a: 'CHR Alt. Heading' }),
-       marc_field(tag: '880', indicator2: '4', subfields: { '6': '999', a: 'Another Alt.' })]
-    end
-
-    it 'returns only the specified subfield data and linked alternate field with CHR prefix removed' do
-      expect(helper.chronology_show(record)).to eq ['Heading', 'Alt. Heading']
-    end
-  end
-
   describe '.related_collections_show' do
     let(:fields) do
       [marc_field(tag: '544', subfields: { d: 'Penn Papers', c: 'USA' }),
