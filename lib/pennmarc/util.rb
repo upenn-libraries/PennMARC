@@ -269,7 +269,7 @@ module PennMARC
       mapping[relator_code&.to_sym]
     end
 
-    # Get 650 & 880 for Provenance and Chronology: prefix should be 'PRO' or 'CHR' and may be preceded by a '%'
+    # Get 650 & 880 for Provenance: prefix should be 'PRO' or 'CHR' and may be preceded by a '%'
     # @note 11/2018: do not display $5 in PRO or CHR subjs
     # @param record [MARC::Record]
     # @param prefix [String] prefix to select from subject field

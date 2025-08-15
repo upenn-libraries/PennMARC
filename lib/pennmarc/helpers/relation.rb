@@ -5,8 +5,6 @@ module PennMARC
   # records.
   class Relation < Helper
     class << self
-      CHRONOLOGY_PREFIX = 'CHR'
-
       RELATED_WORK_FIELDS = %w[700 710 711 730].freeze
       CONTAINS_FIELDS = %w[700 710 711 730 740].freeze
 
@@ -19,14 +17,6 @@ module PennMARC
         record.fields('773').map { |field|
           join_subfields(field, &subfield_not_in?(%w[6 7 8 w]))
         }.uniq
-      end
-
-      # Get "chronology" information from specially-prefixed 650 (subject) fields
-      # @todo why do we stuff chronology data in a 650 field?
-      # @param record [MARC::Record]
-      # @return [Array] array of chronology values
-      def chronology_show(record)
-        prefixed_subject_and_alternate(record, CHRONOLOGY_PREFIX)
       end
 
       # Get notes for Related Collections from {https://www.oclc.org/bibformats/en/5xx/544.html MARC 544}.
