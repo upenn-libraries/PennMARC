@@ -42,7 +42,7 @@ module PennMARC
       # @return [Array<String>]
       def location(record:, display_value:, location_map:)
         # get enriched marc location tag and relevant subfields
-        enriched_location_tag_and_subfields(record) => {tag:, location_code_sf:, call_num_sf:, call_num_type_sf:}
+        enriched_location_tag_and_subfields(record) => { tag:, location_code_sf:, call_num_sf:, call_num_type_sf: }
 
         record.fields(tag).flat_map { |field|
           field.filter_map { |subfield|
