@@ -93,6 +93,52 @@ describe 'PennMARC::Creator' do
     end
   end
 
+  describe '.extended_show' do
+    let(:record) { marc_record fields: fields }
+
+    context 'with a single author record' do
+      let(:fields) do
+        [marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345', d: '1900-2000',
+                                             e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
+         marc_field(tag: '880', subfields: { a: 'Surname, Alternative', '6': '100' })]
+      end
+
+      it 'returns single author values with no URIs anywhere (the same as show)' do
+        values = helper.extended_show(record)
+        expect(values).to contain_exactly 'Surname, Name 1900-2000, author.'
+        expect(values.join.downcase).not_to include 'http'
+      end
+    end
+
+    context 'with author records in 100 and 700' do
+      let(:fields) do
+        [marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345', d: '1900-2000',
+                                             e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
+         marc_field(tag: '700', subfields: { a: 'Surname, Alternative', e: 'author', '6': '100', '4': 'aut' }),
+         marc_field(tag: '700', subfields: { a: 'Surname, Not Included', '6': '100', '4': 'edt' })]
+      end
+
+      it 'returns two authors' do
+        values = helper.extended_show(record)
+        expect(values).to contain_exactly 'Surname, Name 1900-2000, author.', 'Surname, Alternative, Author.'
+        expect(values.join.downcase).not_to include 'http'
+      end
+    end
+
+    context 'with no 100 or 700 fields' do
+      let(:fields) do
+        [marc_field(tag: '110', subfields: { a: 'Group of People', b: 'Annual Meeting', '4': 'aut' }),
+         marc_field(tag: '880', subfields: { '6': '110', a: 'Alt. Group Name', b: 'Alt. Annual Meeting' })]
+      end
+
+      it 'returns empty' do
+        values = helper.extended_show(record, relator_map: mapping)
+        expect(values).to be_empty
+        expect(values.join.downcase).not_to include 'http'
+      end
+    end
+  end
+
   describe '.authors_list' do
     let(:record) { marc_record fields: fields }
 
@@ -195,6 +241,26 @@ describe 'PennMARC::Creator' do
       values = helper.show_facet_map(record, relator_map: mapping)
       expect(values).to eq({ 'Surname, Name 1900-2000, author.' => 'Surname, Name 1900-2000',
                              'Group of People Annual Meeting, Author.' => 'Group of People Annual Meeting' })
+    end
+  end
+
+  describe '.extended_show_facet_map' do
+    let(:record) do
+      marc_record fields: [
+        marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345', d: '1900-2000',
+                                            e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
+        marc_field(tag: '700', subfields: { a: 'Group of People', b: 'Annual Meeting', '4': 'aut' }),
+        marc_field(tag: '700', subfields: { a: 'Second Group of People', b: 'Meeting', '4': 'aut' }),
+        marc_field(tag: '700', subfields: { a: 'Ignore (not author)', '4': 'edt' }),
+        marc_field(tag: '880', subfields: { a: 'Ignore', '6': '100' })
+      ]
+    end
+
+    it 'returns expected hash' do
+      values = helper.extended_show_facet_map(record, relator_map: mapping)
+      expect(values).to eq({ 'Surname, Name 1900-2000, author.' => 'Surname, Name 1900-2000',
+                             'Group of People Annual Meeting, Author.' => 'Group of People Annual Meeting',
+                             'Second Group of People Meeting, Author.' => 'Second Group of People Meeting' })
     end
   end
 
