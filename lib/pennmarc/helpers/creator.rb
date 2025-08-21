@@ -85,28 +85,28 @@ module PennMARC
         creators.to_h { |h| [h[:show], h[:facet]] }
       end
 
-      # Show more credited authors - both 100 field and 700 entries where the relator term is aut
+      # Show more credited authors - both 100 field and 700 entries where the relator (codes e or 4) is author/aut
       # @param record [MARC::Record]
       # @return [Array<String>] array of author/creator values for display
       def extended_show(record, relator_map: Mappers.relator)
         fields = record.fields(%w[100 700])
         fields.filter_map { |field|
-          # for 700 entries, only include ones with relator code of aut
-          next if (field.tag == '700') && field['4']&.downcase != 'aut'
+          # for 700 entries, only include ones with relator code ('4') = aut, or code 'e' = 'author'
+          next if field.tag == '700' && !(field['4']&.downcase == 'aut' || field['e']&.downcase&.start_with?('author'))
 
           parse_show_value(field, relator_map: relator_map)
         }.uniq
       end
 
       # Hash with extended creators show values as the fields and the corresponding facet as the values.
-      # Only include 100, and 700 with relator of aut
+      # Only include 100, and 700 with relator (codes e or 4) of author/aut
       # @param record [MARC::Record]
       # @param relator_map [Hash]
       # @return [Hash]
       def extended_show_facet_map(record, relator_map: Mappers.relator)
         creators = record.fields(%w[100 700]).filter_map do |field|
-          # for 700 entries, only include ones with relator code of aut
-          next if (field.tag == '700') && field['4']&.downcase != 'aut'
+          # for 700 entries, only include ones with relator code ('4') = aut, or code 'e' = 'author'
+          next if field.tag == '700' && !(field['4']&.downcase == 'aut' || field['e']&.downcase&.start_with?('author'))
 
           show = parse_show_value(field, relator_map: relator_map)
           facet = parse_facet_value(field, FACET_SOURCE_MAP[field.tag.to_i].chars)
