@@ -85,6 +85,36 @@ module PennMARC
         creators.to_h { |h| [h[:show], h[:facet]] }
       end
 
+      # Show more credited authors - both 100 field and 700 entries where the relator term is aut
+      # @param record [MARC::Record]
+      # @return [Array<String>] array of author/creator values for display
+      def extended_show(record, relator_map: Mappers.relator)
+        fields = record.fields(%w[100 700])
+        fields.filter_map { |field|
+          # for 700 entries, only include ones with relator code of aut
+          next if (field.tag == '700') && field['4']&.downcase != 'aut'
+
+          parse_show_value(field, relator_map: relator_map)
+        }.uniq
+      end
+
+      # Hash with extended creators show values as the fields and the corresponding facet as the values.
+      # Only include 100, and 700 with relator of aut
+      # @param record [MARC::Record]
+      # @param relator_map [Hash]
+      # @return [Hash]
+      def extended_show_facet_map(record, relator_map: Mappers.relator)
+        creators = record.fields(%w[100 700]).filter_map do |field|
+          # for 700 entries, only include ones with relator code of aut
+          next if (field.tag == '700') && field['4']&.downcase != 'aut'
+
+          show = parse_show_value(field, relator_map: relator_map)
+          facet = parse_facet_value(field, FACET_SOURCE_MAP[field.tag.to_i].chars)
+          { show: show, facet: facet }
+        end
+        creators.to_h { |h| [h[:show], h[:facet]] }
+      end
+
       # Returns the list of authors with name (subfield $a) only
       # @param record [MARC::Record]
       # @param main_tags_only [Boolean] only use TAGS; otherwise use both TAGS and CONTRIBUTOR_TAGS
