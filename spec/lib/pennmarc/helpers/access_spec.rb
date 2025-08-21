@@ -44,7 +44,7 @@ describe 'PennMARC::Access' do
       end
     end
 
-    context 'with a record containing a link to a finding aid (as a handle link)' do
+    context 'with a record containing a link to an online resource' do
       let(:record) do
         marc_record fields: [marc_field(tag: PennMARC::Enriched::Pub::PHYS_INVENTORY_TAG),
                              marc_field(tag: '856', subfields: location_and_access_subfields, **indicators)]
