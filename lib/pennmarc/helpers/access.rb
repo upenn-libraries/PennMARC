@@ -5,7 +5,8 @@ module PennMARC
   class Access < Helper
     ONLINE = 'Online'
     AT_THE_LIBRARY = 'At the library'
-    RESOURCE_LINK_BASE_URL = 'hdl.library.upenn.edu'
+    HANDLE_BASE_URL = 'hdl.library.upenn.edu'
+    COLENDA_BASE_URL = 'colenda.library.upenn.edu'
 
     class << self
       # Based on enhanced metadata fields added by Alma publishing process or API, determine if the record has
@@ -46,7 +47,7 @@ module PennMARC
       # Check if a record contains an 856 entry with a Penn Handle server link meeting these criteria:
       # 1. Indicator 1 is 4 (HTTP resource)
       # 2. Indicator 2 is NOT 2 (indicating the linkage is to a "related" thing)
-      # 3. The URL specified in subfield u (URI) is a Penn Handle link
+      # 3. The URL specified in subfield u (URI) is a Penn Handle link or Penn Colenda link
       # 4. The subfield z does NOT include the string 'Finding aid'
       # See: https://www.loc.gov/marc/bibliographic/bd856.html
       # @note Some electronic records do not have Portfolios in Alma, so we rely upon the Resource Link in the 856 to
@@ -54,15 +55,19 @@ module PennMARC
       # @param record [MARC::Record]
       # @return [Boolean]
       def resource_link?(record)
-        record.fields('856').filter_map do |field|
-          next if field.indicator2 == '2' || field.indicator1 != '4'
+        record.fields('856').any? { |field| valid_resource_field?(field) }
+      end
 
-          subz = subfield_values(field, 'z')
-          subfield_values(field, 'u').filter_map do |value|
-            return true if subz.exclude?('Finding aid') && value.include?(RESOURCE_LINK_BASE_URL)
-          end
+      # Check if a field contains valid resource
+      # @param field [MARC::Field]
+      # @return [Boolean]
+      def valid_resource_field?(field)
+        return false if field.indicator2 == '2' || field.indicator1 != '4'
+        return false if subfield_values(field, 'z')&.include?('Finding aid')
+
+        subfield_values(field, 'u').any? do |value|
+          [HANDLE_BASE_URL, COLENDA_BASE_URL].any? { |url| value.include?(url) }
         end
-        false
       end
     end
   end

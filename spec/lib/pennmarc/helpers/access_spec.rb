@@ -44,7 +44,7 @@ describe 'PennMARC::Access' do
       end
     end
 
-    context 'with a record containing a link to a finding aid (as a handle link)' do
+    context 'with a record containing a link to an online resource' do
       let(:record) do
         marc_record fields: [marc_field(tag: PennMARC::Enriched::Pub::PHYS_INVENTORY_TAG),
                              marc_field(tag: '856', subfields: location_and_access_subfields, **indicators)]
@@ -72,7 +72,7 @@ describe 'PennMARC::Access' do
         end
       end
 
-      context 'with an 856 describing a resource link' do
+      context 'with an 856 describing a handle resource link' do
         let(:indicators) { { indicator1: '4', indicator2: '1' } }
         let(:location_and_access_subfields) do
           { z: 'Connect to resource', u: 'http://hdl.library.upenn.edu/1234' }
@@ -80,6 +80,28 @@ describe 'PennMARC::Access' do
 
         it 'includes online access' do
           expect(helper.facet(record)).to contain_exactly(PennMARC::Access::ONLINE, PennMARC::Access::AT_THE_LIBRARY)
+        end
+      end
+
+      context 'with an 856 describing a colenda resource link' do
+        let(:indicators) { { indicator1: '4', indicator2: '1' } }
+        let(:location_and_access_subfields) do
+          { z: 'Connect to resource', u: 'http://colenda.library.upenn.edu/1234' }
+        end
+
+        it 'includes online access' do
+          expect(helper.facet(record)).to contain_exactly(PennMARC::Access::ONLINE, PennMARC::Access::AT_THE_LIBRARY)
+        end
+      end
+
+      context 'with an 856 describing some other resource link' do
+        let(:indicators) { { indicator1: '4', indicator2: '1' } }
+        let(:location_and_access_subfields) do
+          { z: 'Connect to resource', u: 'http://vanpelt.upenn.edu/something' }
+        end
+
+        it 'does not includes online access' do
+          expect(helper.facet(record)).not_to include PennMARC::Access::ONLINE
         end
       end
     end
