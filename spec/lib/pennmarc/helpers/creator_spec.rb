@@ -554,4 +554,126 @@ describe 'PennMARC::Creator' do
       end
     end
   end
+
+  describe '.contributor_noauthor_show' do
+    let(:record) { marc_record fields: fields }
+
+    context 'when idicator2 is "1"' do
+      let(:fields) do
+        [marc_field(tag: '700', subfields: { a: 'Ignore' }, indicator2: '1')]
+      end
+
+      it 'ignores the field' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping)
+        expect(values).to be_empty
+      end
+    end
+
+    context 'with subfield "i"' do
+      let(:fields) do
+        [
+          marc_field(tag: '700', subfields: { i: 'Ignore', e: 'author' }),
+          marc_field(tag: '880', subfields: { i: 'Ignore', '6': '700' })
+        ]
+      end
+
+      it 'ignores the field' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping)
+        expect(values).to be_empty
+      end
+    end
+
+    context 'with a single contributor and linked alternate' do
+      let(:fields) do
+        [
+          marc_field(tag: '700', subfields: { a: 'Name', b: 'I', c: 'laureate', d: '1968', e: 'author',
+                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+                                              '4': 'aut' }),
+          marc_field(tag: '880', subfields: {  '6': '700', a: 'Alt Name', b: 'Alt num', c: 'Alt title',
+                                               d: 'Alt date', e: 'Alt relator', j: 'Alt qualifier',
+                                               q: 'Alt Fuller Name', u: 'Alt affiliation', '3': 'Alt material' })
+        ]
+      end
+
+      it 'returns the non-author contributor only' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping)
+        expect(values).to contain_exactly(
+          'Alt Name Alt num Alt title Alt date Alt qualifier Alt Fuller Name Alt affiliation Alt material, Alt relator.'
+        )
+      end
+
+      it 'returns the non-author contributor name only when called with name_only as true' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping, name_only: true)
+        expect(values).to contain_exactly 'Alt Name, Alt relator.'
+      end
+
+      it 'returns empty when called with vernacular as false' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping, vernacular: false)
+        expect(values).to be_empty
+      end
+    end
+
+    context 'with four contributors two of which are authors' do
+      let(:fields) do
+        [
+          marc_field(tag: '700', subfields: { a: 'First Contributor (Ignore)', b: 'I', c: 'laureate',
+                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+                                              '4': 'aut' }),
+          marc_field(tag: '700', subfields: { a: 'Second Contributor (Ignore)', d: '1968', e: 'author',
+                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials' }),
+          marc_field(tag: '700', subfields: { a: 'Third Contributor (Show)', b: 'J', c: 'laureate',
+                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+                                              '4': 'edt' }),
+          marc_field(tag: '700', subfields: { a: 'Fourth Contributor (Show)', d: '1968', e: 'editor',
+                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials' }),
+          marc_field(tag: '880', subfields: { '6': '700', a: 'Alt Name', b: 'Alt num', c: 'Alt title',
+                                              d: 'Alt date', e: 'Alt relator', j: 'Alt qualifier',
+                                              q: 'Alt Fuller Name', u: 'Alt affiliation', '3': 'Alt material' })
+        ]
+      end
+
+      it 'returns two non-author contributors' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping)
+        expect(values).to contain_exactly(
+          'Third Contributor (Show) J laureate pseud Fuller Name affiliation materials',
+          'Fourth Contributor (Show) 1968 pseud Fuller Name affiliation materials, editor.',
+          'Alt Name Alt num Alt title Alt date Alt qualifier Alt Fuller Name Alt affiliation Alt material, Alt relator.'
+        )
+      end
+
+      it 'returns contributor name only when called with name_only as true' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping, name_only: true)
+        expect(values).to contain_exactly('Third Contributor (Show)', 'Alt Name, Alt relator.',
+                                          'Fourth Contributor (Show), editor.')
+      end
+
+      it 'returns contributor values without alternatives when called with vernacular as false' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping, vernacular: false)
+        expect(values).to contain_exactly(
+          'Third Contributor (Show) J laureate pseud Fuller Name affiliation materials',
+          'Fourth Contributor (Show) 1968 pseud Fuller Name affiliation materials, editor.'
+        )
+      end
+    end
+
+    context 'with a corporate contributor and linked alternate' do
+      let(:fields) do
+        [
+          marc_field(tag: '710', subfields: { a: 'Corporation', b: 'A division', c: 'Office', d: '1968', e: 'author',
+                                              u: 'affiliation', '3': 'materials', '4': 'aut' }),
+          marc_field(tag: '880', subfields: { '6': '710', a: 'Alt Corp Name', b: 'Alt unit', c: 'Alt location',
+                                              d: 'Alt date', e: ['Alt relator', 'another'], u: 'Alt Affiliation',
+                                              '3': 'Alt materials' })
+        ]
+      end
+
+      it 'returns expected contributor values' do
+        values = helper.contributor_noauthor_show(record)
+        expect(values).to contain_exactly(
+          'Corporation A division Office 1968 affiliation materials, Author.',
+          'Alt Corp Name Alt unit Alt location Alt date Alt Affiliation Alt materials, Alt relator, another.'
+        )
+      end
+    end
+  end
 end

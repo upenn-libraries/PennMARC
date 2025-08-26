@@ -313,6 +313,29 @@ module PennMARC
         }.uniq
       end
 
+      # Similar to contributor_show, excluding the authors included in extended_show
+      # @param record [MARC::Record]
+      # @param relator_map [Hash]
+      # @param name_only [Boolean]
+      # @param vernacular [Boolean]
+      # @return [Array<String>]
+      def contributor_noauthor_show(record, relator_map: Mappers.relator, name_only: false, vernacular: true)
+        indicator_2_options = ['', ' ', '0']
+        fields = record.fields(CONTRIBUTOR_TAGS)
+        if vernacular
+          fields += record.fields('880').select { |f| subfield_value?(f, '6', /^(#{CONTRIBUTOR_TAGS.join('|')})/) }
+        end
+        sf = name_only ? %w[a] : CONTRIBUTOR_DISPLAY_SUBFIELDS
+        fields.filter_map { |field|
+          next if indicator_2_options.exclude?(field.indicator2) && field.tag.in?(CONTRIBUTOR_TAGS)
+          next if subfield_defined? field, 'i'
+          next if field.tag == '700' && (field['4']&.downcase == 'aut' || field['e']&.downcase&.start_with?('author'))
+
+          contributor = join_subfields(field, &subfield_in?(sf))
+          append_relator(field: field, joined_subfields: contributor, relator_term_sf: 'e', relator_map: relator_map)
+        }.uniq
+      end
+
       private
 
       # @param record [MARC::Record]
