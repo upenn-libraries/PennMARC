@@ -101,6 +101,10 @@ litaward:
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Literary Award
   aeon: true
+lounge:
+  specific_location: Athenaeum of Philadelphia - Member Lounge
+  library: Athenaeum of Philadelphia
+  display: Athenaeum of Philadelphia - Member Lounge
 microfilm:
   specific_location: Athenaeum of Philadelphia - Microfilm
   library: Athenaeum of Philadelphia
