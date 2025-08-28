@@ -616,42 +616,60 @@ describe 'PennMARC::Creator' do
     context 'with four contributors two of which are authors' do
       let(:fields) do
         [
-          marc_field(tag: '700', subfields: { a: 'First Contributor (Ignore)', b: 'I', c: 'laureate',
+          marc_field(tag: '700', subfields: { a: '01 (Ignore)', b: 'I', c: 'laureate',
                                               j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
-                                              '4': 'aut' }),
-          marc_field(tag: '700', subfields: { a: 'Second Contributor (Ignore)', d: '1968', e: 'author',
-                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials' }),
-          marc_field(tag: '700', subfields: { a: 'Third Contributor (Show)', b: 'J', c: 'laureate',
+                                              '4': 'aut', '6': '880-01' }),
+          marc_field(tag: '700', subfields: { a: '02 (Ignore)', d: '1968', e: 'author',
                                               j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
-                                              '4': 'edt' }),
-          marc_field(tag: '700', subfields: { a: 'Fourth Contributor (Show)', d: '1968', e: 'editor',
-                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials' }),
-          marc_field(tag: '880', subfields: { '6': '700', a: 'Alt Name', b: 'Alt num', c: 'Alt title',
-                                              d: 'Alt date', e: 'Alt relator', j: 'Alt qualifier',
-                                              q: 'Alt Fuller Name', u: 'Alt affiliation', '3': 'Alt material' })
+                                              '6': '880-02' }),
+          marc_field(tag: '700', subfields: { a: '03 (Show)', b: 'J', c: 'laureate',
+                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+                                              '4': 'edt', '6': '880-03' }),
+          marc_field(tag: '700', subfields: { a: '04 (Show)', d: '1968', e: 'editor',
+                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+                                              '6': '880-04' }),
+          marc_field(tag: '880', subfields: { a: 'Alt Name 01 (Ignore)', '6': '700-01', b: 'Alt num 01',
+                                              c: 'Alt title 01', d: 'Alt date 01', e: 'Alt relator 01',
+                                              j: 'Alt qualifier 01', q: 'Alt Fuller Name 01', u: 'Alt affiliation 01',
+                                              '3': 'Alt material 01' }),
+          marc_field(tag: '880', subfields: { a: 'Alt Name 02 (Ignore)', '6': '700-02', b: 'Alt num 02',
+                                              c: 'Alt title 02', d: 'Alt date 02', e: 'Alt relator 02',
+                                              j: 'Alt qualifier 02', q: 'Alt Fuller Name 02', u: 'Alt affiliation 02',
+                                              '3': 'Alt material 02' }),
+          marc_field(tag: '880', subfields: { a: 'Alt Name 03 (Show)', '6': '700-03', b: 'Alt num 03',
+                                              c: 'Alt title 03', d: 'Alt date 03', e: 'Alt relator 03',
+                                              j: 'Alt qualifier 03', q: 'Alt Fuller Name 03', u: 'Alt affiliation 03',
+                                              '3': 'Alt material 03' }),
+          marc_field(tag: '880', subfields: { a: 'Alt Name 04 (Show)', '6': '700-04', b: 'Alt num 04',
+                                              c: 'Alt title 04', d: 'Alt date 04', e: 'Alt relator 04',
+                                              j: 'Alt qualifier 04', q: 'Alt Fuller Name 04', u: 'Alt affiliation 04',
+                                              '3': 'Alt material 04' })
         ]
       end
 
       it 'returns two non-author contributors' do
         values = helper.contributor_noauthor_show(record, relator_map: mapping)
         expect(values).to contain_exactly(
-          'Third Contributor (Show) J laureate pseud Fuller Name affiliation materials',
-          'Fourth Contributor (Show) 1968 pseud Fuller Name affiliation materials, editor.',
-          'Alt Name Alt num Alt title Alt date Alt qualifier Alt Fuller Name Alt affiliation Alt material, Alt relator.'
+          '03 (Show) J laureate pseud Fuller Name affiliation materials',
+          '04 (Show) 1968 pseud Fuller Name affiliation materials, editor.',
+          'Alt Name 03 (Show) Alt num 03 Alt title 03 Alt date 03 Alt qualifier 03 Alt Fuller Name 03 '\
+'Alt affiliation 03 Alt material 03, Alt relator 03.',
+          'Alt Name 04 (Show) Alt num 04 Alt title 04 Alt date 04 Alt qualifier 04 Alt Fuller Name 04 '\
+'Alt affiliation 04 Alt material 04, Alt relator 04.'
         )
       end
 
       it 'returns contributor name only when called with name_only as true' do
         values = helper.contributor_noauthor_show(record, relator_map: mapping, name_only: true)
-        expect(values).to contain_exactly('Third Contributor (Show)', 'Alt Name, Alt relator.',
-                                          'Fourth Contributor (Show), editor.')
+        expect(values).to contain_exactly('03 (Show)', 'Alt Name 03 (Show), Alt relator 03.',
+                                          '04 (Show), editor.', 'Alt Name 04 (Show), Alt relator 04.')
       end
 
       it 'returns contributor values without alternatives when called with vernacular as false' do
         values = helper.contributor_noauthor_show(record, relator_map: mapping, vernacular: false)
         expect(values).to contain_exactly(
-          'Third Contributor (Show) J laureate pseud Fuller Name affiliation materials',
-          'Fourth Contributor (Show) 1968 pseud Fuller Name affiliation materials, editor.'
+          '03 (Show) J laureate pseud Fuller Name affiliation materials',
+          '04 (Show) 1968 pseud Fuller Name affiliation materials, editor.'
         )
       end
     end
