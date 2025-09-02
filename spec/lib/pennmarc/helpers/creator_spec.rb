@@ -478,7 +478,7 @@ describe 'PennMARC::Creator' do
   describe '.contributor_show' do
     let(:record) { marc_record fields: fields }
 
-    context 'when idicator2 is "1"' do
+    context 'when indicator2 is "1"' do
       let(:fields) do
         [marc_field(tag: '700', subfields: { a: 'Ignore' }, indicator2: '1')]
       end
@@ -558,7 +558,7 @@ describe 'PennMARC::Creator' do
   describe '.contributor_noauthor_show' do
     let(:record) { marc_record fields: fields }
 
-    context 'when idicator2 is "1"' do
+    context 'when indicator2 is "1"' do
       let(:fields) do
         [marc_field(tag: '700', subfields: { a: 'Ignore' }, indicator2: '1')]
       end
@@ -627,6 +627,46 @@ describe 'PennMARC::Creator' do
                                               '4': 'edt', '6': '880-03' }),
           marc_field(tag: '700', subfields: { a: '04 (Show)', d: '1968', e: 'editor',
                                               j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+                                              '6': '880-04' })
+        ]
+      end
+
+      it 'returns two non-author contributors' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping)
+        expect(values).to contain_exactly(
+          '03 (Show) J laureate pseud Fuller Name affiliation materials',
+          '04 (Show) 1968 pseud Fuller Name affiliation materials, editor.'
+        )
+      end
+
+      it 'returns contributor name only when called with name_only as true' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping, name_only: true)
+        expect(values).to contain_exactly('03 (Show)', '04 (Show), editor.')
+      end
+
+      it 'returns contributor values without alternatives when called with vernacular as false' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping, vernacular: false)
+        expect(values).to contain_exactly(
+          '03 (Show) J laureate pseud Fuller Name affiliation materials',
+          '04 (Show) 1968 pseud Fuller Name affiliation materials, editor.'
+        )
+      end
+    end
+
+    context 'with four contributors having respective alternatives, two of the contributors are authors' do
+      let(:fields) do
+        [
+          marc_field(tag: '700', subfields: { a: '01 (Ignore)', b: 'I', c: 'laureate',
+                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+                                              '4': 'aut', '6': '880-01' }),
+          marc_field(tag: '700', subfields: { a: '02 (Ignore)', d: '1968', e: 'author',
+                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+                                              '6': '880-02' }),
+          marc_field(tag: '700', subfields: { a: '03 (Show)', b: 'J', c: 'laureate',
+                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+                                              '4': 'edt', '6': '880-03' }),
+          marc_field(tag: '700', subfields: { a: '04 (Show)', d: '1968', e: 'editor',
+                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
                                               '6': '880-04' }),
           marc_field(tag: '880', subfields: { a: 'Alt Name 01 (Ignore)', '6': '700-01', b: 'Alt num 01',
                                               c: 'Alt title 01', d: 'Alt date 01', e: 'Alt relator 01',
@@ -647,25 +687,25 @@ describe 'PennMARC::Creator' do
         ]
       end
 
-      it 'returns two non-author contributors' do
+      it 'returns two non-author contributors with their alternatives' do
         values = helper.contributor_noauthor_show(record, relator_map: mapping)
         expect(values).to contain_exactly(
           '03 (Show) J laureate pseud Fuller Name affiliation materials',
           '04 (Show) 1968 pseud Fuller Name affiliation materials, editor.',
           'Alt Name 03 (Show) Alt num 03 Alt title 03 Alt date 03 Alt qualifier 03 Alt Fuller Name 03 '\
-'Alt affiliation 03 Alt material 03, Alt relator 03.',
+            'Alt affiliation 03 Alt material 03, Alt relator 03.',
           'Alt Name 04 (Show) Alt num 04 Alt title 04 Alt date 04 Alt qualifier 04 Alt Fuller Name 04 '\
-'Alt affiliation 04 Alt material 04, Alt relator 04.'
+            'Alt affiliation 04 Alt material 04, Alt relator 04.'
         )
       end
 
-      it 'returns contributor name only when called with name_only as true' do
+      it 'returns two non-author contributors name and alternative names only when called with name_only as true' do
         values = helper.contributor_noauthor_show(record, relator_map: mapping, name_only: true)
         expect(values).to contain_exactly('03 (Show)', 'Alt Name 03 (Show), Alt relator 03.',
                                           '04 (Show), editor.', 'Alt Name 04 (Show), Alt relator 04.')
       end
 
-      it 'returns contributor values without alternatives when called with vernacular as false' do
+      it 'returns two non-author contributors without alternatives when called with vernacular as false' do
         values = helper.contributor_noauthor_show(record, relator_map: mapping, vernacular: false)
         expect(values).to contain_exactly(
           '03 (Show) J laureate pseud Fuller Name affiliation materials',
