@@ -36,6 +36,14 @@ module PennMARC
     NO_TITLE_PROVIDED = '[No title provided]'
 
     class << self
+      # @param record [MARC::Record]
+      # @return [Array<String>] array of title values for suggestion
+      def suggest(record)
+        record.fields(%w[245]).filter_map do |field|
+          join_subfields(field, &subfield_in?(%w[a b])).squish.truncate_words(20)
+        end
+      end
+
       # Main Title Search field. Takes from {https://www.loc.gov/marc/bibliographic/bd245.html 245} and linked 880.
       # @note Ported from get_title_1_search_values.
       # @param record [MARC::Record]

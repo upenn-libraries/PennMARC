@@ -6,6 +6,18 @@ describe 'PennMARC::Title' do
   let(:fields) { [marc_field(tag: '245', subfields: subfields)] }
   let(:record) { marc_record fields: fields, leader: leader }
 
+  describe '.suggest' do
+    let(:subfields) do
+      { a: 'Title', b: 'Subtitle', c: 'Author' }
+    end
+
+    it 'returns only title fields' do
+      values = helper.suggest(record)
+      expect(values).to contain_exactly 'Title Subtitle'
+      expect(values.first).not_to include 'Author'
+    end
+  end
+
   describe '.search' do
     let(:fields) do
       [marc_field(tag: '245', subfields: { a: 'Title', b: 'Subtitle', c: 'Responsibility', h: 'Medium' }),
