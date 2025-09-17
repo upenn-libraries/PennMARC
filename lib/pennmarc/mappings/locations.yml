@@ -1653,6 +1653,13 @@ veteresov:
     - 'Veterinary: Atwood Library (Campus)'
     - Reserve
   display: 'Veterinary: Atwood Library (Campus) - Reserve Oversize'
+vetewellrm:
+  specific_location: 'Veterinary: Atwood Library (Campus)- Wellness Room'
+  library:
+    - Health Sciences Libraries
+    - Veterinary
+    - 'Veterinary: Atwood Library (Campus)'
+  display: 'Veterinary: Atwood Library (Campus)- Wellness Room'  
 vpexhibit:
   specific location: Van Pelt - Exhibits and Events
   library: Van Pelt-Dietrich Library Center
