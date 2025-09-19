@@ -478,7 +478,7 @@ describe 'PennMARC::Creator' do
   describe '.contributor_show' do
     let(:record) { marc_record fields: fields }
 
-    context 'when idicator2 is "1"' do
+    context 'when indicator2 is "1"' do
       let(:fields) do
         [marc_field(tag: '700', subfields: { a: 'Ignore' }, indicator2: '1')]
       end
@@ -547,6 +547,186 @@ describe 'PennMARC::Creator' do
 
       it 'returns expected contributor values' do
         values = helper.contributor_show(record)
+        expect(values).to contain_exactly(
+          'Corporation A division Office 1968 affiliation materials, Author.',
+          'Alt Corp Name Alt unit Alt location Alt date Alt Affiliation Alt materials, Alt relator, another.'
+        )
+      end
+    end
+  end
+
+  describe '.contributor_noauthor_show' do
+    let(:record) { marc_record fields: fields }
+
+    context 'when indicator2 is "1"' do
+      let(:fields) do
+        [marc_field(tag: '700', subfields: { a: 'Ignore' }, indicator2: '1')]
+      end
+
+      it 'ignores the field' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping)
+        expect(values).to be_empty
+      end
+    end
+
+    context 'with subfield "i"' do
+      let(:fields) do
+        [
+          marc_field(tag: '700', subfields: { i: 'Ignore', e: 'author' }),
+          marc_field(tag: '880', subfields: { i: 'Ignore', '6': '700' })
+        ]
+      end
+
+      it 'ignores the field' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping)
+        expect(values).to be_empty
+      end
+    end
+
+    context 'with a single contributor and linked alternate' do
+      let(:fields) do
+        [
+          marc_field(tag: '700', subfields: { a: 'Name', b: 'I', c: 'laureate', d: '1968', e: 'author',
+                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+                                              '4': 'aut' }),
+          marc_field(tag: '880', subfields: {  '6': '700', a: 'Alt Name', b: 'Alt num', c: 'Alt title',
+                                               d: 'Alt date', e: 'Alt relator', j: 'Alt qualifier',
+                                               q: 'Alt Fuller Name', u: 'Alt affiliation', '3': 'Alt material' })
+        ]
+      end
+
+      it 'returns the non-author contributor only' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping)
+        expect(values).to contain_exactly(
+          'Alt Name Alt num Alt title Alt date Alt qualifier Alt Fuller Name Alt affiliation Alt material, Alt relator.'
+        )
+      end
+
+      it 'returns the non-author contributor name only when called with name_only as true' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping, name_only: true)
+        expect(values).to contain_exactly 'Alt Name, Alt relator.'
+      end
+
+      it 'returns empty when called with vernacular as false' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping, vernacular: false)
+        expect(values).to be_empty
+      end
+    end
+
+    context 'with four contributors two of which are authors' do
+      let(:fields) do
+        [
+          marc_field(tag: '700', subfields: { a: '01 (Ignore)', b: 'I', c: 'laureate',
+                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+                                              '4': 'aut', '6': '880-01' }),
+          marc_field(tag: '700', subfields: { a: '02 (Ignore)', d: '1968', e: 'author',
+                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+                                              '6': '880-02' }),
+          marc_field(tag: '700', subfields: { a: '03 (Show)', b: 'J', c: 'laureate',
+                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+                                              '4': 'edt', '6': '880-03' }),
+          marc_field(tag: '700', subfields: { a: '04 (Show)', d: '1968', e: 'editor',
+                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+                                              '6': '880-04' })
+        ]
+      end
+
+      it 'returns two non-author contributors' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping)
+        expect(values).to contain_exactly(
+          '03 (Show) J laureate pseud Fuller Name affiliation materials',
+          '04 (Show) 1968 pseud Fuller Name affiliation materials, editor.'
+        )
+      end
+
+      it 'returns contributor name only when called with name_only as true' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping, name_only: true)
+        expect(values).to contain_exactly('03 (Show)', '04 (Show), editor.')
+      end
+
+      it 'returns contributor values without alternatives when called with vernacular as false' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping, vernacular: false)
+        expect(values).to contain_exactly(
+          '03 (Show) J laureate pseud Fuller Name affiliation materials',
+          '04 (Show) 1968 pseud Fuller Name affiliation materials, editor.'
+        )
+      end
+    end
+
+    context 'with four contributors having respective alternatives, two of the contributors are authors' do
+      let(:fields) do
+        [
+          marc_field(tag: '700', subfields: { a: '01 (Ignore)', b: 'I', c: 'laureate',
+                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+                                              '4': 'aut', '6': '880-01' }),
+          marc_field(tag: '700', subfields: { a: '02 (Ignore)', d: '1968', e: 'author',
+                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+                                              '6': '880-02' }),
+          marc_field(tag: '700', subfields: { a: '03 (Show)', b: 'J', c: 'laureate',
+                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+                                              '4': 'edt', '6': '880-03' }),
+          marc_field(tag: '700', subfields: { a: '04 (Show)', d: '1968', e: 'editor',
+                                              j: 'pseud', q: 'Fuller Name', u: 'affiliation', '3': 'materials',
+                                              '6': '880-04' }),
+          marc_field(tag: '880', subfields: { a: 'Alt Name 01 (Ignore)', '6': '700-01', b: 'Alt num 01',
+                                              c: 'Alt title 01', d: 'Alt date 01', e: 'Alt relator 01',
+                                              j: 'Alt qualifier 01', q: 'Alt Fuller Name 01', u: 'Alt affiliation 01',
+                                              '3': 'Alt material 01' }),
+          marc_field(tag: '880', subfields: { a: 'Alt Name 02 (Ignore)', '6': '700-02', b: 'Alt num 02',
+                                              c: 'Alt title 02', d: 'Alt date 02', e: 'Alt relator 02',
+                                              j: 'Alt qualifier 02', q: 'Alt Fuller Name 02', u: 'Alt affiliation 02',
+                                              '3': 'Alt material 02' }),
+          marc_field(tag: '880', subfields: { a: 'Alt Name 03 (Show)', '6': '700-03', b: 'Alt num 03',
+                                              c: 'Alt title 03', d: 'Alt date 03', e: 'Alt relator 03',
+                                              j: 'Alt qualifier 03', q: 'Alt Fuller Name 03', u: 'Alt affiliation 03',
+                                              '3': 'Alt material 03' }),
+          marc_field(tag: '880', subfields: { a: 'Alt Name 04 (Show)', '6': '700-04', b: 'Alt num 04',
+                                              c: 'Alt title 04', d: 'Alt date 04', e: 'Alt relator 04',
+                                              j: 'Alt qualifier 04', q: 'Alt Fuller Name 04', u: 'Alt affiliation 04',
+                                              '3': 'Alt material 04' })
+        ]
+      end
+
+      it 'returns two non-author contributors with their alternatives' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping)
+        expect(values).to contain_exactly(
+          '03 (Show) J laureate pseud Fuller Name affiliation materials',
+          '04 (Show) 1968 pseud Fuller Name affiliation materials, editor.',
+          'Alt Name 03 (Show) Alt num 03 Alt title 03 Alt date 03 Alt qualifier 03 Alt Fuller Name 03 '\
+            'Alt affiliation 03 Alt material 03, Alt relator 03.',
+          'Alt Name 04 (Show) Alt num 04 Alt title 04 Alt date 04 Alt qualifier 04 Alt Fuller Name 04 '\
+            'Alt affiliation 04 Alt material 04, Alt relator 04.'
+        )
+      end
+
+      it 'returns two non-author contributors name and alternative names only when called with name_only as true' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping, name_only: true)
+        expect(values).to contain_exactly('03 (Show)', 'Alt Name 03 (Show), Alt relator 03.',
+                                          '04 (Show), editor.', 'Alt Name 04 (Show), Alt relator 04.')
+      end
+
+      it 'returns two non-author contributors without alternatives when called with vernacular as false' do
+        values = helper.contributor_noauthor_show(record, relator_map: mapping, vernacular: false)
+        expect(values).to contain_exactly(
+          '03 (Show) J laureate pseud Fuller Name affiliation materials',
+          '04 (Show) 1968 pseud Fuller Name affiliation materials, editor.'
+        )
+      end
+    end
+
+    context 'with a corporate contributor and linked alternate' do
+      let(:fields) do
+        [
+          marc_field(tag: '710', subfields: { a: 'Corporation', b: 'A division', c: 'Office', d: '1968', e: 'author',
+                                              u: 'affiliation', '3': 'materials', '4': 'aut' }),
+          marc_field(tag: '880', subfields: { '6': '710', a: 'Alt Corp Name', b: 'Alt unit', c: 'Alt location',
+                                              d: 'Alt date', e: ['Alt relator', 'another'], u: 'Alt Affiliation',
+                                              '3': 'Alt materials' })
+        ]
+      end
+
+      it 'returns expected contributor values' do
+        values = helper.contributor_noauthor_show(record)
         expect(values).to contain_exactly(
           'Corporation A division Office 1968 affiliation materials, Author.',
           'Alt Corp Name Alt unit Alt location Alt date Alt Affiliation Alt materials, Alt relator, another.'

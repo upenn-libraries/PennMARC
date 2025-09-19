@@ -313,6 +313,42 @@ module PennMARC
         }.uniq
       end
 
+      # Similar to contributor_show, excluding the authors included in extended_show
+      # @param record [MARC::Record]
+      # @param relator_map [Hash]
+      # @param name_only [Boolean]
+      # @param vernacular [Boolean]
+      # @return [Array<String>]
+      def contributor_noauthor_show(record, relator_map: Mappers.relator, name_only: false, vernacular: true)
+        contributor_fields = record.fields(CONTRIBUTOR_TAGS)
+
+        # Exclude the 700 authors and collect their linkages
+        excluded_linkages = []
+        filtered_fields = contributor_fields.reject do |f|
+          is_author = f.tag == '700' && (f['4']&.downcase == 'aut' || f['e']&.downcase&.start_with?('author'))
+          excluded_linkages << "700-#{f['6'].split('-').last}" if is_author && f['6']
+          is_author
+        end
+
+        # Add vernacular fields that are not excluded by checking the linkages
+        if vernacular
+          vernacular_fields = record.fields('880').select do |f|
+            CONTRIBUTOR_TAGS.any? { |tag| f['6']&.start_with?(tag) } && !excluded_linkages.include?(f['6'])
+          end
+          filtered_fields.concat(vernacular_fields)
+        end
+
+        sf = name_only ? %w[a] : CONTRIBUTOR_DISPLAY_SUBFIELDS
+
+        filtered_fields.filter_map { |field|
+          next if ['', ' ', '0'].exclude?(field.indicator2) && field.tag.in?(CONTRIBUTOR_TAGS)
+          next if subfield_defined? field, 'i'
+
+          contributor = join_subfields(field, &subfield_in?(sf))
+          append_relator(field: field, joined_subfields: contributor, relator_term_sf: 'e', relator_map: relator_map)
+        }.uniq
+      end
+
       private
 
       # @param record [MARC::Record]
