@@ -66,10 +66,6 @@ carpco:
   library: Special Collections
   display: Carpenters' Company of the City and County of Philadelphia
   aeon: true
-catoffice:
-  specific_location: Athenaeum of Philadelphia - Cataloging Office
-  library: Athenaeum of Philadelphia
-  display: Athenaeum of Philadelphia - Cataloging Office
 circcoll:
   specific_location: Athenaeum of Philadelphia - Circulating Collection
   library: Athenaeum of Philadelphia
@@ -83,10 +79,6 @@ cidirbusrm:
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - City Directories Busch Room
   aeon: true
-collcare:
-  specific_location: Athenaeum of Philadelphia - Collections Care Manager
-  library: Athenaeum of Philadelphia
-  display: Athenaeum of Philadelphia - Collections Care Manager
 fic:
   specific_location: Athenaeum of Philadelphia - Fiction
   library: Athenaeum of Philadelphia
@@ -127,11 +119,6 @@ rarecoll:
   specific_location: Athenaeum of Philadelphia - Rare Books Collection
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Rare Books Collection
-  aeon: true
-reevecoll:
-  specific_location: Athenaeum of Philadelphia - Reeve Collection
-  library: Athenaeum of Philadelphia
-  display: Athenaeum of Philadelphia - Reeve Collection
   aeon: true
 ref:
   specific_location: Athenaeum of Philadelphia - Reference
@@ -293,13 +280,6 @@ cjsarcths:
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Archives Thesis
   aeon: true
-cjsartif:
-  specific_location: Library at the Katz Center - Reading Room
-  library:
-    - Special Collections
-    - Library at the Katz Center for Advanced Judaic Studies
-  display: Library at the Katz Center - Artifacts
-  aeon: true
 cjsbox1:
   specific_location: Library at the Katz Center - Stacks
   library: Library at the Katz Center for Advanced Judaic Studies
@@ -312,22 +292,10 @@ cjsbox3:
   specific_location: Library at the Katz Center - Stacks
   library: Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Stacks Box 3
-cjsbox4:
-  specific_location: Library at the Katz Center - Stacks
-  library: Library at the Katz Center for Advanced Judaic Studies
-  display: Library at the Katz Center - Stacks Box 4
 cjscdrom:
   specific_location: Library at the Katz Center - Reading Room
   library: Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - CD-ROM
-cjscirc:
-  specific_location: Library at the Katz Center - Reading Room
-  library: Library at the Katz Center for Advanced Judaic Studies
-  display: Library at the Katz Center - Circulation
-cjscomp:
-  specific_location: Library at the Katz Center - Reading Room
-  library: Library at the Katz Center for Advanced Judaic Studies
-  display: Library at the Katz Center - Computer Room
 cjsdir:
   specific_location: Library at the Katz Center - Stacks
   library: Library at the Katz Center for Advanced Judaic Studies
@@ -438,10 +406,6 @@ cjspergal:
   specific_location: Library at the Katz Center - Reading Room
   library: Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Periodicals Gallery
-cjsperover:
-  specific_location: Library at the Katz Center - Stacks
-  library: Library at the Katz Center for Advanced Judaic Studies
-  display: Library at the Katz Center - Periodicals Oversize
 cjsrar:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
@@ -531,12 +495,6 @@ cjsreffol+:
   specific_location: Library at the Katz Center - Reading Room
   library: Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Reference Oversize
-cjsres:
-  specific_location: Library at the Katz Center - Reading Room
-  library:
-    - Library at the Katz Center for Advanced Judaic Studies
-    - Reserve
-  display: Library at the Katz Center - Reserves
 cjsspec:
   specific_location: Library at the Katz Center - Stacks
   library:
@@ -842,12 +800,7 @@ mideast:
   specific_location: Van Pelt - Stapleton Seminar Room
   library: Van Pelt-Dietrich Library Center
   display: Van Pelt - Stapleton Seminar Room (523)
-mideastres:
-  specific_location: Van Pelt - Middle East Seminar Reserve
-  library:
-    - Van Pelt-Dietrich Library Center
-    - Reserve
-  display: Van Pelt - Middle East Seminar Reserve
+
 mscirc:
   specific_location: Penn Museum Library - Circulation
   library: Penn Museum Library
@@ -1073,12 +1026,6 @@ sasiarefe:
   specific_location: Van Pelt - Govindaraju/Chandrasekhara South Asia Studies Seminar Room
   library: Van Pelt-Dietrich Library Center
   display: Van Pelt - Govindaraju/Chandrasekhara South Asia Studies Seminar Room (551)
-sasiarese:
-  specific_location: Van Pelt - South Asian Reserve
-  library:
-    - Van Pelt-Dietrich Library Center
-    - Reserve
-  display: Van Pelt - South Asia Reserve (551)
 scg123:
   specific_location: Kislak Center for Special Collections - Rare Book Collection
   library:
@@ -1479,10 +1426,6 @@ stor:
   specific_location: LIBRA
   library: LIBRA
   display: LIBRA
-storcirc:
-  specific_location: LIBRA - Circulation
-  library: LIBRA
-  display: LIBRA - Circulation
 storcrstxt:
   specific_location: GIC Collection at Penn Libraries
   library:
@@ -1525,13 +1468,6 @@ scrunning:
     - Special Collections
     - LIBRA
   display: LIBRA Running Press Collection
-  aeon: true
-storvilain:
-  specific_location: LIBRA Vilain-Wieck Collection
-  library: 
-    - Special Collections
-    - LIBRA
-  display: LIBRA Vilain-Wieck Collection
   aeon: true
 univarch:
   specific_location: University Archives
@@ -1649,7 +1585,7 @@ vetewellrm:
     - Veterinary
     - 'Veterinary: Atwood Library (Campus)'
   display: 'Veterinary: Atwood Library (Campus)- Wellness Room'  
-vpexhibit:
+vpexhibits:
   specific location: Van Pelt - Exhibits and Events
   library: Van Pelt-Dietrich Library Center
   display: Van Pelt - Exhibits and Events -- First Floor, Circulation Desk
