@@ -37,8 +37,28 @@ module PennMARC
 
     class << self
       # @param record [MARC::Record]
-      # @return [Array<String>] array of title values for suggestion
+      # @return [Array<String>] array of all title values for suggestion
       def suggest(record)
+        record.fields(%w[245]).filter_map do |field|
+          join_subfields(field, &subfield_in?(%w[a b])).squish.truncate_words(20)
+        end
+      end
+
+      # @param record [MARC::Record]
+      # @return [Array<String>] array of serial title values for suggestion
+      def serial_suggest(record)
+        return [] if not_a_serial?(record)
+
+        record.fields(%w[245]).filter_map do |field|
+          join_subfields(field, &subfield_in?(%w[a b])).squish.truncate_words(20)
+        end
+      end
+
+      # @param record [MARC::Record]
+      # @return [Array<String>] array of monograph title values for suggestion
+      def monograph_suggest(record)
+        return [] unless not_a_serial?(record)
+
         record.fields(%w[245]).filter_map do |field|
           join_subfields(field, &subfield_in?(%w[a b])).squish.truncate_words(20)
         end
