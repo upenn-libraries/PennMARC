@@ -105,5 +105,56 @@ describe 'PennMARC::Access' do
         end
       end
     end
+
+    context 'with an electronic record but no electronic inventory provided' do
+      let(:record) { marc_record fields: fields }
+
+      context 'with a 944 indicating an online database' do
+        let(:fields) do
+          [marc_field(tag: '944', subfields: { a: 'Database & Article Index',
+                                               b: 'Dictionaries and Thesauri (language based)' })]
+        end
+
+        it 'returns expected access value' do
+          expect(helper.facet(record)).to contain_exactly(PennMARC::Access::ONLINE)
+        end
+      end
+
+      context 'with a single MARC indicator check suggesting an online database' do
+        let(:fields) do
+          [marc_control_field(tag: '006', value: '      m    ')]
+        end
+
+        it 'returns expected access value' do
+          expect(helper.facet(record)).not_to include PennMARC::Access::ONLINE
+        end
+      end
+
+      context 'with two MARC indicators suggesting an online database' do
+        let(:fields) do
+          [
+            marc_control_field(tag: '006', value: '      m    '),
+            marc_control_field(tag: '007', value: 'cr')
+          ]
+        end
+
+        it 'returns expected access value' do
+          expect(helper.facet(record)).to contain_exactly(PennMARC::Access::ONLINE)
+        end
+      end
+
+      context 'with other two MARC indicators suggesting an online database' do
+        let(:fields) do
+          [
+            marc_control_field(tag: '008', value: '                       o'),
+            marc_field(tag: '338', subfields: { a: 'online resource', b: 'cr' })
+          ]
+        end
+
+        it 'returns expected access value' do
+          expect(helper.facet(record)).to contain_exactly(PennMARC::Access::ONLINE)
+        end
+      end
+    end
   end
 end
