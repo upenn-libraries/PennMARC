@@ -14,7 +14,7 @@ module PennMARC
       # the library", but has a link to a finding aid in the 856 field (matching certain criteria), also add 'Online' as
       # an access method.
       # Because Alma E-Collections don't return electronic inventory, check some MARC control fields and other fields
-      # for indicators of an online resource, but only if n other Online indicators are present.
+      # for indicators of an online resource, but only if no other Online indicators are present.
       # @param record [MARC::Record]
       # @return [Array]
       def facet(record)
@@ -32,17 +32,6 @@ module PennMARC
 
       private
 
-      # @param [MARC::Record] record
-      # @return [Boolean]
-      def marc_indicators?(record)
-        return true if resource_link?(record) || electronic_database?(record)
-
-        [eresource_form?(record),
-         eresource_material_designation?(record),
-         online_computer_file_form?(record),
-         online_carrier_type?(record)].count(true) >= 2
-      end
-
       # Does the record have added electronic holding info?
       # @param field [MARC::Field]
       # @return [Boolean]
@@ -55,6 +44,24 @@ module PennMARC
       # @return [Boolean]
       def physical_holding_tag?(field)
         field.tag.in? [Enriched::Pub::PHYS_INVENTORY_TAG, Enriched::Api::PHYS_INVENTORY_TAG]
+      end
+
+      # In order to determine if a record has Online access, we should also check some MARC fields. This is because the
+      # Alma inventory publishing process does not include tags for E-Collections associated with a record. Here we
+      # check for obvious indicators:
+      #  - a "Resource Link" matching certain criteria
+      #  - a field indicating that the record is part of our curated "Databases" collection
+      # If there's still no online access, check for at least two other positive indicators in other MARC control fields
+      # and other tags.
+      # @param [MARC::Record] record
+      # @return [Boolean]
+      def marc_indicators?(record)
+        return true if resource_link?(record) || electronic_database?(record)
+
+        [eresource_form?(record),
+         eresource_material_designation?(record),
+         online_computer_file_form?(record),
+         online_carrier_type?(record)].count(true) >= 2
       end
 
       # Check if a record contains an 856 entry with a Penn Handle server link meeting these criteria:
