@@ -80,7 +80,7 @@ module PennMARC
       end
 
       # Does the record have an 006 suggesting an electronic resource?
-      # Check position 6 "Form of item" for an `m` indicating "Computer file/Electronic resource"
+      # Check position 6 "Form of item" for an `o` indicating "Computer file/Electronic resource"
       # @see https://www.loc.gov/marc/bibliographic/bd006.html
       # @param record [MARC::Record]
       # @return [Boolean]
