@@ -107,7 +107,7 @@ module PennMARC
       def extended_show_facet_map(record, relator_map: Mappers.relator)
         creators = record.fields(%w[100 700]).filter_map do |field|
           # for 700 entries, only include ones with relator code ('4') = aut, or code 'e' = 'author'
-          next if field.tag == '700' && !(field['4']&.downcase == 'aut' || field['e']&.downcase&.start_with?('author'))
+          next if field.tag == '700' && !describes_author?(field)
 
           show = parse_show_value(field, relator_map: relator_map)
           facet = parse_facet_value(field, FACET_SOURCE_MAP[field.tag.to_i].chars)
