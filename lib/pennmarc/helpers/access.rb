@@ -87,7 +87,7 @@ module PennMARC
       def eresource_form?(record)
         return false unless field_defined?(record, '006')
 
-        record.fields('006').first.value[6] == 'm'
+        record.fields('006').first.value[6] == 'o'
       end
 
       # Does the record have an 007 indicating an electronic resource?
