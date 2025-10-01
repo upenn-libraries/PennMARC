@@ -7,6 +7,7 @@ module PennMARC
     AT_THE_LIBRARY = 'At the library'
     HANDLE_BASE_URL = 'hdl.library.upenn.edu'
     COLENDA_BASE_URL = 'colenda.library.upenn.edu'
+    REQUIRED_ONLINE_MARC_INDICATOR_COUNT = 2
 
     class << self
       # Based on enhanced metadata fields added by Alma publishing process or API, determine if the record has
@@ -61,7 +62,7 @@ module PennMARC
         [eresource_form?(record),
          eresource_material_designation?(record),
          online_computer_file_form?(record),
-         online_carrier_type?(record)].count(true) >= 2
+         online_carrier_type?(record)].count(true) >= REQUIRED_ONLINE_MARC_INDICATOR_COUNT
       end
 
       # Check if a record contains an 856 entry with a Penn Handle server link meeting these criteria:
