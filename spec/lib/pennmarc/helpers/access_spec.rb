@@ -134,7 +134,7 @@ describe 'PennMARC::Access' do
 
       context 'with a single MARC indicator check suggesting an online database' do
         let(:fields) do
-          [marc_control_field(tag: '006', value: '      m    ')]
+          [marc_control_field(tag: '006', value: '      o    ')]
         end
 
         it 'does not return Online access value' do
@@ -144,7 +144,7 @@ describe 'PennMARC::Access' do
 
       context 'with two MARC indicators suggesting an online database' do
         let(:fields) do
-          [marc_control_field(tag: '006', value: '      m    '),
+          [marc_control_field(tag: '006', value: '      o    '),
            marc_control_field(tag: '007', value: 'cr')]
         end
 
