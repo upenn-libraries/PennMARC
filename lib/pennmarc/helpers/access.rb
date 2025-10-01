@@ -53,7 +53,7 @@ module PennMARC
       #  - a field indicating that the record is part of our curated "Databases" collection
       # If there's still no online access, check for at least two other positive indicators in other MARC control fields
       # and other tags.
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Boolean]
       def marc_indicators?(record)
         return true if resource_link?(record) || electronic_database?(record)
