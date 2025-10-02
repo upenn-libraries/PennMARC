@@ -90,9 +90,10 @@ module PennMARC
       # @return [Array<String>] array of author/creator values for display
       def extended_show(record, relator_map: Mappers.relator)
         fields = record.fields(%w[100 700])
+        fields += record.fields('880').select { |field| subfield_value?(field, '6', /^(#{TAGS.join('|')})/) }
         fields.filter_map { |field|
-          # for 700 entries, only include ones with relator code ('4') = aut, or code 'e' = 'author'
-          next if field.tag == '700' && !(field['4']&.downcase == 'aut' || field['e']&.downcase&.start_with?('author'))
+          # for 700 and 880 entries, only include ones with relator code ('4') = aut, or code 'e' = 'author'
+          next if field.tag.in?(%w[700 880]) && !describes_author?(field)
 
           parse_show_value(field, relator_map: relator_map)
         }.uniq
@@ -106,7 +107,7 @@ module PennMARC
       def extended_show_facet_map(record, relator_map: Mappers.relator)
         creators = record.fields(%w[100 700]).filter_map do |field|
           # for 700 entries, only include ones with relator code ('4') = aut, or code 'e' = 'author'
-          next if field.tag == '700' && !(field['4']&.downcase == 'aut' || field['e']&.downcase&.start_with?('author'))
+          next if field.tag == '700' && !describes_author?(field)
 
           show = parse_show_value(field, relator_map: relator_map)
           facet = parse_facet_value(field, FACET_SOURCE_MAP[field.tag.to_i].chars)
@@ -464,6 +465,13 @@ module PennMARC
         conf = [conf, sub_unit].compact_blank.join(' ')
 
         append_relator(field: field, joined_subfields: conf, relator_term_sf: 'j', relator_map: relator_map)
+      end
+
+      # Does the given field describe an author record, as indicated by the relator fields of sf 4 or sf e ?
+      # @param [MARC::Field] field
+      # @return [Boolean]
+      def describes_author?(field)
+        field['4']&.downcase == 'aut' || field['e']&.downcase&.start_with?('author')
       end
     end
   end

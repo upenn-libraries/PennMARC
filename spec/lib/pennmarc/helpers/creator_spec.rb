@@ -100,12 +100,12 @@ describe 'PennMARC::Creator' do
       let(:fields) do
         [marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345', d: '1900-2000',
                                              e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
-         marc_field(tag: '880', subfields: { a: 'Surname, Alternative', '6': '100' })]
+         marc_field(tag: '880', subfields: { a: 'Surname, Alternative', e: 'author', '6': '100' })]
       end
 
-      it 'returns single author values with no URIs anywhere (the same as show)' do
+      it 'returns single author values and linked alternate with no URIs anywhere (the same as show)' do
         values = helper.extended_show(record)
-        expect(values).to contain_exactly 'Surname, Name 1900-2000, author.'
+        expect(values).to contain_exactly 'Surname, Name 1900-2000, author.', 'Surname, Alternative, author.'
         expect(values.join.downcase).not_to include 'http'
       end
     end
