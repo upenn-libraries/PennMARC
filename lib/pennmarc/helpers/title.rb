@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../service/title_suggestion_scale/service'
 
 module PennMARC

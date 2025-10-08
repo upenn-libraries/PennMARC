@@ -23,7 +23,7 @@ describe 'PennMARC::Title' do
       { a: 'Title', b: 'Subtitle', c: 'Author' }
     end
 
-    it 'works' do
+    it 'does not fail' do
       value = helper.suggest_weight(record)
       expect(value).to eq 10
     end

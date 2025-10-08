@@ -2,6 +2,7 @@
 
 module PennMARC
   module TitleSuggestionScale
+    # A service to calculate suggestion weights based on a variety of criteria
     class Service
       class << self
         BASE_WEIGHT = 10
