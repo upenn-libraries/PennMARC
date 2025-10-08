@@ -18,6 +18,17 @@ describe 'PennMARC::Title' do
     end
   end
 
+  describe '.suggest_weight' do
+    let(:subfields) do
+      { a: 'Title', b: 'Subtitle', c: 'Author' }
+    end
+
+    it 'works' do
+      value = helper.suggest_weight(record)
+      expect(value).to eq 10
+    end
+  end
+
   describe '.search' do
     let(:fields) do
       [marc_field(tag: '245', subfields: { a: 'Title', b: 'Subtitle', c: 'Responsibility', h: 'Medium' }),
