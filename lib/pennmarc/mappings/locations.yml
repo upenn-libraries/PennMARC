@@ -66,10 +66,6 @@ carpco:
   library: Special Collections
   display: Carpenters' Company of the City and County of Philadelphia
   aeon: true
-catoffice:
-  specific_location: Athenaeum of Philadelphia - Cataloging Office
-  library: Athenaeum of Philadelphia
-  display: Athenaeum of Philadelphia - Cataloging Office
 circcoll:
   specific_location: Athenaeum of Philadelphia - Circulating Collection
   library: Athenaeum of Philadelphia
@@ -83,10 +79,6 @@ cidirbusrm:
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - City Directories Busch Room
   aeon: true
-collcare:
-  specific_location: Athenaeum of Philadelphia - Collections Care Manager
-  library: Athenaeum of Philadelphia
-  display: Athenaeum of Philadelphia - Collections Care Manager
 fic:
   specific_location: Athenaeum of Philadelphia - Fiction
   library: Athenaeum of Philadelphia
@@ -127,11 +119,6 @@ rarecoll:
   specific_location: Athenaeum of Philadelphia - Rare Books Collection
   library: Athenaeum of Philadelphia
   display: Athenaeum of Philadelphia - Rare Books Collection
-  aeon: true
-reevecoll:
-  specific_location: Athenaeum of Philadelphia - Reeve Collection
-  library: Athenaeum of Philadelphia
-  display: Athenaeum of Philadelphia - Reeve Collection
   aeon: true
 ref:
   specific_location: Athenaeum of Philadelphia - Reference
@@ -293,13 +280,6 @@ cjsarcths:
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Archives Thesis
   aeon: true
-cjsartif:
-  specific_location: Library at the Katz Center - Reading Room
-  library:
-    - Special Collections
-    - Library at the Katz Center for Advanced Judaic Studies
-  display: Library at the Katz Center - Artifacts
-  aeon: true
 cjsbox1:
   specific_location: Library at the Katz Center - Stacks
   library: Library at the Katz Center for Advanced Judaic Studies
@@ -312,22 +292,10 @@ cjsbox3:
   specific_location: Library at the Katz Center - Stacks
   library: Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Stacks Box 3
-cjsbox4:
-  specific_location: Library at the Katz Center - Stacks
-  library: Library at the Katz Center for Advanced Judaic Studies
-  display: Library at the Katz Center - Stacks Box 4
 cjscdrom:
   specific_location: Library at the Katz Center - Reading Room
   library: Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - CD-ROM
-cjscirc:
-  specific_location: Library at the Katz Center - Reading Room
-  library: Library at the Katz Center for Advanced Judaic Studies
-  display: Library at the Katz Center - Circulation
-cjscomp:
-  specific_location: Library at the Katz Center - Reading Room
-  library: Library at the Katz Center for Advanced Judaic Studies
-  display: Library at the Katz Center - Computer Room
 cjsdir:
   specific_location: Library at the Katz Center - Stacks
   library: Library at the Katz Center for Advanced Judaic Studies
@@ -438,10 +406,6 @@ cjspergal:
   specific_location: Library at the Katz Center - Reading Room
   library: Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Periodicals Gallery
-cjsperover:
-  specific_location: Library at the Katz Center - Stacks
-  library: Library at the Katz Center for Advanced Judaic Studies
-  display: Library at the Katz Center - Periodicals Oversize
 cjsrar:
   specific_location: Library at the Katz Center - Rare Book Room
   library:
@@ -531,12 +495,6 @@ cjsreffol+:
   specific_location: Library at the Katz Center - Reading Room
   library: Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Reference Oversize
-cjsres:
-  specific_location: Library at the Katz Center - Reading Room
-  library:
-    - Library at the Katz Center for Advanced Judaic Studies
-    - Reserve
-  display: Library at the Katz Center - Reserves
 cjsspec:
   specific_location: Library at the Katz Center - Stacks
   library:
@@ -842,12 +800,7 @@ mideast:
   specific_location: Van Pelt - Stapleton Seminar Room
   library: Van Pelt-Dietrich Library Center
   display: Van Pelt - Stapleton Seminar Room (523)
-mideastres:
-  specific_location: Van Pelt - Middle East Seminar Reserve
-  library:
-    - Van Pelt-Dietrich Library Center
-    - Reserve
-  display: Van Pelt - Middle East Seminar Reserve
+
 mscirc:
   specific_location: Penn Museum Library - Circulation
   library: Penn Museum Library
@@ -974,12 +927,11 @@ newbofc:
     - 'Veterinary: du Pont Library (New Bolton)'
   display: 'Veterinary: du Pont Library (New Bolton) - Office'
 newbrare:
-  specific_location: Kislak Center for Special Collections - Fairman Rogers Collection
+  specific_location: LIBRA - Fairman Rogers Collection
   library:
     - Special Collections
-    - Kislak Center for Special Collections
-    - Van Pelt-Dietrich Library Center
-  display: Kislak Center for Special Collections - Fairman Rogers Coll.
+    - LIBRA
+  display: LIBRA - Fairman Rogers Collection
   aeon: true
 newbrefe:
   specific_location: 'Veterinary: du Pont Library (New Bolton) - Reference'
@@ -1074,12 +1026,6 @@ sasiarefe:
   specific_location: Van Pelt - Govindaraju/Chandrasekhara South Asia Studies Seminar Room
   library: Van Pelt-Dietrich Library Center
   display: Van Pelt - Govindaraju/Chandrasekhara South Asia Studies Seminar Room (551)
-sasiarese:
-  specific_location: Van Pelt - South Asian Reserve
-  library:
-    - Van Pelt-Dietrich Library Center
-    - Reserve
-  display: Van Pelt - South Asia Reserve (551)
 scg123:
   specific_location: Kislak Center for Special Collections - Rare Book Collection
   library:
@@ -1089,20 +1035,18 @@ scg123:
   display: Kislak Center for Special Collections - Rare Book Collection 123
   aeon: true
 sc1100c:
-  specific_location: Kislak Center for Special Collections - 1100C Collection
+  specific_location: LIBRA - 1100C Collection
   library:
     - Special Collections
-    - Kislak Center for Special Collections
-    - Van Pelt-Dietrich Library Center
-  display: Kislak Center for Special Collections - 1100C Collection
+    - LIBRA
+  display: LIBRA - 1100C Collection
   aeon: true
 scadams:
-  specific_location: Kislak Center for Special Collections - Adams Collection
+  specific_location: LIBRA - Adams Collection
   library:
     - Special Collections
-    - Kislak Center for Special Collections
-    - Van Pelt-Dietrich Library Center
-  display: Kislak Center for Special Collections - Adams Collection
+    - LIBRA
+  display: LIBRA - Adams Collection
   aeon: true
 scartbk:
   specific_location: Kislak Center for Special Collections - Artists' Books
@@ -1121,12 +1065,11 @@ scbanks:
   display: Kislak Center for Special Collections - Joanna Banks Collection
   aeon: true
 scblank:
-  specific_location: Kislak Center for Special Collections - Blank Collection
+  specific_location: LIBRA - Blank Collection
   library:
     - Special Collections
-    - Kislak Center for Special Collections
-    - Van Pelt-Dietrich Library Center
-  display: Kislak Center for Special Collections - Blank Collection
+    - LIBRA
+  display: LIBRA - Blank Collection
   aeon: true
 scbyron:
   specific_location: Kislak Center for Special Collections - Byron Collection
@@ -1209,12 +1152,11 @@ scelz:
   display: Kislak Center for Special Collections - Elzevier Collection
   aeon: true
 scfast:
-  specific_location: Kislak Center for Special Collections - Fast Collection
+  specific_location: LIBRA - Fast Collection
   library:
     - Special Collections
-    - Kislak Center for Special Collections
-    - Van Pelt-Dietrich Library Center
-  display: Kislak Center for Special Collections - Fast Collection
+    - LIBRA
+  display: LIBRA - Fast Collection
   aeon: true
 scforr:
   specific_location: Kislak Center for Special Collections - Forrest Collection
@@ -1257,20 +1199,18 @@ scfurnlib:
   display: Kislak Center for Special Collections - Furness Shakespeare Library (Van
     Pelt 628)
 scfurnst:
-  specific_location: Kislak Center for Special Collections - Furness Collection
+  specific_location: LIBRA - Furness Collection
   library:
     - Special Collections
-    - Kislak Center for Special Collections
-    - Van Pelt-Dietrich Library Center
-  display: Kislak Center for Special Collections - Furness Storage
+    - LIBRA
+  display: LIBRA - Furness Storage
   aeon: true
 scgull:
-  specific_location: Kislak Center for Special Collections - Gulliver's Travels Collection
+  specific_location: LIBRA - Gulliver's Travels Collection
   library:
     - Special Collections
-    - Kislak Center for Special Collections
-    - Van Pelt-Dietrich Library Center
-  display: Kislak Center for Special Collections - Gulliver's Travels Collection
+    - LIBRA
+  display: LIBRA - Gulliver's Travels Collection
   aeon: true
 scinc:
   specific_location: Kislak Center for Special Collections - Incunables
@@ -1313,12 +1253,11 @@ scmss:
   display: Kislak Center for Special Collections - Manuscripts
   aeon: true
 scmst:
-  specific_location: Kislak Center for Special Collections - Manuscripts Storage
+  specific_location: LIBRA - Manuscripts Storage
   library:
     - Special Collections
-    - Kislak Center for Special Collections
-    - Van Pelt-Dietrich Library Center
-  display: Kislak Center for Special Collections - Manuscripts Storage
+    - LIBRA
+  display: LIBRA - Manuscripts Storage
   aeon: true
 scmsw:
   specific_location: Kislak Center for Special Collections - Web
@@ -1371,12 +1310,11 @@ screfe:
   display: Kislak Center for Special Collections - Reference Collection
   aeon: true
 screfestor:
-  specific_location: Kislak Center for Special Collections - Reference Storage
+  specific_location: LIBRA - Reference Storage
   library:
     - Special Collections
-    - Kislak Center for Special Collections
-    - Van Pelt-Dietrich Library Center
-  display: Kislak Center for Special Collections Reference Storage
+    - LIBRA
+  display: LIBRA - Reference Storage
   aeon: true
 scschimmel:
   specific_location: Kislak Center for Special Collections - Schimmel Collection
@@ -1403,12 +1341,11 @@ scsmith:
   display: Kislak Center for Special Collections - E.F. Smith Collection
   aeon: true
 scsmithst:
-  specific_location: Kislak Center for Special Collections - E.F. Smith Collection
+  specific_location: LIBRA - E.F. Smith Collection
   library:
     - Special Collections
-    - Kislak Center for Special Collections
-    - Van Pelt-Dietrich Library Center
-  display: Kislak Center for Special Collections - E.F. Smith Collection Storage
+    - LIBRA
+  display: LIBRA - E.F. Smith Collection Storage
   aeon: true
 scsterne:
   specific_location: Kislak Center for Special Collections - Day Sterne Collection
@@ -1419,12 +1356,11 @@ scsterne:
   display: Kislak Center for Special Collections - Day Sterne Collection
   aeon: true
 scstor:
-  specific_location: Kislak Center for Special Collections - Rare Book Collection
+  specific_location: LIBRA - Rare Book Collection
   library:
     - Special Collections
-    - Kislak Center for Special Collections
-    - Van Pelt-Dietrich Library Center
-  display: Kislak Center for Special Collections - Rare Book Collection Storage
+    - LIBRA
+  display: LIBRA - Rare Book Collection Storage
   aeon: true
 scstorvil:
   specific_location: LIBRA Vilain-Wieck Collection
@@ -1490,10 +1426,6 @@ stor:
   specific_location: LIBRA
   library: LIBRA
   display: LIBRA
-storcirc:
-  specific_location: LIBRA - Circulation
-  library: LIBRA
-  display: LIBRA - Circulation
 storcrstxt:
   specific_location: GIC Collection at Penn Libraries
   library:
@@ -1536,13 +1468,6 @@ scrunning:
     - Special Collections
     - LIBRA
   display: LIBRA Running Press Collection
-  aeon: true
-storvilain:
-  specific_location: LIBRA Vilain-Wieck Collection
-  library: 
-    - Special Collections
-    - LIBRA
-  display: LIBRA Vilain-Wieck Collection
   aeon: true
 univarch:
   specific_location: University Archives
@@ -1653,7 +1578,14 @@ veteresov:
     - 'Veterinary: Atwood Library (Campus)'
     - Reserve
   display: 'Veterinary: Atwood Library (Campus) - Reserve Oversize'
-vpexhibit:
+vetewellrm:
+  specific_location: 'Veterinary: Atwood Library (Campus)- Wellness Room'
+  library:
+    - Health Sciences Libraries
+    - Veterinary
+    - 'Veterinary: Atwood Library (Campus)'
+  display: 'Veterinary: Atwood Library (Campus)- Wellness Room'  
+vpexhibits:
   specific location: Van Pelt - Exhibits and Events
   library: Van Pelt-Dietrich Library Center
   display: Van Pelt - Exhibits and Events -- First Floor, Circulation Desk
