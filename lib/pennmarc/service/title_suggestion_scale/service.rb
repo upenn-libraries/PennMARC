@@ -26,7 +26,8 @@ module PennMARC
           weight = BASE_WEIGHT
           FACTORS.each do |call, score|
             weight + score if send(call, record)
-          rescue NameError => _e
+          rescue NameError => e
+            puts "Title suggestion weight encountered an (#{e.class.name}) error: #{e.message}"
             next
           end
           weight
