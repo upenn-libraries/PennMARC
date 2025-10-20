@@ -69,6 +69,8 @@ module PennMARC
         end
 
         def low_encoding_level?(record)
+          return false unless Encoding.level_sort(record).present?
+
           Encoding.level_sort(record) > 4
         end
       end
