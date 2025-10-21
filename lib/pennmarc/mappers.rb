@@ -50,10 +50,9 @@ module PennMARC
       end
 
       # @param filename [String] name of mapping file in config directory, with file extension
-      # @param symbolize_names [Boolean] whether or not to symbolize keys in returned hash
+      # @param symbolize_names [Boolean] whether to symbolize keys in returned hash
       # @return [Hash, nil] mapping as hash
       def load_map(filename, symbolize_names: true)
-        puts { "Loading #{filename}" }
         YAML.safe_load(File.read(File.join(File.expand_path(__dir__), 'mappings', filename)),
                        symbolize_names: symbolize_names)
       end
