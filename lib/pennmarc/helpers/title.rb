@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../service/title_suggestion_scale/service'
+require_relative '../services/title_suggestion_weight_service'
 
 module PennMARC
   # This helper contains logic for parsing out Title and Title-related fields.
@@ -53,7 +53,7 @@ module PennMARC
       # @param record [MARC::Record]
       # @return [Integer, nil]
       def suggest_weight(record)
-        PennMARC::TitleSuggestionScale::Service.weight record
+        PennMARC::TitleSuggestionWeightService.weight record
       end
 
       # Main Title Search field. Takes from {https://www.loc.gov/marc/bibliographic/bd245.html 245} and linked 880.
