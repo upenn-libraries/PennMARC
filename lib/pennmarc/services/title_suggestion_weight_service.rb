@@ -50,7 +50,7 @@ module PennMARC
       def published_in_last_ten_years?(record)
         return false unless Date.publication(record).present?
 
-        Date.publication(record) < 10.years.ago
+        Date.publication(record) > 10.years.ago
       end
 
       # @param [MARC::Record] record
@@ -68,24 +68,19 @@ module PennMARC
       # @param [MARC::Record] record
       # @return [Boolean]
       def targeted_format?(record)
-        (Format.facet(record) | TARGETED_FORMATS).any?
+        (Format.facet(record) & TARGETED_FORMATS).any?
       end
 
       # @param [MARC::Record] record
       # @return [Boolean]
       def high_encoding_level?(record)
-        case Encoding.level_sort(record)
-        when 0
-          true
-        else
-          false
-        end
+        Encoding.level_sort(record) == 0
       end
 
       # @param [MARC::Record] record
       # @return [Boolean]
       def weird_format?(record)
-        (Format.facet(record) | WEIRD_FORMATS).any?
+        (Format.facet(record) & WEIRD_FORMATS).any?
       end
 
       # @param [MARC::Record] record

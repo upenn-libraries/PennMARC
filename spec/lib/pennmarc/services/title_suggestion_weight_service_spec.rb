@@ -35,4 +35,159 @@ describe PennMARC::TitleSuggestionWeightService do
     end
   end
 
+  describe '.published_in_the_last_ten_years' do
+    before { allow(PennMARC::Date).to receive(:publication).with(record).and_return(record_date) }
+
+    let(:value) { described_class.published_in_last_ten_years?(record) }
+
+    context 'with no date' do
+      let(:record_date) { nil }
+
+      it 'returns true' do
+        expect(value).to be false
+      end
+    end
+
+    context 'with a recent date' do
+      let(:record_date) { Time.now }
+
+      it 'returns true' do
+        expect(value).to be true
+      end
+    end
+
+    context 'with an ancient date' do
+      let(:record_date) { Time.now - 400.years }
+
+      it 'returns false' do
+        expect(value).to be false
+      end
+    end
+  end
+
+  describe '.targeted_format?' do
+    before { allow(PennMARC::Format).to receive(:facet).with(record).and_return([record_format]) }
+
+    let(:value) { described_class.targeted_format?(record) }
+
+    context 'with no format' do
+      let(:record_format) { nil }
+
+      it 'returns false' do
+        expect(value).to be false
+      end
+    end
+
+    context 'with a targeted format' do
+      let(:record_format) { PennMARC::TitleSuggestionWeightService::TARGETED_FORMATS.sample }
+
+      it 'returns true' do
+        expect(value).to be true
+      end
+    end
+
+    context 'with a non-targeted format' do
+      let(:record_format) { PennMARC::TitleSuggestionWeightService::WEIRD_FORMATS.sample }
+
+      it 'returns false' do
+        expect(value).to be false
+      end
+    end
+  end
+
+  describe '.weird_format?' do
+    before { allow(PennMARC::Format).to receive(:facet).with(record).and_return([record_format]) }
+
+    let(:value) { described_class.weird_format?(record) }
+
+    context 'with no format' do
+      let(:record_format) { nil }
+
+      it 'returns false' do
+        expect(value).to be false
+      end
+    end
+
+    context 'with a weird format' do
+      let(:record_format) { PennMARC::TitleSuggestionWeightService::WEIRD_FORMATS.sample }
+
+      it 'returns true' do
+        expect(value).to be true
+      end
+    end
+
+    context 'with a non-weird format' do
+      let(:record_format) { PennMARC::TitleSuggestionWeightService::TARGETED_FORMATS.sample }
+
+      it 'returns false' do
+        expect(value).to be false
+      end
+    end
+  end
+
+  describe '.low_encoding_level?' do
+    before { allow(PennMARC::Encoding).to receive(:level_sort).with(record).and_return(encoding_sort_score) }
+
+    let(:value) { described_class.low_encoding_level?(record) }
+
+    context 'with no encoding level' do
+      let(:encoding_sort_score) { nil }
+
+      it 'returns false' do
+        expect(value).to be false
+      end
+    end
+
+    context 'with a low encoding level' do
+      let(:encoding_sort_score) { 11 }
+
+      it 'returns true' do
+        expect(value).to be true
+      end
+    end
+
+    context 'with a high encoding level' do
+      let(:encoding_sort_score) { 0 }
+
+      it 'returns false' do
+        expect(value).to be false
+      end
+    end
+  end
+
+  describe '.no_holdings?' do
+    before do
+      allow(PennMARC::Inventory).to receive(:physical).with(record).and_return(physical_holdings)
+      allow(PennMARC::Inventory).to receive(:electronic).with(record).and_return(electronic_holdings)
+    end
+
+    let(:value) { described_class.no_holdings?(record) }
+
+    context 'with neither physical nor electronic holdings' do
+      let(:physical_holdings) { [] }
+      let(:electronic_holdings) { [] }
+
+      it 'returns true' do
+        expect(value).to be true
+      end
+    end
+
+    context 'with only electronic holdings' do
+      let(:physical_holdings) { [] }
+      let(:electronic_holdings) { [instance_double(PennMARC::InventoryEntry::Electronic)] }
+
+      it 'returns false' do
+        expect(value).to be false
+      end
+    end
+
+    context 'with only physical holdings' do
+      let(:physical_holdings) { [instance_double(PennMARC::InventoryEntry::Physical)] }
+      let(:electronic_holdings) { [] }
+
+      it 'returns false' do
+        expect(value).to be false
+      end
+    end
+  end
 end
