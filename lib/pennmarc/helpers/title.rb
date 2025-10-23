@@ -38,6 +38,9 @@ module PennMARC
     NO_TITLE_PROVIDED = '[No title provided]'
 
     class << self
+      # Values for title suggester, including only ǂa and ǂb from
+      # {https://www.loc.gov/marc/bibliographic/bd245.html 245} field. Limits the output top 20 words and strip any
+      # trailing slashes.
       # @param record [MARC::Record]
       # @return [Array<String>] array of all title values for suggestion
       def suggest(record)
