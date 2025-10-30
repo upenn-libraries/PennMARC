@@ -49,15 +49,15 @@ module PennMARC
       end
 
       # @param record [MARC::Record]
-      # @return [Boolean, nil]
+      # @return [Boolean]
       def electronic_holdings?(record)
-        Inventory.electronic(record)&.any?
+        Inventory.electronic(record)&.any? || false
       end
 
       # @param record [MARC::Record]
       # @return [Boolean, nil]
       def physical_holdings?(record)
-        Inventory.physical(record)&.any?
+        Inventory.physical(record)&.any? || false
       end
 
       # @param record [MARC::Record]
@@ -81,7 +81,7 @@ module PennMARC
       # @param record [MARC::Record]
       # @return [Boolean]
       def no_holdings?(record)
-        !electronic_holdings?(record) && Inventory.physical(record)&.none?
+        !electronic_holdings?(record) && !physical_holdings?(record)
       end
 
       # @param record [MARC::Record]
