@@ -27,7 +27,7 @@ module PennMARC
 
     class << self
       # Calculate a weight for use in sorting good title suggestions from bad
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Integer]
       def weight(record)
         factors.reduce(BASE_WEIGHT) do |weight, (call, score)|
@@ -45,7 +45,7 @@ module PennMARC
         FACTORS
       end
 
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Boolean]
       def published_in_last_ten_years?(record)
         return false unless Date.publication(record).present?
@@ -53,43 +53,43 @@ module PennMARC
         Date.publication(record) > 10.years.ago
       end
 
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Boolean, nil]
       def electronic_holdings?(record)
         Inventory.electronic(record)&.any?
       end
 
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Boolean, nil]
       def physical_holdings?(record)
         Inventory.physical(record)&.any?
       end
 
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Boolean]
       def targeted_format?(record)
         (Format.facet(record) & TARGETED_FORMATS).any?
       end
 
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Boolean]
       def high_encoding_level?(record)
         Encoding.level_sort(record) == 0
       end
 
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Boolean]
       def weird_format?(record)
         (Format.facet(record) & WEIRD_FORMATS).any?
       end
 
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Boolean]
       def no_holdings?(record)
         !electronic_holdings?(record) && Inventory.physical(record)&.none?
       end
 
-      # @param [MARC::Record] record
+      # @param record [MARC::Record]
       # @return [Boolean]
       def low_encoding_level?(record)
         return false unless Encoding.level_sort(record).present?

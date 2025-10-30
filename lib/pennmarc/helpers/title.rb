@@ -39,7 +39,7 @@ module PennMARC
 
     class << self
       # Values for title suggester, including only ǂa and ǂb from
-      # {https://www.loc.gov/marc/bibliographic/bd245.html 245} field. Limits the output top 20 words and strip any
+      # {https://www.loc.gov/marc/bibliographic/bd245.html 245} field. Limits the output to 20 words and strips any
       # trailing slashes.
       # @param record [MARC::Record]
       # @return [Array<String>] array of all title values for suggestion
@@ -52,7 +52,7 @@ module PennMARC
         end
       end
 
-      # An integer value used for weighting title suggest values. See TitleSuggestionScale for logic.
+      # An integer value used for weighing title suggest values. See {PennMARC::TitleSuggestionWeightService} for logic.
       # @param record [MARC::Record]
       # @return [Integer, nil]
       def suggest_weight(record)
