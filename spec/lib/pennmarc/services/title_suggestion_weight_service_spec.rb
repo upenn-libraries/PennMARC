@@ -145,6 +145,54 @@ describe PennMARC::TitleSuggestionWeightService do
     end
   end
 
+  describe '.electronic_holdings?' do
+    before do
+      allow(PennMARC::Inventory).to receive(:electronic).with(record).and_return(holdings)
+    end
+
+    let(:value) { described_class.electronic_holdings?(record) }
+
+    context 'with electronic holdings' do
+      let(:holdings) { [PennMARC::InventoryEntry::Electronic] }
+
+      it 'returns true' do
+        expect(value).to be true
+      end
+    end
+
+    context 'without any holdings' do
+      let(:holdings) { [] }
+
+      it 'returns false' do
+        expect(value).to be false
+      end
+    end
+  end
+
+  describe '.physical_holdings?' do
+    before do
+      allow(PennMARC::Inventory).to receive(:physical).with(record).and_return(holdings)
+    end
+
+    let(:value) { described_class.physical_holdings?(record) }
+
+    context 'with physical holdings' do
+      let(:holdings) { [PennMARC::InventoryEntry::Physical] }
+
+      it 'returns true' do
+        expect(value).to be true
+      end
+    end
+
+    context 'without any holdings' do
+      let(:holdings) { [] }
+
+      it 'returns false' do
+        expect(value).to be false
+      end
+    end
+  end
+
   describe '.no_holdings?' do
     before do
       allow(PennMARC::Inventory).to receive(:physical).with(record).and_return(physical_holdings)
