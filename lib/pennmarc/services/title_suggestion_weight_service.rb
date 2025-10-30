@@ -34,7 +34,7 @@ module PennMARC
     class << self
       # Calculate a weight for use in sorting good title suggestions from bad
       # @param record [MARC::Record]
-      # @return [Integer, nil]
+      # @return [Integer]
       def weight(record)
         factors.reduce(BASE_WEIGHT) do |weight, (call, score)|
           weight + (public_send(call, record) ? score : 0)
@@ -61,7 +61,7 @@ module PennMARC
       end
 
       # @param record [MARC::Record]
-      # @return [Boolean, nil]
+      # @return [Boolean]
       def physical_holdings?(record)
         Inventory.physical(record)&.any? || false
       end

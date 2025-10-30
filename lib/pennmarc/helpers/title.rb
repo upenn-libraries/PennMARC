@@ -54,7 +54,7 @@ module PennMARC
 
       # An integer value used for weighing title suggest values. See {PennMARC::TitleSuggestionWeightService} for logic.
       # @param record [MARC::Record]
-      # @return [Integer, nil]
+      # @return [Integer]
       def suggest_weight(record)
         PennMARC::TitleSuggestionWeightService.weight record
       end
