@@ -31,12 +31,7 @@ module PennMARC
       # @return [Integer]
       def weight(record)
         factors.reduce(BASE_WEIGHT) do |weight, (call, score)|
-          if respond_to?(call, true)
-            weight + (public_send(call, record) ? score : 0)
-          else
-            warn "Unknown weighting method: #{call}"
-            next
-          end
+          weight + (public_send(call, record) ? score : 0)
         end
       end
 

@@ -4,16 +4,6 @@ describe PennMARC::TitleSuggestionWeightService do
   let(:record) { instance_double MARC::Record }
 
   describe '.weight' do
-    context 'with a weight factor that has no corresponding method' do
-      let(:factors) { [[:bad_name, 0]] }
-
-      before { allow(described_class).to receive(:factors).and_return(factors) }
-
-      it 'logs a warning to STDERR' do
-        expect { described_class.weight(record) }.to output("Unknown weighting method: bad_name\n").to_stderr
-      end
-    end
-
     context 'with defined factors' do
       before do
         allow(described_class).to receive_messages(
