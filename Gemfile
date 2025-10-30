@@ -19,6 +19,7 @@ group :test do
 end
 
 group :development do
-  gem 'webrick', '~> 1.8'
+  gem 'puma'
+  gem 'rackup'
   gem 'yard', '~> 0.9'
 end
