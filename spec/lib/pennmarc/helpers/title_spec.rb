@@ -21,13 +21,12 @@ describe 'PennMARC::Title' do
           b: 'Containing many words with that may or may not have many characters /' }
       end
 
-      it 'truncates the title to twenty words' do
-        word_count = helper.suggest(record).first.split(' ').count
-        expect(word_count).to eq 20
-      end
-
-      it 'adds a trailing ellipsis' do
-        expect(helper.suggest(record).first).to end_with '...'
+      it 'truncates the title to twenty words and adds a trailing ellipsis' do
+        truncated_suggestion = helper.suggest(record).first
+        expect(truncated_suggestion).to eq(
+          'The Book of Very Short Words With a Lot of Words Containing many words with that may or may not...'
+        )
+        expect(truncated_suggestion.split(' ').count).to eq 20
       end
     end
 
