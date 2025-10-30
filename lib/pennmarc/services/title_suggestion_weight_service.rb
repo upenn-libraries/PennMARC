@@ -25,6 +25,12 @@ module PennMARC
     # Score lower these formats
     WEIRD_FORMATS = [Format::OTHER, Format::THREE_D_OBJECT].freeze
 
+    # See #{PennMARC::EncodingLevel} for more of the logic that determines sort values
+    # An encoding sort level of this value is considered good
+    HIGH_ENCODING_SORT_LEVEL = 0
+    # An encoding sort level higher than this is considered poor
+    LOW_ENCODING_SORT_LEVEL = 4
+
     class << self
       # Calculate a weight for use in sorting good title suggestions from bad
       # @param record [MARC::Record]
@@ -69,7 +75,7 @@ module PennMARC
       # @param record [MARC::Record]
       # @return [Boolean]
       def high_encoding_level?(record)
-        Encoding.level_sort(record) == 0
+        Encoding.level_sort(record) == HIGH_ENCODING_SORT_LEVEL
       end
 
       # @param record [MARC::Record]
@@ -89,7 +95,7 @@ module PennMARC
       def low_encoding_level?(record)
         return false unless Encoding.level_sort(record).present?
 
-        Encoding.level_sort(record) > 4
+        Encoding.level_sort(record) > LOW_ENCODING_SORT_LEVEL
       end
     end
   end

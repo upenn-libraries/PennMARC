@@ -137,7 +137,7 @@ describe PennMARC::TitleSuggestionWeightService do
     end
 
     context 'with a high encoding level' do
-      let(:encoding_sort_score) { 0 }
+      let(:encoding_sort_score) { PennMARC::TitleSuggestionWeightService::HIGH_ENCODING_SORT_LEVEL }
 
       it 'returns false' do
         expect(value).to be false
