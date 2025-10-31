@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../services/title_suggestion_weight_service'
+
 module PennMARC
   # This helper contains logic for parsing out Title and Title-related fields.
   class Title < Helper
@@ -36,6 +38,27 @@ module PennMARC
     NO_TITLE_PROVIDED = '[No title provided]'
 
     class << self
+      # Values for title suggester, including only ǂa and ǂb from
+      # {https://www.loc.gov/marc/bibliographic/bd245.html 245} field. Limits the output to 20 words and strips any
+      # trailing slashes.
+      # @param record [MARC::Record]
+      # @return [Array<String>] array of all title values for suggestion
+      def suggest(record)
+        record.fields(%w[245]).filter_map do |field|
+          join_subfields(field, &subfield_in?(%w[a b]))
+            .squish
+            .truncate_words(20)
+            .sub(%r{ /$}, '')
+        end
+      end
+
+      # An integer value used for weighing title suggest values. See {PennMARC::TitleSuggestionWeightService} for logic.
+      # @param record [MARC::Record]
+      # @return [Integer]
+      def suggest_weight(record)
+        PennMARC::TitleSuggestionWeightService.weight record
+      end
+
       # Main Title Search field. Takes from {https://www.loc.gov/marc/bibliographic/bd245.html 245} and linked 880.
       # @note Ported from get_title_1_search_values.
       # @param record [MARC::Record]

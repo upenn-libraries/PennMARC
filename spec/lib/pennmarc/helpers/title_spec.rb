@@ -6,6 +6,39 @@ describe 'PennMARC::Title' do
   let(:fields) { [marc_field(tag: '245', subfields: subfields)] }
   let(:record) { marc_record fields: fields, leader: leader }
 
+  describe '.suggest' do
+    context 'with slashes in the title as well as at the end of ǂb' do
+      let(:subfields) { { a: 'Title /', b: 'Subtitle /' } }
+
+      it 'removes only the trailing slash' do
+        expect(helper.suggest(record).first).to eq 'Title / Subtitle'
+      end
+    end
+
+    context 'with a long title more than twenty words' do
+      let(:subfields) do
+        { a: 'The Book of Very Short Words With a Lot of Words',
+          b: 'Containing many words with that may or may not have many characters /' }
+      end
+
+      it 'truncates the title to twenty words and adds a trailing ellipsis' do
+        truncated_suggestion = helper.suggest(record).first
+        expect(truncated_suggestion).to eq(
+          'The Book of Very Short Words With a Lot of Words Containing many words with that may or may not...'
+        )
+        expect(truncated_suggestion.split(' ').count).to eq 20
+      end
+    end
+
+    context 'with other subfields present' do
+      let(:subfields) { { a: 'Title', b: 'Subtitle', c: 'Author' } }
+
+      it 'returns only title fields' do
+        expect(helper.suggest(record).first).not_to include 'Author'
+      end
+    end
+  end
+
   describe '.search' do
     let(:fields) do
       [marc_field(tag: '245', subfields: { a: 'Title', b: 'Subtitle', c: 'Responsibility', h: 'Medium' }),

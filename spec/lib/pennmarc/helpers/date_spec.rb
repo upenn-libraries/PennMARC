@@ -90,7 +90,7 @@ describe 'PennMARC::Date' do
         expect {
           helper.added(record)
         }.to output('Error parsing date in date added subfield. mmsid: mmsid, value: invalid date, ' \
-                    "error: invalid date or strptime format - `invalid date' `%Y-%m-%d %H:%M:%S'\n").to_stdout
+                    "error: invalid date or strptime format - `invalid date' `%Y-%m-%d %H:%M:%S'\n").to_stderr
       end
     end
   end
@@ -120,7 +120,7 @@ describe 'PennMARC::Date' do
         expect {
           helper.last_updated(record)
         }.to output('Error parsing last updated date. mmsid: mmsid, value: invalid date, ' \
-                    "error: invalid date or strptime format - `invalid date' `%Y%m%d%H%M%S.%N'\n").to_stdout
+                    "error: invalid date or strptime format - `invalid date' `%Y%m%d%H%M%S.%N'\n").to_stderr
       end
     end
   end

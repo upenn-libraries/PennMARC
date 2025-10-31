@@ -36,7 +36,7 @@ module PennMARC
 
             Time.strptime(date_added, format)
           rescue StandardError => e
-            puts 'Error parsing date in date added subfield. ' \
+            warn 'Error parsing date in date added subfield. ' \
                  "mmsid: #{Identifier.mmsid(record)}, value: #{date_added}, error: #{e}"
             nil
           end
@@ -59,7 +59,7 @@ module PennMARC
 
             Time.strptime(date_time_string, '%Y%m%d%H%M%S.%N')
           rescue StandardError => e
-            puts 'Error parsing last updated date. ' \
+            warn 'Error parsing last updated date. ' \
                  "mmsid: #{Identifier.mmsid(record)}, value: #{date_time_string}, error: #{e}"
             nil
           end
