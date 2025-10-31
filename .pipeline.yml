@@ -1,3 +1,7 @@
+variables:
+  FF_SCRIPT_SECTIONS: "true"
+  GIT_CLONE_PATH: "${CI_BUILDS_DIR}/${CI_PROJECT_NAME}/${CI_JOB_ID}"
+
 include:
   - component: gitlab.library.upenn.edu/devops/gitlab/components/general/install_hashicorp_vault@~latest
   - component: gitlab.library.upenn.edu/devops/gitlab/components/general/vault_jwt_auth@~latest
