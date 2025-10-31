@@ -1,4 +1,8 @@
 ---
+variables:
+  FF_SCRIPT_SECTIONS: "true"
+  GIT_CLONE_PATH: "${CI_BUILDS_DIR}/${CI_PROJECT_NAME}/${CI_JOB_ID}"
+
 include:
   - template: Jobs/Secret-Detection.gitlab-ci.yml
 
