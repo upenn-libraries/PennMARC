@@ -119,7 +119,8 @@ describe 'PennMARC::Title' do
     it 'returns auxiliary journal search titles' do
       expect(helper.journal_search_aux(record)).to contain_exactly('Uniform Title', 'Alternative Uniform Title',
                                                                    'Host Item - Uniform title Host Item - Title',
-                                                                   'Personal Entry Title', 'Formatted Contents Note Title')
+                                                                   'Personal Entry Title',
+                                                                   'Formatted Contents Note Title')
     end
 
     context 'when the record is not a serial' do
