@@ -147,7 +147,7 @@ module PennMARC
       string.strip
     end
 
-    # @param trailer [Symbol|String] to target for removal
+    # @param trailer [Symbol, String] to target for removal
     # @param string [String] to modify
     # @return [String]
     def trim_trailing(trailer, string)

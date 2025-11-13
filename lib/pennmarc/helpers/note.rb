@@ -156,7 +156,7 @@ module PennMARC
         system_details_notes += record.fields(%w[344 880]).filter_map do |field|
           next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^344/)
 
-          sub3_and_other_subs(field, &subfield_in?(%w[a b c d e f g h]))
+          sub3_and_other_subs(field, &subfield_in?(%w[a b c d e f g h i j]))
         end
         system_details_notes += record.fields(%w[345 346 880]).filter_map do |field|
           next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^(345|346)/)
