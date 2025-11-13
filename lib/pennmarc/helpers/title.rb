@@ -77,7 +77,7 @@ module PennMARC
       # @return [Array<String>] array of auxiliary title values for search
       def search_aux(record)
         values = search_aux_values(record: record, title_type: :main, &subfield_not_in?(%w[c 6 8])) +
-                 search_aux_values(record: record, title_type: :related, &subfield_not_in?(%w[s t])) +
+                 search_aux_values(record: record, title_type: :related, &subfield_in?(%w[s t])) +
                  search_aux_values(record: record, title_type: :entity, &subfield_in?(%w[t])) +
                  search_aux_values(record: record, title_type: :note, &subfield_in?(%w[t]))
         values.uniq
@@ -105,7 +105,7 @@ module PennMARC
       # @return [Array<String>] auxiliary journal title information for search
       def journal_search_aux(record)
         values = search_aux_values(record: record, title_type: :main, journal: true, &subfield_not_in?(%w[c 6 8])) +
-                 search_aux_values(record: record, title_type: :related, journal: true, &subfield_not_in?(%w[s t])) +
+                 search_aux_values(record: record, title_type: :related, journal: true, &subfield_in?(%w[s t])) +
                  search_aux_values(record: record, title_type: :entity, journal: true, &subfield_in?(%w[t])) +
                  search_aux_values(record: record, title_type: :note, journal: true, &subfield_in?(%w[t]))
         values.uniq

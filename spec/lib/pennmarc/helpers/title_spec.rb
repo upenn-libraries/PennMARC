@@ -57,7 +57,8 @@ describe 'PennMARC::Title' do
     let(:fields) do
       [marc_field(tag: '130', subfields: { a: 'Uniform Title', c: '130 not included' }),
        marc_field(tag: '880', subfields: { '6': '130', a: 'Alternative Uniform Title' }),
-       marc_field(tag: '773', subfields: { a: 'Host Uniform Title', s: '773 not included' }),
+       marc_field(tag: '773', subfields: { a: 'Host Item - Main entry heading', s: 'Host Item - Uniform title',
+                                           t: 'Host Item - Title' }),
        marc_field(tag: '700', subfields: { t: 'Personal Entry Title', s: '700 not included' }),
        marc_field(tag: '505', subfields: { t: 'Invalid Formatted Contents Note Title' }, indicator1: 'invalid'),
        marc_field(tag: '505', subfields: { t: 'Formatted Contents Note Title', s: '505 not included' },
@@ -65,18 +66,18 @@ describe 'PennMARC::Title' do
     end
 
     it 'returns auxiliary titles' do
-      expect(helper.search_aux(record)).to contain_exactly('Uniform Title', 'Host Uniform Title',
-                                                           'Alternative Uniform Title', 'Personal Entry Title',
-                                                           'Formatted Contents Note Title')
+      expect(helper.search_aux(record)).to contain_exactly('Uniform Title', 'Alternative Uniform Title',
+                                                           'Host Item - Uniform title Host Item - Title',
+                                                           'Personal Entry Title', 'Formatted Contents Note Title')
     end
 
     context 'when the leader indicates the record is a serial' do
       let(:leader) { 'ZZZZZnasZa22ZZZZZzZZ4500' }
 
       it 'returns auxiliary titles' do
-        expect(helper.search_aux(record)).to contain_exactly('Uniform Title', 'Host Uniform Title',
-                                                             'Alternative Uniform Title', 'Personal Entry Title',
-                                                             'Formatted Contents Note Title')
+        expect(helper.search_aux(record)).to contain_exactly('Uniform Title', 'Alternative Uniform Title',
+                                                             'Host Item - Uniform title Host Item - Title',
+                                                             'Personal Entry Title', 'Formatted Contents Note Title')
       end
     end
   end
@@ -107,7 +108,8 @@ describe 'PennMARC::Title' do
     let(:fields) do
       [marc_field(tag: '130', subfields: { a: 'Uniform Title', c: '130 not included' }),
        marc_field(tag: '880', subfields: { '6': '130', a: 'Alternative Uniform Title' }),
-       marc_field(tag: '773', subfields: { a: 'Host Uniform Title', s: '773 not included' }),
+       marc_field(tag: '773', subfields: { a: 'Host Item - Main entry heading', s: 'Host Item - Uniform title',
+                                           t: 'Host Item - Title' }),
        marc_field(tag: '700', subfields: { t: 'Personal Entry Title', s: '700 not included' }),
        marc_field(tag: '505', subfields: { t: 'Invalid Formatted Contents Note Title' }, indicator1: 'invalid'),
        marc_field(tag: '505', subfields: { t: 'Formatted Contents Note Title', s: '505 not included' },
@@ -116,8 +118,8 @@ describe 'PennMARC::Title' do
 
     it 'returns auxiliary journal search titles' do
       expect(helper.journal_search_aux(record)).to contain_exactly('Uniform Title', 'Alternative Uniform Title',
-                                                                   'Host Uniform Title', 'Personal Entry Title',
-                                                                   'Formatted Contents Note Title')
+                                                                   'Host Item - Uniform title Host Item - Title',
+                                                                   'Personal Entry Title', 'Formatted Contents Note Title')
     end
 
     context 'when the record is not a serial' do
