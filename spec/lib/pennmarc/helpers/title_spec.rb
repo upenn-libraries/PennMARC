@@ -107,7 +107,7 @@ describe 'PennMARC::Title' do
     let(:leader) { 'ZZZZZnasZa22ZZZZZzZZ4500' }
     let(:fields) do
       [marc_field(tag: '130', subfields: { a: 'Uniform Title', c: '130 not included' }),
-       marc_field(tag: '222', subfields: { a: 'Key Title' }),
+       marc_field(tag: '222', subfields: { a: 'Key Title', b: '(Qualifying Info)' }),
        marc_field(tag: '880', subfields: { '6': '130', a: 'Alternative Uniform Title' }),
        marc_field(tag: '773', subfields: { a: 'Host Item - Main entry heading', s: 'Host Item - Uniform title',
                                            t: 'Host Item - Title' }),
@@ -119,7 +119,7 @@ describe 'PennMARC::Title' do
 
     it 'returns auxiliary journal search titles' do
       expect(helper.journal_search_aux(record)).to contain_exactly('Uniform Title', 'Alternative Uniform Title',
-                                                                   'Key Title',
+                                                                   'Key Title (Qualifying Info)',
                                                                    'Host Item - Uniform title Host Item - Title',
                                                                    'Personal Entry Title',
                                                                    'Formatted Contents Note Title')
