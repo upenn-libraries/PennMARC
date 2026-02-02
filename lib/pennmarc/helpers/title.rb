@@ -8,6 +8,7 @@ module PennMARC
     # We use these fields when retrieving auxiliary titles in the *search_aux methods:
     # {https://www.loc.gov/marc/bibliographic/bd130.html 130},
     # {https://www.loc.gov/marc/bibliographic/bd210.html 210},
+    # {https://www.loc.gov/marc/bibliographic/bd222.html 222},
     # {https://www.loc.gov/marc/bibliographic/bd245.html 245},
     # {https://www.loc.gov/marc/bibliographic/bd246.html 246},
     # {https://www.loc.gov/marc/bibliographic/bd247.html 247},
