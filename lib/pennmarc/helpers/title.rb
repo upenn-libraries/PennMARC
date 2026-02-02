@@ -8,6 +8,7 @@ module PennMARC
     # We use these fields when retrieving auxiliary titles in the *search_aux methods:
     # {https://www.loc.gov/marc/bibliographic/bd130.html 130},
     # {https://www.loc.gov/marc/bibliographic/bd210.html 210},
+    # {https://www.loc.gov/marc/bibliographic/bd222.html 222},
     # {https://www.loc.gov/marc/bibliographic/bd245.html 245},
     # {https://www.loc.gov/marc/bibliographic/bd246.html 246},
     # {https://www.loc.gov/marc/bibliographic/bd247.html 247},
@@ -25,7 +26,7 @@ module PennMARC
     # {https://www.loc.gov/marc/bibliographic/bd711.html 711},
     # {https://www.loc.gov/marc/bibliographic/bd505.html 505}
     AUX_TITLE_TAGS = {
-      main: %w[130 210 240 245 246 247 440 490 730 740 830],
+      main: %w[130 210 222 240 245 246 247 440 490 730 740 830],
       related: %w[773 774 780 785],
       entity: %w[700 710 711],
       note: %w[505]
