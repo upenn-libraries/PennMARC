@@ -57,6 +57,18 @@ describe 'PennMARC::Subject' do
         expect(values.first).to eq 'Unicorns dpc Depicted'
       end
     end
+
+    context 'with subject heading subdivisions' do
+      let(:fields) do
+        [marc_field(tag: '610', indicator2: '0', subfields: { a: 'University of Pennsylvania',
+                                                              v: 'Ivy league', x: 'Higher education',
+                                                              y: '19th century', z: 'Philly' })]
+      end
+
+      it 'includes subdivisions' do
+        expect(values).to contain_exactly('University of Pennsylvania Ivy league Higher education 19th century Philly')
+      end
+    end
   end
 
   describe '.facet' do
