@@ -11,6 +11,7 @@ gem 'rake', '~> 13.0'
 gem 'upennlib-rubocop', require: false
 
 group :test, :development do
+  gem 'debug', platforms: %i[mri mingw x64_mingw]
   gem 'rspec', '~> 3.12'
 end
 

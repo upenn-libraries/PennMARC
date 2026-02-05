@@ -11,14 +11,16 @@ describe 'PennMARC::Creator' do
       let(:fields) do
         [marc_field(tag: '100', subfields: { a: 'Surname, Name,', '0': 'http://cool.uri/12345',
                                              e: 'author', d: '1900-2000' }),
-         marc_field(tag: '880', subfields: { a: 'Surname, Alternative,', '6': '100' })]
+         marc_field(tag: '880', subfields: { a: 'Surname, Alternative,', '6': '100' }),
+         marc_field(tag: '700', subfields: { a: 'Surname, Third', e: 'author.', '6': '100' })]
       end
 
       it 'contains the expected search field values for a single author work' do
         expect(helper.search(record, relator_map: mapping)).to contain_exactly(
           'Name Surname http://cool.uri/12345 1900-2000, author.',
           'Surname, Name http://cool.uri/12345 1900-2000, author.',
-          'Alternative Surname'
+          'Alternative Surname',
+          'Third Surname'
         )
       end
     end
