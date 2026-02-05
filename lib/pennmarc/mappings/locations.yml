@@ -995,12 +995,11 @@ pahref:
     - Pennsylvania Hospital Library
   display: Pennsylvania Hospital Library - Reference
 pahres:
-  specific_location: Pennsylvania Hospital Library - Reserve
+  specific_location: Pennsylvania Hospital Library
   library:
     - Health Sciences Libraries
     - Pennsylvania Hospital Library
-    - Reserve
-  display: Pennsylvania Hospital Library - Reserve
+  display: Pennsylvania Hospital Library
 pahresrm:
   specific_location: Pennsylvania Hospital Library - Reserve Room
   library:
