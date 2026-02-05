@@ -357,25 +357,33 @@ module PennMARC
       # @param relator_map [Hash]
       # @return [Array<String>] name values from given tags
       def name_search_values(record:, tags:, relator_map:)
-        acc = record.fields(tags).filter_map do |field|
-          name_from_main_entry field, relator_map, should_convert_name_order: false, for_display: false
+        # Standard tags
+        standard_names = record.fields(tags).flat_map do |field|
+          [false, true].map do |should_convert|
+            name_from_main_entry(field, relator_map, should_convert_name_order: should_convert,
+                                                     for_display: false)
+          end
         end
 
-        acc += record.fields(tags).filter_map do |field|
-          name_from_main_entry field, relator_map, should_convert_name_order: true, for_display: false
+        # Author 700 fields
+        added_entry_personal_names = record.fields('700').filter_map do |field|
+          next unless describes_author?(field)
+
+          convert_name_order(field['a']) if field['a']
         end
 
-        acc += record.fields(['880']).filter_map do |field|
+        # Linked 880 fields
+        linked_names = record.fields('880').filter_map do |field|
           next unless subfield_value?(field, '6', /^(#{tags.join('|')})/)
 
-          suba = field.find_all(&subfield_in?(%w[a])).filter_map { |sf|
-            convert_name_order(sf.value)
-          }.first
-          oth = join_and_squish(field.find_all(&subfield_not_in?(%w[6 8 a t])).map(&:value))
-          join_and_squish [suba, oth]
+          sub_a = field['a'] ? convert_name_order(field['a']) : nil
+          others = join_and_squish(field.subfields.reject { |sf| %w[6 8 a t].include?(sf.code) }.map(&:value))
+
+          join_and_squish([sub_a, others])
         end
 
-        acc.uniq
+        # Merge and deduplicate
+        (standard_names + added_entry_personal_names + linked_names).compact.uniq
       end
 
       # Extract the information we care about from 1xx fields, map relator codes, and use appropriate punctuation
