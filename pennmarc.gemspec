@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'lcsort', '~> 0.9'
   s.add_dependency 'library_stdnums', '~> 1.6'
   s.add_dependency 'marc', '~> 1.4'
-  s.add_dependency 'nokogiri', '~> 1.15'
+  s.add_dependency 'nokogiri', '~> 1.19'
 
   s.metadata['rubygems_mfa_required'] = 'false'
 end
