@@ -98,10 +98,10 @@ module PennMARC
       def childrens_show(record, override: true)
         values = subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '1' })
                  .filter_map { |field|
-          term_hash = build_subject_hash(field)
-          next if term_hash.blank? || term_hash[:count]&.zero?
+                   term_hash = build_subject_hash(field)
+                   next if term_hash.blank? || term_hash[:count]&.zero?
 
-          format_term type: :display, term: term_hash
+                   format_term type: :display, term: term_hash
         }.uniq
         override ? HeadingControl.term_override(values) : values
       end
@@ -114,10 +114,10 @@ module PennMARC
       def medical_show(record, override: true)
         values = subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '2' })
                  .filter_map { |field|
-          term_hash = build_subject_hash(field)
-          next if term_hash.blank? || term_hash[:count]&.zero?
+                   term_hash = build_subject_hash(field)
+                   next if term_hash.blank? || term_hash[:count]&.zero?
 
-          format_term type: :display, term: term_hash
+                   format_term type: :display, term: term_hash
         }.uniq
         override ? HeadingControl.term_override(values) : values
       end

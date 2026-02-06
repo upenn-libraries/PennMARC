@@ -52,7 +52,7 @@ module PennMARC
         added_2xx = record.fields(%w[260 261 262])
                           .first(1)
                           .map do |field|
-          join_subfields(field, &subfield_not_in?(['6'])).squish
+                            join_subfields(field, &subfield_not_in?(['6'])).squish
         end
 
         if added_2xx.present?

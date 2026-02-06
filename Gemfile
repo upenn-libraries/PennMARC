@@ -22,5 +22,5 @@ end
 group :development do
   gem 'puma'
   gem 'rackup'
-  gem 'yard', '~> 0.9'
+  gem 'yard'
 end
