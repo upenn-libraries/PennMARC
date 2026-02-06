@@ -69,8 +69,11 @@ module PennMARC
           term_hash = build_subject_hash(field)
           next if term_hash.blank? || term_hash[:count]&.zero?
 
-          format_term type: :facet, term: term_hash
-        }.uniq
+          composed_heading = format_term type: :facet, term: term_hash
+
+          [composed_heading, lcsh_subfield_a(field)].compact_blank
+        }.flatten.uniq
+
         override ? HeadingControl.term_override(values) : values
       end
 
@@ -287,6 +290,27 @@ module PennMARC
           end
         end
         term_info
+      end
+
+      # Return subfield 'a' of a library of congress subject heading
+      # @param field [MARC::Field]
+      # @return [String]
+      def lcsh_subfield_a(field)
+        return unless lcsh?(field)
+
+        trim_trailing(:comma, subfield_values(field, 'a').first)
+      end
+
+      # Determine if field contains a library of congress subject heading
+      # @param field [MARC::Field]
+      # @return [Boolean]
+      def lcsh?(field)
+        return false unless field.respond_to?(:indicator2)
+
+        return true if field.indicator2.in? %w[0]
+        return true if field.indicator2 == '7' && subfield_values(field, '2').first == 'lcsh'
+
+        false
       end
 
       # Determine if a field should be considered for Subject search inclusion. It must be either contained in
