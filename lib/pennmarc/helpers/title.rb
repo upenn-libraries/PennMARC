@@ -231,9 +231,9 @@ module PennMARC
         end
         other_titles += record.fields('740')
                               .filter_map do |field|
-          next unless field.indicator2.in? ['', ' ', '0', '1', '3']
+                                next unless field.indicator2.in? ['', ' ', '0', '1', '3']
 
-          join_subfields(field, &subfield_not_in?(%w[5 6 8]))
+                                join_subfields(field, &subfield_not_in?(%w[5 6 8]))
         end
         titles = other_titles + record.fields('880').filter_map do |field|
           next unless subfield_value? field, '6', /^(246|740)/

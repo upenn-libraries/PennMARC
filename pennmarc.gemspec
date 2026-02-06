@@ -18,10 +18,10 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 3.2'
 
-  s.add_dependency 'activesupport', '>= 7'
+  s.add_dependency 'activesupport', '>= 8'
   s.add_dependency 'lcsort', '~> 0.9'
   s.add_dependency 'library_stdnums', '~> 1.6'
-  s.add_dependency 'marc', '~> 1.2'
+  s.add_dependency 'marc', '~> 1.4'
   s.add_dependency 'nokogiri', '~> 1.15'
 
   s.metadata['rubygems_mfa_required'] = 'false'
