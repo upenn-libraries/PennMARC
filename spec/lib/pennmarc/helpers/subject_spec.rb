@@ -186,9 +186,9 @@ describe 'PennMARC::Subject' do
       let(:fields) do
         [marc_field(tag: '650', indicator2: '0', subfields: { a: 'Franklin, Benjamin,', d: '1706-1790',
                                                               x: 'Books and reading' }),
-         marc_field(tag: '650', indicator2: '7',
+         marc_field(tag: '610', indicator2: '7',
                     subfields: { '2': 'lcsh', a: 'Philadelphia (Pa.)', y: '18th century.' }),
-         marc_field(tag: '650', indicator2: '7',
+         marc_field(tag: '600', indicator2: '7',
                     subfields: { '2': 'fast', a: 'Do not decompose', v: 'Penn Libraries' })]
       end
 
