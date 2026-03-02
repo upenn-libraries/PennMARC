@@ -192,7 +192,7 @@ describe 'PennMARC::Subject' do
                     subfields: { '2': 'fast', a: 'Do not decompose', v: 'Penn Libraries' })]
       end
 
-      it 'returns decomposed subfield "a" values for library of congressional subject headings' do
+      it 'returns decomposed subfield "a" values for library of congress subject headings' do
         expect(values).to contain_exactly('Franklin, Benjamin, 1706-1790--Books and reading',
                                           'Philadelphia (Pa.)--18th century',
                                           'Do not decompose--Penn Libraries',
@@ -259,7 +259,8 @@ describe 'PennMARC::Subject' do
 
       it 'properly handles punctuation in subject parts' do
         expect(values).to contain_exactly 'Franklin, Benjamin, 1706-1790.',
-                                          'Franklin, Benjamin, 1706-1790--As inventor.', 'Franklin stoves.'
+                                          'Franklin, Benjamin, 1706-1790--As inventor.', 'Franklin stoves.',
+                                          'Franklin, Benjamin.'
       end
     end
 
@@ -358,6 +359,24 @@ describe 'PennMARC::Subject' do
           'History.', "#{PennMARC::Mappers.headings_to_remove.first}.",
           "#{PennMARC::Mappers.heading_overrides.first[0]}."
         )
+      end
+    end
+
+    context 'with a record with subject heading subdivisions' do
+      let(:fields) do
+        [marc_field(tag: '650', indicator2: '0', subfields: { a: 'Franklin, Benjamin,', d: '1706-1790',
+                                                              x: 'Books and reading' }),
+         marc_field(tag: '610', indicator2: '7',
+                    subfields: { '2': 'lcsh', a: 'Philadelphia (Pa.)', y: '18th century.' }),
+         marc_field(tag: '600', indicator2: '7',
+                    subfields: { '2': 'fast', a: 'Do not decompose', v: 'Penn Libraries' })]
+      end
+
+      it 'returns decomposed subfield "a" values for library of congress subject headings' do
+        expect(values).to contain_exactly('Franklin, Benjamin, 1706-1790--Books and reading.',
+                                          'Philadelphia (Pa.)--18th century.',
+                                          'Do not decompose--Penn Libraries.',
+                                          'Franklin, Benjamin.', 'Philadelphia (Pa.).')
       end
     end
   end
