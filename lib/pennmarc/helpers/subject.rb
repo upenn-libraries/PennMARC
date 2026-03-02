@@ -69,9 +69,10 @@ module PennMARC
           term_hash = build_subject_hash(field)
           next if term_hash.blank? || term_hash[:count]&.zero?
 
-          composed_heading = format_term type: :facet, term: term_hash
+          heading = format_term type: :facet, term: term_hash
+          subfield_a = term_hash[:subfield_a] if term_hash[:lcsh] && term_hash[:subfield_a]
 
-          [composed_heading, lcsh_subfield_a(field)].compact_blank
+          [heading, subfield_a].compact_blank
         }.flatten.uniq
 
         override ? HeadingControl.term_override(values) : values
@@ -88,8 +89,11 @@ module PennMARC
           term_hash = build_subject_hash(field)
           next if term_hash.blank? || term_hash[:count]&.zero?
 
-          format_term type: :display, term: term_hash
-        }.uniq
+          heading = format_term type: :display, term: term_hash
+          subfield_a = "#{term_hash[:subfield_a].delete_suffix('.')}." if term_hash[:lcsh] && term_hash[:subfield_a]
+
+          [heading, subfield_a].compact_blank
+        }.flatten.uniq
         override ? HeadingControl.term_override(values) : values
       end
 
@@ -249,7 +253,9 @@ module PennMARC
       def build_subject_hash(field)
         term_info = { count: 0, parts: [], append: [], uri: nil,
                       local: field.indicator2 == '4' || field.tag.starts_with?('69'), # local subject heading
-                      vernacular: field.tag == '880' }
+                      vernacular: field.tag == '880',
+                      subfield_a: nil,
+                      lcsh: lcsh?(field) }
         field.each do |subfield|
           case subfield.code
           when '0', '6', '8', '5', '7'
@@ -266,6 +272,7 @@ module PennMARC
 
             term_info[:parts] << subfield.value.strip
             term_info[:count] += 1
+            term_info[:subfield_a] = trim_trailing(:comma, subfield.value.strip)
           when '2'
             term_info[:source] = subfield.value.strip
           when 'e', 'w'
@@ -290,15 +297,6 @@ module PennMARC
           end
         end
         term_info
-      end
-
-      # Return subfield 'a' of a library of congress subject heading
-      # @param field [MARC::Field]
-      # @return [String]
-      def lcsh_subfield_a(field)
-        return unless lcsh?(field)
-
-        trim_trailing(:comma, subfield_values(field, 'a').first)
       end
 
       # Determine if field contains a library of congress subject heading
