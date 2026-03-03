@@ -59,6 +59,7 @@ module PennMARC
       end
 
       # All Subjects for faceting
+      # When a library of congress subject heading has subdivisions, we also facet the decomposed main term ($a)
       #
       # @note this is ported mostly form MG's new-style Subject parsing
       # @param record [MARC::Record]
@@ -70,9 +71,9 @@ module PennMARC
           next if term_hash.blank? || term_hash[:count]&.zero?
 
           heading = format_term type: :facet, term: term_hash
-          subfield_a = term_hash[:subfield_a] if term_hash[:lcsh] && term_hash[:subfield_a]
+          main_term = trim_trailing(:period, term_hash[:subfield_a]) if term_hash[:lcsh] && term_hash[:subfield_a]
 
-          [heading, subfield_a].compact_blank
+          [heading, main_term].compact_blank
         }.flatten.uniq
 
         override ? HeadingControl.term_override(values) : values
@@ -80,6 +81,7 @@ module PennMARC
 
       # All Subjects for display. This includes all {DISPLAY_TAGS} and {LOCAL_TAGS}. For tags that specify a source,
       # only those with an allowed source code (see ALLOWED_SOURCE_CODES) are included.
+      # When a library of congress subject heading has subdivisions, we also display the decomposed main term ($a)
       #
       # @param record [MARC::Record]
       # @param override [Boolean] to remove undesirable terms or not
@@ -90,9 +92,9 @@ module PennMARC
           next if term_hash.blank? || term_hash[:count]&.zero?
 
           heading = format_term type: :display, term: term_hash
-          subfield_a = "#{term_hash[:subfield_a].delete_suffix('.')}." if term_hash[:lcsh] && term_hash[:subfield_a]
+          main_term = "#{trim_trailing(:period, term_hash[:subfield_a])}." if term_hash[:lcsh] && term_hash[:subfield_a]
 
-          [heading, subfield_a].compact_blank
+          [heading, main_term].compact_blank
         }.flatten.uniq
         override ? HeadingControl.term_override(values) : values
       end
@@ -249,7 +251,7 @@ module PennMARC
       #       heading. - MG
       # @todo do i need all this?
       # @param field [MARC::DataField]
-      # @return [Hash{Symbol => Integer, Array, Boolean}, Nil]
+      # @return [Hash{Symbol => Integer, Array, Boolean, String}, Nil]
       def build_subject_hash(field)
         term_info = { count: 0, parts: [], append: [], uri: nil,
                       local: field.indicator2 == '4' || field.tag.starts_with?('69'), # local subject heading

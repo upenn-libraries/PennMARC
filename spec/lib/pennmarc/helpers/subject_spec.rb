@@ -164,7 +164,7 @@ describe 'PennMARC::Subject' do
 
       it 'drops the final trailing period' do
         expect(values).to contain_exactly('R.G. (Robert Gordon). Spiritual order and Christian liberty proved ' \
-                                          'to be consistent in the Churches of Christ', 'R.G.')
+                                          'to be consistent in the Churches of Christ', 'R.G')
       end
     end
 
