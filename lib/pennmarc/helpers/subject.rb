@@ -59,6 +59,7 @@ module PennMARC
       end
 
       # All Subjects for faceting
+      # When a library of congress subject heading has subdivisions, we also facet the decomposed main term ($a)
       #
       # @note this is ported mostly form MG's new-style Subject parsing
       # @param record [MARC::Record]
@@ -69,13 +70,18 @@ module PennMARC
           term_hash = build_subject_hash(field)
           next if term_hash.blank? || term_hash[:count]&.zero?
 
-          format_term type: :facet, term: term_hash
-        }.uniq
+          heading = format_term type: :facet, term: term_hash
+          main_term = trim_trailing(:period, term_hash[:subfield_a]) if term_hash[:lcsh] && term_hash[:subfield_a]
+
+          [heading, main_term].compact_blank
+        }.flatten.uniq
+
         override ? HeadingControl.term_override(values) : values
       end
 
       # All Subjects for display. This includes all {DISPLAY_TAGS} and {LOCAL_TAGS}. For tags that specify a source,
       # only those with an allowed source code (see ALLOWED_SOURCE_CODES) are included.
+      # When a library of congress subject heading has subdivisions, we also display the decomposed main term ($a)
       #
       # @param record [MARC::Record]
       # @param override [Boolean] to remove undesirable terms or not
@@ -85,8 +91,11 @@ module PennMARC
           term_hash = build_subject_hash(field)
           next if term_hash.blank? || term_hash[:count]&.zero?
 
-          format_term type: :display, term: term_hash
-        }.uniq
+          heading = format_term type: :display, term: term_hash
+          main_term = "#{trim_trailing(:period, term_hash[:subfield_a])}." if term_hash[:lcsh] && term_hash[:subfield_a]
+
+          [heading, main_term].compact_blank
+        }.flatten.uniq
         override ? HeadingControl.term_override(values) : values
       end
 
@@ -242,11 +251,13 @@ module PennMARC
       #       heading. - MG
       # @todo do i need all this?
       # @param field [MARC::DataField]
-      # @return [Hash{Symbol => Integer, Array, Boolean}, Nil]
+      # @return [Hash{Symbol => Integer, Array, Boolean, String}, Nil]
       def build_subject_hash(field)
         term_info = { count: 0, parts: [], append: [], uri: nil,
                       local: field.indicator2 == '4' || field.tag.starts_with?('69'), # local subject heading
-                      vernacular: field.tag == '880' }
+                      vernacular: field.tag == '880',
+                      subfield_a: nil,
+                      lcsh: lcsh?(field) }
         field.each do |subfield|
           case subfield.code
           when '0', '6', '8', '5', '7'
@@ -263,6 +274,7 @@ module PennMARC
 
             term_info[:parts] << subfield.value.strip
             term_info[:count] += 1
+            term_info[:subfield_a] = trim_trailing(:comma, subfield.value.strip)
           when '2'
             term_info[:source] = subfield.value.strip
           when 'e', 'w'
@@ -287,6 +299,18 @@ module PennMARC
           end
         end
         term_info
+      end
+
+      # Determine if field contains a library of congress subject heading
+      # @param field [MARC::Field]
+      # @return [Boolean]
+      def lcsh?(field)
+        return false unless field.respond_to?(:indicator2)
+
+        return true if field.indicator2.in? %w[0]
+        return true if field.indicator2 == '7' && subfield_values(field, '2').first == 'lcsh'
+
+        false
       end
 
       # Determine if a field should be considered for Subject search inclusion. It must be either contained in

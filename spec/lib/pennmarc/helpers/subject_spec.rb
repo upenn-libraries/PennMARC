@@ -57,6 +57,18 @@ describe 'PennMARC::Subject' do
         expect(values.first).to eq 'Unicorns dpc Depicted'
       end
     end
+
+    context 'with subject heading subdivisions' do
+      let(:fields) do
+        [marc_field(tag: '610', indicator2: '0', subfields: { a: 'University of Pennsylvania',
+                                                              v: 'Ivy league', x: 'Higher education',
+                                                              y: '19th century', z: 'Philly' })]
+      end
+
+      it 'includes subdivisions' do
+        expect(values).to contain_exactly('University of Pennsylvania Ivy league Higher education 19th century Philly')
+      end
+    end
   end
 
   describe '.facet' do
@@ -152,7 +164,7 @@ describe 'PennMARC::Subject' do
 
       it 'drops the final trailing period' do
         expect(values).to contain_exactly('R.G. (Robert Gordon). Spiritual order and Christian liberty proved ' \
-                                          'to be consistent in the Churches of Christ')
+                                          'to be consistent in the Churches of Christ', 'R.G')
       end
     end
 
@@ -162,7 +174,29 @@ describe 'PennMARC::Subject' do
       end
 
       it 'treats the first part it comes across as a main subject part' do
-        expect(values).to contain_exactly('Italian--Architectural theory')
+        expect(values).to include('Italian--Architectural theory')
+      end
+
+      it 'returns subfield "a" for library of congress subject headings' do
+        expect(values).to contain_exactly('Architectural theory', 'Italian--Architectural theory')
+      end
+    end
+
+    context 'with a record with subject heading subdivisions' do
+      let(:fields) do
+        [marc_field(tag: '650', indicator2: '0', subfields: { a: 'Franklin, Benjamin,', d: '1706-1790',
+                                                              x: 'Books and reading' }),
+         marc_field(tag: '610', indicator2: '7',
+                    subfields: { '2': 'lcsh', a: 'Philadelphia (Pa.)', y: '18th century.' }),
+         marc_field(tag: '600', indicator2: '7',
+                    subfields: { '2': 'fast', a: 'Do not decompose', v: 'Penn Libraries' })]
+      end
+
+      it 'returns decomposed subfield "a" values for library of congress subject headings' do
+        expect(values).to contain_exactly('Franklin, Benjamin, 1706-1790--Books and reading',
+                                          'Philadelphia (Pa.)--18th century',
+                                          'Do not decompose--Penn Libraries',
+                                          'Franklin, Benjamin', 'Philadelphia (Pa.)')
       end
     end
   end
@@ -225,7 +259,8 @@ describe 'PennMARC::Subject' do
 
       it 'properly handles punctuation in subject parts' do
         expect(values).to contain_exactly 'Franklin, Benjamin, 1706-1790.',
-                                          'Franklin, Benjamin, 1706-1790--As inventor.', 'Franklin stoves.'
+                                          'Franklin, Benjamin, 1706-1790--As inventor.', 'Franklin stoves.',
+                                          'Franklin, Benjamin.'
       end
     end
 
@@ -324,6 +359,24 @@ describe 'PennMARC::Subject' do
           'History.', "#{PennMARC::Mappers.headings_to_remove.first}.",
           "#{PennMARC::Mappers.heading_overrides.first[0]}."
         )
+      end
+    end
+
+    context 'with a record with subject heading subdivisions' do
+      let(:fields) do
+        [marc_field(tag: '650', indicator2: '0', subfields: { a: 'Franklin, Benjamin,', d: '1706-1790',
+                                                              x: 'Books and reading' }),
+         marc_field(tag: '610', indicator2: '7',
+                    subfields: { '2': 'lcsh', a: 'Philadelphia (Pa.)', y: '18th century.' }),
+         marc_field(tag: '600', indicator2: '7',
+                    subfields: { '2': 'fast', a: 'Do not decompose', v: 'Penn Libraries' })]
+      end
+
+      it 'returns decomposed subfield "a" values for library of congress subject headings' do
+        expect(values).to contain_exactly('Franklin, Benjamin, 1706-1790--Books and reading.',
+                                          'Philadelphia (Pa.)--18th century.',
+                                          'Do not decompose--Penn Libraries.',
+                                          'Franklin, Benjamin.', 'Philadelphia (Pa.).')
       end
     end
   end
