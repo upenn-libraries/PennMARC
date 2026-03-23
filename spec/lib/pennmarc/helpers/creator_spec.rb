@@ -144,8 +144,8 @@ describe 'PennMARC::Creator' do
 
     context 'with no 100 or 700 fields' do
       let(:fields) do
-        [marc_field(tag: '110', subfields: { a: 'Group of People', b: 'Annual Meeting', '4': 'aut' }),
-         marc_field(tag: '880', subfields: { '6': '110', a: 'Alt. Group Name', b: 'Alt. Annual Meeting' })]
+        [marc_field(tag: '111', subfields: { a: 'Group of People', b: 'Annual Meeting', '4': 'aut' }),
+         marc_field(tag: '880', subfields: { '6': '111', a: 'Alt. Group Name', b: 'Alt. Annual Meeting' })]
       end
 
       it 'returns empty' do
