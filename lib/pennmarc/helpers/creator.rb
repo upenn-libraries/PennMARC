@@ -89,7 +89,7 @@ module PennMARC
       # @param record [MARC::Record]
       # @return [Array<String>] array of author/creator values for display
       def extended_show(record, relator_map: Mappers.relator)
-        fields = record.fields(%w[100 700])
+        fields = record.fields(TAGS + %w[700 710])
         fields += record.fields('880').select { |field| subfield_value?(field, '6', /^(#{TAGS.join('|')})/) }
         fields.filter_map { |field|
           # for 700 and 880 entries, only include ones with relator code ('4') = aut, or code 'e' = 'author'
