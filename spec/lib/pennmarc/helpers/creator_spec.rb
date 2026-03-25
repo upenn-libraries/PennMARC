@@ -112,6 +112,18 @@ describe 'PennMARC::Creator' do
       end
     end
 
+    context 'with a corporate author records in 110 and 710' do
+      let(:fields) do
+        [marc_field(tag: '110', subfields: { a: 'Island Records', '0': 'http://cool.uri/12345' }),
+         marc_field(tag: '710', subfields: { a: 'Def Jam Records', '0': 'http://cool.uri/45678' })]
+      end
+
+      it 'returns single author value' do
+        values = helper.extended_show(record)
+        expect(values).to contain_exactly 'Def Jam Records', 'Island Records'
+      end
+    end
+
     context 'with author records in 100 and 700' do
       let(:fields) do
         [marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345', d: '1900-2000',
@@ -132,8 +144,8 @@ describe 'PennMARC::Creator' do
 
     context 'with no 100 or 700 fields' do
       let(:fields) do
-        [marc_field(tag: '110', subfields: { a: 'Group of People', b: 'Annual Meeting', '4': 'aut' }),
-         marc_field(tag: '880', subfields: { '6': '110', a: 'Alt. Group Name', b: 'Alt. Annual Meeting' })]
+        [marc_field(tag: '111', subfields: { a: 'Group of People', b: 'Annual Meeting', '4': 'aut' }),
+         marc_field(tag: '880', subfields: { '6': '111', a: 'Alt. Group Name', b: 'Alt. Annual Meeting' })]
       end
 
       it 'returns empty' do
