@@ -112,26 +112,29 @@ describe 'PennMARC::Creator' do
       end
     end
 
-    context 'with a corporate author records in 110 and 710' do
+    context 'with an author in 100 and a corporate author records in 710' do
       let(:fields) do
-        [marc_field(tag: '110', subfields: { a: 'Island Records', '0': 'http://cool.uri/12345' }),
-         marc_field(tag: '710', subfields: { a: 'Def Jam Records', '0': 'http://cool.uri/45678' })]
+        [marc_field(tag: '100', subfields: { a: 'Sparky the Fire Dog', '4': 'aut' }),
+         marc_field(tag: '710', subfields: { a: 'National Fire Protection Association', '4': 'aut' })]
       end
 
-      it 'returns single author value' do
+      it 'returns two author values' do
         values = helper.extended_show(record)
-        expect(values).to contain_exactly 'Def Jam Records', 'Island Records'
+        expect(values).to contain_exactly 'Sparky the Fire Dog, Author.',
+                                          'National Fire Protection Association, Author.'
       end
     end
 
-    context 'with author records in 100 and 700' do
+    context 'with author records in 100 and 700, and non-author content in 710' do
       let(:fields) do
         [marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345', d: '1900-2000',
                                              e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
          marc_field(tag: '700', subfields: { a: 'Surname, Alternative', '6': '100', '4': 'aut' }),
          marc_field(tag: '700', subfields: { a: 'Surname, Third', e: 'author.', '6': '100' }),
          marc_field(tag: '700', subfields: { a: 'Surname, Ignore', e: 'editor.', '6': '100' }),
-         marc_field(tag: '700', subfields: { a: 'Surname, Not Included', '6': '100', '4': 'edt' })]
+         marc_field(tag: '700', subfields: { a: 'Surname, Not Included', '6': '100', '4': 'edt' }),
+         marc_field(tag: '710',
+                    subfields: { a: 'Culinary Archive and Library (University of Pennsylvania)' })]
       end
 
       it 'returns three authors' do

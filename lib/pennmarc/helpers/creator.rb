@@ -92,8 +92,8 @@ module PennMARC
         fields = record.fields(TAGS + %w[700 710])
         fields += record.fields('880').select { |field| subfield_value?(field, '6', /^(#{TAGS.join('|')})/) }
         fields.filter_map { |field|
-          # for 700 and 880 entries, only include ones with relator code ('4') = aut, or code 'e' = 'author'
-          next if field.tag.in?(%w[700 880]) && !describes_author?(field)
+          # for 700, 710 and 880 entries, only include ones with relator code ('4') = aut, or code 'e' = 'author'
+          next if field.tag.in?(%w[700 710 880]) && !describes_author?(field)
 
           parse_show_value(field, relator_map: relator_map)
         }.uniq
