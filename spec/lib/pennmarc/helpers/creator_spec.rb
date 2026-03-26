@@ -124,14 +124,16 @@ describe 'PennMARC::Creator' do
       end
     end
 
-    context 'with author records in 100 and 700' do
+    context 'with author records in 100 and 700, and non-author content in 710' do
       let(:fields) do
         [marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345', d: '1900-2000',
                                              e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
          marc_field(tag: '700', subfields: { a: 'Surname, Alternative', '6': '100', '4': 'aut' }),
          marc_field(tag: '700', subfields: { a: 'Surname, Third', e: 'author.', '6': '100' }),
          marc_field(tag: '700', subfields: { a: 'Surname, Ignore', e: 'editor.', '6': '100' }),
-         marc_field(tag: '700', subfields: { a: 'Surname, Not Included', '6': '100', '4': 'edt' })]
+         marc_field(tag: '700', subfields: { a: 'Surname, Not Included', '6': '100', '4': 'edt' }),
+         marc_field(tag: '710',
+                    subfields: { a: 'Nick Malgieri Culinary Archive and Library (University of Pennsylvania)' })]
       end
 
       it 'returns three authors' do
