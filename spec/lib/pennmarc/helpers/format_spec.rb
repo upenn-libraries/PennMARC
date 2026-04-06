@@ -132,7 +132,8 @@ describe 'PennMARC::Format' do
       context 'with LDR06 not egkr but 006/00 is, and 008 field valid value at position 29' do
         let(:record) do
           marc_record leader: '      h',
-                      fields: [marc_control_field(tag: '006', value: 'g  '),
+                      fields: [marc_control_field(tag: '006', value: 'a  '),
+                               marc_control_field(tag: '006', value: 'g  '),
                                marc_control_field(tag: '008', value: '                             c')]
         end
 
