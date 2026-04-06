@@ -275,11 +275,7 @@ module PennMARC
         record.fields('502').any? && format_code.in?(%w[am tm dm])
       end
 
-      # @param call_nums [Array<String>]
-      # @param leader [String]
-      # @param f006 [String]
-      # @param f007 [Array<String>]
-      # @param f008 [String]
+      # @param record [MARC::Record]
       # @param title_medium [Array<String>]
       # @param media_type [Array<String>]
       # @return [Boolean]
@@ -289,7 +285,7 @@ module PennMARC
         f008 = record.fields('008').first&.value || ''
 
         micro_code =
-          if %w[e g k r].include?(record.leader&.[](6)) || f006&.any? { |str| %w[e g k r].include?(str[0]) }
+          if %w[e g k r].include?(record.leader.[](6)) || f006.any? { |str| %w[e g k r].include?(str[0]) }
             f008&.[](29)
           else
             f008&.[](23)
