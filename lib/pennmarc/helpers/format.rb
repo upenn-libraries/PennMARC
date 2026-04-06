@@ -85,7 +85,7 @@ module PennMARC
         # any of these
         formats << MANUSCRIPT if include_manuscripts?(format_code)
         formats << ARCHIVE if archive?(record)
-        formats << MICROFORMAT if micro_or_microform?(call_nums(record), f007, f008, media_type, title_medium)
+        formats << MICROFORMAT if micro_or_microform?(record, media_type, title_medium)
         formats << THESIS_DISSERTATION if thesis_or_dissertation?(format_code, record)
         formats << CONFERENCE_EVENT if conference_event?(record)
         formats << NEWSPAPER if newspaper?(f008, format_code)
@@ -276,16 +276,29 @@ module PennMARC
       end
 
       # @param call_nums [Array<String>]
+      # @param leader [String]
+      # @param f006 [String]
       # @param f007 [Array<String>]
       # @param f008 [String]
       # @param title_medium [Array<String>]
       # @param media_type [Array<String>]
       # @return [Boolean]
-      def micro_or_microform?(call_nums, f007, f008, media_type, title_medium)
-        [f008[23], f008[29]].any? { |v| v.in?(%w[a b c]) } ||
+      def micro_or_microform?(record, media_type, title_medium)
+        f006 = record.fields('006').map(&:value)
+        f007 = record.fields('007').map(&:value)
+        f008 = record.fields('008').first&.value || ''
+
+        micro_code =
+          if %w[e g k r].include?(record.leader&.[](6)) || f006&.any? { |str| %w[e g k r].include?(str[0]) }
+            f008&.[](29)
+          else
+            f008&.[](23)
+          end
+
+        %w[a b c].include?(micro_code) ||
           f007.any? { |v| v.start_with?('h') } ||
           title_medium.any? { |val| val =~ /micro/i } ||
-          call_nums.any? { |val| val =~ /micro/i } ||
+          call_nums(record).any? { |val| val =~ /micro/i } ||
           media_type.any? { |val| val =~ /micro/i }
       end
 

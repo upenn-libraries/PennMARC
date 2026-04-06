@@ -106,11 +106,11 @@ describe 'PennMARC::Format' do
         end
       end
 
-      context 'with 008 field and valid value at position 23' do
+      context 'with LDR06 and 006/00 not egkr and 008 field valid value at position 23' do
         let(:record) do
-          marc_record fields: [
-            marc_control_field(tag: '008', value: '                       a')
-          ]
+          marc_record leader: '     h',
+                      fields: [marc_control_field(tag: '006', value: 'c  '),
+                               marc_control_field(tag: '008', value: '                       a')]
         end
 
         it 'returns "Microformat"' do
@@ -118,11 +118,22 @@ describe 'PennMARC::Format' do
         end
       end
 
-      context 'with 008 field and valid value at position 29' do
+      context 'with LDR06 value egkr and 008 field valid value at position 29' do
         let(:record) do
-          marc_record fields: [
-            marc_control_field(tag: '008', value: '                             a')
-          ]
+          marc_record leader: '      k',
+                      fields: [marc_control_field(tag: '008', value: '                             b')]
+        end
+
+        it 'returns "Microformat"' do
+          expect(formats).to contain_exactly('Microformat')
+        end
+      end
+
+      context 'with LDR06 not egkr but 006/00 is, and 008 field valid value at position 29' do
+        let(:record) do
+          marc_record leader: '      h',
+                      fields: [marc_control_field(tag: '006', value: 'g  '),
+                               marc_control_field(tag: '008', value: '                             c')]
         end
 
         it 'returns "Microformat"' do
