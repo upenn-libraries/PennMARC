@@ -85,7 +85,12 @@ module PennMARC
         # any of these
         formats << MANUSCRIPT if include_manuscripts?(format_code)
         formats << ARCHIVE if archive?(record)
-        formats << MICROFORMAT if micro_or_microform?(record, media_type, title_medium)
+
+        if micro_or_microform?(micro_code(record.leader, f006_forms, f008),
+                               call_nums(record), f007, media_type, title_medium)
+          formats << MICROFORMAT
+        end
+
         formats << THESIS_DISSERTATION if thesis_or_dissertation?(format_code, record)
         formats << CONFERENCE_EVENT if conference_event?(record)
         formats << NEWSPAPER if newspaper?(f008, format_code)
@@ -275,26 +280,31 @@ module PennMARC
         record.fields('502').any? && format_code.in?(%w[am tm dm])
       end
 
-      # @param record [MARC::Record]
+      # @param leader [String]
+      # @param f006_forms [Array<String>]
+      # @param f008 [String]
+      # @return [String]
+      def micro_code(leader, f006_forms, f008)
+        map_or_visual = %w[e g k r]
+
+        if map_or_visual.include?(leader[6]) || f006_forms.any? { |str| map_or_visual.include?(str) }
+          f008[29] || ' '
+        else
+          f008[23] || ' '
+        end
+      end
+
+      # @param micro_code [String]
+      # @param call_nums [Array<String>]
+      # @param f007 [Array<String>]
       # @param title_medium [Array<String>]
       # @param media_type [Array<String>]
       # @return [Boolean]
-      def micro_or_microform?(record, media_type, title_medium)
-        f006 = record.fields('006').map(&:value)
-        f007 = record.fields('007').map(&:value)
-        f008 = record.fields('008').first&.value || ''
-
-        micro_code =
-          if %w[e g k r].include?(record.leader.[](6)) || f006.any? { |str| %w[e g k r].include?(str[0]) }
-            f008&.[](29)
-          else
-            f008&.[](23)
-          end
-
+      def micro_or_microform?(micro_code, call_nums, f007, media_type, title_medium)
         %w[a b c].include?(micro_code) ||
           f007.any? { |v| v.start_with?('h') } ||
           title_medium.any? { |val| val =~ /micro/i } ||
-          call_nums(record).any? { |val| val =~ /micro/i } ||
+          call_nums.any? { |val| val =~ /micro/i } ||
           media_type.any? { |val| val =~ /micro/i }
       end
 

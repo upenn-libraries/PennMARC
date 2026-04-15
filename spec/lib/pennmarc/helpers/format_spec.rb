@@ -106,7 +106,7 @@ describe 'PennMARC::Format' do
         end
       end
 
-      context 'with LDR06 and 006/00 not egkr and 008 field valid value at position 23' do
+      context 'with non-map/visual record (LDR06 and 006/00 not egkr) and 008 field valid value at position 23' do
         let(:record) do
           marc_record leader: '     h',
                       fields: [marc_control_field(tag: '006', value: 'c  '),
@@ -118,7 +118,7 @@ describe 'PennMARC::Format' do
         end
       end
 
-      context 'with LDR06 value egkr and 008 field valid value at position 29' do
+      context 'with map/visual record (LDR06 value egkr) and 008 field valid value at position 29' do
         let(:record) do
           marc_record leader: '      k',
                       fields: [marc_control_field(tag: '008', value: '                             b')]
@@ -129,7 +129,7 @@ describe 'PennMARC::Format' do
         end
       end
 
-      context 'with LDR06 not egkr but 006/00 is, and 008 field valid value at position 29' do
+      context 'with map/visual record (LDR06 not egkr but 006/00 is), and 008 field valid value at position 29' do
         let(:record) do
           marc_record leader: '      h',
                       fields: [marc_control_field(tag: '006', value: 'a  '),
