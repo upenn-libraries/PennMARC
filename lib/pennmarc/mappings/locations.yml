@@ -1220,12 +1220,12 @@ scinc:
   display: Kislak Center for Special Collections - Incunables
   aeon: true
 sckatzstor:
-  specific_location: LIBRA Rare Library at the Katz Center
+  specific_location: LIBRA - Rare Library at the Katz Center
   library:
     - Special Collections
     - LIBRA
     - Library at the Katz Center for Advanced Judaic Studies
-  display: LIBRA Rare Library at the Katz Center
+  display: LIBRA - Rare Library at the Katz Center
   aeon: true
 sclea:
   specific_location: Kislak Center for Special Collections - Lea Collection
@@ -1361,12 +1361,19 @@ scstor:
     - LIBRA
   display: LIBRA - Rare Book Collection Storage
   aeon: true
+scstorcomx:
+  specific_location: LIBRA - Rare Comics Collection
+  library:
+    - Special Collections
+    - LIBRA
+  display: LIBRA - Rare Comics Collection
+  aeon: true
 scstorvil:
-  specific_location: LIBRA Vilain-Wieck Collection
+  specific_location: LIBRA - Vilain-Wieck Collection
   library: 
     - Special Collections
     - LIBRA
-  display: LIBRA Vilain-Wieck Collection
+  display: LIBRA - Vilain-Wieck Collection
   aeon: true
 scteer:
   specific_location: Kislak Center for Special Collections - Teerink Collection
@@ -1432,41 +1439,41 @@ storcrstxt:
     - GIC Collection
   display: GIC Collection at Penn Libraries
 storfine:
-  specific_location: LIBRA Fisher Fine Arts
+  specific_location: LIBRA - Fisher Fine Arts
   library: LIBRA
-  display: LIBRA Fisher Fine Arts
+  display: LIBRA - Fisher Fine Arts
   aeon: true
 storm:
   specific_location: LIBRA
   library: LIBRA
   display: LIBRA - Music
 storlimit:
-  specific_location: LIBRA Limited
+  specific_location: LIBRA - Limited
   library:
     - Special Collections
     - LIBRA
-  display: LIBRA Limited
+  display: LIBRA - Limited
   aeon: true
 storrare:
-  specific_location: LIBRA Rare
+  specific_location: LIBRA - Rare
   library:
     - Special Collections
     - LIBRA
-  display: LIBRA Rare
+  display: LIBRA - Rare
   aeon: true
 storspec:
-  specific_location: LIBRA Special
+  specific_location: LIBRA - Special
   library:
     - Special Collections
     - LIBRA
-  display: LIBRA Special
+  display: LIBRA - Special
   aeon: true
 scrunning:
-  specific_location: LIBRA Running Press Collection
+  specific_location: LIBRA - Running Press Collection
   library:
     - Special Collections
     - LIBRA
-  display: LIBRA Running Press Collection
+  display: LIBRA - Running Press Collection
   aeon: true
 univarch:
   specific_location: University Archives
