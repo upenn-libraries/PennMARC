@@ -338,7 +338,7 @@ cjshur:
   display: Library at the Katz Center - Hurowitz Collection
   aeon: true
 cjsincun:
-  specific_location: Library at the Katz Center - Rare Book Room
+  specific_location: Library at the Katz Center - Ione Apfelbaum & Hilary Strauss Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
@@ -351,13 +351,13 @@ cjsinproc:
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Processing
 cjsinprocn:
-  specific_location: Library at the Katz Center - Rare Book Room
+  specific_location: Library at the Katz Center - Ione Apfelbaum & Hilary Strauss Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Processing Non-Circulating
 cjsmar:
-  specific_location: Library at the Katz Center - Stacks
+  specific_location: Library at the Katz Center - Ione Apfelbaum & Hilary Strauss Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
@@ -407,77 +407,77 @@ cjspergal:
   library: Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Periodicals Gallery
 cjsrar:
-  specific_location: Library at the Katz Center - Rare Book Room
+  specific_location: Library at the Katz Center - Ione Apfelbaum & Hilary Strauss Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
-  display: Library at the Katz Center - Rare Book Room
+  display: Library at the Katz Center - Ione Apfelbaum & Hilary Strauss Rare Book Room
   aeon: true
 cjsraram:
-  specific_location: Library at the Katz Center - Rare Book Room
+  specific_location: Library at the Katz Center - Ione Apfelbaum & Hilary Strauss Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Americana
   aeon: true
 cjsrarbx1:
-  specific_location: Library at the Katz Center - Rare Book Room
+  specific_location: Library at the Katz Center - Ione Apfelbaum & Hilary Strauss Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Box 1
   aeon: true
 cjsrarbx2:
-  specific_location: Library at the Katz Center - Rare Book Room
+  specific_location: Library at the Katz Center - Ione Apfelbaum & Hilary Strauss Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Box 2
   aeon: true
 cjsrarbx3:
-  specific_location: Library at the Katz Center - Rare Book Room
+  specific_location: Library at the Katz Center - Ione Apfelbaum & Hilary Strauss Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Box 3
   aeon: true
 cjsrarbx4:
-  specific_location: Library at the Katz Center - Rare Book Room
+  specific_location: Library at the Katz Center - Ione Apfelbaum & Hilary Strauss Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Box 4
   aeon: true
 cjsrarfol:
-  specific_location: Library at the Katz Center - Rare Book Room
+  specific_location: Library at the Katz Center - Ione Apfelbaum & Hilary Strauss Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Folio
   aeon: true
 cjsrargiga:
-  specific_location: Library at the Katz Center - Rare Book Room
+  specific_location: Library at the Katz Center - Ione Apfelbaum & Hilary Strauss Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Giant
   aeon: true
 cjsrarmini:
-  specific_location: Library at the Katz Center - Rare Book Room
+  specific_location: Library at the Katz Center - Ione Apfelbaum & Hilary Strauss Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Miniature
   aeon: true
 cjsrarms:
-  specific_location: Library at the Katz Center - Rare Book Room
+  specific_location: Library at the Katz Center - Ione Apfelbaum & Hilary Strauss Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
   display: Library at the Katz Center - Rare Book Manuscript
   aeon: true
 cjsrarover:
-  specific_location: Library at the Katz Center - Rare Book Room
+  specific_location: Library at the Katz Center - Ione Apfelbaum & Hilary Strauss Rare Book Room
   library:
     - Special Collections
     - Library at the Katz Center for Advanced Judaic Studies
