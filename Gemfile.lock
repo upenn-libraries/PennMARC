@@ -127,6 +127,10 @@ GEM
     rubocop-rspec (3.9.0)
       lint_roller (~> 1.1)
       rubocop (~> 1.81)
+    rubocop-yard (1.1.0)
+      lint_roller
+      rubocop (~> 1.72)
+      yard
     ruby-progressbar (1.13.0)
     securerandom (0.4.1)
     simplecov (0.22.0)
@@ -171,6 +175,7 @@ DEPENDENCIES
   rackup
   rake (~> 13.0)
   rspec (~> 3.12)
+  rubocop-yard
   simplecov (~> 0.22)
   upennlib-rubocop
   yard
