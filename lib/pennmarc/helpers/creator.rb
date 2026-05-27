@@ -52,6 +52,7 @@ module PennMARC
       # theme to the 7xx fields but apply to serial records. Includes all subfield values except those in the
       # {SEARCH_EXCLUDED_SUBFIELDS} constant.
       # @param record [MARC::Record]
+      # @param relator_map [Hash]
       # @return [Array<String>] array of extended author/creator values for indexing
       def search_aux(record, relator_map: Mappers.relator)
         name_search_values record: record, tags: AUX_TAGS, relator_map: relator_map
@@ -62,6 +63,7 @@ module PennMARC
       # value except for those defined in the {DISPLAY_EXCLUDED_SUBFIELDS} constant. Then, appends any encoded relators
       # found in $4. If there are no valid encoded relators, uses the value found in $e.
       # @param record [MARC::Record]
+      # @param relator_map [Hash]
       # @return [Array<String>] array of author/creator values for display
       def show(record, relator_map: Mappers.relator)
         fields = record.fields(TAGS)
@@ -87,6 +89,7 @@ module PennMARC
 
       # Show more credited authors - both 100 field and 700 entries where the relator (codes e or 4) is author/aut
       # @param record [MARC::Record]
+      # @param relator_map [Hash]
       # @return [Array<String>] array of author/creator values for display
       def extended_show(record, relator_map: Mappers.relator)
         fields = record.fields(TAGS + %w[700 710])
@@ -231,6 +234,7 @@ module PennMARC
       # @note ported from get_conference_values
       # @todo what is ǂi for?
       # @param record [MARC::Record]
+      # @param relator_map [Hash]
       # @return [Array<String>] array of conference values
       def conference_detail_show(record, relator_map: Mappers.relator)
         conferences = record.fields(%w[111 711]).filter_map do |field|
@@ -462,6 +466,7 @@ module PennMARC
       # values other than $0, $4, $5, $6, $8, $e, $j, and $w to create conference value. We join subfields $e and $w to
       # determine the subunit value. We append any relators, preferring those defined in $4 and using $j as a fallback.
       # @param field [MARC::Field]
+      # @param relator_map [Hash]
       # @return [String]
       def parse_conference_detail_show_value(field, relator_map: Mappers.relator)
         conf = if subfield_undefined? field, 'i'

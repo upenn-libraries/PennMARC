@@ -25,7 +25,7 @@ module PennMARC
         field[mapper::PHYS_PRIORITY]
       end
 
-      # @return [Hash{Symbol->Unknown}]
+      # @return [Hash{Symbol=>Unknown}]
       def to_h
         { holding_id: field[mapper::PHYS_HOLDING_ID],
           location_name: field[mapper::PHYS_LOCATION_NAME],

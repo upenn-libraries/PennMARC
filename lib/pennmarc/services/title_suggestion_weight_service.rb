@@ -41,7 +41,7 @@ module PennMARC
         end
       end
 
-      # @return [Array[Array]]
+      # @return [Array<Array>]
       def factors
         FACTORS
       end

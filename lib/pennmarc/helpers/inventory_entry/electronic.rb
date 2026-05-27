@@ -7,7 +7,7 @@ module PennMARC
     # Represent a Electronic inventory entry - simple because the subfield specification is identical across
     # entries returned by the API and Alma Publishing enrichment
     class Electronic < Base
-      # @return [Hash{Symbol->Unknown}]
+      # @return [Hash{Symbol=>Unknown}]
       def to_h
         { portfolio_id: field[mapper::ELEC_PORTFOLIO_ID],
           url: field[mapper::ELEC_SERVICE_URL],
