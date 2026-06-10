@@ -1384,12 +1384,11 @@ scteer:
   display: Kislak Center for Special Collections - Teerink Collection
   aeon: true
 sctehon:
-  specific_location: Kislak Center for Special Collections - Tehon Collection
+  specific_location: LIBRA - Tehon Collection
   library:
     - Special Collections
-    - Kislak Center for Special Collections
-    - Van Pelt-Dietrich Library Center
-  display: Kislak Center for Special Collections - Tehon Collection
+    - LIBRA
+  display: LIBRA - Tehon Collection
   aeon: true
 sctress:
   specific_location: Kislak Center for Special Collections - Arthur Tress Collection
