@@ -1367,14 +1367,14 @@ scstorcomx:
     - Special Collections
     - LIBRA
   display: LIBRA - Rare Comics Collection
-  aeon: true # TODO: !!!!
+  aeon: LIBRA Rare Comics
 scstorvil:
   specific_location: LIBRA - Vilain-Wieck Collection
   library: 
     - Special Collections
     - LIBRA
   display: LIBRA - Vilain-Wieck Collection
-  aeon: true # TODO: !!!!
+  aeon: LIBRA Vilain-Wieck
 scteer:
   specific_location: Kislak Center for Special Collections - Teerink Collection
   library:
