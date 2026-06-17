@@ -1056,12 +1056,11 @@ scartbk:
   display: Kislak Center for Special Collections - Artists' Books
   aeon: true
 scbanks:
-  specific_location: Kislak Center for Special Collections - Joanna Banks Collection
+  specific_location: LIBRA - Joanna Banks Collection
   library:
     - Special Collections
-    - Kislak Center for Special Collections
-    - Van Pelt-Dietrich Library Center
-  display: Kislak Center for Special Collections - Joanna Banks Collection
+    - LIBRA
+  display: LIBRA - Joanna Banks Collection
   aeon: true
 scblank:
   specific_location: LIBRA - Blank Collection
