@@ -168,6 +168,12 @@ biom:
     - Health Sciences Libraries
     - Holman Biotech Commons
   display: Holman Biotech Commons
+biombest:
+  specific_location: Holman Biotech Commons - Bestsellers
+  library:
+    - Health Sciences Libraries
+    - Holman Biotech Commons
+  display: Holman Biotech Commons - Bestsellers
 biomclin:
   specific_location: Holman Biotech Commons - Clinical Reading Room
   library:
