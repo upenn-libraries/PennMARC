@@ -1624,6 +1624,10 @@ vpnewbook:
   specific_location: Van Pelt - New Book Display
   library: Van Pelt-Dietrich Library Center
   display: Van Pelt - New Book Display
+vppendcc:
+  specific_location: Van Pelt - Pending Review (G133 CC)
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Pending Review (G133 CC)
 vpref:
   specific_location: Van Pelt Reference - Stacks
   library:
