@@ -1241,6 +1241,13 @@ sclea:
     - Van Pelt-Dietrich Library Center
   display: Kislak Center for Special Collections - Lea Collection
   aeon: true
+scleastor:
+  specific_location: LIBRA Lea Collection
+  library: 
+    - Special Collections
+    - LIBRA
+  display: LIBRA Lea Collection
+  aeon: true
 scmap:
   specific_location: Kislak Center for Special Collections - Rare Book Collection
   library:
