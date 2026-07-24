@@ -579,7 +579,7 @@ easiaover:
 easiasem:
   specific_location: Van Pelt - Candice and Robert Willoughby East Asian Studies Seminar Room
   library: Van Pelt-Dietrich Library Center
-  display: Van Pelt - Candice and Robert Willoughby East Asian Studies Seminar Room (526)
+  display: Van Pelt - Candice and Robert Willoughby East Asian Studies Seminar Room
 eastasia:
   specific_location: Van Pelt - East Asia Collection
   library: Van Pelt-Dietrich Library Center
@@ -805,8 +805,7 @@ medieval:
 mideast:
   specific_location: Van Pelt - Stapleton Seminar Room
   library: Van Pelt-Dietrich Library Center
-  display: Van Pelt - Stapleton Seminar Room (523)
-
+  display: Van Pelt - Stapleton Seminar Room
 mscirc:
   specific_location: Penn Museum Library - Circulation
   library: Penn Museum Library
@@ -1030,7 +1029,7 @@ rotc:
 sasiarefe:
   specific_location: Van Pelt - Govindaraju/Chandrasekhara South Asia Studies Seminar Room
   library: Van Pelt-Dietrich Library Center
-  display: Van Pelt - Govindaraju/Chandrasekhara South Asia Studies Seminar Room (551)
+  display: Van Pelt - Govindaraju/Chandrasekhara South Asia Studies Seminar Room
 scg123:
   specific_location: Kislak Center for Special Collections - Rare Book Collection
   library:
