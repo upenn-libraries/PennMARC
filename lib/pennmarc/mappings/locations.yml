@@ -1602,6 +1602,10 @@ vetewellrm:
     - Veterinary
     - 'Veterinary: Atwood Library (Campus)'
   display: 'Veterinary: Atwood Library (Campus)- Wellness Room'  
+vpcgcdisp:
+  specific_location: Van Pelt - Global Collections Book Display
+  library: Van Pelt-Dietrich Library Center
+  display: Van Pelt - Global Collections Book Display -- First Floor
 vpexhibits:
   specific location: Van Pelt - Exhibits and Events
   library: Van Pelt-Dietrich Library Center
