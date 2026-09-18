@@ -3,5 +3,16 @@ inherit_from: .rubocop_todo.yml
 inherit_gem:
   upennlib-rubocop: upennlib_rubocop_defaults.yml
 
+plugins:
+  - rubocop-yard
+
+YARD/MismatchName:
+  Description: 'Check @param and @option name and method parameters'
+  Enabled: true
+  VersionAdded: '0.3.0'
+  EnforcedStylePrototypeName: before
+  SupportedStylesPrototypeName:
+    - before
+
 Rails:
   Enabled: false

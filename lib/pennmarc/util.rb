@@ -38,7 +38,7 @@ module PennMARC
     # returns true if field has a value that matches
     # passed-in regex and passed in subfield
     # @param field [MARC::DataField]
-    # @param subfield [String|Integer|Symbol]
+    # @param subfield [String, Integer, Symbol]
     # @param regex [Regexp]
     # @return [Boolean, nil]
     def subfield_value?(field, subfield, regex)
@@ -48,7 +48,7 @@ module PennMARC
     # returns true if field has no value that matches
     # passed-in regex and passed in subfield
     # @param field [MARC::DataField]
-    # @param subfield [String|Integer|Symbol]
+    # @param subfield [String, Integer, Symbol]
     # @param regex [Regexp]
     # @return [Boolean, nil]
     def no_subfield_value_matches?(field, subfield, regex)
@@ -57,7 +57,7 @@ module PennMARC
 
     # returns true if a given field has a given subfield value in a given array
     # @param field [MARC::DataField]
-    # @param subfield [String|Integer|Symbol]
+    # @param subfield [String, Integer, Symbol]
     # @param array [Array]
     # @return [Boolean]
     def subfield_value_in?(field, subfield, array)
@@ -65,8 +65,8 @@ module PennMARC
     end
 
     # returns true if a given field does not have a given subfield value in a given array
-    # @param field [MARC:DataField]
-    # @param subfield [String|Integer|Symbol]
+    # @param field [MARC::DataField]
+    # @param subfield [String, Integer, Symbol]
     # @param array [Array]
     # @return [Boolean]
     def subfield_value_not_in?(field, subfield, array)
@@ -89,7 +89,7 @@ module PennMARC
 
     # Check if a field has a given subfield defined
     # @param field [MARC::DataField]
-    # @param subfield [String|Symbol|Integer]
+    # @param subfield [String, Symbol, Integer]
     # @return [Boolean]
     def subfield_defined?(field, subfield)
       field.any? { |sf| sf.code == subfield.to_s }
@@ -97,7 +97,7 @@ module PennMARC
 
     # Check if a field does not have a given subfield defined
     # @param field [MARC::DataField]
-    # @param subfield [String|Symbol|Integer]
+    # @param subfield [String, Symbol, Integer]
     # @return [Boolean]
     def subfield_undefined?(field, subfield)
       field.none? { |sf| sf.code == subfield.to_s }
@@ -105,7 +105,7 @@ module PennMARC
 
     # Gets all subfield values for a subfield in a given field
     # @param field [MARC::DataField]
-    # @param subfield [String|Symbol] as a string or symbol
+    # @param subfield [String, Symbol] as a string or symbol
     # @return [Array] subfield values for given subfield code
     def subfield_values(field, subfield)
       field.filter_map do |sf|
@@ -183,7 +183,7 @@ module PennMARC
     # passed-in block from 880 datafield that has a particular subfield 6 value.
     # See: https://www.loc.gov/marc/bibliographic/bd880.html
     # @param record [MARC::Record]
-    # @param subfield6_value [String|Array] either a string to look for in sub6 or an array of them
+    # @param subfield6_value [String, Array] either a string to look for in sub6 or an array of them
     # @param selector [Proc] takes a subfield as argument, returns a boolean
     # @return [Array] array of linked alternates
     def linked_alternate(record, subfield6_value, &selector)
@@ -198,7 +198,7 @@ module PennMARC
     # from 880 datafield that has a particular subfield 6 value. We exclude 6 because
     # that value is the linkage ID itself and 8 because... IDK
     # @param record [MARC::Record]
-    # @param subfield6_value [String|Array] either a string to look for in sub6 or an array of them
+    # @param subfield6_value [String, Array] either a string to look for in sub6 or an array of them
     # @return [Array] array of linked alternates without 8 or 6 values
     def linked_alternate_not_6_or_8(record, subfield6_value)
       excluded_subfields = %w[6 8]
@@ -319,7 +319,7 @@ module PennMARC
     # {https://www.loc.gov/marc/bibliographic/bd111.html 111}, {https://www.loc.gov/marc/bibliographic/bd411.html 411},
     # {https://www.loc.gov/marc/bibliographic/bd611.html 611}, {https://www.loc.gov/marc/bibliographic/bd711.html 711},
     # {https://www.loc.gov/marc/bibliographic/bd811.html 811}
-    # @param field [MARC:Field]
+    # @param field [MARC::Field]
     # @return [String (frozen)]
     def relator_term_subfield(field)
       field_or_its_linked_alternate?(field, %w[111 411 611 711 811]) ? 'j' : 'e'

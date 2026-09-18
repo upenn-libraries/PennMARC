@@ -68,7 +68,7 @@ module PennMARC
       # Determine enriched marc location tag, location code subfield, and call number subfield,
       # giving priority to using 'itm', 'AVA', or 'hld' fields.
       # @param record [MARC::Record]
-      # @return [Hash<String, String>] containing location tag and subfield code
+      # @return [Hash{String => String}] containing location tag and subfield code
       # - `:tag` (String): The enriched marc location tag
       # - `:location_code_sf` (String): The subfield code where location code is stored
       # - `:call_num_sf` (String): The subfield code where call number is stored

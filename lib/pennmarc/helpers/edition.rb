@@ -12,6 +12,7 @@ module PennMARC
       # Publication and/or Volume Designation).
       # https://www.loc.gov/marc/bibliographic/bd250.html
       # @param record [MARC::Record]
+      # @param with_alternate [Boolean]
       # @return [Array<String>] array of editions and their alternates
       def show(record, with_alternate: true)
         editions = record.fields('250').map do |field|

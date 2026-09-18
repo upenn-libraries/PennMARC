@@ -13,6 +13,7 @@ module PennMARC
   class Parser
     # Allow calls to `respond_to?` on parser instances to respond accurately by checking helper classes
     # @param name [String, Symbol]
+    # @param include_private [Boolean]
     # @return [Boolean]
     def respond_to_missing?(name, include_private = false)
       helper, method_name = parse_call(name)

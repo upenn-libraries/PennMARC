@@ -8,6 +8,7 @@ gem 'library_stdnums', '~> 1.6'
 gem 'marc', '~> 1.2'
 gem 'nokogiri', '~> 1.15'
 gem 'rake', '~> 13.0'
+gem 'rubocop-yard', require: false
 gem 'upennlib-rubocop', require: false
 
 group :test, :development do
