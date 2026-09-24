@@ -3,10 +3,21 @@
 # read "Illegal Noncitizens".
 # Also, use lower case only in the key to support efficient case-insensitive matching.
 "illegal alien children": Undocumented immigrant children
-"alien detention centers": Immigrant detention centers
+"alien detention centers": Noncitizen detention centers
 "alien criminals": Noncitizen criminals
-"alien property": Foreign-owned property
+"alien property": Foreign property
 "illegal aliens": Undocumented immigrants
 "alien labor": Foreign workers
 gypsies: Romanies
 aliens: Noncitizens
+"east indians": Indians (India)
+"east indian": Indian (India)
+"east indian americans": Indian Americans
+"east indian american": Indian American
+"indians of north america": Indigenous peoples of North America
+"indians of south america": Indigenous peoples of South America
+"indians of central america": Indigenous peoples of Central America
+"indians of mexico": Indigenous peoples of Mexico
+"indians of the west indies": Indigenous peoples of the West Indies
+"Memphis Race Riot, Memphis, Tenn., 1866": Memphis Race Massacre, Memphis, Tenn., 1866
+"East Saint Louis Race Riot, East Saint Louis, Ill., 1917": East Saint Louis Race Massacre, East Saint Louis, Ill., 1917
