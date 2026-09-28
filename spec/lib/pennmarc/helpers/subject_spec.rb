@@ -199,6 +199,20 @@ describe 'PennMARC::Subject' do
                                           'Franklin, Benjamin', 'Philadelphia (Pa.)')
       end
     end
+
+    context 'with a record with fields not subject to overriding' do
+      let(:replace_term) { PennMARC::Mappers.heading_overrides.keys[2] }
+      let(:fields) do
+        [marc_field(tag: '650', indicator2: '0', subfields: { a: replace_term }),
+         marc_field(tag: helper::NO_OVERRIDE_TAGS.sample, indicator2: '0',
+                    subfields: { a: replace_term })]
+      end
+
+      it 'only overrides in the allowed field' do
+        replaced_term = PennMARC::HeadingControl.term_override(replace_term)
+        expect(values).to contain_exactly(replace_term, replaced_term)
+      end
+    end
   end
 
   describe '.show' do

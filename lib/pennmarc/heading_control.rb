@@ -14,19 +14,17 @@ module PennMARC
     class << self
       # Replace or remove any terms in provided values pursuant to the configuration in remove and override mappers.
       # Used to remove or replace offensive or otherwise undesirable subject headings.
-      # @param values [Array]
-      # @return [Array] values with terms removed/replaced
-      def term_override(values)
-        values.filter_map do |value|
-          # Remove values if they contain a remove term
-          next nil if value.match?(REMOVE_TERM_REGEX)
+      # @param [String] value
+      # @return [String, nil]
+      def term_override(value)
+        # Remove values if they contain a remove term
+        return nil if value.match?(REMOVE_TERM_REGEX)
 
-          # return early if theres no terms to replace
-          next value if value.match(REPLACE_TERM_REGEX).nil?
+        # return early if there are no terms to replace
+        return value if value.match(REPLACE_TERM_REGEX).nil?
 
-          # lookup and perform replacement
-          value.sub(::Regexp.last_match.to_s, Mappers.heading_overrides[::Regexp.last_match.to_s.downcase])
-        end
+        # lookup and perform replacement
+        value.sub(::Regexp.last_match.to_s, Mappers.heading_overrides[::Regexp.last_match.to_s.downcase])
       end
     end
   end

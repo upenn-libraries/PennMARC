@@ -7,25 +7,28 @@ module PennMARC
   # tightly to be preserved. As a result fo this, display methods and facet methods below are ported from their state
   # prior to Michael's 2/2021 subject parsing changes.
   class Subject < Helper
+    # Tags that serve as sources for Subject search values
+    # @todo why are 541 and 561 included here? these fields include info about source of acquisition
+    SEARCH_TAGS = %w[541 561 600 610 611 630 650 651 653].freeze
+
+    # Valid indicator 2 values indicating the source thesaurus for subject terms. These are:
+    # - 0: LCSH
+    # - 1: LC Children's
+    # - 2: MeSH
+    # - 4: Source not specified (local?)
+    # - 7: Source specified in ǂ2
+    VALID_SOURCE_INDICATORS = %w[0 1 2 4 7].freeze
+
+    # Tags that serve as sources for Subject facet values
+    DISPLAY_TAGS = %w[600 610 611 630 650 651].freeze
+
+    # Local subject heading tags
+    LOCAL_TAGS = %w[690 691 697].freeze
+
+    # Don't perform any term overriding on these tags
+    NO_OVERRIDE_TAGS = %w[600 610 611 630].freeze
+
     class << self
-      # Tags that serve as sources for Subject search values
-      # @todo why are 541 and 561 included here? these fields include info about source of acquisition
-      SEARCH_TAGS = %w[541 561 600 610 611 630 650 651 653].freeze
-
-      # Valid indicator 2 values indicating the source thesaurus for subject terms. These are:
-      # - 0: LCSH
-      # - 1: LC Children's
-      # - 2: MeSH
-      # - 4: Source not specified (local?)
-      # - 7: Source specified in ǂ2
-      VALID_SOURCE_INDICATORS = %w[0 1 2 4 7].freeze
-
-      # Tags that serve as sources for Subject facet values
-      DISPLAY_TAGS = %w[600 610 611 630 650 651].freeze
-
-      # Local subject heading tags
-      LOCAL_TAGS = %w[690 691 697].freeze
-
       # All Subjects for searching. This includes most subfield content from any field contained in {SEARCH_TAGS} or
       # 69X, including any linked 880 fields. Fields must have an indicator2 value in {VALID_SOURCE_INDICATORS}.
       # @todo this includes subfields that may not be desired like 1 (uri) and 2 (source code) but this might be OK for
@@ -63,11 +66,11 @@ module PennMARC
       #
       # @note this is ported mostly form MG's new-style Subject parsing
       # @param record [MARC::Record]
-      # @param override [Boolean] remove undesirable terms or not
+      # @param override [Boolean] whether to remove undesirable terms in eligible fields or not
       # @return [Array<String>] array of all subject values for faceting
       def facet(record, override: true)
-        values = subject_fields(record, type: :facet).filter_map { |field|
-          term_hash = build_subject_hash(field)
+        subject_fields(record, type: :facet).filter_map { |field|
+          term_hash = build_subject_hash(field, override)
           next if term_hash.blank? || term_hash[:count]&.zero?
 
           heading = format_term type: :facet, term: term_hash
@@ -75,8 +78,6 @@ module PennMARC
 
           [heading, main_term].compact_blank
         }.flatten.uniq
-
-        override ? HeadingControl.term_override(values) : values
       end
 
       # All Subjects for display. This includes all {DISPLAY_TAGS} and {LOCAL_TAGS}. For tags that specify a source,
@@ -87,8 +88,8 @@ module PennMARC
       # @param override [Boolean] to remove undesirable terms or not
       # @return [Array] array of all subject values for display
       def show(record, override: true)
-        values = subject_fields(record, type: :all).filter_map { |field|
-          term_hash = build_subject_hash(field)
+        subject_fields(record, type: :all).filter_map { |field|
+          term_hash = build_subject_hash(field, override)
           next if term_hash.blank? || term_hash[:count]&.zero?
 
           heading = format_term type: :display, term: term_hash
@@ -96,7 +97,6 @@ module PennMARC
 
           [heading, main_term].compact_blank
         }.flatten.uniq
-        override ? HeadingControl.term_override(values) : values
       end
 
       # Get Subjects from "Children" ontology
@@ -105,14 +105,13 @@ module PennMARC
       # @param override [Boolean] remove undesirable terms or not
       # @return [Array] array of children's subject values for display
       def childrens_show(record, override: true)
-        values = subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '1' })
-                 .filter_map { |field|
-                   term_hash = build_subject_hash(field)
-                   next if term_hash.blank? || term_hash[:count]&.zero?
+        subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '1' })
+          .filter_map { |field|
+            term_hash = build_subject_hash(field, override)
+            next if term_hash.blank? || term_hash[:count]&.zero?
 
-                   format_term type: :display, term: term_hash
+            format_term type: :display, term: term_hash
         }.uniq
-        override ? HeadingControl.term_override(values) : values
       end
 
       # Get Subjects from "MeSH" ontology
@@ -121,14 +120,13 @@ module PennMARC
       # @param override [Boolean] remove undesirable terms or not
       # @return [Array] array of MeSH subject values for display
       def medical_show(record, override: true)
-        values = subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '2' })
-                 .filter_map { |field|
-                   term_hash = build_subject_hash(field)
-                   next if term_hash.blank? || term_hash[:count]&.zero?
+        subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '2' })
+          .filter_map { |field|
+            term_hash = build_subject_hash(field, override)
+            next if term_hash.blank? || term_hash[:count]&.zero?
 
-                   format_term type: :display, term: term_hash
+            format_term type: :display, term: term_hash
         }.uniq
-        override ? HeadingControl.term_override(values) : values
       end
 
       # Get Subject values from {DISPLAY_TAGS} where indicator2 is 4 and {LOCAL_TAGS}. Do not include any values where
@@ -140,15 +138,14 @@ module PennMARC
       def local_show(record, override: true)
         local_fields = subject_fields(record, type: :display, options: { tags: DISPLAY_TAGS, indicator2: '4' }) +
                        subject_fields(record, type: :local)
-        values = local_fields.filter_map { |field|
+        local_fields.filter_map { |field|
           next if subfield_value?(field, '2', /penncoi/)
 
-          term_hash = build_subject_hash(field)
+          term_hash = build_subject_hash(field, override)
           next if term_hash.blank? || term_hash[:count]&.zero?
 
           format_term type: :display, term: term_hash
         }.uniq
-        override ? HeadingControl.term_override(values) : values
       end
 
       private
@@ -177,25 +174,26 @@ module PennMARC
         end
       end
 
-      # Format a term hash as a string for display
+      # Format a term hash as a string for display, performing overrides if needed
       #
-      # @todo support search field formatting?
       # @param type [Symbol]
       # @param term [Hash] components and information as a hash
-      # @return [String]
+      # @return [String, nil]
       def format_term(type:, term:)
         return unless type.in? %i[facet display]
 
         # attempt to handle poorly coded record
         normalize_single_subfield(term[:parts].first) if term[:count] == 1 && term[:parts].first.present?
 
-        case type
-        when :facet
-          trim_trailing(:period, term[:parts].join('--').strip)
-        when :display
-          display_value = "#{term[:parts].join('--')} #{term[:append].join(' ')}".strip
-          display_value.ends_with?('.') ? display_value : "#{display_value}."
-        end
+        value = case type
+                when :facet
+                  trim_trailing(:period, term[:parts].join('--').strip)
+                when :display
+                  display_value = "#{term[:parts].join('--')} #{term[:append].join(' ')}".strip
+                  display_value.ends_with?('.') ? display_value : "#{display_value}."
+                end
+
+        term[:override] ? HeadingControl.term_override(value) : value
       end
 
       # Is a field intended for display in a general subject field? To be included, the field tag is in either
@@ -251,13 +249,14 @@ module PennMARC
       #       heading. - MG
       # @todo do i need all this?
       # @param field [MARC::DataField]
+      # @param override [Boolean]
       # @return [Hash{Symbol => Integer, Array, Boolean, String}, Nil]
-      def build_subject_hash(field)
+      def build_subject_hash(field, override)
         term_info = { count: 0, parts: [], append: [], uri: nil,
                       local: field.indicator2 == '4' || field.tag.starts_with?('69'), # local subject heading
                       vernacular: field.tag == '880',
-                      subfield_a: nil,
-                      lcsh: lcsh?(field) }
+                      override: override && overrideable_field?(field),
+                      subfield_a: nil, lcsh: lcsh?(field) }
         field.each do |subfield|
           case subfield.code
           when '0', '6', '8', '5', '7'
@@ -356,6 +355,12 @@ module PennMARC
         return if subject_part.blank?
 
         trim_trailing!(:comma, subject_part) || trim_trailing!(:period, subject_part)
+      end
+
+      # @param  field [MARC::Field]
+      # @return [Boolean]
+      def overrideable_field?(field)
+        !field.tag.in?(NO_OVERRIDE_TAGS)
       end
     end
   end
