@@ -192,6 +192,21 @@ describe 'PennMARC::Creator' do
                                           'Name ends with comma', 'Name with no comma'
       end
     end
+
+    context 'with university donor/fund provenance' do
+      let(:fields) do
+        [marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345', d: '1900-2000',
+                                             e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
+         marc_field(tag: '700', subfields: { a: 'Important Person Collection', '6': '100', d: '1970-',
+                                             '5': helper::UNIVERSITY_IDENTIFIER }),
+         marc_field(tag: '710', subfields: { a: 'Important Person Collection Library', '6': '100', d: '1970-',
+                                             '5': helper::UNIVERSITY_IDENTIFIER })]
+      end
+
+      it 'omits any university donor/fund provenance' do
+        expect(helper.authors_list(record)).to contain_exactly 'Surname, Name'
+      end
+    end
   end
 
   describe '.contributors_list' do
@@ -243,6 +258,21 @@ describe 'PennMARC::Creator' do
                                           ['Editor',
                                            ['Franklin, Ben 1970-, Editor', 'Jefferson, Thomas 1870-, Editor']],
                                           ['Translator', ['Einstein, Albert 1970-, Translator']]
+      end
+    end
+
+    context 'with university donor/fund provenance' do
+      let(:fields) do
+        [marc_field(tag: '700', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345', d: '1900-2000',
+                                             e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
+         marc_field(tag: '700', subfields: { a: 'Important Person Collection', '6': '100', d: '1970-',
+                                             '5': helper::UNIVERSITY_IDENTIFIER }),
+         marc_field(tag: '710', subfields: { a: 'Important Person Collection Library', '6': '100', d: '1970-',
+                                             '5': helper::UNIVERSITY_IDENTIFIER })]
+      end
+
+      it 'omits any university donor/fund provenance' do
+        expect(helper.contributors_list(record)).to contain_exactly ['Author', ['Surname, Name']]
       end
     end
   end

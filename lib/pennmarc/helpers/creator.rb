@@ -23,6 +23,8 @@ module PennMARC
     CONTRIBUTOR_TAGS = %w[700 710].freeze
     CONTRIBUTOR_DISPLAY_SUBFIELDS = %w[a b c d j q u 3].freeze
 
+    UNIVERSITY_IDENTIFIER = 'PU'
+
     FACET_SOURCE_MAP = {
       100 => 'abcdjq', 110 => 'abcdjq', 111 => 'abcen',
       700 => 'abcdjq', 710 => 'abcdjq', 711 => 'abcen',
@@ -127,6 +129,8 @@ module PennMARC
       def authors_list(record, main_tags_only: false, first_initial_only: false)
         fields = record.fields(main_tags_only ? TAGS : TAGS + CONTRIBUTOR_TAGS)
         fields.filter_map { |field|
+          next if university_provenance? field
+
           if field['a'].present?
             name = trim_trailing(:comma, field['a'])
             first_initial_only ? abbreviate_name(name) : name
@@ -153,6 +157,7 @@ module PennMARC
         fields.each do |field|
           next if indicator_2_options.exclude?(field.indicator2) && field.tag.in?(CONTRIBUTOR_TAGS)
           next if subfield_defined? field, 'i'
+          next if university_provenance? field
 
           relator = relator(field: field, relator_term_sf: 'e', relator_map: relator_map)
           relator = 'Contributor' if relator.blank?
@@ -485,6 +490,12 @@ module PennMARC
       # @return [Boolean]
       def describes_author?(field)
         field['4']&.downcase == 'aut' || field['e']&.downcase&.start_with?('author')
+      end
+
+      # @param field [MARC::Field]
+      # @return [Boolean]
+      def university_provenance?(field)
+        field.tag.in?(CONTRIBUTOR_TAGS) && subfield_value?(field, '5', /#{UNIVERSITY_IDENTIFIER}/)
       end
     end
   end
