@@ -492,10 +492,12 @@ module PennMARC
         field['4']&.downcase == 'aut' || field['e']&.downcase&.start_with?('author')
       end
 
+      # Does the given field describe a contributor representing university provenance. A contributor tag with a '$5'
+      # value starting with the university identifier represents university provenance.
       # @param field [MARC::Field]
       # @return [Boolean]
       def university_provenance?(field)
-        field.tag.in?(CONTRIBUTOR_TAGS) && subfield_value?(field, '5', /#{UNIVERSITY_IDENTIFIER}/)
+        field.tag.in?(CONTRIBUTOR_TAGS) && subfield_value?(field, '5', /^#{UNIVERSITY_IDENTIFIER}/)
       end
     end
   end
