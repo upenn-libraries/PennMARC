@@ -93,7 +93,19 @@ rspec
    2. Create a new tag that matches the version set in step 1 (ex: v1.1.0). 
    3. Add a release title that is the same as the tag name. 
    4. Submit by clicking "Create Release".
-4. Once the release is created a pipeline will run to publish the gem to RubyGems. 
+4. Once the release is created a pipeline will run to publish the gem to RubyGems.
+
+### Publishing Manually
+
+You can also publish the gem using `gem` commands. After updating the `VERSION` value on `main`, you can run the
+following commands:
+
+```bash
+gem build pennmarc.gemspec
+gem push pennmarc-<VERSION>.gem
+```
+
+You may need an OTP code for use in the push to bundler.
 
 ### Versioning Guidelines
 
