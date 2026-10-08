@@ -197,6 +197,8 @@ describe 'PennMARC::Creator' do
       let(:fields) do
         [marc_field(tag: '100', subfields: { a: 'Surname, Name', '0': 'http://cool.uri/12345', d: '1900-2000',
                                              e: 'author.', '4': 'http://cool.uri/vocabulary/relators/aut' }),
+         marc_field(tag: '700', subfields: { a: 'A contributor', e: 'contributor',
+                                             '5': "Does-not-start-with-#{helper::UNIVERSITY_IDENTIFIER}" }),
          marc_field(tag: '700', subfields: { a: 'Important Person Collection', '6': '100', d: '1970-',
                                              '5': helper::UNIVERSITY_IDENTIFIER }),
          marc_field(tag: '710', subfields: { a: 'Important Person Collection Library', '6': '100', d: '1970-',
@@ -204,7 +206,7 @@ describe 'PennMARC::Creator' do
       end
 
       it 'omits any university donor/fund provenance' do
-        expect(helper.authors_list(record)).to contain_exactly 'Surname, Name'
+        expect(helper.authors_list(record)).to contain_exactly 'Surname, Name', 'A contributor'
       end
     end
   end
