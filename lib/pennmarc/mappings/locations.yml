@@ -856,6 +856,10 @@ muselock:
     - Penn Museum Library
   display: Penn Museum Library - Locked Cases (ask staff)
   aeon: true
+musemap:
+  specific_location: Penn Museum Library - Map
+  library: Penn Museum Library
+  display: Penn Museum Library - Map
 musemedia:
   specific_location: Penn Museum Library - Media
   library: Penn Museum Library
