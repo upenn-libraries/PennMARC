@@ -1,34 +1,103 @@
 ---
+variables:
+  FF_SCRIPT_SECTIONS: "true"
+  GIT_CLONE_PATH: "${CI_BUILDS_DIR}/${CI_JOB_ID}/${CI_PIPELINE_ID}/${CI_PROJECT_NAME}"
+
 include:
-  - template: Jobs/Secret-Detection.gitlab-ci.yml
+  - component: gitlab.library.upenn.edu/devops/gitlab/components/sast/secret_scan@2.5.0
+  - component: gitlab.library.upenn.edu/devops/gitlab/components/general/install_ansible@~latest
+  - component: gitlab.library.upenn.edu/devops/gitlab/components/general/ci_requirements@~latest
+  - component: gitlab.library.upenn.edu/devops/gitlab/components/general/install_hashicorp_vault@~latest
+  - component: gitlab.library.upenn.edu/devops/gitlab/components/general/vault_jwt_auth@~latest
+    inputs:
+      ci_requirements_file: ".gitlab/ci-requirements.yml"
+      vault_addr: ${VAULT_ADDR}
+      vault_auth_path: ${VAULT_AUTH_PATH}
+      vault_auth_role: ${VAULT_AUTH_ROLE}
+  - component: gitlab.library.upenn.edu/devops/gitlab/components/tests/rubocop@~latest
+    inputs:
+      app_dir: "."
+      job_image_name: "ruby"
+      job_image_tag: "3.2.2"
+      needs:
+        - secret_detection
 
 stages:
   - secret_check
-  - main_pipeline
+  - test
+  - deploy
 
-secret_detection:
-  stage: secret_check
-  allow_failure: false
-  artifacts:
-    paths:
-      - .pipeline.yml
-    expire_in: 1 day
-  tags:
-    - build
+rubocop:
+  before_script:
+    - bundle install -j $(nproc)
   rules:
-  - when: always
+    - exists:
+        - .rubocop.yml
 
-main:
-  stage: main_pipeline
+rspec:
+  stage: test
+  image: ruby:3.2.2
   needs:
     - secret_detection
-  allow_failure: false
-  trigger:
-    include:
-      - artifact: .pipeline.yml
-        job: secret_detection
-    strategy: depend
+  variables:
+    ANSIBLE_COLLECTIONS_CACHE_DIR: .cache/ansible/collections
+    GALAXY_REQUIREMENTS_FILE: ".gitlab/ci-requirements.yml"
+  cache:
+    - key:
+        files:
+          - .gitlab/ci-requirements.yml
+        prefix: ansible-collections
+      paths:
+        - $ANSIBLE_COLLECTIONS_CACHE_DIR
+  before_script:
+    - !reference [.install_ansible, before_script]
+    - !reference [.ci_requirements, before_script]
+    - bundle install -j $(nproc)
+  script:
+    - tail -F --pid=$$ rspec.log 2>/dev/null &
+    - ansible-playbook library.ci.rails_test -e rails_test_app_dir="."
+  artifacts:
+    paths:
+      - rspec.xml
+    expire_in: 1 week
+    reports:
+      junit: rspec.xml
   rules:
-  - if: "$CI_MERGE_REQUEST_IID"
-  - if: "$CI_COMMIT_TAG"
-  - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+    - exists:
+        - spec/**.rb
+        - spec/**/**.rb
+  tags:
+    - build
+
+# This step was inspired from Gitlab's example of gem publication:
+# https://gitlab.com/gitlab-org/quality/pipeline-common/-/blob/master/ci/gem-release.yml
+gem_publication:
+  stage: deploy
+  image: ruby:3.2.2
+  extends:
+    - .vault_jwt_auth
+  variables:
+    GEMSPEC_FILE: "${CI_PROJECT_NAME}.gemspec"
+  before_script:
+    - !reference [.install_ansible, before_script]
+    - !reference [.install_hashicorp_vault, before_script]
+    - !reference [.vault_jwt_auth, before_script]
+  script:
+    - export GEM_HOST_API_KEY="$(vault kv get -field=rubygems_api_key ${VAULT_KV_ENDPOINT}${ENVIRONMENT})"
+    - |
+      gem -v
+      rm -f ./*.gem
+      [ -f "${GEMSPEC_FILE}" ] || (echo "No ${GEMSPEC_FILE} file found!" && exit 1)
+    - '[ -n "${GEM_HOST_API_KEY}" ] || (echo "GEM_HOST_API_KEY is not set!" && exit 1)'
+    - GEM_FILE=$(echo "${CI_PROJECT_NAME}-${CI_COMMIT_TAG:1}.gem")
+    - |
+      gem build "${GEMSPEC_FILE}"
+      [ -f "${GEM_FILE}" ] || (echo "No ${GEM_FILE} file found!" && exit 1)
+    - '[ "${DISABLE_GEM_PUSH}" == "true" ] || gem push "${GEM_FILE}"'
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+(\.[a-zA-Z0-9]+)?$/
+  artifacts:
+    paths:
+      - "*.gem"
+  tags:
+    - deploy
