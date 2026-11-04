@@ -8,44 +8,34 @@ describe 'PennMARC::HeadingControl' do
   describe '.process' do
     context 'with a term for removal' do
       it 'removes the term if found in isolation' do
-        values = [remove_term]
-        expect(PennMARC::HeadingControl.term_override(values)).to eq []
+        expect(PennMARC::HeadingControl.term_override(remove_term)).to be_nil
       end
 
       it 'removes the term regardless of case' do
-        values = [remove_term.downcase]
-        expect(PennMARC::HeadingControl.term_override(values)).to eq []
+        expect(PennMARC::HeadingControl.term_override(remove_term.downcase)).to be_nil
       end
 
       it 'removes the term if it is included as a substring' do
-        values = ["#{remove_term}--History"]
-        expect(PennMARC::HeadingControl.term_override(values)).to eq []
+        value = "#{remove_term}--History"
+        expect(PennMARC::HeadingControl.term_override(value)).to be_nil
       end
     end
 
     PennMARC::Mappers.heading_overrides.each do |target, replacement|
       context "with the \"#{target}\" term" do
         it 'replaces the term in isolation' do
-          values = [target]
-          expect(PennMARC::HeadingControl.term_override(values)).to eq [replacement]
+          expect(PennMARC::HeadingControl.term_override(target)).to eq replacement
         end
 
         it 'replaces the term when used with other headings' do
-          values = ["#{target}--History"]
-          expect(PennMARC::HeadingControl.term_override(values)).to eq ["#{replacement}--History"]
+          value = "#{target}--History"
+          expect(PennMARC::HeadingControl.term_override(value)).to eq "#{replacement}--History"
         end
 
         it 'replaces the term regardless of case' do
-          values = ["#{target.titleize}--History"]
-          expect(PennMARC::HeadingControl.term_override(values)).to eq ["#{replacement}--History"]
+          value = "#{target.titleize}--History"
+          expect(PennMARC::HeadingControl.term_override(value)).to eq "#{replacement}--History"
         end
-      end
-    end
-
-    context 'with a variety of terms' do
-      it 'removes and replaces terms as needed' do
-        values = [remove_term, replace_term, 'History']
-        expect(PennMARC::HeadingControl.term_override(values)).to contain_exactly 'History', replaced_term
       end
     end
   end

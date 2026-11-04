@@ -11,22 +11,30 @@ module PennMARC
     REMOVE_TERM_REGEX = /#{Mappers.headings_to_remove&.join('|')}/i
     REPLACE_TERM_REGEX = /(#{Mappers.heading_overrides.keys.join('|')})/i
 
+    # Don't perform any term overriding on these tags
+    NO_OVERRIDE_TAGS = %w[600 610 611 630].freeze
+
     class << self
       # Replace or remove any terms in provided values pursuant to the configuration in remove and override mappers.
       # Used to remove or replace offensive or otherwise undesirable subject headings.
-      # @param values [Array]
-      # @return [Array] values with terms removed/replaced
-      def term_override(values)
-        values.filter_map do |value|
-          # Remove values if they contain a remove term
-          next nil if value.match?(REMOVE_TERM_REGEX)
+      # @param [String] value
+      # @return [String, nil]
+      def term_override(value)
+        # Remove values if they contain a remove term
+        return if value.match?(REMOVE_TERM_REGEX)
 
-          # return early if theres no terms to replace
-          next value if value.match(REPLACE_TERM_REGEX).nil?
+        # return early if there are no terms to replace
+        return value if value.match(REPLACE_TERM_REGEX).nil?
 
-          # lookup and perform replacement
-          value.sub(::Regexp.last_match.to_s, Mappers.heading_overrides[::Regexp.last_match.to_s.downcase])
-        end
+        # lookup and perform replacement
+        value.sub(::Regexp.last_match.to_s, Mappers.heading_overrides[::Regexp.last_match.to_s.downcase])
+      end
+
+      # Is the given field overrideable?
+      # @param field [MARC::Field]
+      # @return [Boolean]
+      def overrideable_field?(field)
+        !field.tag.in?(NO_OVERRIDE_TAGS)
       end
     end
   end
