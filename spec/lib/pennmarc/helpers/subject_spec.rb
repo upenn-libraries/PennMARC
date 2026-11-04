@@ -204,7 +204,7 @@ describe 'PennMARC::Subject' do
       let(:replace_term) { PennMARC::Mappers.heading_overrides.keys[2] }
       let(:fields) do
         [marc_field(tag: '650', indicator2: '0', subfields: { a: replace_term }),
-         marc_field(tag: helper::NO_OVERRIDE_TAGS.sample, indicator2: '0',
+         marc_field(tag: PennMARC::HeadingControl::NO_OVERRIDE_TAGS.sample, indicator2: '0',
                     subfields: { a: replace_term })]
       end
 

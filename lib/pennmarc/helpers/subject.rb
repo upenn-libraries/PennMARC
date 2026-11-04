@@ -25,9 +25,6 @@ module PennMARC
     # Local subject heading tags
     LOCAL_TAGS = %w[690 691 697].freeze
 
-    # Don't perform any term overriding on these tags
-    NO_OVERRIDE_TAGS = %w[600 610 611 630].freeze
-
     class << self
       # All Subjects for searching. This includes most subfield content from any field contained in {SEARCH_TAGS} or
       # 69X, including any linked 880 fields. Fields must have an indicator2 value in {VALID_SOURCE_INDICATORS}.
@@ -255,7 +252,7 @@ module PennMARC
         term_info = { count: 0, parts: [], append: [], uri: nil,
                       local: field.indicator2 == '4' || field.tag.starts_with?('69'), # local subject heading
                       vernacular: field.tag == '880',
-                      override: override && overrideable_field?(field),
+                      override: override && HeadingControl.overrideable_field?(field),
                       subfield_a: nil, lcsh: lcsh?(field) }
         field.each do |subfield|
           case subfield.code
@@ -355,12 +352,6 @@ module PennMARC
         return if subject_part.blank?
 
         trim_trailing!(:comma, subject_part) || trim_trailing!(:period, subject_part)
-      end
-
-      # @param  field [MARC::Field]
-      # @return [Boolean]
-      def overrideable_field?(field)
-        !field.tag.in?(NO_OVERRIDE_TAGS)
       end
     end
   end
