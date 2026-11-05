@@ -16,7 +16,7 @@ module PennMARC
       # @return [Array<String>] array of editions and their alternates
       def show(record, with_alternate: true)
         editions = record.fields('250').map do |field|
-          join_subfields(field, &subfield_not_in?(%w[6 8]))
+          join_subfields(field, &subfield_not_in?(%w[6 7 8]))
         end
         editions += linked_alternate_not_6_or_8(record, '250') if with_alternate
 
@@ -30,7 +30,7 @@ module PennMARC
         edition = record.fields('250').first
         return if edition.blank?
 
-        join_subfields(edition, &subfield_not_in?(%w[6 8]))
+        join_subfields(edition, &subfield_not_in?(%w[6 7 8]))
       end
 
       # Entry for another available edition of the target item (horizontal relationship). When a note is generated

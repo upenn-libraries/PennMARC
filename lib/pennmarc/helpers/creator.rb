@@ -9,10 +9,10 @@ module PennMARC
     TAGS = %w[100 110].freeze
 
     # For creator fields intended for display, these subfields are ignored
-    DISPLAY_EXCLUDED_SUBFIELDS = %w[a 0 1 4 5 6 8 t].freeze
+    DISPLAY_EXCLUDED_SUBFIELDS = %w[a 0 1 4 5 6 7 8 t].freeze
 
     # For creator fields intended for searching, these subfields are ignored
-    SEARCH_EXCLUDED_SUBFIELDS = %w[a 1 4 5 6 8 t].freeze
+    SEARCH_EXCLUDED_SUBFIELDS = %w[a 1 4 5 6 7 8 t].freeze
 
     # Aux tags for Author/Creator information, for use in search_aux method
     AUX_TAGS = %w[100 110 111 400 410 411 700 710 711 800 810 811].freeze
@@ -35,7 +35,7 @@ module PennMARC
       # Author/Creator search field, from tags
       # {https://www.oclc.org/bibformats/en/1xx/100.html 100 Main Entry--Personal Name} and
       # {https://www.oclc.org/bibformats/en/1xx/110.html 110 Main Entry--Corporate Name}. Includes subfield values
-      # except for those in the {DISPLAY_EXCLUDED_SUBFIELDS} constant. Maps any relator codes found in ǂ4. To better
+      # except for those in the {SEARCH_EXCLUDED_SUBFIELDS} constant. Maps any relator codes found in ǂ4. To better
       # handle name searches, returns names as both "First Last" and "Last, First" if a comma is found in ǂa. Also
       # indexes any linked values in the 880.
       # @param record [MARC::Record]
@@ -463,7 +463,7 @@ module PennMARC
       # @param relator_map [Hash]
       # @return [String]
       def parse_show_value(field, relator_map: Mappers.relator)
-        creator = join_subfields(field, &subfield_not_in?(%w[0 1 4 6 8 e w]))
+        creator = join_subfields(field, &subfield_not_in?(%w[0 1 4 6 7 8 e w]))
         append_relator(field: field, joined_subfields: creator, relator_term_sf: 'e', relator_map: relator_map)
       end
 
@@ -475,7 +475,7 @@ module PennMARC
       # @return [String]
       def parse_conference_detail_show_value(field, relator_map: Mappers.relator)
         conf = if subfield_undefined? field, 'i'
-                 join_subfields field, &subfield_not_in?(%w[0 4 5 6 8 e j w])
+                 join_subfields field, &subfield_not_in?(%w[0 4 5 6 7 8 e j w])
                else
                  ''
                end
