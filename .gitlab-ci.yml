@@ -1,7 +1,6 @@
 ---
 variables:
   FF_SCRIPT_SECTIONS: "true"
-  GIT_CLONE_PATH: "${CI_BUILDS_DIR}/${CI_JOB_ID}/${CI_PIPELINE_ID}/${CI_PROJECT_NAME}"
 
 include:
   - component: gitlab.library.upenn.edu/devops/gitlab/components/sast/secret_scan@2.5.0
