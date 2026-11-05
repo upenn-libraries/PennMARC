@@ -63,7 +63,7 @@ module PennMARC
       # @return [String (frozen)] assembled other version string
       def other_edition_value(field, relator_map)
         subi = remove_paren_value_from_subfield_i(field) || ''
-        excluded_subfields = %w[6 7 8]
+        excluded_subfields = %w[6 8]
         other_edition_subfields = %w[s x z]
         other_editions = field.filter_map { |sf|
           next if excluded_subfields.member?(sf.code)
@@ -77,7 +77,7 @@ module PennMARC
             " #{relator}. "
           end
         }.join
-        other_editions_append_subfields = %w[i h s t x z e f o r w y]
+        other_editions_append_subfields = %w[i h s t x z e f o r w y 7]
         other_editions_append = field.filter_map { |sf|
           next if excluded_subfields.member?(sf.code)
 
