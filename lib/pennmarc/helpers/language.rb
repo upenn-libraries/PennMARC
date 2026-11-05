@@ -16,7 +16,7 @@ module PennMARC
       # @return [Array<String>] language values and notes
       def show(record)
         values = record.fields('546').map do |field|
-          join_subfields field, &subfield_not_in?(%w[6 8])
+          join_subfields field, &subfield_not_in?(%w[6 7 8])
         end
         language_values = values + linked_alternate(record, '546', &subfield_not_in?(%w[6 8]))
         language_values.uniq

@@ -38,7 +38,7 @@ module PennMARC
       def show(record)
         results = record.fields('300').map { |f| join_subfields(f, &subfield_not_in?(%w[3 6 8])) }
         results += record.fields(%w[254 255 310 342 352 362]).map do |f|
-          join_subfields(f, &subfield_not_in?(%w[6 8]))
+          join_subfields(f, &subfield_not_in?(%w[6 7 8]))
         end
         results += record.fields('340').map { |f| join_subfields(f, &subfield_not_in?(%w[0 2 6 8])) }
         results += record.fields('880').map do |f|

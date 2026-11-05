@@ -142,7 +142,7 @@ describe 'PennMARC::Title' do
       end
 
       it 'returns default title' do
-        expect(helper.show(record)).to eq [PennMARC::Title::NO_TITLE_PROVIDED]
+        expect(helper.show(record)).to eq PennMARC::Title::NO_TITLE_PROVIDED
       end
     end
 

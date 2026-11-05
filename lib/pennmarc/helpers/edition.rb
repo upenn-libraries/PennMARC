@@ -16,7 +16,7 @@ module PennMARC
       # @return [Array<String>] array of editions and their alternates
       def show(record, with_alternate: true)
         editions = record.fields('250').map do |field|
-          join_subfields(field, &subfield_not_in?(%w[6 8]))
+          join_subfields(field, &subfield_not_in?(%w[6 7 8]))
         end
         editions += linked_alternate_not_6_or_8(record, '250') if with_alternate
 
@@ -30,7 +30,7 @@ module PennMARC
         edition = record.fields('250').first
         return if edition.blank?
 
-        join_subfields(edition, &subfield_not_in?(%w[6 8]))
+        join_subfields(edition, &subfield_not_in?(%w[6 7 8]))
       end
 
       # Entry for another available edition of the target item (horizontal relationship). When a note is generated
@@ -63,7 +63,7 @@ module PennMARC
       # @return [String (frozen)] assembled other version string
       def other_edition_value(field, relator_map)
         subi = remove_paren_value_from_subfield_i(field) || ''
-        excluded_subfields = %w[6 8]
+        excluded_subfields = %w[6 7 8]
         other_edition_subfields = %w[s x z]
         other_editions = field.filter_map { |sf|
           next if excluded_subfields.member?(sf.code)
@@ -77,7 +77,7 @@ module PennMARC
             " #{relator}. "
           end
         }.join
-        other_editions_append_subfields = %w[i h s t x z e f o r w y 7]
+        other_editions_append_subfields = %w[i h s t x z e f o r w y]
         other_editions_append = field.filter_map { |sf|
           next if excluded_subfields.member?(sf.code)
 

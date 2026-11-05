@@ -68,7 +68,7 @@ module PennMARC
         record.fields(%w[245 880]).filter_map { |field|
           next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^245/)
 
-          join_subfields(field, &subfield_not_in?(%w[c 6 8 h]))
+          join_subfields(field, &subfield_not_in?(%w[c 6 7 8 h]))
         }.uniq
       end
 
@@ -77,7 +77,7 @@ module PennMARC
       # @param record [MARC::Record]
       # @return [Array<String>] array of auxiliary title values for search
       def search_aux(record)
-        values = search_aux_values(record: record, title_type: :main, &subfield_not_in?(%w[c 6 8])) +
+        values = search_aux_values(record: record, title_type: :main, &subfield_not_in?(%w[c 6 7 8])) +
                  search_aux_values(record: record, title_type: :related, &subfield_in?(%w[s t])) +
                  search_aux_values(record: record, title_type: :entity, &subfield_in?(%w[t])) +
                  search_aux_values(record: record, title_type: :note, &subfield_in?(%w[t]))
@@ -95,7 +95,7 @@ module PennMARC
         record.fields(%w[245 880]).filter_map { |field|
           next if field.tag == '880' && no_subfield_value_matches?(field, '6', /^245/)
 
-          join_subfields(field, &subfield_not_in?(%w[c 6 8 h]))
+          join_subfields(field, &subfield_not_in?(%w[c 6 7 8 h]))
         }.uniq
       end
 
@@ -105,7 +105,7 @@ module PennMARC
       # @param record [MARC::Record]
       # @return [Array<String>] auxiliary journal title information for search
       def journal_search_aux(record)
-        values = search_aux_values(record: record, title_type: :main, journal: true, &subfield_not_in?(%w[c 6 8])) +
+        values = search_aux_values(record: record, title_type: :main, journal: true, &subfield_not_in?(%w[c 6 7 8])) +
                  search_aux_values(record: record, title_type: :related, journal: true, &subfield_in?(%w[s t])) +
                  search_aux_values(record: record, title_type: :entity, journal: true, &subfield_in?(%w[t])) +
                  search_aux_values(record: record, title_type: :note, journal: true, &subfield_in?(%w[t]))
@@ -120,20 +120,20 @@ module PennMARC
       # @return [String] single title for display
       def show(record)
         field = record.fields('245')&.first
-        return Array.wrap(NO_TITLE_PROVIDED) unless field.present?
+        return NO_TITLE_PROVIDED unless field.present?
 
         values = title_values(field)
         [format_title(values[:title_or_form]), values[:punctuation], values[:other_info]].compact_blank.join(' ')
       end
 
-      # Same as show, but with all subfields included as found - except for subfield c.
+      # Same as show, but with most subfields included as found.
       # @param record [MARC::Record]
       # @return [String] detailed title for display
       def detailed_show(record)
         field = record.fields('245')&.first
         return unless field
 
-        join_subfields(field, &subfield_not_in?(%w[6 8]))
+        join_subfields(field, &subfield_not_in?(%w[6 7 8]))
       end
 
       # Same structure as show, but linked alternate title.
@@ -198,7 +198,7 @@ module PennMARC
       # @return [Array<String>] Array of standardized titles as strings
       def standardized_show(record)
         standardized_titles = record.fields(%w[130 240]).map do |field|
-          join_subfields(field, &subfield_not_in?(%w[0 6 8 e w]))
+          join_subfields(field, &subfield_not_in?(%w[0 6 7 8 e w]))
         end
         standardized_titles += record.fields('730').filter_map do |field|
           # skip unless one of the indicators is blank
@@ -207,13 +207,13 @@ module PennMARC
           # skip if a subfield i is present
           next if subfield_defined?(field, 'i')
 
-          join_subfields(field, &subfield_not_in?(%w[5 6 8 e w]))
+          join_subfields(field, &subfield_not_in?(%w[5 6 7 8 e w]))
         end
         titles = standardized_titles + record.fields('880').filter_map do |field|
           next unless subfield_undefined?(field, 'i') &&
                       subfield_value?(field, '6', /^(130|240|730)/)
 
-          join_subfields field, &subfield_not_in?(%w[5 6 8 e w])
+          join_subfields field, &subfield_not_in?(%w[5 6 7 8 e w])
         end
         titles.uniq
       end
@@ -227,18 +227,18 @@ module PennMARC
       # @return [Array<String>] Array of other titles as strings
       def other_show(record)
         other_titles = record.fields('246').map do |field|
-          join_subfields(field, &subfield_not_in?(%w[6 8]))
+          join_subfields(field, &subfield_not_in?(%w[6 7 8]))
         end
         other_titles += record.fields('740')
                               .filter_map do |field|
                                 next unless field.indicator2.in? ['', ' ', '0', '1', '3']
 
-                                join_subfields(field, &subfield_not_in?(%w[5 6 8]))
+                                join_subfields(field, &subfield_not_in?(%w[5 6 7 8]))
         end
         titles = other_titles + record.fields('880').filter_map do |field|
           next unless subfield_value? field, '6', /^(246|740)/
 
-          join_subfields(field, &subfield_not_in?(%w[5 6 8]))
+          join_subfields(field, &subfield_not_in?(%w[5 6 7 8]))
         end
         titles.uniq
       end
@@ -257,7 +257,7 @@ module PennMARC
                 next unless field.tag == '247' || (field.tag == '880' && subfield_value?(field, '6', /^247/))
 
                 # 6 and 8 are not meaningful for display
-                former_title = join_subfields field, &subfield_not_in?(%w[6 8 e w])
+                former_title = join_subfields field, &subfield_not_in?(%w[6 7 8 e w])
                 former_title_append = join_subfields field, &subfield_in?(%w[e w])
                 "#{former_title} #{former_title_append}".strip
               }.uniq
