@@ -3,7 +3,7 @@ variables:
   FF_SCRIPT_SECTIONS: "true"
 
 include:
-  - component: gitlab.library.upenn.edu/devops/gitlab/components/sast/secret_scan@2.5.0
+  - component: gitlab.library.upenn.edu/devops/gitlab/components/sast/secret_scan@~latest
   - component: gitlab.library.upenn.edu/devops/gitlab/components/general/install_ansible@~latest
   - component: gitlab.library.upenn.edu/devops/gitlab/components/general/ci_requirements@~latest
   - component: gitlab.library.upenn.edu/devops/gitlab/components/general/install_hashicorp_vault@~latest
