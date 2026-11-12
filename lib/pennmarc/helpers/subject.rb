@@ -193,8 +193,8 @@ module PennMARC
 
       # Process and return the "main term" (sf a) from a field, overriding if necessary
       # @param field [MARC::DataField]
-      # @param [Hash] term
-      # @param [Boolean] override
+      # @param term [Hash]
+      # @param override [Boolean]
       # @return [String, nil]
       def main_term_for(field:, term:, override:)
         return unless term[:lcsh] && term[:subfield_a]
