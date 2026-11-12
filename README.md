@@ -20,14 +20,14 @@ This gem provides configuration as well as a method for overriding and removing 
 you can remove or replace the configured terms like so:
 
 ```ruby
-improved_values = PennMARC::HeadingControl.term_override(values)
+improved_value = PennMARC::HeadingControl.term_override(value)
 ```
 
-This will remove any elements of the `values` array that include any terms defined in [`headings_remove.yml`](lib/pennmarc/mappings/headings_remove.yml) and
-replace any terms defined in the [`headings_override.yml`](lib/pennmarc/mappings/headings_override.yml) file.
+This will remove the term (return nil) if `value` is included in `headings_remove.yml`](lib/pennmarc/mappings/headings_remove.yml) and replace it if it matches any of the terms defined
+in the [`headings_override.yml`](lib/pennmarc/mappings/headings_override.yml) file.
 
 By default, terms are replaced for `Subject#*show` and `Subject#facet` methods. You can bypass the default overriding on
-on these methods by passing `override: false`.
+on these methods by passing `override: false`. Decomposed LCSH headings are also subject to overriding.
 
 ## Development
 

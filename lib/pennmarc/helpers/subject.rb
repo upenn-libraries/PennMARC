@@ -89,10 +89,8 @@ module PennMARC
           term_hash = build_subject_hash(field, override)
           next if term_hash.blank? || term_hash[:count]&.zero?
 
-          heading = format_term type: :display, term: term_hash
-          main_term = "#{trim_trailing(:period, term_hash[:subfield_a])}." if term_hash[:lcsh] && term_hash[:subfield_a]
-
-          [heading, main_term].compact_blank
+          [format_term(type: :display, term: term_hash),
+           main_term_for(field: field, term: term_hash, override: override)].compact_blank
         }.flatten.uniq
       end
 
@@ -191,6 +189,20 @@ module PennMARC
                 end
 
         term[:override] ? HeadingControl.term_override(value) : value
+      end
+
+      # Process and return the "main term" (sf a) from a field, overriding if necessary
+      # @param field [MARC::DataField]
+      # @param term [Hash]
+      # @param override [Boolean]
+      # @return [String, nil]
+      def main_term_for(field:, term:, override:)
+        return unless term[:lcsh] && term[:subfield_a]
+
+        subfield_a_term = "#{trim_trailing(:period, term[:subfield_a])}."
+        return HeadingControl.term_override(subfield_a_term) if override && HeadingControl.overrideable_field?(field)
+
+        subfield_a_term
       end
 
       # Is a field intended for display in a general subject field? To be included, the field tag is in either
