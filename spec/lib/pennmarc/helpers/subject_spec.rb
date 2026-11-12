@@ -359,19 +359,24 @@ describe 'PennMARC::Subject' do
 
     context 'with headings that contain terms for removal and replacement' do
       let(:fields) do
-        [marc_field(tag: '650', subfields: { a: 'History.' }),
-         marc_field(tag: '650', subfields: { a: PennMARC::Mappers.headings_to_remove.first }),
-         marc_field(tag: '650', subfields: { a: PennMARC::Mappers.heading_overrides.first[0] })]
+        [marc_field(tag: '650', subfields: { a: PennMARC::Mappers.headings_to_remove.first }),
+         marc_field(tag: '650', indicator2: '0',
+                    subfields: { a: PennMARC::Mappers.heading_overrides.first[0],
+                                 z: 'United States', x: 'History' })]
       end
 
       it 'removes and replaces terms as expected' do
-        expect(values).to contain_exactly 'History.', "#{PennMARC::Mappers.heading_overrides.first[1]}."
+        expect(values).to contain_exactly(
+          "#{PennMARC::Mappers.heading_overrides.first[1]}--United States--History.",
+          "#{PennMARC::Mappers.heading_overrides.first[1]}."
+        )
       end
 
       it 'does not remove or replace terms if override param is false' do
         expect(helper.show(record, override: false)).to contain_exactly(
-          'History.', "#{PennMARC::Mappers.headings_to_remove.first}.",
-          "#{PennMARC::Mappers.heading_overrides.first[0]}."
+          "#{PennMARC::Mappers.headings_to_remove.first}.",
+          "#{PennMARC::Mappers.heading_overrides.first[0]}.",
+          "#{PennMARC::Mappers.heading_overrides.first[0]}--United States--History."
         )
       end
     end
