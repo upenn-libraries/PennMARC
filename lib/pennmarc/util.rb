@@ -194,27 +194,26 @@ module PennMARC
       end
     end
 
-    # Common case of wanting to extract all the subfields besides 6 or 8,
-    # from 880 datafield that has a particular subfield 6 value. We exclude 6 because
-    # that value is the linkage ID itself and 8 because... IDK
+    # Common case of wanting to extract all the subfields besides 6, 7 or 8,
+    # from 880 datafield that has a particular subfield 6 value.
     # @param record [MARC::Record]
     # @param subfield6_value [String, Array] either a string to look for in sub6 or an array of them
     # @return [Array] array of linked alternates without 8 or 6 values
-    def linked_alternate_not_6_or_8(record, subfield6_value)
-      excluded_subfields = %w[6 8]
+    def linked_alternate_not_6_7_8(record, subfield6_value)
+      excluded_subfields = %w[6 7 8]
       linked_alternate(record, subfield6_value) do |sf|
         excluded_subfields.exclude?(sf.code)
       end
     end
 
-    # Returns the non-6,8 subfields from a datafield and its 880 link.
+    # Returns the non-6,7,8 subfields from a datafield and its 880 link.
     # @param record [MARC::Record]
     # @param tag [String]
     # @return [Array<String>] values
     def datafield_and_linked_alternate(record, tag)
       record.fields(tag).filter_map { |field|
-        join_subfields(field, &subfield_not_in?(%w[6 8]))
-      } + linked_alternate_not_6_or_8(record, tag)
+        join_subfields(field, &subfield_not_in?(%w[6 7 8]))
+      } + linked_alternate_not_6_7_8(record, tag)
     end
 
     # Get the substring of a string up to a given target character
@@ -283,7 +282,7 @@ module PennMARC
         next unless field.any? { |sf| sf.code == 'a' && sf.value =~ /^(#{prefix}|%#{prefix})/ }
 
         elements = field.select(&subfield_in?(%w[a])).map { |sf| sf.value.gsub(/^%?#{prefix}/, '') }
-        elements << join_subfields(field, &subfield_not_in?(%w[a 6 8 e w 5]))
+        elements << join_subfields(field, &subfield_not_in?(%w[a 6 7 8 e w 5]))
         join_and_squish elements
       }.uniq
     end

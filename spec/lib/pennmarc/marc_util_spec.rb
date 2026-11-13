@@ -142,11 +142,12 @@ describe 'PennMARC::Util' do
   describe '.linked_alternate_not_6_or_8' do
     let(:record) do
       marc_record fields: [marc_field(tag: '510', subfields: { a: 'Perkins', b: 'Test' }),
-                           marc_field(tag: '880', subfields: { '6': '510', '8': 'Ignore', a: 'Snikrep', b: 'Tset' })]
+                           marc_field(tag: '880', subfields: { '6': '510', '7': 'blah', '8': 'Ignore', a: 'Snikrep',
+                                                               b: 'Tset' })]
     end
 
-    it 'returns the linked alternate without 6 or 8' do
-      expect(util.linked_alternate_not_6_or_8(record, '510')).to contain_exactly('Snikrep Tset')
+    it 'returns the linked alternate without 6, 7 or 8' do
+      expect(util.linked_alternate_not_6_7_8(record, '510')).to contain_exactly('Snikrep Tset')
     end
   end
 
